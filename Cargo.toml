@@ -1,5 +1,5 @@
 [package]
-name = "Rssust"
+name = "rssust"
 version = "0.1.0"
 edition = "2024"
 
@@ -9,3 +9,4 @@ anyhow = "1.0.103"
 threadpool = "1.8"
 tokio = { version = "1.0", features = ["rt"] }
 obscura = { git = "https://github.com/h4ckf0r0day/obscura" }
+reqwest = "0.13.4"

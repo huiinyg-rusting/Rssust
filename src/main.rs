@@ -1,4 +1,4 @@
-use Rssust::{connect::handle_connection, request::load_cookies};
+use rssust::{connect::handle_connection, crawler::load_cookies};
 use std::net::TcpListener;
 use threadpool::ThreadPool;
 

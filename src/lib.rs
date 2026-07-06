@@ -10,7 +10,7 @@ pub mod connect {
     use std::net::TcpStream;
     use std::path::Path;
 
-use crate::request::fetch_url;
+    use crate::crawler::{fetch_obscura, fetch_reqwest_get, fetch_reqwest_post};
 
     pub fn handle_connection(mut stream: TcpStream) {
         let mut buffer = [0; 1024];
@@ -39,7 +39,11 @@ use crate::request::fetch_url;
             Ok("What is this?".to_string())
         } 
         else if buffer.starts_with(b"GET /bilibili ") {
-            fetch_url("https://bilibili.com")
+            fetch_obscura("https://bilibili.com")
+        } else if buffer.starts_with(b"GET /git ") {
+            fetch_reqwest_get("https://api.kuleu.com/api/getGreetingMessage?type=json")
+        } else if buffer.starts_with(b"GET /git1 ") {
+            fetch_reqwest_post("http://is.snssdk.com/api/news/feed/v51/", "".to_string())
         }
         else {
             Err(anyhow!("404NotFound"))
@@ -58,13 +62,14 @@ use crate::request::fetch_url;
 }
 
 
-pub mod request {
+pub mod crawler {
     use std::cell::RefCell;
     use std::time::{SystemTime, UNIX_EPOCH};
     use anyhow::{ Error, Ok, Result, anyhow};
     use obscura::Browser;
     use serde_json::Value;
     use tokio::runtime::Builder as RuntimeBuilder;
+    use tokio::runtime::Runtime;
 
     #[derive(Debug)]
     struct Coke {
@@ -161,7 +166,7 @@ pub mod request {
             .map(build_set_cookie)
             .collect::<Result<Vec<_>, _>>()?;
         
-        init(&coke_list);
+        let _ = init(&coke_list);
         println!("成功载入 {} 个 Cookie", cookies.len());
         Ok("Succse".to_string())
         
@@ -176,8 +181,6 @@ pub mod request {
             Ok(())
         })
     }
-
-    /// 从指定 URL 抓取 HTML。
     pub fn fetch(url: &str) -> Result<String> {
         with_browser(|rt, browser| {
             rt.block_on(async {
@@ -188,9 +191,31 @@ pub mod request {
         })
     }
 
-    pub fn fetch_url(url:&str) -> Result<String,Error>{
+    /// 从指定 URL 抓取 HTML。
+    /// 推荐
+    pub fn fetch_obscura(url:&str) -> Result<String,Error>{
         let html = fetch(url)?;
         println!("[OK] {} ({} bytes)\n", url, html.len());
         Ok(html)
+    }
+
+    //下面是reqwest get的内容
+    //不会使用线程池
+    pub fn fetch_reqwest_get(url: &str) -> Result<String,Error> {
+        let rt = Runtime::new().unwrap();
+        rt.block_on(async {
+        Ok(reqwest::get(url).await?.text().await?)
+        })
+    }
+
+    ///This can be an array of tuples, or a HashMap, or a custom type that implements Serialize.
+    ///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
+    ///The feature form is required.
+    ///必须使用 form 功能
+    pub fn fetch_reqwest_post(url: &str,body: String) -> Result<String,Error>{
+        let rt = Runtime::new().unwrap();
+            rt.block_on(async {
+            Ok(reqwest::Client::new().post(url).body(body).send().await?.text().await?)
+        })
     }
 }
