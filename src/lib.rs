@@ -1,3 +1,4 @@
+pub mod request_rules;
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
 /// 最终在这个函数体内发送http数据
@@ -5,18 +6,37 @@ pub mod connect {
     use anyhow::Error;
     use anyhow::{Result, anyhow};
 
+    use crate::request_rules::request_rules;
+    use std::collections::HashMap;
     use std::fs;
     use std::io::prelude::*;
     use std::net::TcpStream;
     use std::path::Path;
 
-    use crate::crawler::{fetch_obscura, fetch_reqwest_get, fetch_reqwest_post};
-
     pub fn handle_connection(mut stream: TcpStream) {
-        let mut buffer = [0; 1024];
+        let mut buffer: [u8; 1024] = [0; 1024];
         stream.read(&mut buffer).unwrap();
 
-        let response = request_rules(buffer); //.expect("在加载request_rules时发生错误");
+        let head = std::str::from_utf8(extract_between_spaces(&buffer).unwrap_or_else(|| {
+            eprintln!("Failed to slice header{:?}", buffer);
+            &[]
+        }))
+        .unwrap_or_else(|_| {
+            eprintln!("Invalid UTF-8{:?}", buffer);
+            ""
+        });
+        let response = if head.contains("?") {
+            if let Some((before, after)) = head.split_once('?') {
+                let first_part = before;
+                let second_part = parse_query_params(after);
+                request_rules(first_part, Some(second_part))
+            } else {
+                request_rules(head, None)
+            }
+        } else {
+            request_rules(head, None)
+        };
+
         let response = match response {
             Ok(i) => format!(
                 "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\n\r\n{}",
@@ -30,29 +50,40 @@ pub mod connect {
         stream.flush().unwrap();
     }
 
-    ///这个函数相当于模块的注册表
-    /// 给调用者的是html格式
-    fn request_rules(buffer: [u8; 1024]) -> Result<String, Error> {
-        if buffer.starts_with(b"GET / ") {
-            show_index_doc()
-        } else if buffer.starts_with(b"GET /what ") {
-            Ok("What is this?".to_string())
-        } 
-        else if buffer.starts_with(b"GET /bilibili ") {
-            fetch_obscura("https://bilibili.com")
-        } else if buffer.starts_with(b"GET /git ") {
-            fetch_reqwest_get("https://api.kuleu.com/api/getGreetingMessage?type=json")
-        } else if buffer.starts_with(b"GET /git1 ") {
-            fetch_reqwest_post("http://is.snssdk.com/api/news/feed/v51/", "".to_string())
+    fn parse_query_params(query: &str) -> HashMap<String, String> {
+        let mut params = HashMap::new();
+
+        for pair in query.split('&') {
+            if let Some((key, value)) = pair.split_once('=') {
+                params.insert(key.to_string(), value.to_string());
+            } else if !pair.is_empty() {
+                // 处理没有等号的参数（如 "flag"），值设为空字符串
+                params.insert(pair.to_string(), String::new());
+            }
         }
-        else {
-            Err(anyhow!("404NotFound"))
-        }
+
+        params
+    }
+
+    fn extract_between_spaces(buffer: &[u8; 1024]) -> Option<&[u8]> {
+        let bytes = buffer.as_slice();
+
+        // 找到第一个空格的位置
+        let first_space = bytes.iter().position(|&b| b == b' ')?;
+
+        // 从第一个空格之后开始，找第二个空格
+        let second_space = bytes[first_space + 1..]
+            .iter()
+            .position(|&b| b == b' ')
+            .map(|pos| first_space + 1 + pos)?;
+
+        // 截取两个空格之间的内容
+        Some(&bytes[first_space + 1..second_space])
     }
 
     ///这个函数发送index.html的内容给调用者，否则发送错误及anyhow的文本错误类型 给调用者
     /// 给调用者的是html格式
-    fn show_index_doc() -> Result<String, Error> {
+    pub fn show_index_doc() -> Result<String, Error> {
         match fs::read_to_string(&Path::new("index.html")) {
             Ok(i) => Ok(i),
 
@@ -61,20 +92,22 @@ pub mod connect {
     }
 }
 
-
 pub mod crawler {
-    use std::cell::RefCell;
-    use std::time::{SystemTime, UNIX_EPOCH};
-    use anyhow::{ Error, Ok, Result, anyhow};
+    use anyhow::{Error, Ok, Result, anyhow};
     use obscura::Browser;
     use serde_json::Value;
+    use std::cell::RefCell;
+    use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::runtime::Builder as RuntimeBuilder;
     use tokio::runtime::Runtime;
 
+    use scraper::{Html, Selector};
+    use url::Url;
+
     #[derive(Debug)]
     struct Coke {
-    url: String,
-    mai: String,
+        url: String,
+        mai: String,
     }
 
     thread_local! {
@@ -88,9 +121,7 @@ pub mod crawler {
         BROWSER.with(|cell| {
             let mut guard = cell.borrow_mut();
             if guard.is_none() {
-                let rt = RuntimeBuilder::new_current_thread()
-                    .enable_all()
-                    .build()?;
+                let rt = RuntimeBuilder::new_current_thread().enable_all().build()?;
                 let browser = rt.block_on(async { Browser::new() })?;
                 *guard = Some((rt, browser));
             }
@@ -128,10 +159,18 @@ pub mod crawler {
         let path = cookie.get("path").and_then(Value::as_str).unwrap_or("/");
 
         let mut set_cookie = format!("{}={}; Domain={}; Path={}", name, value, domain, path);
-        if cookie.get("secure").and_then(Value::as_bool).unwrap_or(false) {
+        if cookie
+            .get("secure")
+            .and_then(Value::as_bool)
+            .unwrap_or(false)
+        {
             set_cookie.push_str("; Secure");
         }
-        if cookie.get("httpOnly").and_then(Value::as_bool).unwrap_or(false) {
+        if cookie
+            .get("httpOnly")
+            .and_then(Value::as_bool)
+            .unwrap_or(false)
+        {
             set_cookie.push_str("; HttpOnly");
         }
         if let Some(same_site) = cookie.get("sameSite").and_then(Value::as_str) {
@@ -139,7 +178,6 @@ pub mod crawler {
                 set_cookie.push_str(&format!("; SameSite={}", same_site));
             }
         }
-
 
         if let Some(expiration) = cookie.get("expirationDate").and_then(Value::as_f64) {
             if let std::result::Result::Ok(now) = SystemTime::now().duration_since(UNIX_EPOCH) {
@@ -150,33 +188,36 @@ pub mod crawler {
             }
         }
 
-        Ok(Coke { url: (domain.to_string()), mai: (set_cookie) })
-
-
-        }
-
+        Ok(Coke {
+            url: (domain.to_string()),
+            mai: (set_cookie),
+        })
+    }
 
     /// 从 JSON 文件加载 cookie，返回 Set-Cookie 字符串列表。
     /// JSON 文件应为 cookie 对象数组。
-    pub fn load_cookies() -> Result<String,Error> {
+    pub fn load_cookies() -> Result<String, Error> {
         let raw = std::fs::read_to_string("cookies.json")?;
 
         let cookies: Vec<Value> = serde_json::from_str(&raw)?;
-        let coke_list: Vec<Coke> = cookies.iter()
+        let coke_list: Vec<Coke> = cookies
+            .iter()
             .map(build_set_cookie)
             .collect::<Result<Vec<_>, _>>()?;
-        
+
         let _ = init(&coke_list);
         println!("成功载入 {} 个 Cookie", cookies.len());
         Ok("Succse".to_string())
-        
     }
 
     /// 将 cookie 注入全局浏览器实例。
     fn init(cookies: &[Coke]) -> Result<()> {
         with_browser(|_rt, browser| {
             for cmake in cookies {
-                browser.cookies().set(cmake.mai.as_str(),format!("https://www{}",cmake.url).as_str())?;
+                browser.cookies().set(
+                    cmake.mai.as_str(),
+                    format!("https://www{}", cmake.url).as_str(),
+                )?;
             }
             Ok(())
         })
@@ -193,7 +234,7 @@ pub mod crawler {
 
     /// 从指定 URL 抓取 HTML。
     /// 推荐
-    pub fn fetch_obscura(url:&str) -> Result<String,Error>{
+    pub fn fetch_obscura(url: &str) -> Result<String, Error> {
         let html = fetch(url)?;
         println!("[OK] {} ({} bytes)\n", url, html.len());
         Ok(html)
@@ -201,21 +242,70 @@ pub mod crawler {
 
     //下面是reqwest get的内容
     //不会使用线程池
-    pub fn fetch_reqwest_get(url: &str) -> Result<String,Error> {
+    pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
         let rt = Runtime::new().unwrap();
-        rt.block_on(async {
-        Ok(reqwest::get(url).await?.text().await?)
-        })
+        rt.block_on(async { Ok(reqwest::get(url).await?.text().await?) })
     }
 
     ///This can be an array of tuples, or a HashMap, or a custom type that implements Serialize.
     ///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
     ///The feature form is required.
     ///必须使用 form 功能
-    pub fn fetch_reqwest_post(url: &str,body: String) -> Result<String,Error>{
+    pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
         let rt = Runtime::new().unwrap();
-            rt.block_on(async {
-            Ok(reqwest::Client::new().post(url).body(body).send().await?.text().await?)
+        rt.block_on(async {
+            Ok(reqwest::Client::new()
+                .post(url)
+                .body(body)
+                .send()
+                .await?
+                .text()
+                .await?)
         })
+    }
+    pub fn convert_relative_urls_to_absolute(html: &str, base_url: &str) -> Result<String, Error> {
+        let base = Url::parse(base_url)?;
+        let document = Html::parse_document(html);
+
+        // 需要处理的属性映射
+        let attribute_map = vec![
+            ("a", "href"),
+            ("img", "src"),
+            ("link", "href"),
+            ("script", "src"),
+            ("form", "action"),
+            ("video", "src"),
+            ("audio", "src"),
+            ("source", "src"),
+            ("iframe", "src"),
+            ("embed", "src"),
+            ("object", "data"),
+        ];
+
+        let mut modified_html = html.to_string();
+
+        for (tag, attr) in attribute_map {
+            let selector = Selector::parse(tag).unwrap();
+            for element in document.select(&selector) {
+                if let Some(original_value) = element.value().attr(attr) {
+                    // 跳过绝对地址、data URI 和锚点
+                    if original_value.starts_with("http")
+                        || original_value.starts_with("data:")
+                        || original_value.starts_with('#')
+                    {
+                        continue;
+                    }
+
+                    // 使用 Url::join 解析相对路径
+                    if let std::result::Result::Ok(absolute_url) = base.join(original_value) {
+                        let old_attr = format!("{}=\"{}\"", attr, original_value);
+                        let new_attr = format!("{}=\"{}\"", attr, absolute_url.as_str());
+                        modified_html = modified_html.replace(&old_attr, &new_attr);
+                    }
+                }
+            }
+        }
+
+        Ok(modified_html)
     }
 }
