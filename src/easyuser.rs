@@ -1,6 +1,6 @@
 use crate::crawler::fetch;
 use anyhow::{Error, Ok, Result};
-use chrono::Local;
+use chrono::{Local,NaiveDate,Datelike};
 use std::collections::HashMap;
 use tokio::runtime::Runtime;
 
@@ -61,4 +61,16 @@ pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
 
 pub fn now() -> String {
     Local::now().format("%a, %d %b %Y %H:%M:%S %z").to_string()
+}
+
+///x月y日到rss用的时间
+//这个函数已经测试过有效了
+///时间如果无效返回None
+pub fn chinese_date_to_parse(input: &str) -> Option<String> {
+    let re = regex::Regex::new(r"(\d{1,2})月(\d{1,2})日").ok()?;
+    let caps = re.captures(input)?;
+    let month = caps.get(1)?.as_str().parse::<u32>().ok()?;
+    let day = caps.get(2)?.as_str().parse::<u32>().ok()?;
+    let year = Local::now().year() as i32;
+    Some(NaiveDate::from_ymd_opt(year, month, day)?.format("%a, %d %b %Y 00:00:00 +0800").to_string())
 }

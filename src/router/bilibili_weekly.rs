@@ -37,7 +37,7 @@ pub fn get() -> Result<String, Error> {
         );
         let item = ItemBuilder::default()
             .title(Some(video["title"].to_string().trim_matches('"').to_string()))
-            .link(Some(video["uri"].to_string().trim_matches('"').to_string()))
+            .link(Some(video["short_link"].to_string().trim_matches('"').to_string()))
             .description(description)
             .pub_date(now())
             .author(Some(video["right_desc_1"].to_string().trim_matches('"').to_string()))
@@ -49,7 +49,7 @@ pub fn get() -> Result<String, Error> {
         .title("B站每周必看")
         .link("https://www.bilibili.com/v/popular/weekly")
         .description("B站每周必看视频精选")
-        .items(item_vec) // 添加条目
+        .items(item_vec) 
         .build();
     Ok(channel.to_string())
 }

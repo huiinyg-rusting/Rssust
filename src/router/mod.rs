@@ -1,1 +1,1 @@
-pub mod router;
+pub mod bilibili_weekly;

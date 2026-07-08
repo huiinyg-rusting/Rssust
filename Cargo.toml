@@ -13,7 +13,9 @@ reqwest = "0.13.4"
 scraper = "0.18"
 rss = "2.1.0"
 chrono = "0.4.45"
-
+regex = "1.12.4"
+comrak = "0.20"
+walkdir = "2"
 
 [profile.dev]
 incremental = true
