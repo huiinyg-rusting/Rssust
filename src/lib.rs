@@ -1,4 +1,6 @@
+pub mod easyuser;
 pub mod request_rules;
+pub mod router;
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
 /// 最终在这个函数体内发送http数据
@@ -28,18 +30,18 @@ pub mod connect {
         let response = if head.contains("?") {
             if let Some((before, after)) = head.split_once('?') {
                 let first_part = before;
-                let second_part = parse_query_params(after);
-                request_rules(first_part, Some(second_part))
+                let second_part = crate::easyuser::params_to_hashmap(after); //执行完second_part此时已经是hashmap格式了
+                request_rules(first_part, second_part)
             } else {
-                request_rules(head, None)
+                request_rules(head, HashMap::new())
             }
         } else {
-            request_rules(head, None)
+            request_rules(head, HashMap::new())
         };
 
         let response = match response {
             Ok(i) => format!(
-                "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\n\r\n{}",
+                "HTTP/1.1 200 OK\r\nContent-Type: application/rss+xml; charset=utf-8\r\nContent-Length: {}\r\n\r\n{}",
                 i.len(),
                 i
             ),
@@ -48,21 +50,6 @@ pub mod connect {
 
         stream.write(response.as_bytes()).unwrap();
         stream.flush().unwrap();
-    }
-
-    fn parse_query_params(query: &str) -> HashMap<String, String> {
-        let mut params = HashMap::new();
-
-        for pair in query.split('&') {
-            if let Some((key, value)) = pair.split_once('=') {
-                params.insert(key.to_string(), value.to_string());
-            } else if !pair.is_empty() {
-                // 处理没有等号的参数（如 "flag"），值设为空字符串
-                params.insert(pair.to_string(), String::new());
-            }
-        }
-
-        params
     }
 
     fn extract_between_spaces(buffer: &[u8; 1024]) -> Option<&[u8]> {
@@ -99,10 +86,6 @@ pub mod crawler {
     use std::cell::RefCell;
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::runtime::Builder as RuntimeBuilder;
-    use tokio::runtime::Runtime;
-
-    use scraper::{Html, Selector};
-    use url::Url;
 
     #[derive(Debug)]
     struct Coke {
@@ -230,82 +213,5 @@ pub mod crawler {
                 Ok(page.content())
             })
         })
-    }
-
-    /// 从指定 URL 抓取 HTML。
-    /// 推荐
-    pub fn fetch_obscura(url: &str) -> Result<String, Error> {
-        let html = fetch(url)?;
-        println!("[OK] {} ({} bytes)\n", url, html.len());
-        Ok(html)
-    }
-
-    //下面是reqwest get的内容
-    //不会使用线程池
-    pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
-        let rt = Runtime::new().unwrap();
-        rt.block_on(async { Ok(reqwest::get(url).await?.text().await?) })
-    }
-
-    ///This can be an array of tuples, or a HashMap, or a custom type that implements Serialize.
-    ///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
-    ///The feature form is required.
-    ///必须使用 form 功能
-    pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
-        let rt = Runtime::new().unwrap();
-        rt.block_on(async {
-            Ok(reqwest::Client::new()
-                .post(url)
-                .body(body)
-                .send()
-                .await?
-                .text()
-                .await?)
-        })
-    }
-    pub fn convert_relative_urls_to_absolute(html: &str, base_url: &str) -> Result<String, Error> {
-        let base = Url::parse(base_url)?;
-        let document = Html::parse_document(html);
-
-        // 需要处理的属性映射
-        let attribute_map = vec![
-            ("a", "href"),
-            ("img", "src"),
-            ("link", "href"),
-            ("script", "src"),
-            ("form", "action"),
-            ("video", "src"),
-            ("audio", "src"),
-            ("source", "src"),
-            ("iframe", "src"),
-            ("embed", "src"),
-            ("object", "data"),
-        ];
-
-        let mut modified_html = html.to_string();
-
-        for (tag, attr) in attribute_map {
-            let selector = Selector::parse(tag).unwrap();
-            for element in document.select(&selector) {
-                if let Some(original_value) = element.value().attr(attr) {
-                    // 跳过绝对地址、data URI 和锚点
-                    if original_value.starts_with("http")
-                        || original_value.starts_with("data:")
-                        || original_value.starts_with('#')
-                    {
-                        continue;
-                    }
-
-                    // 使用 Url::join 解析相对路径
-                    if let std::result::Result::Ok(absolute_url) = base.join(original_value) {
-                        let old_attr = format!("{}=\"{}\"", attr, original_value);
-                        let new_attr = format!("{}=\"{}\"", attr, absolute_url.as_str());
-                        modified_html = modified_html.replace(&old_attr, &new_attr);
-                    }
-                }
-            }
-        }
-
-        Ok(modified_html)
     }
 }
