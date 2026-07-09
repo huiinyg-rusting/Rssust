@@ -1,10 +1,12 @@
 pub mod easyuser;
 pub mod request_rules;
 pub mod router;
+use anyhow::*;
 use comrak::{markdown_to_html, ComrakOptions};
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
+use std::env;
 
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
@@ -89,7 +91,7 @@ pub mod connect {
     ///这个函数发送index.html的内容给调用者，否则发送错误及anyhow的文本错误类型 给调用者
     /// 给调用者的是html格式
     pub fn show_index_doc() -> Result<String, Error> {
-        match fs::read_to_string(&Path::new("index.html")) {
+        match fs::read_to_string(&Path::new("index/index.html")) {
             Ok(i) => Ok(i),
 
             Err(i) => Err(anyhow!(format!("{}:{}", "index.html", i.kind()))),
@@ -102,6 +104,7 @@ pub mod crawler {
     use obscura::Browser;
     use serde_json::Value;
     use std::cell::RefCell;
+    use std::env;
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::runtime::Builder as RuntimeBuilder;
 
@@ -198,9 +201,16 @@ pub mod crawler {
     /// 从 JSON 文件加载 cookie，返回 Set-Cookie 字符串列表。
     /// JSON 文件应为 cookie 对象数组。
     pub fn load_cookies() -> Result<String, Error> {
-        let raw = std::fs::read_to_string("cookies.json")?;
+        let exe_path = env::current_exe()?;
+    
 
-        let cookies: Vec<Value> = serde_json::from_str(&raw)?;
+        let exe_dir = exe_path.parent()
+            .ok_or_else(|| anyhow!("Could not get executable directory"))?;
+            
+        let raw = exe_dir.join("cookies.json");
+        let text = std::fs::read_to_string(raw)?;
+        if text.is_empty() {return  Ok("".to_string());};
+        let cookies: Vec<Value> = serde_json::from_str(&text)?;
         let coke_list: Vec<Coke> = cookies
             .iter()
             .map(build_set_cookie)
@@ -234,33 +244,47 @@ pub mod crawler {
     }
 }
 
-pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
+pub fn doc_generate() -> Result<(), Error> {
     //这个函数是AI写的，我再修改，从试验项目迁到这，不要骂我
-    let input_dir = "./docs_md"; // 指定文件夹
-    let output_dir = "./docs";
-    fs::create_dir_all(output_dir)?;
+    let exe_path = env::current_exe()?;
+
+
+    let exe_dir = exe_path.parent()
+        .ok_or_else(|| anyhow!("Could not get executable directory"))?;
+        
+    let input_dir = exe_dir.join("./docs_md");
+    let output_dir = exe_dir.join("./docs");
+    fs::create_dir_all(&output_dir)?;
 
     // 1. 收集所有 md 文件路径
-    let mut md_files = Vec::new();
-    for entry in WalkDir::new(input_dir) {
+    let mut md_files_all = Vec::new();
+    for entry in WalkDir::new(&input_dir) {
         let entry = entry?;
         if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
-            md_files.push(entry.path().to_path_buf());
+            md_files_all.push(entry.path().to_path_buf());
         }
     }
 
-    // 2. 生成全局导航链接 (美化部分：侧边栏)
-    let mut nav_links = String::new();
-    for path in &md_files {
+    // 2. 分离 official 和 router 的文件链接
+    let official_dir = std::path::Path::new(&input_dir).join("official");
+    let mut official_links = String::new();
+    let mut router_links = String::new();
+
+    for path in &md_files_all {
         let file_name = path.file_stem().unwrap().to_str().unwrap();
-        nav_links.push_str(&format!("<li><a href='{}.html'>{}</a></li>", file_name, file_name));
+        let link = format!("<li><a href='{}.html'>{}</a></li>", file_name, file_name);
+        if path.starts_with(&official_dir) {
+            official_links.push_str(&link);
+        } else {
+            router_links.push_str(&link);
+        }
     }
 
     // 3. 逐个转换
-    for path in &md_files {
+    for path in &md_files_all {
         let content = fs::read_to_string(path)?;
         let file_name = path.file_stem().unwrap().to_str().unwrap();
-        
+
         // 渲染 Markdown
         let html_body = markdown_to_html(&content, &ComrakOptions::default());
 
@@ -282,13 +306,27 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
         }}
 
         .page-shell {{ display: flex; min-height: 100vh; }}
-
+        .current-page-badge {{
+            display: inline-flex;
+            align-items: center;
+            
+            /* 放大关键属性 */
+            padding: 10px 15px;      /* 更大的内边距 */
+            font-size: 1.2rem;       /* 明显放大的字体 */
+            font-weight: 600;
+            
+            /* 视觉风格 */
+            background-color: #7b2fff59; /* 亮蓝色背景 */
+            color: white;              /* 白色文字 */
+            border-radius: 50px;       /* 完全圆角胶囊形状 */
+            box-shadow: 0 4px 6px rgba(86, 9, 145, 0.3); /* 彩色阴影 */
+        }}
         .sidebar {{
             flex: 0 0 260px;
             width: 260px;
             background: rgba(10, 5, 20, 0.96);
             padding: 22px;
-            border-right: 1px solid rgba(123, 47, 255, 0.35);
+            border-right: 1px solid #7b2fff59;
             overflow-y: auto;
             position: sticky;
             top: 0;
@@ -302,6 +340,7 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
             padding-left: 0;
             padding-right: 0;
             border-right: none;
+            overflow: hidden;
         }}
 
         .sidebar h3 {{
@@ -312,6 +351,16 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+        }}
+
+        .sidebar-section-title {{
+            font-size: 13px;
+            color: #8888cc;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 18px 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(123, 47, 255, 0.2);
         }}
 
         .sidebar ul {{ list-style: none; padding: 0; }}
@@ -327,6 +376,24 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
         .sidebar a:hover {{
             background: rgba(123, 47, 255, 0.18);
             color: #fff;
+        }}
+
+        .sidebar-search {{
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid rgba(123, 47, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 13px;
+            margin-bottom: 12px;
+            outline: none;
+        }}
+        .sidebar-search:focus {{
+            border-color: #b026ff;
+        }}
+        .sidebar-search::placeholder {{
+            color: #6666aa;
         }}
 
         .main-container {{
@@ -365,11 +432,42 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
         }}
         .expand-btn:hover {{ background: #b026ff; }}
 
-        .top-bar h2 {{
-            font-size: 22px;
+        .brand {{
+            font-size: 20px;
+            font-weight: 700;
             color: #b026ff;
-            margin: 0;
-            word-break: break-word;
+            text-decoration: none;
+            margin-right: 4px;
+        }}
+        .brand:hover {{ color: #d2a8ff; }}
+
+        .nav-link {{
+            color: #c9a0ff;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }}
+        .nav-link:hover {{ background: rgba(123, 47, 255, 0.18); color: #fff; }}
+
+        .top-bar .spacer {{ flex: 1; }}
+
+        .article-search {{
+            padding: 8px 14px;
+            border: 1px solid rgba(123, 47, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-size: 13px;
+            outline: none;
+            width: 200px;
+        }}
+        .article-search:focus {{
+            border-color: #b026ff;
+        }}
+        .article-search::placeholder {{
+            color: #6666aa;
         }}
 
         .content-wrapper {{
@@ -433,6 +531,13 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
         th {{ background: rgba(123, 47, 255, 0.18); color: #b026ff; }}
         tr:nth-child(even) {{ background: rgba(123, 47, 255, 0.06); }}
 
+        .search-highlight {{
+            background: #b026ff;
+            color: #fff;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }}
+
         .footer-mark {{
             margin-top: 26px;
             padding-top: 16px;
@@ -440,6 +545,14 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
             color: #8888aa;
             text-align: center;
             font-size: 13px;
+        }}
+
+        .sidebar li.hidden {{ display: none; }}
+
+        .nav-separator {{
+            height: 1px;
+            background: rgba(123, 47, 255, 0.2);
+            margin: 12px 0;
         }}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -458,18 +571,32 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
                 📚 文档导航
                 <button class="toggle-btn" onclick="toggleSidebar()">收起</button>
             </h3>
-            <ul>
+            <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="搜索目录..." oninput="filterSidebar()">
+            <div class="sidebar-section-title">官方</div>
+            <ul id="officialLinks">
+                {}
+            </ul>
+            <div class="nav-separator"></div>
+            <div class="sidebar-section-title">Router</div>
+            <ul id="routerLinks">
                 {}
             </ul>
         </div>
 
         <div class="main-container" id="main">
             <div class="top-bar">
-                <button class="expand-btn" onclick="toggleSidebar()">展开/收起目录</button>
-                <h2>{}</h2>
+                <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
+                <a href="/" class="brand">Rssust</a>
+                <a href="/" class="nav-link">主页</a>
+                <span class="spacer"></span>
+                <div class="current-page-badge">
+                    <span class="badge-icon">📄</span>
+                    <span class="badge-text" id="page-title">{}</span>
+                </div>
+                <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
             </div>
             <div class="content-wrapper">
-                <div class="card">
+                <div class="card" id="contentCard">
                     {}
                 </div>
                 <div class="footer-mark">
@@ -486,18 +613,73 @@ pub fn doc_generate() -> Result<(), Box<dyn std::error::Error>> {
             sidebar.classList.toggle('collapsed');
             main.classList.toggle('expanded');
         }}
+
+        function filterSidebar() {{
+            const query = document.getElementById('sidebarSearch').value.toLowerCase();
+            document.querySelectorAll('#officialLinks li, #routerLinks li').forEach(li => {{
+                const text = li.textContent.toLowerCase();
+                li.classList.toggle('hidden', !text.includes(query));
+            }});
+        }}
+
+        function searchContent() {{
+            const query = document.getElementById('articleSearch').value.trim().toLowerCase();
+            const card = document.getElementById('contentCard');
+            if (!query) {{
+                if (card.dataset.originalHtml) {{
+                    card.innerHTML = card.dataset.originalHtml;
+                    delete card.dataset.originalHtml;
+                    hljs.highlightAll();
+                }}
+                return;
+            }}
+            if (!card.dataset.originalHtml) {{
+                card.dataset.originalHtml = card.innerHTML;
+            }}
+            const original = card.dataset.originalHtml;
+            const temp = document.createElement('div');
+            temp.innerHTML = original;
+            const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
+            const nodesToReplace = [];
+            while (walker.nextNode()) {{
+                const node = walker.currentNode;
+                if (node.textContent.toLowerCase().includes(query)) {{
+                    nodesToReplace.push(node);
+                }}
+            }}
+            for (const node of nodesToReplace) {{
+                const span = document.createElement('span');
+                const escaped = query.replace(/[.*+?^${{}}()|[\]\\\\]/g, '\\\\$&');
+                span.innerHTML = node.textContent.replace(
+                    new RegExp('(' + escaped + ')', 'gi'),
+                    '<span class="search-highlight">$1</span>'
+                );
+                node.parentNode.replaceChild(span, node);
+            }}
+            card.innerHTML = temp.innerHTML;
+        }}
     </script>
 </body>
 </html>"#,
             file_name,
-            nav_links,
+            official_links,
+            router_links,
             file_name,
             html_body
         );
 
-        let output_path = Path::new(output_dir).join(format!("{}.html", file_name));
+        let output_path = Path::new(&output_dir).join(format!("{}.html", file_name));
         fs::write(output_path, full_html)?;
     }
 
     Ok(())
+}
+
+//传入的像是/doc/new.html
+pub fn show_doc(path:&str) -> Result<String, Error> {
+    match fs::read_to_string(&Path::new(path.trim_start_matches('/'))) {
+        std::result::Result::Ok(i) => Ok(i),
+
+        Err(_) => Ok(fs::read_to_string(&Path::new("index/404.html")).context("404 html Operation failed")?),
+    }
 }
