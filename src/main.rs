@@ -1,4 +1,4 @@
-use rssust::{connect::handle_connection, crawler::load_cookies,doc_generate};
+use rssust::{connect::handle_connection, crawler::load_cookies,doc::doc_generate};
 use std::net::TcpListener;
 use threadpool::ThreadPool;
 use std::env;
