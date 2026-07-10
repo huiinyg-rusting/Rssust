@@ -1,24 +1,25 @@
 use anyhow::*;
-use comrak::{markdown_to_html, ComrakOptions};
-use std::fs;
-use std::path::Path;
-use walkdir::WalkDir;
+use comrak::{ComrakOptions, markdown_to_html};
 use std::env;
+use std::fs;
+use std::path::{Path, PathBuf};
+use walkdir::WalkDir;
 ///文档生成函数
 pub fn doc_generate() -> Result<(), Error> {
     //这个函数是AI写的，我再修改，从试验项目迁到这，不要骂我
     let exe_path = env::current_exe()?;
 
-
-    let exe_dir = exe_path.parent()
+    let exe_dir = exe_path
+        .parent()
         .ok_or_else(|| anyhow!("Could not get executable directory"))?;
-        
+
     let input_dir = exe_dir.join("./docs_md");
     let output_dir = exe_dir.join("./docs");
     fs::create_dir_all(&output_dir)?;
 
     // 1. 收集所有 md 文件路径
-    let mut md_files_all = Vec::new();
+    let mut md_files_all: Vec<PathBuf> = Vec::new();
+
     for entry in WalkDir::new(&input_dir) {
         let entry = entry?;
         if entry.path().extension().and_then(|s| s.to_str()) == Some("md") {
@@ -26,6 +27,14 @@ pub fn doc_generate() -> Result<(), Error> {
         }
     }
 
+    // 按文件名字母顺序排序
+    md_files_all.sort_by_key(|path| {
+        // 获取文件名，如果无法获取则panic，确保排序稳定
+        path.file_name()
+            .and_then(|name| name.to_str())
+            .expect("无法获取md文件名,请检查是否有错误")
+            .to_lowercase() // 可选：如果不区分大小写，可以转为小写
+    });
     // 2. 分离 official 和 router 的文件链接
     let official_dir = std::path::Path::new(&input_dir).join("official");
     let mut official_links = String::new();
@@ -46,8 +55,12 @@ pub fn doc_generate() -> Result<(), Error> {
         let content = fs::read_to_string(path)?;
         let file_name = path.file_stem().unwrap().to_str().unwrap();
 
-        // 渲染 Markdown
-        let html_body = markdown_to_html(&content, &ComrakOptions::default());
+        let mut options = ComrakOptions::default();
+        options.render.hardbreaks = true;
+        options.extension.strikethrough = true;
+        options.extension.table = true;
+
+        let html_body = markdown_to_html(&content, &options);
 
         // 组装完整 HTML
         let full_html = format!(
@@ -347,7 +360,7 @@ pub fn doc_generate() -> Result<(), Error> {
         <div class="main-container" id="main">
             <div class="top-bar">
                 <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
-                <a href="/" class="brand">Rssust</a>
+                <a href="https://github.com/huiinyg-rusting/Rssust" class="brand">Rssust</a>
                 <a href="/" class="nav-link">主页</a>
                 <span class="spacer"></span>
                 <div class="current-page-badge">
@@ -422,11 +435,7 @@ pub fn doc_generate() -> Result<(), Error> {
     </script>
 </body>
 </html>"#,
-            file_name,
-            official_links,
-            router_links,
-            file_name,
-            html_body
+            file_name, official_links, router_links, file_name, html_body
         );
 
         let output_path = Path::new(&output_dir).join(format!("{}.html", file_name));

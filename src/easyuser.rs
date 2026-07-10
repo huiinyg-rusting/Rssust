@@ -1,7 +1,8 @@
 use crate::crawler::fetch;
-use anyhow::{Error, Ok, Result};
-use chrono::{Local,NaiveDate,Datelike};
-use std::collections::HashMap;
+use anyhow::{Error, Result};
+use chrono::{Datelike, Local, NaiveDate};
+use std::result::Result::Ok;
+use std::{collections::HashMap, env};
 use tokio::runtime::Runtime;
 
 ///这个函数序列化从key1=1&key2=2 到{"key1": "2", "key2": "2"}的Hashmap;
@@ -72,5 +73,23 @@ pub fn chinese_date_to_parse(input: &str) -> Option<String> {
     let month = caps.get(1)?.as_str().parse::<u32>().ok()?;
     let day = caps.get(2)?.as_str().parse::<u32>().ok()?;
     let year = Local::now().year() as i32;
-    Some(NaiveDate::from_ymd_opt(year, month, day)?.format("%a, %d %b %Y 00:00:00 +0800").to_string())
+    Some(
+        NaiveDate::from_ymd_opt(year, month, day)?
+            .format("%a, %d %b %Y 00:00:00 +0800")
+            .to_string(),
+    )
+}
+
+///去除首尾双引号
+pub fn no_double_quotes(s: String) -> String {
+    s.trim_matches('"').to_string() //注意'"'是一对单引号包双引号
+}
+
+//查找环境变量
+//todo:这个函数未经过测试
+pub fn env_search(s: &str) -> Option<String> {
+    match env::var(s) {
+        Ok(i) => Some(i),
+        Err(_) => None,
+    }
 }

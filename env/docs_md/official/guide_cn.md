@@ -10,6 +10,5 @@ ___
 ---
 虽然现在Rssust的路由和Rsshub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这**侵犯了你的权利**，请邮件并且找所有可能的方式联系我，我会尽快处理。
 
-######在这些文档中的链接会失效，因为他们最早不是被设计在Github上渲染的
-如果你想自己做一个路由可以点这里：[路由制作指南——中文](/env/docs_md/official/new_router_cn.md)
-这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类[API DOCS](/env/docs_md/official/api.md)
+如果你想自己做一个路由可以点这里：[路由制作指南——中文](/docs/new_router_cn.html)
+这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类[API DOCS](/docs/api.html)

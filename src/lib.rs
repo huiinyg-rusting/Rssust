@@ -1,17 +1,17 @@
+pub mod doc;
 pub mod easyuser;
 pub mod request_rules;
 pub mod router;
-pub mod doc;
 
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
 /// 最终在这个函数体内发送http数据
 pub mod connect {
+    use crate::request_rules::*;
     use anyhow::Error;
     use anyhow::*;
-    use std::env;
-    use crate::request_rules::*;
     use std::collections::HashMap;
+    use std::env;
     use std::fs;
     use std::io::prelude::*;
     use std::net::TcpStream;
@@ -41,26 +41,22 @@ pub mod connect {
             root_rules(head, HashMap::new())
         };
         let response = match response {
-            ShowToUser::Html {res} => {
-                match res {
+            ShowToUser::Html { res } => match res {
                 std::result::Result::Ok(i) => format!(
                     "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {}\r\n\r\n{}",
                     i.len(),
                     i
                 ),
                 Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
-            }
             },
-            ShowToUser::Rss { res } => {
-                match res {
+            ShowToUser::Rss { res } => match res {
                 std::result::Result::Ok(i) => format!(
                     "HTTP/1.1 200 OK\r\nContent-Type: application/xml; charset=utf-8\r\nContent-Length: {}\r\n\r\n{}",
                     i.len(),
                     i
                 ),
                 Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
-            }
-            }
+            },
         };
 
         stream.write(response.as_bytes()).unwrap();
@@ -87,9 +83,10 @@ pub mod connect {
     /// 给调用者的是html格式
     pub fn show_index_doc() -> Result<String, Error> {
         let exe_path = env::current_exe()?;
-        let exe_dir = exe_path.parent()
-                    .ok_or_else(|| anyhow!("Could not get executable directory"))?;
-                    
+        let exe_dir = exe_path
+            .parent()
+            .ok_or_else(|| anyhow!("Could not get executable directory"))?;
+
         match fs::read_to_string(&Path::new(&exe_dir.join("index/index.html"))) {
             std::result::Result::Ok(i) => Ok(i),
 
@@ -97,18 +94,19 @@ pub mod connect {
         }
     }
     //传入的像是/doc/new.html
-    pub fn show_doc(path:&str) -> Result<String, Error> {
+    pub fn show_doc(path: &str) -> Result<String, Error> {
         let exe_path = env::current_exe()?;
 
-
-        let exe_dir = exe_path.parent()
+        let exe_dir = exe_path
+            .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
-            
+
         let raw = exe_dir.join(path.trim_matches('/'));
         match fs::read_to_string(raw) {
             std::result::Result::Ok(i) => Ok(i),
 
-            Err(_) => Ok(fs::read_to_string(&Path::new("index/404.html")).context("404 html Operation failed")?),
+            Err(_) => Ok(fs::read_to_string(&Path::new("index/404.html"))
+                .context("404 html Operation failed")?),
         }
     }
 }
@@ -216,14 +214,16 @@ pub mod crawler {
     /// JSON 文件应为 cookie 对象数组。
     pub fn load_cookies() -> Result<String, Error> {
         let exe_path = env::current_exe()?;
-    
 
-        let exe_dir = exe_path.parent()
+        let exe_dir = exe_path
+            .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
-            
+
         let raw = exe_dir.join("cookies.json");
         let text = std::fs::read_to_string(raw)?;
-        if text.is_empty() {return  Ok("".to_string());};
+        if text.is_empty() {
+            return Ok("".to_string());
+        };
         let cookies: Vec<Value> = serde_json::from_str(&text)?;
         let coke_list: Vec<Coke> = cookies
             .iter()
@@ -257,4 +257,3 @@ pub mod crawler {
         })
     }
 }
-
