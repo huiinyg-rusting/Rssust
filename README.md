@@ -1,3 +1,6 @@
+<center class ='img'>
+<img title="LOGO" src="/Readme Image Hosting/2026-07-10_16-19.png" width="45%">
+</center>
 # What is Rssust? 
 Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，***但目前还在开发***，
 ## 我们希望得到你的帮助
