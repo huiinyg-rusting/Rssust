@@ -10,7 +10,7 @@ threadpool = "1.8"
 tokio = { version = "1.0", features = ["rt"] }
 obscura = { git = "https://github.com/h4ckf0r0day/obscura" }
 reqwest = "0.13.4"
-scraper = "0.18"
+scraper = "0.27.0"
 rss = "2.1.0"
 chrono = "0.4.45"
 regex = "1.12.4"

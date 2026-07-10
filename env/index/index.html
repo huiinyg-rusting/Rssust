@@ -133,6 +133,12 @@
             justify-content: center;
             margin-top: 1rem;
         }
+        .card-container {
+            display: grid;
+            /* 核心代码：自动填充列，每列最小 300px，最大占满剩余空间(1fr) */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
 
         .card {
             background: rgba(255, 255, 255, 0.03);
@@ -214,25 +220,34 @@
 
         <div class="badge">
             <span class="badge-dot"></span>
-            Rust HTTP Server
+            Rust RSS Server
         </div>
 
         <h1>Rssust</h1>
-        <p class="subtitle">A minimal, fast HTTP server built with Rust</p>
+        <p class="subtitle">A minimal, fast RSS Server built with Rust</p>
 
-        <div class="info-cards">
-            <div class="card">
-                <div class="card-label">Status</div>
-                <div class="card-value">Running</div>
-            </div>
+
+
+            <!-- 第三个卡片：不变 --><div>
+            <a href="https://github.com/huiinyg-rusting/Rssust" class="card-container" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-label">Github
+                    <div class="card-value">Home Page</div>
+                </div>
+            </a></div>
+            <div class="info-cards">
+            <!-- 第二个卡片：动态显示当前域名 -->
             <div class="card">
                 <div class="card-label">Address</div>
-                <div class="card-value">127.0.0.1:7878</div>
+                <!-- 添加一个 ID 以便 JS 操作 -->
+                <div class="card-value" id="current-address">Loading...</div>
             </div>
-            <div class="card">
-                <div class="card-label">Runtime</div>
-                <div class="card-value">Rust (edition 2024)</div>
-            </div>
+            <a href="/docs/guide_cn.html" class="card-link" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <div class="card-label">Docs
+                    <div class="card-value">View Guide</div>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -241,5 +256,19 @@
         <span>&mdash;</span>
         <span>powered by <a href="https://www.rust-lang.org" target="_blank">Rust</a></span>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 获取当前页面的主机名和端口
+        const host = window.location.host; // 例如: "127.0.0.1:7878" 或 "example.com"
+        const protocol = window.location.protocol; // 例如: "http:" 或 "https:"
+        
+        // 组合成完整地址，或者只显示 host，根据你的需求选择
+        // 如果只需要 "127.0.0.1:7878" 这种格式：
+        document.getElementById('current-address').textContent = host;
+        
+        // 如果你需要带协议的完整 URL，可以使用:
+        // document.getElementById('current-address').textContent = `${protocol}//${host}`;
+    });
+</script>
 </body>
 </html>
