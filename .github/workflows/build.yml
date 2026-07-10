@@ -31,27 +31,27 @@ jobs:
 
       - name: Read package name and version from Cargo.toml
         id: get_version
+        shell: bash
         run: |
           set -euo pipefail
           meta=$(cargo metadata --no-deps --format-version 1)
-          pkg_name=$(echo "$meta" | python3 - <<'PY'
-import sys, json
-m = json.load(sys.stdin)
-print(m["packages"][0]["name"])
-PY
-)
-          version=$(echo "$meta" | python3 - <<'PY'
-import sys, json
-m = json.load(sys.stdin)
-print(m["packages"][0]["version"])
-PY
-)
+          pkg_name=$(echo "$meta" | python3 << 'PYTHON_EOF'
+          import sys, json
+          m = json.load(sys.stdin)
+          print(m["packages"][0]["name"])
+          PYTHON_EOF
+          )
+          version=$(echo "$meta" | python3 << 'PYTHON_EOF'
+          import sys, json
+          m = json.load(sys.stdin)
+          print(m["packages"][0]["version"])
+          PYTHON_EOF
+          )
           tag="${GITHUB_REF#refs/tags/}"
           echo "pkg_name=$pkg_name" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "Found package: $pkg_name, version: $version, tag: $tag"
-
       - name: Skip if version does not contain 'S'
         run: |
           VERSION="${{ steps.get_version.outputs.version }}"
@@ -246,7 +246,7 @@ PY
           if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
           Compress-Archive -Path (Join-Path $PACK_DIR '*') -DestinationPath $zipPath -Force
           Write-Host "Created $zipPath"
-          Write-Output "zip_path=$zipPath"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "zip_path=$zipPath"
 
       - name: Upload zip artifact
         uses: actions/upload-artifact@v4
