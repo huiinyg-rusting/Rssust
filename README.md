@@ -1,3 +1,5 @@
+<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-19.png" width=8%></div>
+
 # What is Rssust? 
 Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，***但目前还在开发***，
 ## 我们希望得到你的帮助
@@ -13,3 +15,17 @@ ___
 ######在这些文档中的链接会失效，因为他们最早不是被设计在Github上渲染的
 如果你想自己做一个路由可以点这里：[路由制作指南——中文](/env/docs_md/official/new_router_cn.md)
 这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类[API DOCS](/env/docs_md/official/api.md)
+## 主页
+
+<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-19_1.png" width=45%></div>
+
+## 文档页面
+
+<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-20.png" width=45%></div>
+
+## 使用示例（后面两张是使用Mr RSS客户端，在此鸣谢）
+
+<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-21.png" width=45%></div>
+<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-24 (1).png" width=45%></div>
+
+## THE END
