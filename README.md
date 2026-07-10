@@ -27,6 +27,5 @@ ___
 
 <div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-21.png" width=45%></div>
 <div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-24 (1).png" width=45%></div>
-<div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-25.png" width=45%></div>
 
 ## THE END
