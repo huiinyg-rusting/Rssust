@@ -1,3 +1,4 @@
+### [English HERE](/docs/new_router_en.html)
 # 路由制作指南
 本文可以给人看，也可以给AI看
 在开发前，你需要：
@@ -55,6 +56,21 @@ pub fn get(para: HashMap<String,String>) -> Result<String, Error> {
 └── rssust
 ```
 我还写了一个脚本叫build.sh供用户使用（目前只做了Linux系统的脚本，Windows系统用户可以自己做一个脚本或者手动操作），其内容是 编译，拷贝（把/target/debug/rssust拷贝到/env，接着运行。
+### Cookies的防止
+在与二进制文件同目录下的`cookies.json`中如下：
+ 示例格式：
+ {
+   "name": "session_id",
+   "value": "abc123",
+   "domain": ".example.com",
+   "path": "/",
+   "secure": true,
+   "httpOnly": true,
+   "sameSite": "Lax",
+   "expirationDate": 1893456000
+ }
+ 所有的cookies挤在同一个json文件，程序启动时就会导入。
+Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 ### 文档的编写！
 在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：
 ```markdown
