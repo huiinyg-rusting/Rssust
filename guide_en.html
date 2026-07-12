@@ -3,7 +3,7 @@
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>config</title>
+            <title>guide_en</title>
             <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -299,24 +299,62 @@
     <span class="spacer"></span>
     <div class="current-page-badge">
     <span class="badge-icon">📄</span>
-    <span class="badge-text" id="page-title">config</span>
+    <span class="badge-text" id="page-title">guide_en</span>
     </div>
     <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
     </div>
     <div class="content-wrapper">
     <div class="card" id="contentCard">
-    <h1>About Config</h1>
-<h1>关于配置</h1>
-<blockquote>
-<p>In text Edition<br />
-Sever Config is not available!<br />
-But it won't be diffcult to Improve</p>
-</blockquote>
-<blockquote>
-<p>在内部测试版，<br />
-服务器配置是不可用的！<br />
-但这不会很难完善</p>
-</blockquote>
+    <h3><a href="/Rssust/guide_cn.html">中文</a></h3>
+<h1>What is Rssust?</h1>
+<p>Rssust is an <strong>information aggregation and conversion software</strong> built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, <em><strong>but currently still in development</strong></em>.</p>
+<h2>We Hope for Your Help</h2>
+<p>Tired of <strong>massive memory consumption and slow running speed</strong>, or <strong>dependent on someone else's</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
+<hr />
+<p>Plug a USB drive into someone else's computer, then <em><strong>double-click</strong></em> to open the binary program and a lightweight RSS client to use RSS on their computer without having to find someone else's server. Let everyone handle their own computing power while actually gaining more stability.</p>
+<hr />
+<h5>So is this project meant to run locally? Not necessarily. <em>It's more about hoping for local operation</em>, but if you have a NAS at home or have the financial means to build a server, never mind what I said. <strong>But it's still worth trying Rssust</strong>.</h5>
+<hr />
+<p>Although Rssust's routers are not on the same scale as Rsshub's in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust's router count can grow, but this may seem somewhat like plagiarism, so it's better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
+<p>If you want to create your own router, click here: <a href="/Rssust/new_router_en.html">Router Development Guide — English</a><br />
+Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="/Rssust/api.html">API Rssust</a></p>
+<h2>For General Users:</h2>
+<h3>Installation:</h3>
+<p>It's worth noting that when running, the binary directory structure should be as follows:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>It's quite strict.</p>
+<h3>Binary:</h3>
+<p>Early versions may not include binaries; only versions with an &quot;S&quot; suffix will generate binaries.<br />
+Running the binary is very simple: extract and then start the binary file in the env folder.</p>
+<h3>Building from Source:</h3>
+<p>Linux users:</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust docs
+</code></pre>
+<p>Then when there's no version update, you can enter:</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>to start it.</p>
+<p>Windows users: CMD (unverified)</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe docs
+</code></pre>
 
     </div>
     <div class="footer-mark">

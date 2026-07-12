@@ -3,7 +3,7 @@
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>config</title>
+            <title>guide_cn</title>
             <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -299,24 +299,62 @@
     <span class="spacer"></span>
     <div class="current-page-badge">
     <span class="badge-icon">📄</span>
-    <span class="badge-text" id="page-title">config</span>
+    <span class="badge-text" id="page-title">guide_cn</span>
     </div>
     <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
     </div>
     <div class="content-wrapper">
     <div class="card" id="contentCard">
-    <h1>About Config</h1>
-<h1>关于配置</h1>
-<blockquote>
-<p>In text Edition<br />
-Sever Config is not available!<br />
-But it won't be diffcult to Improve</p>
-</blockquote>
-<blockquote>
-<p>在内部测试版，<br />
-服务器配置是不可用的！<br />
-但这不会很难完善</p>
-</blockquote>
+    <h3><a href="/Rssust/guide_en.html">English HERE</a></h3>
+<h1>What is Rssust?</h1>
+<p>Rssust是一个使用Rust语言做的<strong>信息聚合转换软件</strong>，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，<em><strong>但目前还在开发</strong></em>，</p>
+<h2>我们希望得到你的帮助</h2>
+<p>厌倦了<strong>庞大的内存占用和缓慢的运行速度</strong>以及<strong>依赖于别人</strong>建的Rsshub服务器但是有一天居然停服了，或者你干脆就是个<strong>Rust迷</strong>？</p>
+<hr />
+<p>插个U盘在别的电脑，然后<em><strong>双击</strong></em>打开二进制的程序和一个绿色的RSS客户端就可以在别人电脑上使用RSS，而不是费尽心思的去找别人的服务器。让每个人承担自己的算力反而拥有更多的稳定性。</p>
+<hr />
+<h5>那么本项目是一个本地运行项目吗？并不是，<em>更多的是希望本地运行</em>，但是如果你家有台NAS或者是有财力建服务器的就当我没说，</h5>
+<h2><strong>但是也不妨试一下Rssust</strong>。</h2>
+<p>虽然现在Rssust的路由和Rsshub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这<strong>侵犯了你的权利</strong>，请邮件并且找所有可能的方式联系我，我会尽快处理。</p>
+<p>如果你想自己做一个路由可以点这里：<a href="/Rssust/new_router_cn.html">路由制作指南——中文</a><br />
+这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类<a href="/Rssust/api.html">API Rssust</a></p>
+<h2>对于一般用户使用：</h2>
+<h3>安装：</h3>
+<p>值得一提的是，运行时，二进制的目录结构如下所示：</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>比较严苛</p>
+<h3>二进制：</h3>
+<p>早期版本可能不会附带二进制，只有版本号带S才会生成二进制<br />
+运行二进制十分简单：解压，然后启动env文件夹下的二进制文件即可</p>
+<h3>从源码构建：</h3>
+<p>Linux用户：</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust docs
+</code></pre>
+<p>然后没有版本更新的时候，你可以输入：</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>来启动<br />
+Windows用户：CMD（未经验证）</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe docs
+</code></pre>
 
     </div>
     <div class="footer-mark">

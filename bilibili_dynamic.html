@@ -3,7 +3,7 @@
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>config</title>
+            <title>bilibili_dynamic</title>
             <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -299,24 +299,72 @@
     <span class="spacer"></span>
     <div class="current-page-badge">
     <span class="badge-icon">📄</span>
-    <span class="badge-text" id="page-title">config</span>
+    <span class="badge-text" id="page-title">bilibili_dynamic</span>
     </div>
     <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
     </div>
     <div class="content-wrapper">
     <div class="card" id="contentCard">
-    <h1>About Config</h1>
-<h1>关于配置</h1>
-<blockquote>
-<p>In text Edition<br />
-Sever Config is not available!<br />
-But it won't be diffcult to Improve</p>
-</blockquote>
-<blockquote>
-<p>在内部测试版，<br />
-服务器配置是不可用的！<br />
-但这不会很难完善</p>
-</blockquote>
+    <h1>Router-name: bilibili_dynamic</h1>
+<p><strong>Commit time:</strong> 2026.7.11<br />
+<strong>Cookies?:</strong> yes (使用 <code>BILIBILI_COOKIE_{uid}</code> 环境变量 或 <code>cookies.json</code>)<br />
+<strong>Author:</strong> AI大部分转写自RSShub/huiinyg-rusting收拾烂摊子和审核-AGPL-3.0协议（已被传染）<br />
+<strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs:405</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
+<p><strong>Address:</strong> <code>rssust://bilibili_dynamic</code><br />
+<strong>Example:</strong> <a href="/bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong>
+<ul>
+<li>Type of parameter: string (必填)</li>
+<li>Default value: 无</li>
+<li>Meaning: Bilibili 用户 UID</li>
+</ul>
+</li>
+<li><strong>showEmoji</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否将动态正文中的 emoji 文本替换为图片</li>
+</ul>
+</li>
+<li><strong>embed</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: true</li>
+<li>Meaning: 视频动态是否内嵌 iframe 播放器</li>
+</ul>
+</li>
+<li><strong>useAvid</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 视频链接使用 av 号（默认使用 bv 号）</li>
+</ul>
+</li>
+<li><strong>directLink</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 链接直接跳转至内容页而非动态页</li>
+</ul>
+</li>
+<li><strong>hideGoods</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否隐藏带货类动态</li>
+</ul>
+</li>
+<li><strong>offset</strong>
+<ul>
+<li>Type of parameter: string</li>
+<li>Default value: 空</li>
+<li>Meaning: 翻页偏移量（从上次返回的 <code>data.offset</code> 取值，用于分页续抓）</li>
+</ul>
+</li>
+</ol>
+<p><strong>Environment Variables:</strong> no</p>
 
     </div>
     <div class="footer-mark">

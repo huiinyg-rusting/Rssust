@@ -3,7 +3,7 @@
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>config</title>
+            <title>new_router_en</title>
             <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -299,24 +299,128 @@
     <span class="spacer"></span>
     <div class="current-page-badge">
     <span class="badge-icon">📄</span>
-    <span class="badge-text" id="page-title">config</span>
+    <span class="badge-text" id="page-title">new_router_en</span>
     </div>
     <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
     </div>
     <div class="content-wrapper">
     <div class="card" id="contentCard">
-    <h1>About Config</h1>
-<h1>关于配置</h1>
-<blockquote>
-<p>In text Edition<br />
-Sever Config is not available!<br />
-But it won't be diffcult to Improve</p>
-</blockquote>
-<blockquote>
-<p>在内部测试版，<br />
-服务器配置是不可用的！<br />
-但这不会很难完善</p>
-</blockquote>
+    <h3><a href="/Rssust/new_router_cn.html">中文</a></h3>
+<h1>Router Development Guide</h1>
+<p>This document is for both humans and AI to read.</p>
+<p>Before you start developing, you need:</p>
+<ul>
+<li>A standard Cargo environment</li>
+<li>Git version control system</li>
+<li>An editor</li>
+<li><strong>Basic</strong> Rust knowledge, preferably through the official book, and familiarity with frequently used methods in the std library, such as various error handling methods for recoverable errors, etc.</li>
+<li>RSS knowledge from: <a href="https://www.rssboard.org/rss-specification">Official RSS 2.0.11 English</a> or <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">Blog Garden - Translated by Xiao Y RSS 2.0.10 Chinese</a></li>
+<li>Knowledge of RSS Crates, understanding how to build an RSS feed. <a href="https://docs.rs/rss/latest/rss/">Official English Documentation</a><br />
+<strong>Especially</strong> <a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a> and <a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>Since different upstream APIs have different formats, you need to learn different methods. For example, if your upstream API is in JSON format, you likely only need to learn the <code>.pointer()</code> and <code>.get()</code> methods from the serde_json Crate. If you need to directly process HTML and DOM, you need the methods recommended in the <a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a> documentation, and be careful to avoid causing panic!!!</li>
+</ul>
+<p>You can create your own .rs file under <code>/src/router</code>, but there are some requirements:</p>
+<ol>
+<li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
+<li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
+<li>The filename part (excluding the .rs extension) becomes your router name</li>
+<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
+<li>Each router can only correspond to one function</li>
+</ol>
+<p>Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<h3>Import Libraries</h3>
+<pre><code class="language-rust">use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+</code></pre>
+<p>The above libraries <strong>must be imported</strong>. Import the following as needed:</p>
+<pre><code class="language-rust">use serde_json::Value;  // for JSON
+use scraper::*;  // for HTML
+</code></pre>
+<h3>The main function signature for each router should look like this:</h3>
+<pre><code class="language-rust">pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+</code></pre>
+<p>The function signature and return type cannot be changed! (If you don't use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won't warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
+<p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="/Rssust/easyuser_cn.html">easyuser_cn.html</a>.</p>
+<p>The specific program logic is up to you to write.</p>
+<h3>How to register it after writing?</h3>
+<p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
+<p>Then in the <code>request_rules()</code> function in <code>src/request_rules.rs</code>, add an <code>else if</code> branch with the condition <code>url == &quot;/router_name&quot;</code> (follow the pattern of other branches), and call your function in the <code>{}</code> block. Generally, the path is <code>your_router_name::get(parameters)</code>.</p>
+<h3>How to run after registration?</h3>
+<p>I'm very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>I've also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
+<h3>Cookie Management</h3>
+<p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
+<p>Example format:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;session_id&quot;,
+  &quot;value&quot;: &quot;abc123&quot;,
+  &quot;domain&quot;: &quot;.example.com&quot;,
+  &quot;path&quot;: &quot;/&quot;,
+  &quot;secure&quot;: true,
+  &quot;httpOnly&quot;: true,
+  &quot;sameSite&quot;: &quot;Lax&quot;,
+  &quot;expirationDate&quot;: 1893456000
+}
+</code></pre>
+<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
+<p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
+<h3>Documentation Writing!</h3>
+<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I'll introduce them anyway:</p>
+<ol>
+<li><strong>Router-name:</strong> Fill in the router name</li>
+<li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
+<li><strong>Cookies?:</strong> Two cases: <code>no</code> or <code>yes</code>, with optional remarks after</li>
+<li><strong>Author:</strong> Submitter, write your GitHub username</li>
+<li><strong>Introduction:</strong> Write a brief introduction (note: if the platform is mainly in a certain language, use that language)</li>
+<li><strong>Address:</strong> Fill in <code>rssust://router_name</code></li>
+<li><strong>Example:</strong> Optional; if included, use a hyperlink: <code>[fill Address same as above](/router_name)</code></li>
+<li><strong>Parameter:</strong> This means HTTP GET parameters that might be used. You can fill in <code>no</code>, leave it empty, or start a new line with the following format:</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: Embedded videos
+2. Continue similarly for other parameters
+</code></pre>
+<p>The parameter name follows the number, wrapped with <code>** **</code> for emphasis.</p>
+<p><strong>Type of parameter:</strong> Fill in the type, define it yourself<br />
+<strong>Default value:</strong> Default value, must conform to the <code>Type of parameter</code><br />
+<strong>Meaning:</strong> The meaning of the parameter</p>
+<h3>Final Step: Submit!</h3>
+<p>Before submitting with git, run <code>cargo fmt</code> first. This helps others better understand your code.</p>
+<p>You need to submit:</p>
+<ol>
+<li><code>/src/router/your_router_name.rs</code></li>
+<li><code>env/docs_md/router_name.md</code> (generally please do not submit your <code>router_name.html</code> file)</li>
+<li><code>/src/router/mod.rs</code> and <code>src/request_rules.rs</code></li>
+</ol>
+<h4>This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!</h4>
+<p>If you are insterested in pogram explanation,please turn to <a href="docs/pogram_explanation_cn.hetml">rogram_explanation_cn</a>,but now it only has Chinese.</p>
 
     </div>
     <div class="footer-mark">

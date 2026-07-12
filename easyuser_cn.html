@@ -1,267 +1,267 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>easyuser_cn</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+            <html lang="zh-CN">
+            <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>easyuser_cn</title>
+            <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #e0e0e0;
-        }
+        color: #e0e0e0;
+    }
 
-        .page-shell { display: flex; min-height: 100vh; }
-        .current-page-badge {
-            display: inline-flex;
-            align-items: center;
-            
-            /* 放大关键属性 */
-            padding: 10px 15px;      /* 更大的内边距 */
-            font-size: 1.2rem;       /* 明显放大的字体 */
-            font-weight: 600;
-            
-            /* 视觉风格 */
-            background-color: #7b2fff59; /* 亮蓝色背景 */
-            color: white;              /* 白色文字 */
-            border-radius: 50px;       /* 完全圆角胶囊形状 */
-            box-shadow: 0 4px 6px rgba(86, 9, 145, 0.3); /* 彩色阴影 */
-        }
-        .sidebar {
-            flex: 0 0 260px;
-            width: 260px;
-            background: rgba(10, 5, 20, 0.96);
-            padding: 22px;
-            border-right: 1px solid #7b2fff59;
-            overflow-y: auto;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            transition: flex-basis 0.25s ease, width 0.25s ease, padding 0.25s ease, border-right 0.25s ease;
-        }
+    .page-shell { display: flex; min-height: 100vh; }
+    .current-page-badge {
+    display: inline-flex;
+    align-items: center;
 
-        .sidebar.collapsed {
-            flex: 0 0 0;
-            width: 0;
-            padding-left: 0;
-            padding-right: 0;
-            border-right: none;
-            overflow: hidden;
-        }
+    /* 放大关键属性 */
+    padding: 10px 15px;      /* 更大的内边距 */
+    font-size: 1.2rem;       /* 明显放大的字体 */
+    font-weight: 600;
 
-        .sidebar h3 {
-            font-size: 16px;
-            color: #b026ff;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
+    /* 视觉风格 */
+    background-color: #7b2fff59; /* 亮蓝色背景 */
+    color: white;              /* 白色文字 */
+    border-radius: 50px;       /* 完全圆角胶囊形状 */
+    box-shadow: 0 4px 6px rgba(86, 9, 145, 0.3); /* 彩色阴影 */
+    }
+    .sidebar {
+    flex: 0 0 260px;
+    width: 260px;
+    background: rgba(10, 5, 20, 0.96);
+        padding: 22px;
+        border-right: 1px solid #7b2fff59;
+        overflow-y: auto;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        transition: flex-basis 0.25s ease, width 0.25s ease, padding 0.25s ease, border-right 0.25s ease;
+    }
 
-        .sidebar-section-title {
-            font-size: 13px;
-            color: #8888cc;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin: 18px 0 8px 0;
-            padding-bottom: 4px;
-            border-bottom: 1px solid rgba(123, 47, 255, 0.2);
-        }
+    .sidebar.collapsed {
+    flex: 0 0 0;
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+    overflow: hidden;
+    }
 
-        .sidebar ul { list-style: none; padding: 0; }
-        .sidebar li { margin-bottom: 8px; }
-        .sidebar a {
-            display: block;
-            padding: 10px 14px;
-            border-radius: 8px;
-            color: #c9a0ff;
-            text-decoration: none;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-        .sidebar a:hover {
-            background: rgba(123, 47, 255, 0.18);
-            color: #fff;
-        }
+    .sidebar h3 {
+    font-size: 16px;
+    color: #b026ff;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    }
 
-        .sidebar-search {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid rgba(123, 47, 255, 0.3);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            color: #e0e0e0;
-            font-size: 13px;
-            margin-bottom: 12px;
-            outline: none;
-        }
-        .sidebar-search:focus {
-            border-color: #b026ff;
-        }
-        .sidebar-search::placeholder {
-            color: #6666aa;
-        }
+    .sidebar-section-title {
+    font-size: 13px;
+    color: #8888cc;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 18px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(123, 47, 255, 0.2);
+    }
 
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            width: auto;
-            transition: width 0.25s ease;
-        }
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar li { margin-bottom: 8px; }
+    .sidebar a {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #c9a0ff;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    }
+    .sidebar a:hover {
+    background: rgba(123, 47, 255, 0.18);
+        color: #fff;
+    }
 
-        .main-container.expanded {
-            width: auto;
-        }
+    .sidebar-search {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+        font-size: 13px;
+        margin-bottom: 12px;
+        outline: none;
+    }
+    .sidebar-search:focus {
+    border-color: #b026ff;
+    }
+    .sidebar-search::placeholder {
+    color: #6666aa;
+    }
 
-        .top-bar {
-            padding: 18px 24px;
-            background: rgba(0, 0, 0, 0.45);
-            border-bottom: 1px solid rgba(123, 47, 255, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-        }
+    .main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: auto;
+    transition: width 0.25s ease;
+    }
 
-        .expand-btn {
-            padding: 9px 16px;
-            border: none;
-            border-radius: 8px;
-            background: #7b2fff;
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .expand-btn:hover { background: #b026ff; }
+    .main-container.expanded {
+    width: auto;
+    }
 
-        .brand {
-            font-size: 20px;
-            font-weight: 700;
-            color: #b026ff;
-            text-decoration: none;
-            margin-right: 4px;
-        }
-        .brand:hover { color: #d2a8ff; }
+    .top-bar {
+    padding: 18px 24px;
+    background: rgba(0, 0, 0, 0.45);
+        border-bottom: 1px solid rgba(123, 47, 255, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
 
-        .nav-link {
-            color: #c9a0ff;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        .nav-link:hover { background: rgba(123, 47, 255, 0.18); color: #fff; }
+    .expand-btn {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #7b2fff;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    }
+    .expand-btn:hover { background: #b026ff; }
 
-        .top-bar .spacer { flex: 1; }
+    .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #b026ff;
+    text-decoration: none;
+    margin-right: 4px;
+    }
+    .brand:hover { color: #d2a8ff; }
 
-        .article-search {
-            padding: 8px 14px;
-            border: 1px solid rgba(123, 47, 255, 0.3);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            color: #e0e0e0;
-            font-size: 13px;
-            outline: none;
-            width: 200px;
-        }
-        .article-search:focus {
-            border-color: #b026ff;
-        }
-        .article-search::placeholder {
-            color: #6666aa;
-        }
+    .nav-link {
+    color: #c9a0ff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    }
+    .nav-link:hover { background: rgba(123, 47, 255, 0.18); color: #fff; }
 
-        .content-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            padding: 26px 28px 32px;
-        }
+    .top-bar .spacer { flex: 1; }
 
-        .content-wrapper::-webkit-scrollbar { width: 10px; }
-        .content-wrapper::-webkit-scrollbar-track { background: rgba(10, 5, 20, 0.7); }
-        .content-wrapper::-webkit-scrollbar-thumb { background: rgba(123, 47, 255, 0.55); border-radius: 6px; }
+    .article-search {
+    padding: 8px 14px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+        font-size: 13px;
+        outline: none;
+        width: 200px;
+    }
+    .article-search:focus {
+    border-color: #b026ff;
+    }
+    .article-search::placeholder {
+    color: #6666aa;
+    }
 
-        .card {
-            background: rgba(20, 15, 40, 0.92);
-            border: 1px solid rgba(123, 47, 255, 0.35);
-            border-radius: 16px;
-            padding: 28px 30px;
-            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-            line-height: 1.85;
-        }
+    .content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 26px 28px 32px;
+    }
 
-        pre {
-            background: #161b22;
-            padding: 18px 20px;
-            border-radius: 8px;
-            border: 1px solid rgba(123, 47, 255, 0.3);
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+    .content-wrapper::-webkit-scrollbar { width: 10px; }
+    .content-wrapper::-webkit-scrollbar-track { background: rgba(10, 5, 20, 0.7); }
+    .content-wrapper::-webkit-scrollbar-thumb { background: rgba(123, 47, 255, 0.55); border-radius: 6px; }
 
-        code {
-            font-family: 'Fira Code', 'Courier New', Consolas, monospace;
-            color: #ff79c6;
-            font-size: 14px;
-        }
+    .card {
+    background: rgba(20, 15, 40, 0.92);
+        border: 1px solid rgba(123, 47, 255, 0.35);
+        border-radius: 16px;
+        padding: 28px 30px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        line-height: 1.85;
+    }
 
-        .hljs {
-            background: #161b22 !important;
-            color: #c9d1d9 !important;
-        }
-        .hljs-keyword { color: #ff7b72; }
-        .hljs-string { color: #a5d6ff; }
-        .hljs-number { color: #79c0ff; }
-        .hljs-comment { color: #8b949e; font-style: italic; }
-        .hljs-function, .hljs-title { color: #d2a8ff; }
-        .hljs-built_in, .hljs-type { color: #ffa657; }
+    pre {
+    background: #161b22;
+    padding: 18px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-        blockquote {
-            border-left: 4px solid #b026ff;
-            padding-left: 16px;
-            color: #a0a0b0;
-            margin: 14px 0;
-        }
+    code {
+    font-family: 'Fira Code', 'Courier New', Consolas, monospace;
+    color: #ff79c6;
+    font-size: 14px;
+    }
 
-        h1, h2, h3 { color: #b026ff; margin: 18px 0 12px; }
-        a { color: #b026ff; }
-        img { max-width: 100%; border-radius: 10px; }
-        table { border-collapse: collapse; width: 100%; margin: 18px 0; }
-        th, td { border: 1px solid rgba(123, 47, 255, 0.35); padding: 12px 14px; text-align: left; }
-        th { background: rgba(123, 47, 255, 0.18); color: #b026ff; }
-        tr:nth-child(even) { background: rgba(123, 47, 255, 0.06); }
+    .hljs {
+    background: #161b22 !important;
+    color: #c9d1d9 !important;
+    }
+    .hljs-keyword { color: #ff7b72; }
+    .hljs-string { color: #a5d6ff; }
+    .hljs-number { color: #79c0ff; }
+    .hljs-comment { color: #8b949e; font-style: italic; }
+    .hljs-function, .hljs-title { color: #d2a8ff; }
+    .hljs-built_in, .hljs-type { color: #ffa657; }
 
-        .search-highlight {
-            background: #b026ff;
-            color: #fff;
-            padding: 1px 4px;
-            border-radius: 3px;
-        }
+    blockquote {
+    border-left: 4px solid #b026ff;
+    padding-left: 16px;
+    color: #a0a0b0;
+    margin: 14px 0;
+    }
 
-        .footer-mark {
-            margin-top: 26px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(123, 47, 255, 0.2);
-            color: #8888aa;
-            text-align: center;
-            font-size: 13px;
-        }
+    h1, h2, h3 { color: #b026ff; margin: 18px 0 12px; }
+    a { color: #b026ff; }
+    img { max-width: 100%; border-radius: 10px; }
+    table { border-collapse: collapse; width: 100%; margin: 18px 0; }
+    th, td { border: 1px solid rgba(123, 47, 255, 0.35); padding: 12px 14px; text-align: left; }
+    th { background: rgba(123, 47, 255, 0.18); color: #b026ff; }
+    tr:nth-child(even) { background: rgba(123, 47, 255, 0.06); }
 
-        .sidebar li.hidden { display: none; }
+    .search-highlight {
+    background: #b026ff;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+    }
 
-        .nav-separator {
-            height: 1px;
-            background: rgba(123, 47, 255, 0.2);
-            margin: 12px 0;
-        }
+    .footer-mark {
+    margin-top: 26px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(123, 47, 255, 0.2);
+        color: #8888aa;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .sidebar li.hidden { display: none; }
+
+    .nav-separator {
+    height: 1px;
+    background: rgba(123, 47, 255, 0.2);
+        margin: 12px 0;
+    }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -271,117 +271,160 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
     <script>hljs.highlightAll();</script>
-</head>
-<body>
+    </head>
+    <body>
     <div class="page-shell">
-        <div class="sidebar" id="sidebar">
-            <h3>
-                📚 文档导航
-                <button class="toggle-btn" onclick="toggleSidebar()">收起</button>
-            </h3>
-            <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="搜索目录..." oninput="filterSidebar()">
-            <div class="sidebar-section-title">官方</div>
-            <ul id="officialLinks">
-                <li><a href='api.html'>api</a></li><li><a href='config.html'>config</a></li><li><a href='easyuser_cn.html'>easyuser_cn</a></li><li><a href='index.html'>index</a></li><li><a href='new_router_cn.html'>new_router_cn</a></li>
-            </ul>
-            <div class="nav-separator"></div>
-            <div class="sidebar-section-title">Router</div>
-            <ul id="routerLinks">
-                <li><a href='bilibili_weekly.html'>bilibili_weekly</a></li>
-            </ul>
-        </div>
+    <div class="sidebar" id="sidebar">
+    <h3>
+    📚 文档导航
+    <button class="toggle-btn" onclick="toggleSidebar()">收起</button>
+    </h3>
+    <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="搜索目录..." oninput="filterSidebar()">
+    <div class="sidebar-section-title">官方</div>
+    <ul id="officialLinks">
+    <li><a href='api.html'>api</a></li><li><a href='config.html'>config</a></li><li><a href='easyuser_cn.html'>easyuser_cn</a></li><li><a href='guide_cn.html'>guide_cn</a></li><li><a href='guide_en.html'>guide_en</a></li><li><a href='new_router_cn.html'>new_router_cn</a></li><li><a href='new_router_en.html'>new_router_en</a></li><li><a href='pogram_explanation_cn.html'>pogram_explanation_cn</a></li>
+    </ul>
+    <div class="nav-separator"></div>
+    <div class="sidebar-section-title">Router</div>
+    <ul id="routerLinks">
+    <li><a href='bilibili_dynamic.html'>bilibili_dynamic</a></li><li><a href='bilibili_weekly.html'>bilibili_weekly</a></li>
+    </ul>
+    </div>
 
-        <div class="main-container" id="main">
-            <div class="top-bar">
-                <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
-                <a href="https://github.com/huiinyg-rusting/Rssust" class="brand">Rssust</a>
-                <a href="/" class="nav-link">主页</a>
-                <span class="spacer"></span>
-                <div class="current-page-badge">
-                    <span class="badge-icon">📄</span>
-                    <span class="badge-text" id="page-title">easyuser_cn</span>
-                </div>
-                <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
-            </div>
-            <div class="content-wrapper">
-                <div class="card" id="contentCard">
-                    <h1>给用户使用的函数——简便</h1>
-<p>函数签名自己去src/easyuser.rs看去</p>
-<h2>爬虫类：</h2>
-<p><strong>fetch_obscura()</strong>——无头浏览器爬取<br />
-<strong>fetch_reqwest_get()</strong>——reqwest get模式爬取<br />
-<strong>fetch_reqwest_post()</strong>——reqwest post模式爬取</p>
-<h2>序列化类：</h2>
-<p><strong>params_to_hashmap()</strong>——从key1=1&amp;key2=2 到{&quot;key1&quot;: &quot;2&quot;, &quot;key2&quot;: &quot;2&quot;}的Hashmap<br />
-<strong>hashmap_to_params()</strong>——从HashMap到key1=1&amp;key2=2</p>
-<h2>时间：</h2>
-<p><strong>now()</strong>——使用RSS标准输出当前时间<br />
-<strong>chinese_date_to_parse()</strong>——x月y日到RSS标准（<code>x月y日</code>这个很严格）</p>
-<h2>字符类：</h2>
-<p><strong>no_double_quotes()</strong>——去除首尾双引号</p>
-<h4>总的来说，项目需要很多人完善这些代码</h4>
-<p>核心代码还有很多空缺和需要改进的地方与API</p>
+    <div class="main-container" id="main">
+    <div class="top-bar">
+    <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
+    <a href="https://github.com/huiinyg-rusting/Rssust" class="brand">Rssust</a>
+    <a href="/" class="nav-link">主页</a>
+    <span class="spacer"></span>
+    <div class="current-page-badge">
+    <span class="badge-icon">📄</span>
+    <span class="badge-text" id="page-title">easyuser_cn</span>
+    </div>
+    <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
+    </div>
+    <div class="content-wrapper">
+    <div class="card" id="contentCard">
+    <h1>给用户使用的函数——简便</h1>
+<h2>位置</h2>
+<p><code>src/easyuser.rs</code></p>
+<h2>概述</h2>
+<p>封装了一系列辅助函数，供路由开发者（router）方便地调用。所有函数通过 <code>use crate::easyuser::*;</code> 导入。</p>
+<hr />
+<h2>爬虫类</h2>
+<h3>fetch_obscura()</h3>
+<p><strong>签名</strong>: <code>pub fn fetch_obscura(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用无头浏览器（Obscura）爬取 URL 内容。会自动携带 <code>cookies.json</code> 中注入的 Cookie。适用于需要 JavaScript 渲染的页面。</p>
+<p><strong>内部调用</strong>: <code>crawler::fetch(url)</code></p>
+<h3>fetch_reqwest_get()</h3>
+<p><strong>签名</strong>: <code>pub fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。</p>
+<p><strong>注意</strong>: 每次调用都会创建新的 Tokio Runtime，开销较大。</p>
+<h3>fetch_reqwest_post()</h3>
+<p><strong>签名</strong>: <code>pub fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
+<hr />
+<h2>序列化类</h2>
+<h3>params_to_hashmap()</h3>
+<p><strong>签名</strong>: <code>pub fn params_to_hashmap(query: &amp;str) -&gt; HashMap&lt;String, String&gt;</code></p>
+<p>将 <code>key1=value1&amp;key2=value2</code> 格式参数字符串解析为 <code>HashMap</code>。</p>
+<p><strong>用在</strong>: <code>connect::handle_connection()</code> 中解析 URL 查询参数。</p>
+<h3>hashmap_to_params()</h3>
+<p><strong>签名</strong>: <code>pub fn hashmap_to_params(hashmap: HashMap&lt;String, String&gt;) -&gt; String</code></p>
+<p>将 <code>HashMap</code> 序列化为 <code>key1=value1&amp;key2=value2</code> 格式字符串。</p>
+<hr />
+<h2>时间类</h2>
+<h3>now()</h3>
+<p><strong>签名</strong>: <code>pub fn now() -&gt; String</code></p>
+<p>返回当前时间的 RSS 标准格式：<code>Sat, 11 Jul 2026 12:00:00 +0800</code></p>
+<p><strong>用在</strong>: 路由中设置 RSS Item 的 <code>pub_date</code> 字段。</p>
+<h3>chinese_date_to_parse()</h3>
+<p><strong>签名</strong>: <code>pub fn chinese_date_to_parse(input: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将中文日期格式 <code>x月y日</code> 解析为 RSS 标准时间格式。年份取当前年份。</p>
+<p>示例：<code>&quot;7月11日&quot;</code> → <code>&quot;Sat, 11 Jul 2026 00:00:00 +0800&quot;</code></p>
+<h3>timestamp_to_rss()</h3>
+<p><strong>签名</strong>: <code>pub fn timestamp_to_rss(ts: i64) -&gt; String</code></p>
+<p>将 Unix 时间戳（i64）转换为 RSS 标准时间格式。</p>
+<hr />
+<h2>字符类</h2>
+<h3>no_double_quotes()</h3>
+<p><strong>签名</strong>: <code>pub fn no_double_quotes(s: String) -&gt; String</code></p>
+<p>去除字符串首尾的双引号。</p>
+<p><strong>用在</strong>: 路由中清理从 JSON 提取的字符串值，因为 <code>serde_json::Value::to_string()</code> 会给字符串加双引号。</p>
+<h3>env_search()</h3>
+<p><strong>签名</strong>: <code>pub fn env_search(s: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>查找环境变量值，找到返回 <code>Some(val)</code>，找不到返回 <code>None</code>。</p>
+<h3>extract_js_var()</h3>
+<p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
+<p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
+<hr />
+<h2>开发者提示</h2>
+<ul>
+<li>路由中必须导入 <code>use crate::easyuser::*;</code></li>
+<li><code>fetch_obscura</code> 比 <code>fetch_reqwest_get</code> 慢（需要启动浏览器），但能处理 JS 渲染的页面</li>
+<li>从 JSON 提取字符串后记得用 <code>no_double_quotes()</code> 清理</li>
+</ul>
 
-                </div>
-                <div class="footer-mark">
-                    2026 - Power by rust and made for Rssust
-                </div>
-            </div>
-        </div>
+    </div>
+    <div class="footer-mark">
+    2026 - Power by rust and made for Rssust
+    </div>
+    </div>
+    </div>
     </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const main = document.getElementById('main');
-            sidebar.classList.toggle('collapsed');
-            main.classList.toggle('expanded');
-        }
+    function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+    }
 
-        function filterSidebar() {
-            const query = document.getElementById('sidebarSearch').value.toLowerCase();
-            document.querySelectorAll('#officialLinks li, #routerLinks li').forEach(li => {
-                const text = li.textContent.toLowerCase();
-                li.classList.toggle('hidden', !text.includes(query));
-            });
-        }
+    function filterSidebar() {
+    const query = document.getElementById('sidebarSearch').value.toLowerCase();
+        document.querySelectorAll('#officialLinks li, #routerLinks li').forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.classList.toggle('hidden', !text.includes(query));
+    });
+    }
 
-        function searchContent() {
-            const query = document.getElementById('articleSearch').value.trim().toLowerCase();
-            const card = document.getElementById('contentCard');
-            if (!query) {
-                if (card.dataset.originalHtml) {
-                    card.innerHTML = card.dataset.originalHtml;
-                    delete card.dataset.originalHtml;
-                    hljs.highlightAll();
-                }
-                return;
-            }
-            if (!card.dataset.originalHtml) {
-                card.dataset.originalHtml = card.innerHTML;
-            }
-            const original = card.dataset.originalHtml;
-            const temp = document.createElement('div');
-            temp.innerHTML = original;
-            const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
-            const nodesToReplace = [];
-            while (walker.nextNode()) {
-                const node = walker.currentNode;
-                if (node.textContent.toLowerCase().includes(query)) {
-                    nodesToReplace.push(node);
-                }
-            }
-            for (const node of nodesToReplace) {
-                const span = document.createElement('span');
-                const escaped = query.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&');
-                span.innerHTML = node.textContent.replace(
-                    new RegExp('(' + escaped + ')', 'gi'),
-                    '<span class="search-highlight">$1</span>'
-                );
-                node.parentNode.replaceChild(span, node);
-            }
-            card.innerHTML = temp.innerHTML;
-        }
+    function searchContent() {
+    const query = document.getElementById('articleSearch').value.trim().toLowerCase();
+        const card = document.getElementById('contentCard');
+        if (!query) {
+            if (card.dataset.originalHtml) {
+                card.innerHTML = card.dataset.originalHtml;
+                delete card.dataset.originalHtml;
+                hljs.highlightAll();
+    }
+    return;
+    }
+    if (!card.dataset.originalHtml) {
+        card.dataset.originalHtml = card.innerHTML;
+    }
+    const original = card.dataset.originalHtml;
+    const temp = document.createElement('div');
+        temp.innerHTML = original;
+        const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
+        const nodesToReplace = [];
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (node.textContent.toLowerCase().includes(query)) {
+                nodesToReplace.push(node);
+    }
+    }
+    for (const node of nodesToReplace) {
+        const span = document.createElement('span');
+        const escaped = query.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&');
+        span.innerHTML = node.textContent.replace(
+            new RegExp('(' + escaped + ')', 'gi'),
+                                '<span class="search-highlight">$1</span>'
+        );
+        node.parentNode.replaceChild(span, node);
+    }
+    card.innerHTML = temp.innerHTML;
+    }
     </script>
-</body>
-</html>
+    </body>
+    </html>

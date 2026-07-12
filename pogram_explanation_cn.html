@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+            <html lang="zh-CN">
+            <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>pogram_explanation_cn</title>
+            <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #e0e0e0;
+    }
+
+    .page-shell { display: flex; min-height: 100vh; }
+    .current-page-badge {
+    display: inline-flex;
+    align-items: center;
+
+    /* 放大关键属性 */
+    padding: 10px 15px;      /* 更大的内边距 */
+    font-size: 1.2rem;       /* 明显放大的字体 */
+    font-weight: 600;
+
+    /* 视觉风格 */
+    background-color: #7b2fff59; /* 亮蓝色背景 */
+    color: white;              /* 白色文字 */
+    border-radius: 50px;       /* 完全圆角胶囊形状 */
+    box-shadow: 0 4px 6px rgba(86, 9, 145, 0.3); /* 彩色阴影 */
+    }
+    .sidebar {
+    flex: 0 0 260px;
+    width: 260px;
+    background: rgba(10, 5, 20, 0.96);
+        padding: 22px;
+        border-right: 1px solid #7b2fff59;
+        overflow-y: auto;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        transition: flex-basis 0.25s ease, width 0.25s ease, padding 0.25s ease, border-right 0.25s ease;
+    }
+
+    .sidebar.collapsed {
+    flex: 0 0 0;
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+    overflow: hidden;
+    }
+
+    .sidebar h3 {
+    font-size: 16px;
+    color: #b026ff;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .sidebar-section-title {
+    font-size: 13px;
+    color: #8888cc;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 18px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(123, 47, 255, 0.2);
+    }
+
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar li { margin-bottom: 8px; }
+    .sidebar a {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #c9a0ff;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    }
+    .sidebar a:hover {
+    background: rgba(123, 47, 255, 0.18);
+        color: #fff;
+    }
+
+    .sidebar-search {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+        font-size: 13px;
+        margin-bottom: 12px;
+        outline: none;
+    }
+    .sidebar-search:focus {
+    border-color: #b026ff;
+    }
+    .sidebar-search::placeholder {
+    color: #6666aa;
+    }
+
+    .main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: auto;
+    transition: width 0.25s ease;
+    }
+
+    .main-container.expanded {
+    width: auto;
+    }
+
+    .top-bar {
+    padding: 18px 24px;
+    background: rgba(0, 0, 0, 0.45);
+        border-bottom: 1px solid rgba(123, 47, 255, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .expand-btn {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #7b2fff;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    }
+    .expand-btn:hover { background: #b026ff; }
+
+    .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #b026ff;
+    text-decoration: none;
+    margin-right: 4px;
+    }
+    .brand:hover { color: #d2a8ff; }
+
+    .nav-link {
+    color: #c9a0ff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    }
+    .nav-link:hover { background: rgba(123, 47, 255, 0.18); color: #fff; }
+
+    .top-bar .spacer { flex: 1; }
+
+    .article-search {
+    padding: 8px 14px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+        font-size: 13px;
+        outline: none;
+        width: 200px;
+    }
+    .article-search:focus {
+    border-color: #b026ff;
+    }
+    .article-search::placeholder {
+    color: #6666aa;
+    }
+
+    .content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 26px 28px 32px;
+    }
+
+    .content-wrapper::-webkit-scrollbar { width: 10px; }
+    .content-wrapper::-webkit-scrollbar-track { background: rgba(10, 5, 20, 0.7); }
+    .content-wrapper::-webkit-scrollbar-thumb { background: rgba(123, 47, 255, 0.55); border-radius: 6px; }
+
+    .card {
+    background: rgba(20, 15, 40, 0.92);
+        border: 1px solid rgba(123, 47, 255, 0.35);
+        border-radius: 16px;
+        padding: 28px 30px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        line-height: 1.85;
+    }
+
+    pre {
+    background: #161b22;
+    padding: 18px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(123, 47, 255, 0.3);
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    code {
+    font-family: 'Fira Code', 'Courier New', Consolas, monospace;
+    color: #ff79c6;
+    font-size: 14px;
+    }
+
+    .hljs {
+    background: #161b22 !important;
+    color: #c9d1d9 !important;
+    }
+    .hljs-keyword { color: #ff7b72; }
+    .hljs-string { color: #a5d6ff; }
+    .hljs-number { color: #79c0ff; }
+    .hljs-comment { color: #8b949e; font-style: italic; }
+    .hljs-function, .hljs-title { color: #d2a8ff; }
+    .hljs-built_in, .hljs-type { color: #ffa657; }
+
+    blockquote {
+    border-left: 4px solid #b026ff;
+    padding-left: 16px;
+    color: #a0a0b0;
+    margin: 14px 0;
+    }
+
+    h1, h2, h3 { color: #b026ff; margin: 18px 0 12px; }
+    a { color: #b026ff; }
+    img { max-width: 100%; border-radius: 10px; }
+    table { border-collapse: collapse; width: 100%; margin: 18px 0; }
+    th, td { border: 1px solid rgba(123, 47, 255, 0.35); padding: 12px 14px; text-align: left; }
+    th { background: rgba(123, 47, 255, 0.18); color: #b026ff; }
+    tr:nth-child(even) { background: rgba(123, 47, 255, 0.06); }
+
+    .search-highlight {
+    background: #b026ff;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+    }
+
+    .footer-mark {
+    margin-top: 26px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(123, 47, 255, 0.2);
+        color: #8888aa;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .sidebar li.hidden { display: none; }
+
+    .nav-separator {
+    height: 1px;
+    background: rgba(123, 47, 255, 0.2);
+        margin: 12px 0;
+    }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    </head>
+    <body>
+    <div class="page-shell">
+    <div class="sidebar" id="sidebar">
+    <h3>
+    📚 文档导航
+    <button class="toggle-btn" onclick="toggleSidebar()">收起</button>
+    </h3>
+    <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="搜索目录..." oninput="filterSidebar()">
+    <div class="sidebar-section-title">官方</div>
+    <ul id="officialLinks">
+    <li><a href='api.html'>api</a></li><li><a href='config.html'>config</a></li><li><a href='easyuser_cn.html'>easyuser_cn</a></li><li><a href='guide_cn.html'>guide_cn</a></li><li><a href='guide_en.html'>guide_en</a></li><li><a href='new_router_cn.html'>new_router_cn</a></li><li><a href='new_router_en.html'>new_router_en</a></li><li><a href='pogram_explanation_cn.html'>pogram_explanation_cn</a></li>
+    </ul>
+    <div class="nav-separator"></div>
+    <div class="sidebar-section-title">Router</div>
+    <ul id="routerLinks">
+    <li><a href='bilibili_dynamic.html'>bilibili_dynamic</a></li><li><a href='bilibili_weekly.html'>bilibili_weekly</a></li>
+    </ul>
+    </div>
+
+    <div class="main-container" id="main">
+    <div class="top-bar">
+    <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
+    <a href="https://github.com/huiinyg-rusting/Rssust" class="brand">Rssust</a>
+    <a href="/" class="nav-link">主页</a>
+    <span class="spacer"></span>
+    <div class="current-page-badge">
+    <span class="badge-icon">📄</span>
+    <span class="badge-text" id="page-title">pogram_explanation_cn</span>
+    </div>
+    <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
+    </div>
+    <div class="content-wrapper">
+    <div class="card" id="contentCard">
+    <p>本文由AI撰写，但其他不是哦！</p>
+<h1>入口函数 - main.rs</h1>
+<h2>入口函数</h2>
+<p><strong><code>src/main.rs:9</code> — <code>fn main()</code></strong> 是整个程序的入口。</p>
+<h2>功能流程</h2>
+<ol>
+<li><strong>命令行参数处理</strong>：如果第一个参数为 <code>&quot;docs&quot;</code>，则调用 <code>doc_generate()</code> 生成文档 HTML（遍历 <code>docs_md/</code> 下的 <code>.md</code> 文件，输出为 <code>.html</code> 到 <code>docs/</code> 目录）</li>
+<li><strong>Cookie 加载</strong>：调用 <code>load_cookies()</code> 从二进制同目录的 <code>cookies.json</code> 加载 cookie，注入到无头浏览器实例</li>
+<li><strong>启动 TCP 服务器</strong>：绑定 <code>127.0.0.1:7878</code>，使用 <code>ThreadPool</code>（4 线程）并发处理请求</li>
+<li><strong>请求处理</strong>：每个连接由 <code>handle_connection()</code> 处理（定义在 <code>lib.rs</code> 的 <code>connect</code> 模块）</li>
+</ol>
+<h2>架构图</h2>
+<pre><code>用户 HTTP 请求
+    ↓
+TcpListener(:7878)
+    ↓  (ThreadPool 分配线程)
+handle_connection(stream)
+    ↓
+解析 HTTP 请求行 (GET /xxx?key=val HTTP/1.1)
+    ↓
+root_rules(url, params)
+    ├── &quot;/&quot;        → show_index_doc()       → index.html
+    ├── &quot;/docs/*&quot;  → show_doc(path)          → 文档 HTML
+    └── 其他路由    → request_rules(url, params)
+                      └── 路由器名::get(params)  → RSS XML
+</code></pre>
+<h2>环境目录结构</h2>
+<p>二进制运行所需的目录结构：</p>
+<pre><code>env/
+├── cookies.json      # Cookie 文件，启动时加载到浏览器
+├── index/
+│   ├── 404.html      # 404 页面
+│   └── index.html    # 首页
+├── docs_md/          # Markdown 文档源文件
+│   ├── official/     # 官方文档
+│   └── 路由名.md     # 各路由的文档
+└── rssust            # 编译后的二进制
+</code></pre>
+<h1>crawler 模块 - lib.rs</h1>
+<h2>位置</h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod crawler</code> 模块。</p>
+<h2>概述</h2>
+<p>管理无头浏览器（Obscura）实例和 Cookie 的生命周期。所有浏览器操作通过线程局部存储（<code>thread_local!</code>）实现，每个线程持有独立的浏览器实例。</p>
+<h2>核心类型</h2>
+<h3>Coke</h3>
+<p>内部结构体，存储处理后的 Cookie 信息：</p>
+<pre><code class="language-rust">struct Coke {
+    url: String,    // 域名
+    mai: String,    // Set-Cookie 字符串
+}
+</code></pre>
+<h3>BROWSER（线程局部变量）</h3>
+<pre><code class="language-rust">thread_local! {
+    static BROWSER: RefCell&lt;Option&lt;(tokio::runtime::Runtime, Browser)&gt;&gt; = RefCell::new(None);
+}
+</code></pre>
+<p>每个线程第一次使用时创建 <code>Runtime</code> + <code>Browser</code> 实例，后续复用。</p>
+<h2>核心函数</h2>
+<h3>with_browser()</h3>
+<p><strong>签名</strong>: <code>pub fn with_browser&lt;F, T&gt;(f: F) -&gt; Result&lt;T&gt;</code></p>
+<p>获取当前线程的浏览器实例，执行闭包。如果浏览器尚未初始化，则自动创建：</p>
+<ul>
+<li>使用 <code>tokio::runtime::Builder</code> 创建单线程运行时</li>
+<li>调用 <code>Browser::new()</code> 创建 Obscura 无头浏览器实例</li>
+</ul>
+<h3>load_cookies()</h3>
+<p><strong>签名</strong>: <code>pub fn load_cookies() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie：</p>
+<ol>
+<li>读取 JSON 文件（空文件跳过）</li>
+<li>反序列化为 <code>Vec&lt;Value&gt;</code>（Cookie 对象数组）</li>
+<li>对每个 Cookie 调用 <code>build_set_cookie()</code> 转换为 <code>Coke</code> 结构</li>
+<li>调用 <code>init()</code> 注入到全局浏览器</li>
+</ol>
+<h3>init()</h3>
+<p><strong>签名</strong>: <code>fn init(cookies: &amp;[Coke]) -&gt; Result&lt;()&gt;</code></p>
+<p>将 Cookie 注入到浏览器实例中，通过 <code>browser.cookies().set()</code> 设置。</p>
+<h3>build_set_cookie()</h3>
+<p><strong>签名</strong>: <code>fn build_set_cookie(cookie: &amp;Value) -&gt; Result&lt;Coke&gt;</code></p>
+<p>将 JSON Cookie 对象转换为 HTTP <code>Set-Cookie</code> 字符串：</p>
+<ul>
+<li>必填字段：<code>name</code>, <code>value</code>, <code>domain</code></li>
+<li>可选字段：<code>path</code>（默认 <code>/</code>）, <code>secure</code>, <code>httpOnly</code>, <code>sameSite</code>, <code>expirationDate</code></li>
+<li><code>expirationDate</code> 会计算 <code>Max-Age</code> 并附加到字符串</li>
+</ul>
+<h3>fetch()</h3>
+<p><strong>签名</strong>: <code>pub fn fetch(url: &amp;str) -&gt; Result&lt;String&gt;</code></p>
+<p>使用无头浏览器访问指定 URL，返回页面 HTML 内容：</p>
+<ol>
+<li>创建新页面（<code>new_page()</code>）</li>
+<li>导航到 URL（<code>goto()</code>）</li>
+<li>返回页面内容（<code>content()</code>）</li>
+</ol>
+<h1>connect 模块 - lib.rs</h1>
+<h2>位置</h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod connect</code> 模块。</p>
+<h2>核心函数</h2>
+<h3>handle_connection()</h3>
+<p><strong>签名</strong>: <code>pub fn handle_connection(mut stream: TcpStream)</code></p>
+<p>这是每个 HTTP 请求的入口处理函数：</p>
+<ol>
+<li>从 TCP 流读取 1024 字节缓冲区</li>
+<li>用 <code>extract_between_spaces()</code> 提取 HTTP 请求行中的 URL 路径（GET 和 POST 之间的部分）</li>
+<li>解析 URL 中的查询参数：
+<ul>
+<li>如果 URL 包含 <code>?</code>，用 <code>split_once('?')</code> 分割路径和查询字符串</li>
+<li>查询字符串通过 <code>params_to_hashmap()</code> 转为 <code>HashMap</code></li>
+</ul>
+</li>
+<li>调用 <code>root_rules(path, params)</code> 获取响应</li>
+<li>根据 <code>ShowToUser</code> 枚举类型构建 HTTP 响应：
+<ul>
+<li><code>ShowToUser::Html</code> → <code>Content-Type: text/html</code></li>
+<li><code>ShowToUser::Rss</code> → <code>Content-Type: application/xml</code></li>
+</ul>
+</li>
+<li>写回 TCP 流</li>
+</ol>
+<h3>extract_between_spaces()</h3>
+<p><strong>签名</strong>: <code>fn extract_between_spaces(buffer: &amp;[u8; 1024]) -&gt; Option&lt;&amp;[u8]&gt;</code></p>
+<p>从 HTTP 原始请求中提取两个空格之间的内容（即 URL 路径）。例如从 <code>GET /bilibili_weekly?key=val HTTP/1.1</code> 中提取 <code>/bilibili_weekly?key=val</code>。</p>
+<h3>show_index_doc()</h3>
+<p><strong>签名</strong>: <code>pub fn show_index_doc() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的 <code>index/index.html</code> 文件，返回 HTML 字符串。</p>
+<h3>show_doc()</h3>
+<p><strong>签名</strong>: <code>pub fn show_doc(path: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的文档 HTML 文件（如 <code>/docs/new_router_cn.html</code> → 读取 <code>docs/new_router_cn.html</code>）。如果文件不存在，返回 <code>index/404.html</code>。</p>
+<h2>ShowToUser 枚举</h2>
+<p>定义在 <code>request_rules.rs</code> 中，但被 connect 模块使用：</p>
+<pre><code class="language-rust">pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+}
+</code></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面（首页、文档页面、错误页面）</li>
+<li><code>Rss</code> — 返回 RSS XML（路由器的输出）</li>
+</ul>
+<h1>路由注册表 - request_rules.rs</h1>
+<h2>位置</h2>
+<p><code>src/request_rules.rs</code></p>
+<h2>概述</h2>
+<p>这是整个项目的路由调度中心。负责将 URL 路径分发给对应的处理器，并封装返回格式。</p>
+<h2>ShowToUser 枚举</h2>
+<pre><code class="language-rust">pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+}
+</code></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面</li>
+<li><code>Rss</code> — 返回 RSS XML</li>
+</ul>
+<h2>核心函数</h2>
+<h3>root_rules()</h3>
+<p><strong>签名</strong>: <code>pub fn root_rules(first_part: &amp;str, second_part: HashMap&lt;String, String&gt;) -&gt; ShowToUser</code></p>
+<p>一级路由分发函数：</p>
+<table>
+<thead>
+<tr>
+<th>URL 路径</th>
+<th>处理器</th>
+<th>返回类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&quot;/&quot;</code></td>
+<td><code>show_index_doc()</code></td>
+<td><code>ShowToUser::Html</code></td>
+</tr>
+<tr>
+<td><code>以 &quot;/docs/&quot; 开头</code></td>
+<td><code>show_doc(path)</code></td>
+<td><code>ShowToUser::Html</code></td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>request_rules()</code></td>
+<td><code>ShowToUser::Rss</code> 或 <code>Html(错误)</code></td>
+</tr>
+</tbody>
+</table>
+<h3>request_rules()</h3>
+<p><strong>签名</strong>: <code>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>二级路由注册表，匹配 URL 路径到具体路由器：</p>
+<pre><code class="language-rust">pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt; {
+    if url == &quot;/bilibili_weekly&quot; {
+        bilibili_weekly::get(parameters)
+    } else {
+        Err(anyhow!(&quot;404NotFound&quot;))
+    }
+}
+</code></pre>
+<p><strong>注意</strong>：<code>bilibili_dynamic</code> 路由虽然在 <code>mod.rs</code> 中注册了 <code>pub mod bilibili_dynamic</code>，但当前 <strong>未在 <code>request_rules()</code> 中添加匹配分支</strong>，因此访问 <code>/bilibili_dynamic</code> 会返回 404。</p>
+<h2>如何添加新路由</h2>
+<p>参考 <code>new_router_cn.md</code>，步骤：</p>
+<ol>
+<li>在 <code>src/router/</code> 下新建 <code>.rs</code> 文件，实现 <code>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code></li>
+<li>在 <code>src/router/mod.rs</code> 中添加 <code>pub mod 你的路由名;</code></li>
+<li>在 <code>request_rules()</code> 中添加 <code>else if</code> 分支匹配 URL</li>
+<li>在 <code>env/docs_md/</code> 下编写对应的路由文档 <code>.md</code> 文件</li>
+</ol>
+<h1>文档生成器 - doc.rs</h1>
+<h2>位置</h2>
+<p><code>src/doc.rs</code></p>
+<h2>概述</h2>
+<p>将 <code>docs_md/</code> 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在 <code>src/main.rs</code> 中通过 <code>cargo run docs</code> 触发。</p>
+<h2>核心函数</h2>
+<h3>doc_generate()</h3>
+<p><strong>签名</strong>: <code>pub fn doc_generate() -&gt; Result&lt;(), Error&gt;</code></p>
+<h4>执行流程</h4>
+<ol>
+<li><strong>定位目录</strong>：以二进制文件所在目录为基础，输入目录为 <code>./docs_md</code>，输出目录为 <code>./docs</code></li>
+<li><strong>收集文件</strong>：使用 <code>walkdir::WalkDir</code> 递归遍历 <code>docs_md/</code> 下所有 <code>.md</code> 文件</li>
+<li><strong>排序</strong>：按文件名（字母顺序，不区分大小写）排序</li>
+<li><strong>分类</strong>：<code>docs_md/official/</code> 下的文件归为&quot;官方&quot;类，其余归为&quot;Router&quot;类，分别生成导航链接</li>
+<li><strong>转换</strong>：使用 <code>comrak</code> 库将 Markdown 转为 HTML</li>
+<li><strong>组装</strong>：将 HTML 嵌入带完整样式的页面模板，包含：
+<ul>
+<li>可折叠的侧边栏导航（带搜索功能）</li>
+<li>顶栏（含文章内容搜索）</li>
+<li>代码高亮（highlight.js）</li>
+<li>深色主题 CSS</li>
+</ul>
+</li>
+<li><strong>输出</strong>：写入 <code>docs/目录名.html</code></li>
+</ol>
+<h4>页面功能</h4>
+<ul>
+<li><strong>侧边栏导航</strong>：可折叠/展开，支持关键词搜索过滤目录</li>
+<li><strong>文章搜索</strong>：实时高亮文章中的匹配文本</li>
+<li><strong>代码高亮</strong>：支持 Rust、Python、JavaScript、Bash、XML 语言</li>
+<li><strong>响应式设计</strong>：深色主题，自适应布局</li>
+</ul>
+<h4>样式特点</h4>
+<ul>
+<li>深紫色渐变背景</li>
+<li>代码块深色底 + 彩色高亮</li>
+<li>胶囊形状的&quot;当前页面&quot;指示器</li>
+<li>紫蓝色点缀色</li>
+</ul>
+
+    </div>
+    <div class="footer-mark">
+    2026 - Power by rust and made for Rssust
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <script>
+    function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('expanded');
+    }
+
+    function filterSidebar() {
+    const query = document.getElementById('sidebarSearch').value.toLowerCase();
+        document.querySelectorAll('#officialLinks li, #routerLinks li').forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.classList.toggle('hidden', !text.includes(query));
+    });
+    }
+
+    function searchContent() {
+    const query = document.getElementById('articleSearch').value.trim().toLowerCase();
+        const card = document.getElementById('contentCard');
+        if (!query) {
+            if (card.dataset.originalHtml) {
+                card.innerHTML = card.dataset.originalHtml;
+                delete card.dataset.originalHtml;
+                hljs.highlightAll();
+    }
+    return;
+    }
+    if (!card.dataset.originalHtml) {
+        card.dataset.originalHtml = card.innerHTML;
+    }
+    const original = card.dataset.originalHtml;
+    const temp = document.createElement('div');
+        temp.innerHTML = original;
+        const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
+        const nodesToReplace = [];
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (node.textContent.toLowerCase().includes(query)) {
+                nodesToReplace.push(node);
+    }
+    }
+    for (const node of nodesToReplace) {
+        const span = document.createElement('span');
+        const escaped = query.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&');
+        span.innerHTML = node.textContent.replace(
+            new RegExp('(' + escaped + ')', 'gi'),
+                                '<span class="search-highlight">$1</span>'
+        );
+        node.parentNode.replaceChild(span, node);
+    }
+    card.innerHTML = temp.innerHTML;
+    }
+    </script>
+    </body>
+    </html>
