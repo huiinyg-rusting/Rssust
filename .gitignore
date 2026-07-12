@@ -1,1 +1,5 @@
 /target
+*.lock
+env/*.json
+env/docs
+env/rssust

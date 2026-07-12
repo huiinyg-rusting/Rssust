@@ -12,6 +12,8 @@ pub enum ShowToUser {
 pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, Error> {
     if url == "/bilibili_weekly" {
         bilibili_weekly::get(parameters)
+    } else if url == "/bilibili_dynamic" {
+        bilibili_dynamic::get(parameters)
     } else {
         Err(anyhow!("404NotFound"))
     }

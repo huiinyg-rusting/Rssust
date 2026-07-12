@@ -133,3 +133,4 @@ You need to submit:
 3. `/src/router/mod.rs` and `src/request_rules.rs`
 
 #### This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!
+If you are insterested in pogram explanation,please turn to [rogram_explanation_cn](docs/pogram_explanation_cn.hetml),but now it only has Chinese.

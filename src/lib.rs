@@ -130,7 +130,7 @@ pub mod crawler {
         static BROWSER: RefCell<Option<(tokio::runtime::Runtime, Browser)>> = RefCell::new(None);
     }
 
-    fn with_browser<F, T>(f: F) -> Result<T>
+    pub fn with_browser<F, T>(f: F) -> Result<T>
     where
         F: FnOnce(&tokio::runtime::Runtime, &mut Browser) -> Result<T>,
     {
