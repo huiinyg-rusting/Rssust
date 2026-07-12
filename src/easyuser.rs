@@ -1,6 +1,9 @@
 use crate::crawler::fetch;
-use anyhow::{Error, Result};
+use anyhow::{Error, Result, anyhow};
+use chrono::DateTime;
 use chrono::{Datelike, Local, NaiveDate};
+use serde_json::Value;
+use std::fs;
 use std::result::Result::Ok;
 use std::{collections::HashMap, env};
 use tokio::runtime::Runtime;
@@ -17,7 +20,6 @@ pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
             params.insert(pair.to_string(), String::new());
         }
     }
-
     params
 }
 
@@ -60,6 +62,60 @@ pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
     })
 }
 
+pub fn fetch_reqwest_get_with_headers(url: &str, headers: &[(&str, &str)]) -> Result<String, Error> {
+    let rt = Runtime::new().unwrap();
+    rt.block_on(async {
+        let client = reqwest::Client::new();
+        let mut req = client.get(url);
+        for &(key, value) in headers {
+            req = req.header(key, value);
+        }
+        Ok(req.send().await?.text().await?)
+    })
+}
+
+///简单的1,true,True转true
+pub fn parse_bool(value: Option<&String>, default: bool) -> bool {
+    match value.map(String::as_str) {
+        Some("1") | Some("true") | Some("True") => true,
+        Some("0") | Some("false") | Some("False") => false,
+        Some(other) => other.parse().unwrap_or(default),
+        None => default,
+    }
+}
+
+pub fn load_cookie_header(domain_filter: Option<&str>) -> Result<Option<String>> {
+    let exe_path = env::current_exe()?;
+    let exe_dir = exe_path
+        .parent()
+        .ok_or_else(|| anyhow!("Could not get executable directory"))?;
+    let cookie_path = exe_dir.join("cookies.json");
+    let content = fs::read_to_string(cookie_path).map_err(|_| anyhow!("无法读取 cookies.json"))?;
+    let cookies: Value = serde_json::from_str(&content)?;
+    let cookie_array = cookies
+        .as_array()
+        .ok_or_else(|| anyhow!("cookies.json 格式错误, 预期数组"))?;
+    let cookie_pairs: Vec<String> = cookie_array
+        .iter()
+        .filter_map(|cookie| {
+            if let Some(filter) = domain_filter {
+                let domain = cookie.get("domain")?.as_str()?;
+                if !domain.contains(filter) {
+                    return None;
+                }
+            }
+            let name = cookie.get("name")?.as_str()?;
+            let value = cookie.get("value")?.as_str()?;
+            Some(format!("{}={}", name, value))
+        })
+        .collect();
+    if cookie_pairs.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(cookie_pairs.join("; ")))
+    }
+}
+
 pub fn now() -> String {
     Local::now().format("%a, %d %b %Y %H:%M:%S %z").to_string()
 }
@@ -79,17 +135,23 @@ pub fn chinese_date_to_parse(input: &str) -> Option<String> {
             .to_string(),
     )
 }
-
 ///去除首尾双引号
+//注意'"'是一对单引号包双引号
 pub fn no_double_quotes(s: String) -> String {
-    s.trim_matches('"').to_string() //注意'"'是一对单引号包双引号
+    s.trim_matches('"').to_string()
 }
 
 //查找环境变量
-//todo:这个函数未经过测试
 pub fn env_search(s: &str) -> Option<String> {
     match env::var(s) {
         Ok(i) => Some(i),
         Err(_) => None,
     }
+}
+
+//Unix时间戳改RSS标准时间
+pub fn timestamp_to_rss(ts: i64) -> String {
+    DateTime::from_timestamp(ts, 0)
+        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
+        .unwrap_or_else(now)
 }

@@ -101,10 +101,21 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
    Meaning: 内嵌视频
 2. 接下来如法炮制
 ```
+注意：必填的项目把默认值设为null
 其中的参数名称跟在序号后面，用`** **`包裹强调
 **Type of parameter:** 填类型，自己定
 **Default value:** 默认值，要符合`Type of parameter`
 **Meaning:** 参数的含义
+9. **Environment Variables:** 可能用到的环境变量，填no,或者空着，另起一行，像下面的示例
+``` markdown
+**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: 内嵌视频
+2. 接下来如法炮制
+```
+注意：必填的项目把默认值设为null，每个项目的意思参考**Parameter:** 的子项
 ### 最后一步：提交！
 使用git提交前，先运行`cargo fmt`，这可以使别人更好的识别你的代码
 你需要提交的有：
@@ -113,3 +124,4 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 3. /src/router/mod.rs以及src/request_rules.rs
    
 #### 这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善
+如果好奇程序构造的，可以看[rogram_explanation_cn](docs/pogram_explanation_cn.html)
