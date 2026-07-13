@@ -34,16 +34,31 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo "Running cargo metadata..."
           meta=$(cargo metadata --no-deps --format-version 1)
+          if [ -z "$meta" ]; then
+            echo "ERROR: cargo metadata returned empty output"
+            exit 1
+          fi
+          echo "cargo metadata output length: ${#meta}"
+          
           pkg_name=$(echo "$meta" | python3 << 'PYTHON_EOF'
           import sys, json
-          m = json.load(sys.stdin)
+          data = sys.stdin.read()
+          if not data.strip():
+            print("ERROR: Empty input to JSON parser", file=sys.stderr)
+            sys.exit(1)
+          m = json.loads(data)
           print(m["packages"][0]["name"])
           PYTHON_EOF
           )
           version=$(echo "$meta" | python3 << 'PYTHON_EOF'
           import sys, json
-          m = json.load(sys.stdin)
+          data = sys.stdin.read()
+          if not data.strip():
+            print("ERROR: Empty input to JSON parser", file=sys.stderr)
+            sys.exit(1)
+          m = json.loads(data)
           print(m["packages"][0]["version"])
           PYTHON_EOF
           )
