@@ -62,7 +62,10 @@ pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
     })
 }
 
-pub fn fetch_reqwest_get_with_headers(url: &str, headers: &[(&str, &str)]) -> Result<String, Error> {
+pub fn fetch_reqwest_get_with_headers(
+    url: &str,
+    headers: &[(&str, &str)],
+) -> Result<String, Error> {
     let rt = Runtime::new().unwrap();
     rt.block_on(async {
         let client = reqwest::Client::new();

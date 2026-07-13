@@ -1,5 +1,5 @@
 use crate::easyuser::*;
-use anyhow::{anyhow, Error, Result};
+use anyhow::{Error, Result, anyhow};
 use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -59,7 +59,10 @@ fn get_title(data: &Value) -> String {
 
 fn get_description(data: &Value) -> String {
     let mut desc = String::new();
-    if let Some(text) = data.pointer("/module_dynamic/desc/text").and_then(Value::as_str) {
+    if let Some(text) = data
+        .pointer("/module_dynamic/desc/text")
+        .and_then(Value::as_str)
+    {
         desc.push_str(text);
     }
 
@@ -104,10 +107,7 @@ fn get_description(data: &Value) -> String {
         }
     }
 
-    if let Some(summary) = major
-        .pointer("/opus/summary/text")
-        .and_then(Value::as_str)
-    {
+    if let Some(summary) = major.pointer("/opus/summary/text").and_then(Value::as_str) {
         return summary.to_string();
     }
 
@@ -207,14 +207,13 @@ fn get_imgs(data: &Value) -> String {
 
 fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
     let data = item.pointer("/modules").unwrap_or(&Value::Null);
-    let major = data.pointer("/module_dynamic/major").unwrap_or(&Value::Null);
+    let major = data
+        .pointer("/module_dynamic/major")
+        .unwrap_or(&Value::Null);
     if major.is_null() {
         return None;
     }
-    let typ = major
-        .pointer("/type")
-        .and_then(Value::as_str)
-        .unwrap_or("");
+    let typ = major.pointer("/type").and_then(Value::as_str).unwrap_or("");
 
     let (url, text) = match typ {
         "MAJOR_TYPE_UGC_SEASON" => {
@@ -223,17 +222,28 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string();
-            (url.clone(), format!("合集地址：<a href={}> {}</a>", url, url))
+            (
+                url.clone(),
+                format!("合集地址：<a href={}> {}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_ARTICLE" => {
             let id = major
                 .pointer("/article/id")
                 .and_then(Value::as_u64)
                 .map(|n| n.to_string())
-                .or_else(|| major.pointer("/article/id").and_then(Value::as_str).map(String::from))
+                .or_else(|| {
+                    major
+                        .pointer("/article/id")
+                        .and_then(Value::as_str)
+                        .map(String::from)
+                })
                 .unwrap_or_default();
             let url = format!("https://www.bilibili.com/read/cv{}", id);
-            (url.clone(), format!("专栏地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("专栏地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_ARCHIVE" => {
             let archive = major.pointer("/archive").unwrap_or(&Value::Null);
@@ -242,17 +252,22 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .and_then(Value::as_str)
                 .unwrap_or("")
                 .to_string();
-            let aid = archive.pointer("/aid").and_then(Value::as_u64).map(|n| n.to_string());
+            let aid = archive
+                .pointer("/aid")
+                .and_then(Value::as_u64)
+                .map(|n| n.to_string());
             let id = if use_avid {
-                aid
-                    .as_ref()
+                aid.as_ref()
                     .map(|s| format!("av{}", s))
                     .unwrap_or_else(|| bvid.clone())
             } else {
                 bvid.clone()
             };
             let url = format!("https://www.bilibili.com/video/{}", id);
-            (url.clone(), format!("视频地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("视频地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_COMMON" => {
             let url = major
@@ -285,10 +300,19 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
             let pgc = major.pointer("/pgc").unwrap_or(&Value::Null);
             let url = format!(
                 "https://www.bilibili.com/bangumi/play/ep{}&season_id={}",
-                pgc.pointer("/epid").and_then(Value::as_u64).map(|n| n.to_string()).unwrap_or_default(),
-                pgc.pointer("/season_id").and_then(Value::as_u64).map(|n| n.to_string()).unwrap_or_default()
+                pgc.pointer("/epid")
+                    .and_then(Value::as_u64)
+                    .map(|n| n.to_string())
+                    .unwrap_or_default(),
+                pgc.pointer("/season_id")
+                    .and_then(Value::as_u64)
+                    .map(|n| n.to_string())
+                    .unwrap_or_default()
             );
-            (url.clone(), format!("剧集地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("剧集地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_COURSES" => {
             let id = major
@@ -297,7 +321,10 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .map(|n| n.to_string())
                 .unwrap_or_default();
             let url = format!("https://www.bilibili.com/cheese/play/ss{}", id);
-            (url.clone(), format!("课程地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("课程地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_MUSIC" => {
             let id = major
@@ -306,7 +333,10 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .map(|n| n.to_string())
                 .unwrap_or_default();
             let url = format!("https://www.bilibili.com/audio/au{}", id);
-            (url.clone(), format!("音频地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("音频地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_LIVE" => {
             let id = major
@@ -315,7 +345,10 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .map(|n| n.to_string())
                 .unwrap_or_default();
             let url = format!("https://live.bilibili.com/{}", id);
-            (url.clone(), format!("直播间地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("直播间地址：<a href={}>{}</a>", url, url),
+            )
         }
         "MAJOR_TYPE_LIVE_RCMD" => {
             let mut live_play_info = None;
@@ -330,7 +363,10 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
                 .map(|n| n.to_string())
                 .unwrap_or_default();
             let url = format!("https://live.bilibili.com/{}", room_id);
-            (url.clone(), format!("直播间地址：<a href={}>{}</a>", url, url))
+            (
+                url.clone(),
+                format!("直播间地址：<a href={}>{}</a>", url, url),
+            )
         }
         _ => return None,
     };
@@ -390,8 +426,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     for item in items {
         if hide_goods
-            && item.pointer("/modules/module_dynamic/additional/type")
-                .and_then(Value::as_str) == Some("ADDITIONAL_TYPE_GOODS")
+            && item
+                .pointer("/modules/module_dynamic/additional/type")
+                .and_then(Value::as_str)
+                == Some("ADDITIONAL_TYPE_GOODS")
         {
             continue;
         }
@@ -489,9 +527,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             origin_description.push_str(&origin_des);
         }
 
-        description = description
-            .replace("\r\n", "<br>")
-            .replace('\n', "<br>");
+        description = description.replace("\r\n", "<br>").replace('\n', "<br>");
         let origin_description = origin_description
             .replace("\r\n", "<br>")
             .replace('\n', "<br>");
@@ -521,10 +557,13 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let pub_ts = modules.pointer("/module_author/pub_ts");
         let pub_date = pub_ts
             .and_then(Value::as_i64)
-            .or_else(|| pub_ts.and_then(Value::as_str).and_then(|s| s.parse::<i64>().ok()))
+            .or_else(|| {
+                pub_ts
+                    .and_then(Value::as_str)
+                    .and_then(|s| s.parse::<i64>().ok())
+            })
             .map(timestamp_to_rss)
             .unwrap_or_else(now);
-
 
         let item = ItemBuilder::default()
             .title(Some(no_double_quotes(title)))
@@ -538,7 +577,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .unwrap_or("")
                     .to_string(),
             )))
-            .build(); 
+            .build();
 
         item_vec.push(item);
     }
