@@ -14,6 +14,12 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         bilibili_weekly::get(parameters)
     } else if url == "/bilibili_dynamic" {
         bilibili_dynamic::get(parameters)
+    } else if url == "/bilibili_popular" {
+        bilibili_popular::get(parameters)
+    } else if url == "/bilibili_precious" {
+        bilibili_precious::get(parameters)
+    } else if url == "/bilibili_series" {
+        bilibili_series::get(parameters)
     } else {
         Err(anyhow!("404NotFound"))
     }

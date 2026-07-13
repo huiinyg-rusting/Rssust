@@ -40,7 +40,8 @@ It's worth noting that when running, the binary directory structure should be as
 ```
 
 It's quite strict.
-
+### cookies:
+Some routes depend on cookies, so take a look [guide of cookies](/docs/cookie.html)
 ### Binary:
 
 Early versions may not include binaries; only versions with an "S" suffix will generate binaries.
