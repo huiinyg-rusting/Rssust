@@ -5,6 +5,7 @@ use std::collections::HashMap;
 pub enum ShowToUser {
     Html { res: Result<String, Error> },
     Rss { res: Result<String, Error> },
+    File { res: Result<String, Error>, content_type: String },
 }
 
 ///这个函数相当于模块的注册表
@@ -29,10 +30,8 @@ pub fn root_rules(first_part: &str, second_part: HashMap<String, String>) -> Sho
         ShowToUser::Html {
             res: crate::connect::show_index_doc(),
         }
-    } else if first_part.starts_with("/docs/") {
-        ShowToUser::Html {
-            res: crate::connect::show_doc(first_part),
-        }
+    } else if first_part.starts_with("/docs/") || first_part.starts_with("/index/") {
+        crate::connect::serve_static(first_part)
     } else {
         match request_rules(first_part, second_part) {
             std::result::Result::Ok(i) => ShowToUser::Rss { res: Ok(i) },

@@ -1,4 +1,4 @@
-### [English HERE](/docs/guide_en.html)
+### [English HERE](guide_en.md)
 # What is Rssust? 
 Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，***但目前还在开发***，
 ## 我们希望得到你的帮助
@@ -11,8 +11,8 @@ ___
 ---
 虽然现在Rssust的路由和Rsshub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这**侵犯了你的权利**，请邮件并且找所有可能的方式联系我，我会尽快处理。
 
-如果你想自己做一个路由可以点这里：[路由制作指南——中文](/docs/new_router_cn.html)
-这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类[API DOCS](/docs/api.html)
+如果你想自己做一个路由可以点这里：[路由制作指南——中文](new_router_cn.md)
+这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类[API DOCS](api.md)
 
 ## 对于一般用户使用：
 ### 安装：
@@ -30,7 +30,7 @@ ___
 ```
 比较严苛
 ### cookies:
-有些路由依赖于cookies,所以请看[cookies的指南](/docs/cookie.html)
+有些路由依赖于cookies,所以请看[cookies的指南](cookie.md)
 ### 二进制：
 早期版本可能不会附带二进制，只有版本号带S才会生成二进制
 运行二进制十分简单：解压，然后启动env文件夹下的二进制文件即可

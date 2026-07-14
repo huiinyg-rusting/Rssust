@@ -14,12 +14,12 @@ scraper = "0.27.0"
 rss = "2.1.0"
 chrono = "0.4.45"
 regex = "1.12.4"
-comrak = "0.20"
-walkdir = "2"
+mdbook = "0.4" 
 md-5 = "0.10"
 rand = "0.8"
 base64 = "0.22"
 urlencoding = "2.1"
+bench_scraper = "0.4.1"
 
 [profile.dev]
 incremental = true

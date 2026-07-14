@@ -4,7 +4,7 @@
 **Author:** huiinyg-rusting / AI辅助撰写文档
 **Introduction:** B站热门视频
 **Address:** rssust://bilibili_popular
-**Example:** [rssust://bilibili_popular](/bilibili_popular)
+**Example:** [rssust://bilibili_popular](../bilibili_popular)
 **Parameter:**
 1. **pn**
    Type of parameter: num
