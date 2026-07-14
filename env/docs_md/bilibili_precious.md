@@ -4,7 +4,7 @@
 **Author:** huiinyg-rusting / AI辅助撰写文档
 **Introduction:** B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取
 **Address:** rssust://bilibili_precious
-**Example:** [rssust://bilibili_precious](/bilibili_precious)
+**Example:** [rssust://bilibili_precious](../bilibili_precious)
 **Parameter:**
 1. **disableembed**
    Type of parameter: bool

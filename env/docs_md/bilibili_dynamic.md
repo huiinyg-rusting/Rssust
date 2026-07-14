@@ -5,7 +5,7 @@
 **Introduction:** 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 `pub fn get(para: HashMap<String, String>) -> Result<String, Error>`，位于 `src/router/bilibili_dynamic.rs:405`。内部调用 Bilibili 官方 API `/x/polymer/web-dynamic/v1/feed/space`。
 
 **Address:** `rssust://bilibili_dynamic`
-**Example:** [/bilibili_dynamic?uid=538142100&hideGoods=true](/bilibili_dynamic?uid=538142100&hideGoods=true)
+**Example:** [/bilibili_dynamic?uid=538142100&hideGoods=true](../bilibili_dynamic?uid=538142100&hideGoods=true)
 **Parameter:**
 1. **uid**
    - Type of parameter: string (必填)

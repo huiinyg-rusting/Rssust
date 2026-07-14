@@ -266,16 +266,11 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 #### 执行流程
 
 1. **定位目录**：以二进制文件所在目录为基础，输入目录为 `./docs_md`，输出目录为 `./docs`
-2. **收集文件**：使用 `walkdir::WalkDir` 递归遍历 `docs_md/` 下所有 `.md` 文件
+2. **收集文件**：mdbook干的事
 3. **排序**：按文件名（字母顺序，不区分大小写）排序
 4. **分类**：`docs_md/official/` 下的文件归为"官方"类，其余归为"Router"类，分别生成导航链接
-5. **转换**：使用 `comrak` 库将 Markdown 转为 HTML
-6. **组装**：将 HTML 嵌入带完整样式的页面模板，包含：
-   - 可折叠的侧边栏导航（带搜索功能）
-   - 顶栏（含文章内容搜索）
-   - 代码高亮（highlight.js）
-   - 深色主题 CSS
-7. **输出**：写入 `docs/目录名.html`
+5. **转换**：使用 `mdbook` 库将 Markdown 转为 HTML
+6. **输出**：写入 `docs/目录名.html`
 
 #### 页面功能
 

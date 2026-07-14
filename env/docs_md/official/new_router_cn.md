@@ -37,7 +37,7 @@ pub fn get(para: HashMap<String,String>) -> Result<String, Error> {
 }
 ```
 函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。
-项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在[easyuser_cn.html](/docs/easyuser_cn.html)查看
+项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在[easyuser_cn.html](easyuser_cn.md)查看
 具体的程序逻辑就由你自己编写吧。
 ### 写完怎么注册呢？
 在/src/router/mod.rs中，在最后新建一行，写上 `pub mod 你的路由名;`
@@ -124,4 +124,4 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 3. /src/router/mod.rs以及src/request_rules.rs
    
 #### 这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善
-如果好奇程序构造的，可以看[rogram_explanation_cn](docs/pogram_explanation_cn.html)
+如果好奇程序构造的，可以看[rogram_explanation_cn](pogram_explanation_cn.md)

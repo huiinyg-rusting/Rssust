@@ -2,6 +2,7 @@ pub mod doc;
 pub mod easyuser;
 pub mod request_rules;
 pub mod router;
+pub mod cookies;
 
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
@@ -57,6 +58,15 @@ pub mod connect {
                 ),
                 Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
             },
+            ShowToUser::File { res, content_type } => match res {
+                std::result::Result::Ok(i) => format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\n\r\n{}",
+                    content_type,
+                    i.len(),
+                    i
+                ),
+                Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
+            },
         };
 
         stream.write(response.as_bytes()).unwrap();
@@ -107,6 +117,59 @@ pub mod connect {
 
             Err(_) => Ok(fs::read_to_string(&Path::new("index/404.html"))
                 .context("404 html Operation failed")?),
+        }
+    }
+
+    pub fn mime_type(path: &str) -> &'static str {
+        if path.ends_with(".css") {
+            "text/css; charset=utf-8"
+        } else if path.ends_with(".js") {
+            "application/javascript; charset=utf-8"
+        } else if path.ends_with(".svg") {
+            "image/svg+xml"
+        } else if path.ends_with(".png") {
+            "image/png"
+        } else if path.ends_with(".jpg") || path.ends_with(".jpeg") {
+            "image/jpeg"
+        } else if path.ends_with(".gif") {
+            "image/gif"
+        } else if path.ends_with(".ico") {
+            "image/x-icon"
+        } else if path.ends_with(".woff2") {
+            "font/woff2"
+        } else if path.ends_with(".woff") {
+            "font/woff"
+        } else if path.ends_with(".ttf") {
+            "font/ttf"
+        } else if path.ends_with(".json") {
+            "application/json; charset=utf-8"
+        } else if path.ends_with(".xml") {
+            "application/xml; charset=utf-8"
+        } else {
+            "text/html; charset=utf-8"
+        }
+    }
+
+    pub fn serve_static(path: &str) -> crate::request_rules::ShowToUser {
+        let mime = mime_type(path);
+        let res = show_doc(path);
+
+        if mime == "text/html; charset=utf-8" {
+            return crate::request_rules::ShowToUser::Html { res };
+        }
+
+        let file_exists = match env::current_exe() {
+            std::result::Result::Ok(p) => match p.parent() {
+                Some(d) => d.join(path.trim_matches('/')).exists(),
+                None => false,
+            },
+            std::result::Result::Err(_) => false,
+        };
+
+        if file_exists {
+            crate::request_rules::ShowToUser::File { res, content_type: mime.to_string() }
+        } else {
+            crate::request_rules::ShowToUser::Html { res }
         }
     }
 }

@@ -1,4 +1,4 @@
-### [中文](/docs/guide_cn.html)
+### [中文](guide_cn.md)
 # What is Rssust?
 
 Rssust is an **information aggregation and conversion software** built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, ***but currently still in development***.
@@ -19,8 +19,8 @@ ___
 
 Although Rssust's routers are not on the same scale as Rsshub's in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust's router count can grow, but this may seem somewhat like plagiarism, so it's better to let AI generate its own. Therefore, if this **infringes on your rights**, please email me and contact me through all possible means, and I will handle it as soon as possible.
 
-If you want to create your own router, click here: [Router Development Guide — English](/docs/new_router_en.html)
-Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here [API DOCS](/docs/api.html)
+If you want to create your own router, click here: [Router Development Guide — English](new_router_en.md)
+Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here [API DOCS](api.md)
 
 ## For General Users:
 
@@ -41,7 +41,7 @@ It's worth noting that when running, the binary directory structure should be as
 
 It's quite strict.
 ### cookies:
-Some routes depend on cookies, so take a look [guide of cookies](/docs/cookie.html)
+Some routes depend on cookies, so take a look [guide of cookies](cookie.md)
 ### Binary:
 
 Early versions may not include binaries; only versions with an "S" suffix will generate binaries.

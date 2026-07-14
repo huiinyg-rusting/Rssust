@@ -4,7 +4,7 @@
 **Author:** huiinyg-rusting / AI辅助撰写文档
 **Introduction:** B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频
 **Address:** rssust://bilibili_series
-**Example:** [rssust://bilibili_series?series_id=534502](/bilibili_series?series_id=534502)
+**Example:** [rssust://bilibili_series?series_id=534502](../bilibili_series?series_id=534502)
 **Parameter:**
 1. **series_id**
    Type of parameter: num
