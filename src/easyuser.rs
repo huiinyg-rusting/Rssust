@@ -94,7 +94,7 @@ pub fn load_cookie_header(domain_filter: Option<&str>) -> Result<Option<String>>
         .ok_or_else(|| anyhow!("Could not get executable directory"))?;
     let cookie_path = exe_dir.join("cookies.json");
     let content = fs::read_to_string(cookie_path).map_err(|_| anyhow!("无法读取 cookies.json"))?;
-    let cookies: Value = serde_json::from_str(&content)?;
+    let cookies: Value = serde_json::from_str(content.as_str())?;
     let cookie_array = cookies
         .as_array()
         .ok_or_else(|| anyhow!("cookies.json 格式错误, 预期数组"))?;

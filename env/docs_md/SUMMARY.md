@@ -12,6 +12,7 @@
 # 路由
 - [bilibili_dynamic](bilibili_dynamic.md)
 - [bilibili_precious](bilibili_precious.md)
+- [bilibili_collection](bilibili_collection.md)
 - [bilibili_popular](bilibili_popular.md)
 - [bilibili_weekly](bilibili_weekly.md)
 - [bilibili_series](bilibili_series.md)
