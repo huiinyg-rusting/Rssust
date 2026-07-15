@@ -1,4 +1,4 @@
-### [中文](/docs/new_router_cn.html)
+### [中文](new_router_cn.md)
 # Router Development Guide
 This document is for both humans and AI to read.
 
@@ -41,7 +41,7 @@ pub fn get(para: HashMap<String,String>) -> Result<String, Error> {
 ```
 The function signature and return type cannot be changed! (If you don't use the `para` variable, you can write it as `_para` so the compiler won't warn you). The purpose of `para` is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.
 
-The project has encapsulated some convenient functions for users, which you can check in `src/easyuser.rs` or view at [easyuser_cn.html](/docs/easyuser_cn.html).
+The project has encapsulated some convenient functions for users, which you can check in `src/easyuser.rs` or view at [easyuser_cn.html](easyuser_cn.md).
 
 The specific program logic is up to you to write.
 
@@ -133,4 +133,4 @@ You need to submit:
 3. `/src/router/mod.rs` and `src/request_rules.rs`
 
 #### This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!
-If you are insterested in pogram explanation,please turn to [rogram_explanation_cn](docs/pogram_explanation_cn.hetml),but now it only has Chinese.
+If you are insterested in pogram explanation,please turn to [pogram_explanation_cn](pogram_explanation_cn.md),but now it only has Chinese.

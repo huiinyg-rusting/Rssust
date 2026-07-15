@@ -42,7 +42,7 @@ pub fn get(para:HashMap<String, String>) -> Result<String,Error>{
                 format!(
                     r#"<iframe width="640" height="360" src="https://www.bilibili.com/blackboard/html5mobileplayer.html?aid={}&amp;cid=undefined&amp;bvid={}" frameborder="0" allowfullscreen="" referrerpolicy="no-referrer"></iframe><br><img src="{}" referrerpolicy="no-referrer"><br>{}"#,
                     video["aid"]
-                        .as_u64()
+                        .as_i64()
                         .ok_or_else(|| anyhow!("缺少 aid 字段"))?,
                     video["bvid"]
                         .as_str()
@@ -56,12 +56,12 @@ pub fn get(para:HashMap<String, String>) -> Result<String,Error>{
                 )
             }};
         
-
+        let pubdate = timestamp_to_rss(video["pubdate"].as_i64().ok_or_else(|| anyhow!("bilibili_collection无法找到pubdate项"))?);
         let item = ItemBuilder::default()
             .title(Some(no_double_quotes(video["title"].to_string())))
-            .link(format!("https://www.bilibili.com/video/{}",video["bvid"]))
+            .link(format!("https://www.bilibili.com/video/{}",no_double_quotes(video["bvid"].to_string())))
             .description(description)
-            .pub_date(now())
+            .pub_date(pubdate)
             .author(author.clone())
             .build();
         item_vec.push(item);}

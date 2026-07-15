@@ -1,4 +1,4 @@
-### [English HERE](/docs/new_router_en.html)
+### [English HERE](new_router_en.md)
 # 路由制作指南
 本文可以给人看，也可以给AI看
 在开发前，你需要：
