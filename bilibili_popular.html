@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>api</title>
+        <title>bilibili_popular</title>
 
 
         <!-- Custom HTML head -->
@@ -24,9 +24,9 @@
         <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css"">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css"">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css"">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -141,7 +141,7 @@
                     <h1 class="menu-title"></h1>
 
                     <div class="right-buttons">
-                        <a href="print.html"" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -175,32 +175,39 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
-<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
-<hr />
-<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
-<ul>
-<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
-Bilibili up主的动态</li>
-<li><a href="bilibili_popular.html">bilibili_popular</a>
-B站热门视频</li>
-<li><a href="bilibili_precious.html">bilibili_precious</a>
-B站入站必刷宝藏视频</li>
-<li><a href="bilibili_weekly.html">bilibili_weekly</a>
-Bilibili最新一期的每周精选</li>
-<li><a href="bilibili_series.html">bilibili_seried</a>
-B站系列（！！！只能系列，不能合集）视频列表</li>
-</ul>
+                        <h1 id="router-name-bilibili_popular"><a class="header" href="#router-name-bilibili_popular">Router-name: bilibili_popular</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档
+<strong>Introduction:</strong> B站热门视频
+<strong>Address:</strong> rssust://bilibili_popular
+<strong>Example:</strong> <a href="../bilibili_popular">rssust://bilibili_popular</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>pn</strong>
+Type of parameter: num
+Default value: 1
+Meaning: 页码</li>
+<li><strong>ps</strong>
+Type of parameter: num
+Default value: 20
+Meaning: 每页项数</li>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述
+<strong>Environment Variables:</strong> no</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="guide_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="bilibili_collection.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="new_router_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="bilibili_weekly.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -210,11 +217,11 @@ B站系列（！！！只能系列，不能合集）视频列表</li>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="guide_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="bilibili_collection.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="new_router_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="bilibili_weekly.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

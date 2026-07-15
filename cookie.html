@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>api</title>
+        <title>cookie</title>
 
 
         <!-- Custom HTML head -->
@@ -175,32 +175,35 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
-<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
-<hr />
-<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
-<ul>
-<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
-Bilibili up主的动态</li>
-<li><a href="bilibili_popular.html">bilibili_popular</a>
-B站热门视频</li>
-<li><a href="bilibili_precious.html">bilibili_precious</a>
-B站入站必刷宝藏视频</li>
-<li><a href="bilibili_weekly.html">bilibili_weekly</a>
-Bilibili最新一期的每周精选</li>
-<li><a href="bilibili_series.html">bilibili_seried</a>
-B站系列（！！！只能系列，不能合集）视频列表</li>
-</ul>
+                        <h1 id="cookies-配置指南"><a class="header" href="#cookies-配置指南">cookies 配置指南</a></h1>
+<p>因为有些路由需要cookies,而cookies又不好分发，故作此教程以告诉导出哪个网站的cookies,又或者是否需要登录或者额外配置,cookies 示例格式：
+Because some routes require cookies, and cookies are hard to distribute, this tutorial was made to show how to export cookies from a website, or whether login or additional setup is needed. Example cookie format:
+{
+"name": "session_id",
+"value": "abc123",
+"domain": ".example.com",
+"path": "/",
+"secure": true,
+"httpOnly": true,
+"sameSite": "Lax",
+"expirationDate": 1893456000
+}
+You can use the browser plugin Cookie-Editor to export it.</p>
+<p>Tips:现在自动cookies爬取已经出了，只要加<code> 二进制文件 cookies 浏览器名</code>
+但是实测linux下的firefox出了一些问题，上游crate的问题，可以通过链接文件夹修复</p>
+<h2 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h2>
+<p>bilibili.com
+无需登录</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="guide_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="easyuser_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="new_router_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="guide_en.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -210,11 +213,11 @@ B站系列（！！！只能系列，不能合集）视频列表</li>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="guide_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="easyuser_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="new_router_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="guide_en.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

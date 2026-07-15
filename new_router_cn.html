@@ -1,313 +1,183 @@
-<!DOCTYPE html>
-            <html lang="zh-CN">
-            <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>new_router_cn</title>
-            <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        color: #e0e0e0;
-    }
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>new_router_cn</title>
 
-    .page-shell { display: flex; min-height: 100vh; }
-    .current-page-badge {
-    display: inline-flex;
-    align-items: center;
 
-    /* 放大关键属性 */
-    padding: 10px 15px;      /* 更大的内边距 */
-    font-size: 1.2rem;       /* 明显放大的字体 */
-    font-weight: 600;
+        <!-- Custom HTML head -->
 
-    /* 视觉风格 */
-    background-color: #7b2fff59; /* 亮蓝色背景 */
-    color: white;              /* 白色文字 */
-    border-radius: 50px;       /* 完全圆角胶囊形状 */
-    box-shadow: 0 4px 6px rgba(86, 9, 145, 0.3); /* 彩色阴影 */
-    }
-    .sidebar {
-    flex: 0 0 260px;
-    width: 260px;
-    background: rgba(10, 5, 20, 0.96);
-        padding: 22px;
-        border-right: 1px solid #7b2fff59;
-        overflow-y: auto;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        transition: flex-basis 0.25s ease, width 0.25s ease, padding 0.25s ease, border-right 0.25s ease;
-    }
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
 
-    .sidebar.collapsed {
-    flex: 0 0 0;
-    width: 0;
-    padding-left: 0;
-    padding-right: 0;
-    border-right: none;
-    overflow: hidden;
-    }
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-    .sidebar h3 {
-    font-size: 16px;
-    color: #b026ff;
-    margin-bottom: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    }
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
-    .sidebar-section-title {
-    font-size: 13px;
-    color: #8888cc;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 18px 0 8px 0;
-    padding-bottom: 4px;
-    border-bottom: 1px solid rgba(123, 47, 255, 0.2);
-    }
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css"">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css"">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css"">
 
-    .sidebar ul { list-style: none; padding: 0; }
-    .sidebar li { margin-bottom: 8px; }
-    .sidebar a {
-    display: block;
-    padding: 10px 14px;
-    border-radius: 8px;
-    color: #c9a0ff;
-    text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
-    }
-    .sidebar a:hover {
-    background: rgba(123, 47, 255, 0.18);
-        color: #fff;
-    }
+        <!-- Custom theme stylesheets -->
 
-    .sidebar-search {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid rgba(123, 47, 255, 0.3);
-        border-radius: 8px;
-        background: rgba(0, 0, 0, 0.3);
-        color: #e0e0e0;
-        font-size: 13px;
-        margin-bottom: 12px;
-        outline: none;
-    }
-    .sidebar-search:focus {
-    border-color: #b026ff;
-    }
-    .sidebar-search::placeholder {
-    color: #6666aa;
-    }
 
-    .main-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: auto;
-    transition: width 0.25s ease;
-    }
-
-    .main-container.expanded {
-    width: auto;
-    }
-
-    .top-bar {
-    padding: 18px 24px;
-    background: rgba(0, 0, 0, 0.45);
-        border-bottom: 1px solid rgba(123, 47, 255, 0.3);
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        position: sticky;
-        top: 0;
-        z-index: 5;
-    }
-
-    .expand-btn {
-    padding: 9px 16px;
-    border: none;
-    border-radius: 8px;
-    background: #7b2fff;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    }
-    .expand-btn:hover { background: #b026ff; }
-
-    .brand {
-    font-size: 20px;
-    font-weight: 700;
-    color: #b026ff;
-    text-decoration: none;
-    margin-right: 4px;
-    }
-    .brand:hover { color: #d2a8ff; }
-
-    .nav-link {
-    color: #c9a0ff;
-    text-decoration: none;
-    font-size: 14px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: background 0.2s;
-    }
-    .nav-link:hover { background: rgba(123, 47, 255, 0.18); color: #fff; }
-
-    .top-bar .spacer { flex: 1; }
-
-    .article-search {
-    padding: 8px 14px;
-    border: 1px solid rgba(123, 47, 255, 0.3);
-        border-radius: 8px;
-        background: rgba(0, 0, 0, 0.3);
-        color: #e0e0e0;
-        font-size: 13px;
-        outline: none;
-        width: 200px;
-    }
-    .article-search:focus {
-    border-color: #b026ff;
-    }
-    .article-search::placeholder {
-    color: #6666aa;
-    }
-
-    .content-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    padding: 26px 28px 32px;
-    }
-
-    .content-wrapper::-webkit-scrollbar { width: 10px; }
-    .content-wrapper::-webkit-scrollbar-track { background: rgba(10, 5, 20, 0.7); }
-    .content-wrapper::-webkit-scrollbar-thumb { background: rgba(123, 47, 255, 0.55); border-radius: 6px; }
-
-    .card {
-    background: rgba(20, 15, 40, 0.92);
-        border: 1px solid rgba(123, 47, 255, 0.35);
-        border-radius: 16px;
-        padding: 28px 30px;
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-        line-height: 1.85;
-    }
-
-    pre {
-    background: #161b22;
-    padding: 18px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(123, 47, 255, 0.3);
-        overflow-x: auto;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    code {
-    font-family: 'Fira Code', 'Courier New', Consolas, monospace;
-    color: #ff79c6;
-    font-size: 14px;
-    }
-
-    .hljs {
-    background: #161b22 !important;
-    color: #c9d1d9 !important;
-    }
-    .hljs-keyword { color: #ff7b72; }
-    .hljs-string { color: #a5d6ff; }
-    .hljs-number { color: #79c0ff; }
-    .hljs-comment { color: #8b949e; font-style: italic; }
-    .hljs-function, .hljs-title { color: #d2a8ff; }
-    .hljs-built_in, .hljs-type { color: #ffa657; }
-
-    blockquote {
-    border-left: 4px solid #b026ff;
-    padding-left: 16px;
-    color: #a0a0b0;
-    margin: 14px 0;
-    }
-
-    h1, h2, h3 { color: #b026ff; margin: 18px 0 12px; }
-    a { color: #b026ff; }
-    img { max-width: 100%; border-radius: 10px; }
-    table { border-collapse: collapse; width: 100%; margin: 18px 0; }
-    th, td { border: 1px solid rgba(123, 47, 255, 0.35); padding: 12px 14px; text-align: left; }
-    th { background: rgba(123, 47, 255, 0.18); color: #b026ff; }
-    tr:nth-child(even) { background: rgba(123, 47, 255, 0.06); }
-
-    .search-highlight {
-    background: #b026ff;
-    color: #fff;
-    padding: 1px 4px;
-    border-radius: 3px;
-    }
-
-    .footer-mark {
-    margin-top: 26px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(123, 47, 255, 0.2);
-        color: #8888aa;
-        text-align: center;
-        font-size: 13px;
-    }
-
-    .sidebar li.hidden { display: none; }
-
-    .nav-separator {
-    height: 1px;
-    background: rgba(123, 47, 255, 0.2);
-        margin: 12px 0;
-    }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
-    <script>hljs.highlightAll();</script>
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
     </head>
     <body>
-    <div class="page-shell">
-    <div class="sidebar" id="sidebar">
-    <h3>
-    📚 文档导航
-    <button class="toggle-btn" onclick="toggleSidebar()">收起</button>
-    </h3>
-    <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="搜索目录..." oninput="filterSidebar()">
-    <div class="sidebar-section-title">官方</div>
-    <ul id="officialLinks">
-    <li><a href='api.html'>api</a></li><li><a href='config.html'>config</a></li><li><a href='easyuser_cn.html'>easyuser_cn</a></li><li><a href='guide_cn.html'>guide_cn</a></li><li><a href='guide_en.html'>guide_en</a></li><li><a href='new_router_cn.html'>new_router_cn</a></li><li><a href='new_router_en.html'>new_router_en</a></li><li><a href='pogram_explanation_cn.html'>pogram_explanation_cn</a></li>
-    </ul>
-    <div class="nav-separator"></div>
-    <div class="sidebar-section-title">Router</div>
-    <ul id="routerLinks">
-    <li><a href='bilibili_dynamic.html'>bilibili_dynamic</a></li><li><a href='bilibili_weekly.html'>bilibili_weekly</a></li>
-    </ul>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
     </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
-    <div class="main-container" id="main">
-    <div class="top-bar">
-    <button class="expand-btn" onclick="toggleSidebar()">☰ 目录</button>
-    <a href="https://github.com/huiinyg-rusting/Rssust" class="brand">Rssust</a>
-    <a href="/" class="nav-link">主页</a>
-    <span class="spacer"></span>
-    <div class="current-page-badge">
-    <span class="badge-icon">📄</span>
-    <span class="badge-text" id="page-title">new_router_cn</span>
-    </div>
-    <input type="text" class="article-search" id="articleSearch" placeholder="搜索文章内容..." oninput="searchContent()">
-    </div>
-    <div class="content-wrapper">
-    <div class="card" id="contentCard">
-    <h3><a href="/Rssust/new_router_en.html">English HERE</a></h3>
-<h1>路由制作指南</h1>
-<p>本文可以给人看，也可以给AI看<br />
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html"" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="english-here"><a class="header" href="#english-here"><a href="new_router_en.html">English HERE</a></a></h3>
+<h1 id="路由制作指南"><a class="header" href="#路由制作指南">路由制作指南</a></h1>
+<p>本文可以给人看，也可以给AI看
 在开发前，你需要：</p>
 <ul>
 <li>一个标准的cargo环境</li>
@@ -315,7 +185,7 @@
 <li>编辑器</li>
 <li><strong>基础</strong>rust的知识,最好是通过官方书籍，以及有一些std库里频率很高的方法也要学会，比如给可恢复错误做处理的几种方法之类的;</li>
 <li>RSS的知识 可以通过：<a href="https://www.rssboard.org/rss-specification">官方RSS 2.0.11 英文</a> 或者 <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">博客园-小y 翻译的RSS 2.0.10 中文</a>进行学习</li>
-<li>RSS Crates 的知识，懂得如何构建一个RSS <a href="https://docs.rs/rss/latest/rss/">官方英文文档</a><br />
+<li>RSS Crates 的知识，懂得如何构建一个RSS <a href="https://docs.rs/rss/latest/rss/">官方英文文档</a>
 <strong>尤其</strong>是<a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a>和<a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
 <li>因为不同上游API,你需要学会不同的方法，比如说你的上游API是json格式，你其实实际大概率只需要学会serde_json Crates的.pointer()和.get()这两种方法，而如果你需要直接处理html和DOM,你需要<a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a>的文档中推荐的方法，以及避免导致panic！！！</li>
 </ul>
@@ -328,27 +198,33 @@
 <li>每一个路由只能对应一种功能;</li>
 </ol>
 <p>开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事</p>
-<h3>导入库</h3>
-<pre><code class="language-rust">use std::collections::HashMap;
+<h3 id="导入库"><a class="header" href="#导入库">导入库</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
 use crate::easyuser::*;
 use anyhow::*;
 use rss::*;
-</code></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>上面这几个库<strong>必须导入</strong>，下面的而看需要导入</p>
-<pre><code class="language-rust">use serde_json::Value;//json用的
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;//json用的
 use scraper::*;//html用的
-</code></pre>
-<h3>每个路由的主函数规范长这样：</h3>
-<pre><code class="language-rust">pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+<span class="boring">}</span></code></pre></pre>
+<h3 id="每个路由的主函数规范长这样"><a class="header" href="#每个路由的主函数规范长这样">每个路由的主函数规范长这样：</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
 }
-</code></pre>
-<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。<br />
-项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="/Rssust/easyuser_cn.html">easyuser_cn.html</a>查看<br />
+<span class="boring">}</span></code></pre></pre>
+<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。
+项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.html</a>查看
 具体的程序逻辑就由你自己编写吧。</p>
-<h3>写完怎么注册呢？</h3>
-<p>在/src/router/mod.rs中，在最后新建一行，写上 <code>pub mod 你的路由名;</code><br />
-然后再在src/request_rules.rs中的request_rules()函数加一个else if 分支，条件为url == &quot;/路由名&quot;（仿照其他分支的例子抄），在{}中用绝调用你的函数，一般而言，路径是 <code>你的路由名::get(parameters)</code> 。</p>
-<h3>注册完怎么运行呢？</h3>
+<h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
+<p>在/src/router/mod.rs中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
+然后再在src/request_rules.rs中的request_rules()函数加一个else if 分支，条件为url == "/路由名"（仿照其他分支的例子抄），在{}中用绝调用你的函数，一般而言，路径是 <code>你的路由名::get(parameters)</code> 。</p>
+<h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
 <p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
 <pre><code class="language-sh">├── cookies.json
 ├── docs_md
@@ -361,22 +237,22 @@ use scraper::*;//html用的
 └── rssust
 </code></pre>
 <p>我还写了一个脚本叫build.sh供用户使用（目前只做了Linux系统的脚本，Windows系统用户可以自己做一个脚本或者手动操作），其内容是 编译，拷贝（把/target/debug/rssust拷贝到/env，接着运行。</p>
-<h3>Cookies的防止</h3>
-<p>在与二进制文件同目录下的<code>cookies.json</code>中如下：<br />
-示例格式：<br />
-{<br />
-&quot;name&quot;: &quot;session_id&quot;,<br />
-&quot;value&quot;: &quot;abc123&quot;,<br />
-&quot;domain&quot;: &quot;.example.com&quot;,<br />
-&quot;path&quot;: &quot;/&quot;,<br />
-&quot;secure&quot;: true,<br />
-&quot;httpOnly&quot;: true,<br />
-&quot;sameSite&quot;: &quot;Lax&quot;,<br />
-&quot;expirationDate&quot;: 1893456000<br />
-}<br />
-所有的cookies挤在同一个json文件，程序启动时就会导入。<br />
+<h3 id="cookies的防止"><a class="header" href="#cookies的防止">Cookies的防止</a></h3>
+<p>在与二进制文件同目录下的<code>cookies.json</code>中如下：
+示例格式：
+{
+"name": "session_id",
+"value": "abc123",
+"domain": ".example.com",
+"path": "/",
+"secure": true,
+"httpOnly": true,
+"sameSite": "Lax",
+"expirationDate": 1893456000
+}
+所有的cookies挤在同一个json文件，程序启动时就会导入。
 Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
-<h3>文档的编写！</h3>
+<h3 id="文档的编写"><a class="header" href="#文档的编写">文档的编写！</a></h3>
 <p>在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：</p>
 <pre><code class="language-markdown"># Router-name: 
 **Commit time:** 
@@ -406,11 +282,11 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
    Meaning: 内嵌视频
 2. 接下来如法炮制
 </code></pre>
-<p>注意：必填的项目把默认值设为null<br />
-其中的参数名称跟在序号后面，用<code>** **</code>包裹强调<br />
-<strong>Type of parameter:</strong> 填类型，自己定<br />
-<strong>Default value:</strong> 默认值，要符合<code>Type of parameter</code><br />
-<strong>Meaning:</strong> 参数的含义<br />
+<p>注意：必填的项目把默认值设为null
+其中的参数名称跟在序号后面，用<code>** **</code>包裹强调
+<strong>Type of parameter:</strong> 填类型，自己定
+<strong>Default value:</strong> 默认值，要符合<code>Type of parameter</code>
+<strong>Meaning:</strong> 参数的含义
 9. <strong>Environment Variables:</strong> 可能用到的环境变量，填no,或者空着，另起一行，像下面的示例</p>
 <pre><code class="language-markdown">**Parameter:** 
 1. **disableembed** 
@@ -420,77 +296,66 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
 2. 接下来如法炮制
 </code></pre>
 <p>注意：必填的项目把默认值设为null，每个项目的意思参考<strong>Parameter:</strong> 的子项</p>
-<h3>最后一步：提交！</h3>
-<p>使用git提交前，先运行<code>cargo fmt</code>，这可以使别人更好的识别你的代码<br />
+<h3 id="最后一步提交"><a class="header" href="#最后一步提交">最后一步：提交！</a></h3>
+<p>使用git提交前，先运行<code>cargo fmt</code>，这可以使别人更好的识别你的代码
 你需要提交的有：</p>
 <ol>
 <li>/src/router/你的路由名.rs</li>
 <li>env/docs_md/路由名.md (一般情况下请不要提交您的<code>路由名.html</code>文件)</li>
 <li>/src/router/mod.rs以及src/request_rules.rs</li>
 </ol>
-<h4>这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善</h4>
-<p>如果好奇程序构造的，可以看<a href="Rssust/pogram_explanation_cn.html">rogram_explanation_cn</a></p>
+<h4 id="这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善"><a class="header" href="#这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善">这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善</a></h4>
+<p>如果好奇程序构造的，可以看<a href="pogram_explanation_cn.html">rogram_explanation_cn</a></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="api.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="easyuser_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="api.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="easyuser_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
 
     </div>
-    <div class="footer-mark">
-    2026 - Power by rust and made for Rssust
-    </div>
-    </div>
-    </div>
-    </div>
-
-    <script>
-    function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-        const main = document.getElementById('main');
-        sidebar.classList.toggle('collapsed');
-        main.classList.toggle('expanded');
-    }
-
-    function filterSidebar() {
-    const query = document.getElementById('sidebarSearch').value.toLowerCase();
-        document.querySelectorAll('#officialLinks li, #routerLinks li').forEach(li => {
-        const text = li.textContent.toLowerCase();
-        li.classList.toggle('hidden', !text.includes(query));
-    });
-    }
-
-    function searchContent() {
-    const query = document.getElementById('articleSearch').value.trim().toLowerCase();
-        const card = document.getElementById('contentCard');
-        if (!query) {
-            if (card.dataset.originalHtml) {
-                card.innerHTML = card.dataset.originalHtml;
-                delete card.dataset.originalHtml;
-                hljs.highlightAll();
-    }
-    return;
-    }
-    if (!card.dataset.originalHtml) {
-        card.dataset.originalHtml = card.innerHTML;
-    }
-    const original = card.dataset.originalHtml;
-    const temp = document.createElement('div');
-        temp.innerHTML = original;
-        const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
-        const nodesToReplace = [];
-        while (walker.nextNode()) {
-            const node = walker.currentNode;
-            if (node.textContent.toLowerCase().includes(query)) {
-                nodesToReplace.push(node);
-    }
-    }
-    for (const node of nodesToReplace) {
-        const span = document.createElement('span');
-        const escaped = query.replace(/[.*+?^${}()|[\]\\\\]/g, '\\\\$&');
-        span.innerHTML = node.textContent.replace(
-            new RegExp('(' + escaped + ')', 'gi'),
-                                '<span class="search-highlight">$1</span>'
-        );
-        node.parentNode.replaceChild(span, node);
-    }
-    card.innerHTML = temp.innerHTML;
-    }
-    </script>
     </body>
-    </html>
+</html>

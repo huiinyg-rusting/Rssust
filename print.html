@@ -1,0 +1,1077 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title></title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="中文"><a class="header" href="#中文"><a href="new_router_cn.html">中文</a></a></h3>
+<h1 id="router-development-guide"><a class="header" href="#router-development-guide">Router Development Guide</a></h1>
+<p>This document is for both humans and AI to read.</p>
+<p>Before you start developing, you need:</p>
+<ul>
+<li>A standard Cargo environment</li>
+<li>Git version control system</li>
+<li>An editor</li>
+<li><strong>Basic</strong> Rust knowledge, preferably through the official book, and familiarity with frequently used methods in the std library, such as various error handling methods for recoverable errors, etc.</li>
+<li>RSS knowledge from: <a href="https://www.rssboard.org/rss-specification">Official RSS 2.0.11 English</a> or <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">Blog Garden - Translated by Xiao Y RSS 2.0.10 Chinese</a></li>
+<li>Knowledge of RSS Crates, understanding how to build an RSS feed. <a href="https://docs.rs/rss/latest/rss/">Official English Documentation</a>
+<strong>Especially</strong> <a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a> and <a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>Since different upstream APIs have different formats, you need to learn different methods. For example, if your upstream API is in JSON format, you likely only need to learn the <code>.pointer()</code> and <code>.get()</code> methods from the serde_json Crate. If you need to directly process HTML and DOM, you need the methods recommended in the <a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a> documentation, and be careful to avoid causing panic!!!</li>
+</ul>
+<p>You can create your own .rs file under <code>/src/router</code>, but there are some requirements:</p>
+<ol>
+<li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
+<li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
+<li>The filename part (excluding the .rs extension) becomes your router name</li>
+<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
+<li>Each router can only correspond to one function</li>
+</ol>
+<p>Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+<span class="boring">}</span></code></pre></pre>
+<p>The above libraries <strong>must be imported</strong>. Import the following as needed:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;  // for JSON
+use scraper::*;  // for HTML
+<span class="boring">}</span></code></pre></pre>
+<h3 id="the-main-function-signature-for-each-router-should-look-like-this"><a class="header" href="#the-main-function-signature-for-each-router-should-look-like-this">The main function signature for each router should look like this:</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+<span class="boring">}</span></code></pre></pre>
+<p>The function signature and return type cannot be changed! (If you don't use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won't warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
+<p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="easyuser_cn.html">easyuser_cn.html</a>.</p>
+<p>The specific program logic is up to you to write.</p>
+<h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
+<p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
+<p>Then in the <code>request_rules()</code> function in <code>src/request_rules.rs</code>, add an <code>else if</code> branch with the condition <code>url == "/router_name"</code> (follow the pattern of other branches), and call your function in the <code>{}</code> block. Generally, the path is <code>your_router_name::get(parameters)</code>.</p>
+<h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
+<p>I'm very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>I've also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
+<h3 id="cookie-management"><a class="header" href="#cookie-management">Cookie Management</a></h3>
+<p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
+<p>Example format:</p>
+<pre><code class="language-json">{
+  "name": "session_id",
+  "value": "abc123",
+  "domain": ".example.com",
+  "path": "/",
+  "secure": true,
+  "httpOnly": true,
+  "sameSite": "Lax",
+  "expirationDate": 1893456000
+}
+</code></pre>
+<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
+<p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
+<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing!</a></h3>
+<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I'll introduce them anyway:</p>
+<ol>
+<li><strong>Router-name:</strong> Fill in the router name</li>
+<li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
+<li><strong>Cookies?:</strong> Two cases: <code>no</code> or <code>yes</code>, with optional remarks after</li>
+<li><strong>Author:</strong> Submitter, write your GitHub username</li>
+<li><strong>Introduction:</strong> Write a brief introduction (note: if the platform is mainly in a certain language, use that language)</li>
+<li><strong>Address:</strong> Fill in <code>rssust://router_name</code></li>
+<li><strong>Example:</strong> Optional; if included, use a hyperlink: <code>[fill Address same as above](/router_name)</code></li>
+<li><strong>Parameter:</strong> This means HTTP GET parameters that might be used. You can fill in <code>no</code>, leave it empty, or start a new line with the following format:</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: Embedded videos
+2. Continue similarly for other parameters
+</code></pre>
+<p>The parameter name follows the number, wrapped with <code>** **</code> for emphasis.</p>
+<p><strong>Type of parameter:</strong> Fill in the type, define it yourself
+<strong>Default value:</strong> Default value, must conform to the <code>Type of parameter</code>
+<strong>Meaning:</strong> The meaning of the parameter</p>
+<h3 id="final-step-submit"><a class="header" href="#final-step-submit">Final Step: Submit!</a></h3>
+<p>Before submitting with git, run <code>cargo fmt</code> first. This helps others better understand your code.</p>
+<p>You need to submit:</p>
+<ol>
+<li><code>/src/router/your_router_name.rs</code></li>
+<li><code>env/docs_md/router_name.md</code> (generally please do not submit your <code>router_name.html</code> file)</li>
+<li><code>/src/router/mod.rs</code> and <code>src/request_rules.rs</code></li>
+</ol>
+<h4 id="this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code"><a class="header" href="#this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code">This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!</a></h4>
+<p>If you are insterested in pogram explanation,please turn to <a href="pogram_explanation_cn.html">pogram_explanation_cn</a>,but now it only has Chinese.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="about-config"><a class="header" href="#about-config">About Config</a></h1>
+<h1 id="关于配置"><a class="header" href="#关于配置">关于配置</a></h1>
+<blockquote>
+<p>In text Edition
+Sever Config is not available!
+But it won't be diffcult to Improve</p>
+</blockquote>
+<blockquote>
+<p>在内部测试版，
+服务器配置是不可用的！
+但这不会很难完善</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="english-here"><a class="header" href="#english-here"><a href="guide_en.html">English HERE</a></a></h3>
+<h1 id="what-is-rssust"><a class="header" href="#what-is-rssust">What is Rssust?</a></h1>
+<p>Rssust是一个使用Rust语言做的<strong>信息聚合转换软件</strong>，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，<em><strong>但目前还在开发</strong></em>，</p>
+<h2 id="我们希望得到你的帮助"><a class="header" href="#我们希望得到你的帮助">我们希望得到你的帮助</a></h2>
+<p>厌倦了<strong>庞大的内存占用和缓慢的运行速度</strong>以及<strong>依赖于别人</strong>建的Rsshub服务器但是有一天居然停服了，或者你干脆就是个<strong>Rust迷</strong>？</p>
+<hr />
+<p>插个U盘在别的电脑，然后<em><strong>双击</strong></em>打开二进制的程序和一个绿色的RSS客户端就可以在别人电脑上使用RSS，而不是费尽心思的去找别人的服务器。让每个人承担自己的算力反而拥有更多的稳定性。</p>
+<hr />
+<h5 id="那么本项目是一个本地运行项目吗并不是更多的是希望本地运行但是如果你家有台nas或者是有财力建服务器的就当我没说"><a class="header" href="#那么本项目是一个本地运行项目吗并不是更多的是希望本地运行但是如果你家有台nas或者是有财力建服务器的就当我没说">那么本项目是一个本地运行项目吗？并不是，<em>更多的是希望本地运行</em>，但是如果你家有台NAS或者是有财力建服务器的就当我没说，</a></h5>
+<h2 id="但是也不妨试一下rssust"><a class="header" href="#但是也不妨试一下rssust"><strong>但是也不妨试一下Rssust</strong>。</a></h2>
+<p>虽然现在Rssust的路由和Rsshub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这<strong>侵犯了你的权利</strong>，请邮件并且找所有可能的方式联系我，我会尽快处理。</p>
+<p>如果你想自己做一个路由可以点这里：<a href="new_router_cn.html">路由制作指南——中文</a>
+这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类<a href="api.html">API DOCS</a></p>
+<h2 id="对于一般用户使用"><a class="header" href="#对于一般用户使用">对于一般用户使用：</a></h2>
+<h3 id="安装"><a class="header" href="#安装">安装：</a></h3>
+<p>值得一提的是，运行时，二进制的目录结构如下所示：</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>比较严苛</p>
+<h3 id="cookies"><a class="header" href="#cookies">cookies:</a></h3>
+<p>有些路由依赖于cookies,所以请看<a href="cookie.html">cookies的指南</a></p>
+<h3 id="二进制"><a class="header" href="#二进制">二进制：</a></h3>
+<p>早期版本可能不会附带二进制，只有版本号带S才会生成二进制
+运行二进制十分简单：解压，然后启动env文件夹下的二进制文件即可</p>
+<h3 id="从源码构建"><a class="header" href="#从源码构建">从源码构建：</a></h3>
+<p>Linux用户：</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust docs
+</code></pre>
+<p>然后没有版本更新的时候，你可以输入：</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>来启动
+Windows用户：CMD（未经验证）</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe docs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
+<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
+<hr />
+<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
+<ul>
+<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
+Bilibili up主的动态</li>
+<li><a href="bilibili_popular.html">bilibili_popular</a>
+B站热门视频</li>
+<li><a href="bilibili_precious.html">bilibili_precious</a>
+B站入站必刷宝藏视频</li>
+<li><a href="bilibili_weekly.html">bilibili_weekly</a>
+Bilibili最新一期的每周精选</li>
+<li><a href="bilibili_series.html">bilibili_seried</a>
+B站系列（！！！只能系列，不能合集）视频列表</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="english-here-1"><a class="header" href="#english-here-1"><a href="new_router_en.html">English HERE</a></a></h3>
+<h1 id="路由制作指南"><a class="header" href="#路由制作指南">路由制作指南</a></h1>
+<p>本文可以给人看，也可以给AI看
+在开发前，你需要：</p>
+<ul>
+<li>一个标准的cargo环境</li>
+<li>git 版本管理系统</li>
+<li>编辑器</li>
+<li><strong>基础</strong>rust的知识,最好是通过官方书籍，以及有一些std库里频率很高的方法也要学会，比如给可恢复错误做处理的几种方法之类的;</li>
+<li>RSS的知识 可以通过：<a href="https://www.rssboard.org/rss-specification">官方RSS 2.0.11 英文</a> 或者 <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">博客园-小y 翻译的RSS 2.0.10 中文</a>进行学习</li>
+<li>RSS Crates 的知识，懂得如何构建一个RSS <a href="https://docs.rs/rss/latest/rss/">官方英文文档</a>
+<strong>尤其</strong>是<a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a>和<a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>因为不同上游API,你需要学会不同的方法，比如说你的上游API是json格式，你其实实际大概率只需要学会serde_json Crates的.pointer()和.get()这两种方法，而如果你需要直接处理html和DOM,你需要<a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a>的文档中推荐的方法，以及避免导致panic！！！</li>
+</ul>
+<p>你可以在/src/router下新建一个你自己的.rs文件，但有一些要求：</p>
+<ol>
+<li>文件名只能包含小写字母或数字或下划线还有固定的.rs后缀，严禁在任何文件名或者网址路径中出现空格！</li>
+<li>路由的规范命名是这样的： 平台小写英文名_功能小写英文名</li>
+<li>文件名的除了后缀名的部分就是你的路由名;</li>
+<li>每一个路由在/docs下都必须有一个对应为 路由名.md的文档，待会再讲;</li>
+<li>每一个路由只能对应一种功能;</li>
+</ol>
+<p>开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事</p>
+<h3 id="导入库"><a class="header" href="#导入库">导入库</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+<span class="boring">}</span></code></pre></pre>
+<p>上面这几个库<strong>必须导入</strong>，下面的而看需要导入</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;//json用的
+use scraper::*;//html用的
+<span class="boring">}</span></code></pre></pre>
+<h3 id="每个路由的主函数规范长这样"><a class="header" href="#每个路由的主函数规范长这样">每个路由的主函数规范长这样：</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+<span class="boring">}</span></code></pre></pre>
+<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。
+项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.html</a>查看
+具体的程序逻辑就由你自己编写吧。</p>
+<h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
+<p>在/src/router/mod.rs中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
+然后再在src/request_rules.rs中的request_rules()函数加一个else if 分支，条件为url == "/路由名"（仿照其他分支的例子抄），在{}中用绝调用你的函数，一般而言，路径是 <code>你的路由名::get(parameters)</code> 。</p>
+<h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
+<p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>我还写了一个脚本叫build.sh供用户使用（目前只做了Linux系统的脚本，Windows系统用户可以自己做一个脚本或者手动操作），其内容是 编译，拷贝（把/target/debug/rssust拷贝到/env，接着运行。</p>
+<h3 id="cookies的防止"><a class="header" href="#cookies的防止">Cookies的防止</a></h3>
+<p>在与二进制文件同目录下的<code>cookies.json</code>中如下：
+示例格式：
+{
+"name": "session_id",
+"value": "abc123",
+"domain": ".example.com",
+"path": "/",
+"secure": true,
+"httpOnly": true,
+"sameSite": "Lax",
+"expirationDate": 1893456000
+}
+所有的cookies挤在同一个json文件，程序启动时就会导入。
+Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
+<h3 id="文档的编写"><a class="header" href="#文档的编写">文档的编写！</a></h3>
+<p>在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>首先除了<code>**Cookies?:**</code>,<code>**Environment Variables:**</code>和<code>**Parameter:** </code>,其余基本上都是字面意思，但我还是介绍一下：</p>
+<ol>
+<li><strong>Router-name:</strong> 填路由名</li>
+<li><strong>Commit time:</strong> 提交时间，以<code>年.月.日</code>的形式填写</li>
+<li><strong>Cookies?:</strong> 两种情况，一种为<code>no</code>，一种为yes,后面也可以写备注解释</li>
+<li><strong>Author:</strong> 提交人，写你的Github名</li>
+<li><strong>Introduction:</strong> 写一下简介（注意，如果平台以什么语言为主就用什么语言）</li>
+<li><strong>Address:</strong> 填 <code>rssust://路由名</code>就好</li>
+<li><strong>Example:</strong> 可选项，如果要选就要用超链接<code>[填Address相同的](填/路由名)</code></li>
+<li><strong>Parameter:</strong> 这个意思是http get时可能用到的参数，可以填<code>no</code>, 或者空着，另起一行，像下面的示例</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: 内嵌视频
+2. 接下来如法炮制
+</code></pre>
+<p>注意：必填的项目把默认值设为null
+其中的参数名称跟在序号后面，用<code>** **</code>包裹强调
+<strong>Type of parameter:</strong> 填类型，自己定
+<strong>Default value:</strong> 默认值，要符合<code>Type of parameter</code>
+<strong>Meaning:</strong> 参数的含义
+9. <strong>Environment Variables:</strong> 可能用到的环境变量，填no,或者空着，另起一行，像下面的示例</p>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: 内嵌视频
+2. 接下来如法炮制
+</code></pre>
+<p>注意：必填的项目把默认值设为null，每个项目的意思参考<strong>Parameter:</strong> 的子项</p>
+<h3 id="最后一步提交"><a class="header" href="#最后一步提交">最后一步：提交！</a></h3>
+<p>使用git提交前，先运行<code>cargo fmt</code>，这可以使别人更好的识别你的代码
+你需要提交的有：</p>
+<ol>
+<li>/src/router/你的路由名.rs</li>
+<li>env/docs_md/路由名.md (一般情况下请不要提交您的<code>路由名.html</code>文件)</li>
+<li>/src/router/mod.rs以及src/request_rules.rs</li>
+</ol>
+<h4 id="这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善"><a class="header" href="#这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善">这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善</a></h4>
+<p>如果好奇程序构造的，可以看<a href="pogram_explanation_cn.html">rogram_explanation_cn</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="给用户使用的函数简便"><a class="header" href="#给用户使用的函数简便">给用户使用的函数——简便</a></h1>
+<h2 id="位置"><a class="header" href="#位置">位置</a></h2>
+<p><code>src/easyuser.rs</code></p>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p>封装了一系列辅助函数，供路由开发者（router）方便地调用。所有函数通过 <code>use crate::easyuser::*;</code> 导入。</p>
+<hr />
+<h2 id="爬虫类"><a class="header" href="#爬虫类">爬虫类</a></h2>
+<h3 id="fetch_obscura"><a class="header" href="#fetch_obscura">fetch_obscura()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch_obscura(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用无头浏览器（Obscura）爬取 URL 内容。会自动携带 <code>cookies.json</code> 中注入的 Cookie。适用于需要 JavaScript 渲染的页面。</p>
+<p><strong>内部调用</strong>: <code>crawler::fetch(url)</code></p>
+<h3 id="fetch_reqwest_get"><a class="header" href="#fetch_reqwest_get">fetch_reqwest_get()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。</p>
+<p><strong>注意</strong>: 每次调用都会创建新的 Tokio Runtime，开销较大。</p>
+<h3 id="fetch_reqwest_post"><a class="header" href="#fetch_reqwest_post">fetch_reqwest_post()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
+<hr />
+<h2 id="序列化类"><a class="header" href="#序列化类">序列化类</a></h2>
+<h3 id="params_to_hashmap"><a class="header" href="#params_to_hashmap">params_to_hashmap()</a></h3>
+<p><strong>签名</strong>: <code>pub fn params_to_hashmap(query: &amp;str) -&gt; HashMap&lt;String, String&gt;</code></p>
+<p>将 <code>key1=value1&amp;key2=value2</code> 格式参数字符串解析为 <code>HashMap</code>。</p>
+<p><strong>用在</strong>: <code>connect::handle_connection()</code> 中解析 URL 查询参数。</p>
+<h3 id="hashmap_to_params"><a class="header" href="#hashmap_to_params">hashmap_to_params()</a></h3>
+<p><strong>签名</strong>: <code>pub fn hashmap_to_params(hashmap: HashMap&lt;String, String&gt;) -&gt; String</code></p>
+<p>将 <code>HashMap</code> 序列化为 <code>key1=value1&amp;key2=value2</code> 格式字符串。</p>
+<hr />
+<h2 id="时间类"><a class="header" href="#时间类">时间类</a></h2>
+<h3 id="now"><a class="header" href="#now">now()</a></h3>
+<p><strong>签名</strong>: <code>pub fn now() -&gt; String</code></p>
+<p>返回当前时间的 RSS 标准格式：<code>Sat, 11 Jul 2026 12:00:00 +0800</code></p>
+<p><strong>用在</strong>: 路由中设置 RSS Item 的 <code>pub_date</code> 字段。</p>
+<h3 id="chinese_date_to_parse"><a class="header" href="#chinese_date_to_parse">chinese_date_to_parse()</a></h3>
+<p><strong>签名</strong>: <code>pub fn chinese_date_to_parse(input: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将中文日期格式 <code>x月y日</code> 解析为 RSS 标准时间格式。年份取当前年份。</p>
+<p>示例：<code>"7月11日"</code> → <code>"Sat, 11 Jul 2026 00:00:00 +0800"</code></p>
+<h3 id="timestamp_to_rss"><a class="header" href="#timestamp_to_rss">timestamp_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn timestamp_to_rss(ts: i64) -&gt; String</code></p>
+<p>将 Unix 时间戳（i64）转换为 RSS 标准时间格式。</p>
+<hr />
+<h2 id="字符类"><a class="header" href="#字符类">字符类</a></h2>
+<h3 id="no_double_quotes"><a class="header" href="#no_double_quotes">no_double_quotes()</a></h3>
+<p><strong>签名</strong>: <code>pub fn no_double_quotes(s: String) -&gt; String</code></p>
+<p>去除字符串首尾的双引号。</p>
+<p><strong>用在</strong>: 路由中清理从 JSON 提取的字符串值，因为 <code>serde_json::Value::to_string()</code> 会给字符串加双引号。</p>
+<h3 id="env_search"><a class="header" href="#env_search">env_search()</a></h3>
+<p><strong>签名</strong>: <code>pub fn env_search(s: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>查找环境变量值，找到返回 <code>Some(val)</code>，找不到返回 <code>None</code>。</p>
+<h3 id="extract_js_var"><a class="header" href="#extract_js_var">extract_js_var()</a></h3>
+<p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
+<p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
+<hr />
+<h2 id="开发者提示"><a class="header" href="#开发者提示">开发者提示</a></h2>
+<ul>
+<li>路由中必须导入 <code>use crate::easyuser::*;</code></li>
+<li><code>fetch_obscura</code> 比 <code>fetch_reqwest_get</code> 慢（需要启动浏览器），但能处理 JS 渲染的页面</li>
+<li>从 JSON 提取字符串后记得用 <code>no_double_quotes()</code> 清理</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cookies-配置指南"><a class="header" href="#cookies-配置指南">cookies 配置指南</a></h1>
+<p>因为有些路由需要cookies,而cookies又不好分发，故作此教程以告诉导出哪个网站的cookies,又或者是否需要登录或者额外配置,cookies 示例格式：
+Because some routes require cookies, and cookies are hard to distribute, this tutorial was made to show how to export cookies from a website, or whether login or additional setup is needed. Example cookie format:
+{
+"name": "session_id",
+"value": "abc123",
+"domain": ".example.com",
+"path": "/",
+"secure": true,
+"httpOnly": true,
+"sameSite": "Lax",
+"expirationDate": 1893456000
+}
+You can use the browser plugin Cookie-Editor to export it.</p>
+<p>Tips:现在自动cookies爬取已经出了，只要加<code> 二进制文件 cookies 浏览器名</code>
+但是实测linux下的firefox出了一些问题，上游crate的问题，可以通过链接文件夹修复</p>
+<h2 id="bilibili-1"><a class="header" href="#bilibili-1">Bilibili</a></h2>
+<p>bilibili.com
+无需登录</p>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="中文-1"><a class="header" href="#中文-1"><a href="guide_cn.html">中文</a></a></h3>
+<h1 id="what-is-rssust-1"><a class="header" href="#what-is-rssust-1">What is Rssust?</a></h1>
+<p>Rssust is an <strong>information aggregation and conversion software</strong> built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, <em><strong>but currently still in development</strong></em>.</p>
+<h2 id="we-hope-for-your-help"><a class="header" href="#we-hope-for-your-help">We Hope for Your Help</a></h2>
+<p>Tired of <strong>massive memory consumption and slow running speed</strong>, or <strong>dependent on someone else's</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
+<hr />
+<p>Plug a USB drive into someone else's computer, then <em><strong>double-click</strong></em> to open the binary program and a lightweight RSS client to use RSS on their computer without having to find someone else's server. Let everyone handle their own computing power while actually gaining more stability.</p>
+<hr />
+<h5 id="so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust"><a class="header" href="#so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust">So is this project meant to run locally? Not necessarily. <em>It's more about hoping for local operation</em>, but if you have a NAS at home or have the financial means to build a server, never mind what I said. <strong>But it's still worth trying Rssust</strong>.</a></h5>
+<hr />
+<p>Although Rssust's routers are not on the same scale as Rsshub's in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust's router count can grow, but this may seem somewhat like plagiarism, so it's better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
+<p>If you want to create your own router, click here: <a href="new_router_en.html">Router Development Guide — English</a>
+Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="api.html">API DOCS</a></p>
+<h2 id="for-general-users"><a class="header" href="#for-general-users">For General Users:</a></h2>
+<h3 id="installation"><a class="header" href="#installation">Installation:</a></h3>
+<p>It's worth noting that when running, the binary directory structure should be as follows:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>It's quite strict.</p>
+<h3 id="cookies-1"><a class="header" href="#cookies-1">cookies:</a></h3>
+<p>Some routes depend on cookies, so take a look <a href="cookie.html">guide of cookies</a></p>
+<h3 id="binary"><a class="header" href="#binary">Binary:</a></h3>
+<p>Early versions may not include binaries; only versions with an "S" suffix will generate binaries.
+Running the binary is very simple: extract and then start the binary file in the env folder.</p>
+<h3 id="building-from-source"><a class="header" href="#building-from-source">Building from Source:</a></h3>
+<p>Linux users:</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust docs
+</code></pre>
+<p>Then when there's no version update, you can enter:</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>to start it.</p>
+<p>Windows users: CMD (unverified)</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe docs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><p>本文由AI撰写，但其他不是哦！</p>
+<h1 id="入口函数---mainrs"><a class="header" href="#入口函数---mainrs">入口函数 - main.rs</a></h1>
+<h2 id="入口函数"><a class="header" href="#入口函数">入口函数</a></h2>
+<p><strong><code>src/main.rs:9</code> — <code>fn main()</code></strong> 是整个程序的入口。</p>
+<h2 id="功能流程"><a class="header" href="#功能流程">功能流程</a></h2>
+<ol>
+<li><strong>命令行参数处理</strong>：如果第一个参数为 <code>"docs"</code>，则调用 <code>doc_generate()</code> 生成文档 HTML（遍历 <code>docs_md/</code> 下的 <code>.md</code> 文件，输出为 <code>.html</code> 到 <code>docs/</code> 目录）</li>
+<li><strong>Cookie 加载</strong>：调用 <code>load_cookies()</code> 从二进制同目录的 <code>cookies.json</code> 加载 cookie，注入到无头浏览器实例</li>
+<li><strong>启动 TCP 服务器</strong>：绑定 <code>127.0.0.1:7878</code>，使用 <code>ThreadPool</code>（4 线程）并发处理请求</li>
+<li><strong>请求处理</strong>：每个连接由 <code>handle_connection()</code> 处理（定义在 <code>lib.rs</code> 的 <code>connect</code> 模块）</li>
+</ol>
+<h2 id="架构图"><a class="header" href="#架构图">架构图</a></h2>
+<pre><code>用户 HTTP 请求
+    ↓
+TcpListener(:7878)
+    ↓  (ThreadPool 分配线程)
+handle_connection(stream)
+    ↓
+解析 HTTP 请求行 (GET /xxx?key=val HTTP/1.1)
+    ↓
+root_rules(url, params)
+    ├── "/"        → show_index_doc()       → index.html
+    ├── "/docs/*"  → show_doc(path)          → 文档 HTML
+    └── 其他路由    → request_rules(url, params)
+                      └── 路由器名::get(params)  → RSS XML
+</code></pre>
+<h2 id="环境目录结构"><a class="header" href="#环境目录结构">环境目录结构</a></h2>
+<p>二进制运行所需的目录结构：</p>
+<pre><code>env/
+├── cookies.json      # Cookie 文件，启动时加载到浏览器
+├── index/
+│   ├── 404.html      # 404 页面
+│   └── index.html    # 首页
+├── docs_md/          # Markdown 文档源文件
+│   ├── official/     # 官方文档
+│   └── 路由名.md     # 各路由的文档
+└── rssust            # 编译后的二进制
+</code></pre>
+<h1 id="crawler-模块---librs"><a class="header" href="#crawler-模块---librs">crawler 模块 - lib.rs</a></h1>
+<h2 id="位置-1"><a class="header" href="#位置-1">位置</a></h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod crawler</code> 模块。</p>
+<h2 id="概述-1"><a class="header" href="#概述-1">概述</a></h2>
+<p>管理无头浏览器（Obscura）实例和 Cookie 的生命周期。所有浏览器操作通过线程局部存储（<code>thread_local!</code>）实现，每个线程持有独立的浏览器实例。</p>
+<h2 id="核心类型"><a class="header" href="#核心类型">核心类型</a></h2>
+<h3 id="coke"><a class="header" href="#coke">Coke</a></h3>
+<p>内部结构体，存储处理后的 Cookie 信息：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Coke {
+    url: String,    // 域名
+    mai: String,    // Set-Cookie 字符串
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="browser线程局部变量"><a class="header" href="#browser线程局部变量">BROWSER（线程局部变量）</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>thread_local! {
+    static BROWSER: RefCell&lt;Option&lt;(tokio::runtime::Runtime, Browser)&gt;&gt; = RefCell::new(None);
+}
+<span class="boring">}</span></code></pre></pre>
+<p>每个线程第一次使用时创建 <code>Runtime</code> + <code>Browser</code> 实例，后续复用。</p>
+<h2 id="核心函数"><a class="header" href="#核心函数">核心函数</a></h2>
+<h3 id="with_browser"><a class="header" href="#with_browser">with_browser()</a></h3>
+<p><strong>签名</strong>: <code>pub fn with_browser&lt;F, T&gt;(f: F) -&gt; Result&lt;T&gt;</code></p>
+<p>获取当前线程的浏览器实例，执行闭包。如果浏览器尚未初始化，则自动创建：</p>
+<ul>
+<li>使用 <code>tokio::runtime::Builder</code> 创建单线程运行时</li>
+<li>调用 <code>Browser::new()</code> 创建 Obscura 无头浏览器实例</li>
+</ul>
+<h3 id="load_cookies"><a class="header" href="#load_cookies">load_cookies()</a></h3>
+<p><strong>签名</strong>: <code>pub fn load_cookies() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie：</p>
+<ol>
+<li>读取 JSON 文件（空文件跳过）</li>
+<li>反序列化为 <code>Vec&lt;Value&gt;</code>（Cookie 对象数组）</li>
+<li>对每个 Cookie 调用 <code>build_set_cookie()</code> 转换为 <code>Coke</code> 结构</li>
+<li>调用 <code>init()</code> 注入到全局浏览器</li>
+</ol>
+<h3 id="init"><a class="header" href="#init">init()</a></h3>
+<p><strong>签名</strong>: <code>fn init(cookies: &amp;[Coke]) -&gt; Result&lt;()&gt;</code></p>
+<p>将 Cookie 注入到浏览器实例中，通过 <code>browser.cookies().set()</code> 设置。</p>
+<h3 id="build_set_cookie"><a class="header" href="#build_set_cookie">build_set_cookie()</a></h3>
+<p><strong>签名</strong>: <code>fn build_set_cookie(cookie: &amp;Value) -&gt; Result&lt;Coke&gt;</code></p>
+<p>将 JSON Cookie 对象转换为 HTTP <code>Set-Cookie</code> 字符串：</p>
+<ul>
+<li>必填字段：<code>name</code>, <code>value</code>, <code>domain</code></li>
+<li>可选字段：<code>path</code>（默认 <code>/</code>）, <code>secure</code>, <code>httpOnly</code>, <code>sameSite</code>, <code>expirationDate</code></li>
+<li><code>expirationDate</code> 会计算 <code>Max-Age</code> 并附加到字符串</li>
+</ul>
+<h3 id="fetch"><a class="header" href="#fetch">fetch()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch(url: &amp;str) -&gt; Result&lt;String&gt;</code></p>
+<p>使用无头浏览器访问指定 URL，返回页面 HTML 内容：</p>
+<ol>
+<li>创建新页面（<code>new_page()</code>）</li>
+<li>导航到 URL（<code>goto()</code>）</li>
+<li>返回页面内容（<code>content()</code>）</li>
+</ol>
+<h1 id="connect-模块---librs"><a class="header" href="#connect-模块---librs">connect 模块 - lib.rs</a></h1>
+<h2 id="位置-2"><a class="header" href="#位置-2">位置</a></h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod connect</code> 模块。</p>
+<h2 id="核心函数-1"><a class="header" href="#核心函数-1">核心函数</a></h2>
+<h3 id="handle_connection"><a class="header" href="#handle_connection">handle_connection()</a></h3>
+<p><strong>签名</strong>: <code>pub fn handle_connection(mut stream: TcpStream)</code></p>
+<p>这是每个 HTTP 请求的入口处理函数：</p>
+<ol>
+<li>从 TCP 流读取 1024 字节缓冲区</li>
+<li>用 <code>extract_between_spaces()</code> 提取 HTTP 请求行中的 URL 路径（GET 和 POST 之间的部分）</li>
+<li>解析 URL 中的查询参数：
+<ul>
+<li>如果 URL 包含 <code>?</code>，用 <code>split_once('?')</code> 分割路径和查询字符串</li>
+<li>查询字符串通过 <code>params_to_hashmap()</code> 转为 <code>HashMap</code></li>
+</ul>
+</li>
+<li>调用 <code>root_rules(path, params)</code> 获取响应</li>
+<li>根据 <code>ShowToUser</code> 枚举类型构建 HTTP 响应：
+<ul>
+<li><code>ShowToUser::Html</code> → <code>Content-Type: text/html</code></li>
+<li><code>ShowToUser::Rss</code> → <code>Content-Type: application/xml</code></li>
+</ul>
+</li>
+<li>写回 TCP 流</li>
+</ol>
+<h3 id="extract_between_spaces"><a class="header" href="#extract_between_spaces">extract_between_spaces()</a></h3>
+<p><strong>签名</strong>: <code>fn extract_between_spaces(buffer: &amp;[u8; 1024]) -&gt; Option&lt;&amp;[u8]&gt;</code></p>
+<p>从 HTTP 原始请求中提取两个空格之间的内容（即 URL 路径）。例如从 <code>GET /bilibili_weekly?key=val HTTP/1.1</code> 中提取 <code>/bilibili_weekly?key=val</code>。</p>
+<h3 id="show_index_doc"><a class="header" href="#show_index_doc">show_index_doc()</a></h3>
+<p><strong>签名</strong>: <code>pub fn show_index_doc() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的 <code>index/index.html</code> 文件，返回 HTML 字符串。</p>
+<h3 id="show_doc"><a class="header" href="#show_doc">show_doc()</a></h3>
+<p><strong>签名</strong>: <code>pub fn show_doc(path: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的文档 HTML 文件（如 <code>/docs/new_router_cn.html</code> → 读取 <code>docs/new_router_cn.html</code>）。如果文件不存在，返回 <code>index/404.html</code>。</p>
+<h2 id="showtouser-枚举"><a class="header" href="#showtouser-枚举">ShowToUser 枚举</a></h2>
+<p>定义在 <code>request_rules.rs</code> 中，但被 connect 模块使用：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面（首页、文档页面、错误页面）</li>
+<li><code>Rss</code> — 返回 RSS XML（路由器的输出）</li>
+</ul>
+<h1 id="路由注册表---request_rulesrs"><a class="header" href="#路由注册表---request_rulesrs">路由注册表 - request_rules.rs</a></h1>
+<h2 id="位置-3"><a class="header" href="#位置-3">位置</a></h2>
+<p><code>src/request_rules.rs</code></p>
+<h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
+<p>这是整个项目的路由调度中心。负责将 URL 路径分发给对应的处理器，并封装返回格式。</p>
+<h2 id="showtouser-枚举-1"><a class="header" href="#showtouser-枚举-1">ShowToUser 枚举</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面</li>
+<li><code>Rss</code> — 返回 RSS XML</li>
+</ul>
+<h2 id="核心函数-2"><a class="header" href="#核心函数-2">核心函数</a></h2>
+<h3 id="root_rules"><a class="header" href="#root_rules">root_rules()</a></h3>
+<p><strong>签名</strong>: <code>pub fn root_rules(first_part: &amp;str, second_part: HashMap&lt;String, String&gt;) -&gt; ShowToUser</code></p>
+<p>一级路由分发函数：</p>
+<div class="table-wrapper"><table><thead><tr><th>URL 路径</th><th>处理器</th><th>返回类型</th></tr></thead><tbody>
+<tr><td><code>"/"</code></td><td><code>show_index_doc()</code></td><td><code>ShowToUser::Html</code></td></tr>
+<tr><td><code>以 "/docs/" 开头</code></td><td><code>show_doc(path)</code></td><td><code>ShowToUser::Html</code></td></tr>
+<tr><td>其他</td><td><code>request_rules()</code></td><td><code>ShowToUser::Rss</code> 或 <code>Html(错误)</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="request_rules"><a class="header" href="#request_rules">request_rules()</a></h3>
+<p><strong>签名</strong>: <code>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>二级路由注册表，匹配 URL 路径到具体路由器：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt; {
+    if url == "/bilibili_weekly" {
+        bilibili_weekly::get(parameters)
+    } else {
+        Err(anyhow!("404NotFound"))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>注意</strong>：<code>bilibili_dynamic</code> 路由虽然在 <code>mod.rs</code> 中注册了 <code>pub mod bilibili_dynamic</code>，但当前 <strong>未在 <code>request_rules()</code> 中添加匹配分支</strong>，因此访问 <code>/bilibili_dynamic</code> 会返回 404。</p>
+<h2 id="如何添加新路由"><a class="header" href="#如何添加新路由">如何添加新路由</a></h2>
+<p>参考 <code>new_router_cn.md</code>，步骤：</p>
+<ol>
+<li>在 <code>src/router/</code> 下新建 <code>.rs</code> 文件，实现 <code>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code></li>
+<li>在 <code>src/router/mod.rs</code> 中添加 <code>pub mod 你的路由名;</code></li>
+<li>在 <code>request_rules()</code> 中添加 <code>else if</code> 分支匹配 URL</li>
+<li>在 <code>env/docs_md/</code> 下编写对应的路由文档 <code>.md</code> 文件</li>
+</ol>
+<h1 id="文档生成器---docrs"><a class="header" href="#文档生成器---docrs">文档生成器 - doc.rs</a></h1>
+<h2 id="位置-4"><a class="header" href="#位置-4">位置</a></h2>
+<p><code>src/doc.rs</code></p>
+<h2 id="概述-3"><a class="header" href="#概述-3">概述</a></h2>
+<p>将 <code>docs_md/</code> 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在 <code>src/main.rs</code> 中通过 <code>cargo run docs</code> 触发。</p>
+<h2 id="核心函数-3"><a class="header" href="#核心函数-3">核心函数</a></h2>
+<h3 id="doc_generate"><a class="header" href="#doc_generate">doc_generate()</a></h3>
+<p><strong>签名</strong>: <code>pub fn doc_generate() -&gt; Result&lt;(), Error&gt;</code></p>
+<h4 id="执行流程"><a class="header" href="#执行流程">执行流程</a></h4>
+<ol>
+<li><strong>定位目录</strong>：以二进制文件所在目录为基础，输入目录为 <code>./docs_md</code>，输出目录为 <code>./docs</code></li>
+<li><strong>收集文件</strong>：mdbook干的事</li>
+<li><strong>排序</strong>：按文件名（字母顺序，不区分大小写）排序</li>
+<li><strong>分类</strong>：<code>docs_md/official/</code> 下的文件归为"官方"类，其余归为"Router"类，分别生成导航链接</li>
+<li><strong>转换</strong>：使用 <code>mdbook</code> 库将 Markdown 转为 HTML</li>
+<li><strong>输出</strong>：写入 <code>docs/目录名.html</code></li>
+</ol>
+<h4 id="页面功能"><a class="header" href="#页面功能">页面功能</a></h4>
+<ul>
+<li><strong>侧边栏导航</strong>：可折叠/展开，支持关键词搜索过滤目录</li>
+<li><strong>文章搜索</strong>：实时高亮文章中的匹配文本</li>
+<li><strong>代码高亮</strong>：支持 Rust、Python、JavaScript、Bash、XML 语言</li>
+<li><strong>响应式设计</strong>：深色主题，自适应布局</li>
+</ul>
+<h4 id="样式特点"><a class="header" href="#样式特点">样式特点</a></h4>
+<ul>
+<li>深紫色渐变背景</li>
+<li>代码块深色底 + 彩色高亮</li>
+<li>胶囊形状的"当前页面"指示器</li>
+<li>紫蓝色点缀色</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_dynamic"><a class="header" href="#router-name-bilibili_dynamic">Router-name: bilibili_dynamic</a></h1>
+<p><strong>Commit time:</strong> 2026.7.11
+<strong>Cookies?:</strong> yes (使用<code>cookies.json</code>直接注入到reqwest,需要鲜活的cookies,反爬中等)
+<strong>Author:</strong> AI大部分转写自RSShub/huiinyg-rusting收拾烂摊子和审核-AGPL-3.0协议（已被传染）
+<strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs:405</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
+<p><strong>Address:</strong> <code>rssust://bilibili_dynamic</code>
+<strong>Example:</strong> <a href="../bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong>
+<ul>
+<li>Type of parameter: string (必填)</li>
+<li>Default value: 无</li>
+<li>Meaning: Bilibili 用户 UID</li>
+</ul>
+</li>
+<li><strong>showEmoji</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否将动态正文中的 emoji 文本替换为图片</li>
+</ul>
+</li>
+<li><strong>embed</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: true</li>
+<li>Meaning: 视频动态是否内嵌 iframe 播放器</li>
+</ul>
+</li>
+<li><strong>useAvid</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 视频链接使用 av 号（默认使用 bv 号）</li>
+</ul>
+</li>
+<li><strong>directLink</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 链接直接跳转至内容页而非动态页</li>
+</ul>
+</li>
+<li><strong>hideGoods</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否隐藏带货类动态</li>
+</ul>
+</li>
+<li><strong>offset</strong>
+<ul>
+<li>Type of parameter: string</li>
+<li>Default value: 空</li>
+<li>Meaning: 翻页偏移量（从上次返回的 <code>data.offset</code> 取值，用于分页续抓）</li>
+</ul>
+</li>
+</ol>
+<p><strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_precious"><a class="header" href="#router-name-bilibili_precious">Router-name: bilibili_precious</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档
+<strong>Introduction:</strong> B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取
+<strong>Address:</strong> rssust://bilibili_precious
+<strong>Example:</strong> <a href="../bilibili_precious">rssust://bilibili_precious</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_collection"><a class="header" href="#router-name-bilibili_collection">Router-name: bilibili_collection</a></h1>
+<p><strong>Commit time:</strong> 2026.07.14
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> AI辅助撰写文档
+<strong>Introduction:</strong> B站合集（合集，不是系列）视频列表，通过 season_id 获取合集内的视频
+<strong>Address:</strong> rssust://bilibili_collection
+<strong>Example:</strong> <a href="../bilibili_collection?uid=245645656&amp;sid=529166">rssust://bilibili_collection?uid=245645656&amp;sid=529166</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong>
+Type of parameter: num
+Default value: null
+Meaning: B站用户 uid（必填）</li>
+<li><strong>sid</strong>
+Type of parameter: num
+Default value: null
+Meaning: 合集 season_id（必填）</li>
+<li><strong>sortreverse</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 排序方向，true 为倒序，false 为正序</li>
+<li><strong>pagenum</strong>
+Type of parameter: num
+Default value: 1
+Meaning: 页码</li>
+<li><strong>pagesize</strong>
+Type of parameter: num
+Default value: 16
+Meaning: 每页视频数量</li>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_popular"><a class="header" href="#router-name-bilibili_popular">Router-name: bilibili_popular</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档
+<strong>Introduction:</strong> B站热门视频
+<strong>Address:</strong> rssust://bilibili_popular
+<strong>Example:</strong> <a href="../bilibili_popular">rssust://bilibili_popular</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>pn</strong>
+Type of parameter: num
+Default value: 1
+Meaning: 页码</li>
+<li><strong>ps</strong>
+Type of parameter: num
+Default value: 20
+Meaning: 每页项数</li>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_weekly"><a class="header" href="#router-name-bilibili_weekly">Router-name: <strong>bilibili_weekly</strong></a></h1>
+<p><strong>Commit time:</strong> 2026.07.09
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> huiinyg-rusting
+<strong>Introduction:</strong> Bilibili最新一期的每周精选
+<strong>Address:</strong> rssust://bilibili_weekly
+<strong>Example:</strong> <a href="../bilibili_weekly?disableembed=true">rssust://bilibili_weekly?disableembed=true</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_series"><a class="header" href="#router-name-bilibili_series">Router-name: bilibili_series</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12
+<strong>Cookies?:</strong> no
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档
+<strong>Introduction:</strong> B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频
+<strong>Address:</strong> rssust://bilibili_series
+<strong>Example:</strong> <a href="../bilibili_series?series_id=534502">rssust://bilibili_series?series_id=534502</a>
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>series_id</strong>
+Type of parameter: num
+Default value: null
+Meaning: 系列合集ID（必填）</li>
+<li><strong>disableembed</strong>
+Type of parameter: bool
+Default value: true
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述
+<strong>Environment Variables:</strong> no</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
