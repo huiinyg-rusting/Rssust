@@ -1,7 +1,7 @@
 # Router-name: bilibili_collection
 **Commit time:** 2026.07.14
 **Cookies?:** no
-**Author:** AI辅助撰写文档
+**Author:** huiinyg-rusting / AI辅助撰写文档
 **Introduction:** B站合集（合集，不是系列）视频列表，通过 season_id 获取合集内的视频
 **Address:** rssust://bilibili_collection
 **Example:** [rssust://bilibili_collection?uid=245645656&sid=529166](../bilibili_collection?uid=245645656&sid=529166)
