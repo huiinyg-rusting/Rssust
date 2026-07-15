@@ -99,7 +99,7 @@ pub fn doc_generate() -> Result<(), Error> {
         let mut pos = 0;
         while let Some(found) = s[pos..].find(needle) {
             result.push_str(&s[pos..pos + found]);
-            let val_start = pos + found + 8; // after href="../
+            let val_start = pos + found + 9; // after href="../
             if let Some(end) = s[val_start..].find('"') {
                 let target = &s[val_start..val_start + end];
                 if target.ends_with(".html") || target.starts_with("print.html") {
