@@ -12,3 +12,7 @@
     Bilibili最新一期的每周精选
 - [bilibili_seried](../bilibili_series.md)
     B站系列（！！！只能系列，不能合集）视频列表
+
+#### Zhihu
+- [zhihu_hot](../zhihu_hot.md)
+    知乎热榜
