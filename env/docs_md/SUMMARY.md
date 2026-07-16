@@ -16,3 +16,4 @@
 - [bilibili_popular](bilibili_popular.md)
 - [bilibili_weekly](bilibili_weekly.md)
 - [bilibili_series](bilibili_series.md)
+- [zhihu_hot](zhihu_hot.md)

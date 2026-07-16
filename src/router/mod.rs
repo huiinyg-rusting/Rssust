@@ -4,3 +4,4 @@ pub mod bilibili_precious;
 pub mod bilibili_series;
 pub mod bilibili_weekly;
 pub mod bilibili_collection;
+pub mod zhihu_hot;
