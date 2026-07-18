@@ -25,6 +25,8 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         bilibili_collection::get(parameters)
     } else if url == "/zhihu_hot" {
         zhihu_hot::get(parameters)
+    } else if url == "/cde_index" {
+        cde_index::get(parameters)
     } else {
         Err(anyhow!("404NotFound"))
     }
