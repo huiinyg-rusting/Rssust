@@ -1,7 +1,7 @@
 # Router-name: cde_index  
 **Commit time:** 2026.07.18  
 **Cookies?:** no  
-**Author:** @Fatpandac  
+**Author:** AI转写 / huinyg审核 - 来源于RSShub@Fatpandac  
 **Introduction:** 国家药品审评网站首页（新闻中心/政策法规）  
 **Address:** rssust://cde_index  
 **Example:** [rssust://cde_index?channel=news&category=gzdt](/cde_index?channel=news&category=gzdt)  
