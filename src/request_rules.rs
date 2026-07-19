@@ -31,6 +31,28 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         bilibili_series::get(parameters)
     } else if url == "/bilibili_collection" {
         bilibili_collection::get(parameters)
+    } else if url == "/bilibili_fav" {
+        bilibili_fav::get(parameters)
+    } else if url == "/bilibili_link_news" {
+        bilibili_link_news::get(parameters)
+    } else if url == "/bilibili_partion" {
+        bilibili_partion::get(parameters)
+    } else if url == "/bilibili_partion_ranking" {
+        bilibili_partion_ranking::get(parameters)
+    } else if url == "/bilibili_user_article" {
+        bilibili_user_article::get(parameters)
+    } else if url == "/bilibili_user_coin" {
+        bilibili_user_coin::get(parameters)
+    } else if url == "/bilibili_user_fav" {
+        bilibili_user_fav::get(parameters)
+    } else if url == "/bilibili_user_like" {
+        bilibili_user_like::get(parameters)
+    } else if url == "/bilibili_video_page" {
+        bilibili_video_page::get(parameters)
+    } else if url == "/bilibili_video_reply" {
+        bilibili_video_reply::get(parameters)
+    } else if url == "/bilibili_vsearch" {
+        bilibili_vsearch::get(parameters)
     } else if url == "/zhihu_hot" {
         zhihu_hot::get(parameters)
     } else if url == "/cde" {
