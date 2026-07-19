@@ -1,8 +1,8 @@
+pub mod bilibili_collection;
 pub mod bilibili_dynamic;
 pub mod bilibili_popular;
 pub mod bilibili_precious;
 pub mod bilibili_series;
 pub mod bilibili_weekly;
-pub mod bilibili_collection;
+pub mod cde;
 pub mod zhihu_hot;
-pub mod cde_index;

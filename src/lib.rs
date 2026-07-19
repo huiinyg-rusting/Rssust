@@ -1,8 +1,8 @@
+pub mod cookies;
 pub mod doc;
 pub mod easyuser;
 pub mod request_rules;
 pub mod router;
-pub mod cookies;
 
 ///这个函数提供缓冲区的处理
 /// 并把数据交给request_rules函数处理
@@ -167,7 +167,10 @@ pub mod connect {
         };
 
         if file_exists {
-            crate::request_rules::ShowToUser::File { res, content_type: mime.to_string() }
+            crate::request_rules::ShowToUser::File {
+                res,
+                content_type: mime.to_string(),
+            }
         } else {
             crate::request_rules::ShowToUser::Html { res }
         }

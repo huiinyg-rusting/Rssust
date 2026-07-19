@@ -3,10 +3,7 @@ use mdbook::MDBook;
 use mdbook::config::Config;
 
 pub fn doc_generate() -> Result<(), Error> {
-    let exe_dir = std::env::current_exe()?
-        .parent()
-        .unwrap()
-        .to_path_buf();
+    let exe_dir = std::env::current_exe()?.parent().unwrap().to_path_buf();
     let source_root = exe_dir.join("docs_md");
     let official_dir = source_root.join("official");
     let build_dir = exe_dir.join("docs");
@@ -20,7 +17,11 @@ pub fn doc_generate() -> Result<(), Error> {
             let path = entry.path();
             if path.extension().map_or(false, |e| e == "md") {
                 let name = path.file_stem().unwrap().to_string_lossy();
-                summary.push_str(&format!("- [{}](official/{})\n", name, path.file_name().unwrap().to_string_lossy()));
+                summary.push_str(&format!(
+                    "- [{}](official/{})\n",
+                    name,
+                    path.file_name().unwrap().to_string_lossy()
+                ));
             }
         }
     }
@@ -79,18 +80,33 @@ pub fn doc_generate() -> Result<(), Error> {
         s = s.replace("href=\"../official/", "href=\"");
         // path_to_root
         s = s.replace("path_to_root = \"../\"", "path_to_root = \"\"");
-        s = s.replace("path_to_searchindex_js = \"../searchindex.js\"", "path_to_searchindex_js = \"searchindex.js\"");
+        s = s.replace(
+            "path_to_searchindex_js = \"../searchindex.js\"",
+            "path_to_searchindex_js = \"searchindex.js\"",
+        );
         // 资源文件：css, FontAwesome, fonts, favicon
         s = s.replace("href=\"../css/", "href=\"css/");
         s = s.replace("href=\"../FontAwesome/", "href=\"FontAwesome/");
         s = s.replace("href=\"../fonts/", "href=\"fonts/");
         s = s.replace("href=\"../favicon", "href=\"favicon");
         // 已知资源文件
-        for file in &["highlight.css", "tomorrow-night.css", "ayu-highlight.css",
-                      "elasticlunr.min.js", "mark.min.js", "searcher.js",
-                      "clipboard.min.js", "highlight.js", "book.js",
-                      "print.html", "toc.html"] {
-            s = s.replace(&format!("href=\"../{}", file), &format!("href=\"{}\"", file));
+        for file in &[
+            "highlight.css",
+            "tomorrow-night.css",
+            "ayu-highlight.css",
+            "elasticlunr.min.js",
+            "mark.min.js",
+            "searcher.js",
+            "clipboard.min.js",
+            "highlight.js",
+            "book.js",
+            "print.html",
+            "toc.html",
+        ] {
+            s = s.replace(
+                &format!("href=\"../{}", file),
+                &format!("href=\"{}\"", file),
+            );
         }
         // 其他 HTML 页面链接 (xxx.html) — 这些是文档间跳转，不是 API 示例
         // 移除 href="../xxx.html" 中的 "../"，保留 API 路由链接的 "../"
