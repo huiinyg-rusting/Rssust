@@ -1,7 +1,7 @@
+use bench_scraper::{self, KnownBrowser, SameSite};
 use std::fs;
 use std::io;
 use std::path::PathBuf;
-use bench_scraper::{self, KnownBrowser, SameSite};
 
 fn read_existing_cookies(path: &PathBuf) -> Vec<serde_json::Value> {
     if !path.exists() {
@@ -18,14 +18,21 @@ fn read_existing_cookies(path: &PathBuf) -> Vec<serde_json::Value> {
 }
 
 pub fn extract_cookies_to_json(target_browser: KnownBrowser) -> Result<(), io::Error> {
-        let exe_path = std::env::current_exe()
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
-    let exe_dir = exe_path.parent()
-        .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "Could not get executable directory"))?;
+    let exe_path = std::env::current_exe().map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+    let exe_dir = exe_path.parent().ok_or_else(|| {
+        io::Error::new(
+            io::ErrorKind::NotFound,
+            "Could not get executable directory",
+        )
+    })?;
     let output_path = exe_dir.join("cookies.json");
 
-    let all_sessions = bench_scraper::find_cookies()
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Failed to find cookies: {:?}", e)))?;
+    let all_sessions = bench_scraper::find_cookies().map_err(|e| {
+        io::Error::new(
+            io::ErrorKind::Other,
+            format!("Failed to find cookies: {:?}", e),
+        )
+    })?;
 
     let mut existing = read_existing_cookies(&output_path);
     let mut found = false;
@@ -74,6 +81,6 @@ pub fn extract_cookies_to_json(target_browser: KnownBrowser) -> Result<(), io::E
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     fs::write(&output_path, final_json)?;
-    println!("Download cookies from {:?} done",target_browser);
+    println!("Download cookies from {:?} done", target_browser);
     Ok(())
 }

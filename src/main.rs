@@ -1,5 +1,8 @@
 use bench_scraper::KnownBrowser;
-use rssust::{connect::handle_connection, crawler::load_cookies, doc::doc_generate, cookies::extract_cookies_to_json};
+use rssust::{
+    connect::handle_connection, cookies::extract_cookies_to_json, crawler::load_cookies,
+    doc::doc_generate,
+};
 use std::env;
 use std::net::TcpListener;
 use threadpool::ThreadPool;
@@ -12,7 +15,7 @@ fn main() {
     if matches!(args.get(1), Some(s) if s == "docs") {
         doc_generate().unwrap();
         println!("DOCS:Done")
-    } else if matches!(args.get(1), Some(s) if s == "cookie"){
+    } else if matches!(args.get(1), Some(s) if s == "cookie") {
         extract_cookies_to_json(match args.get(2).expect("没有指明浏览器").as_str() {
             "firefox" => KnownBrowser::Firefox,
             "chrome" => KnownBrowser::Chrome,
@@ -23,7 +26,8 @@ fn main() {
             #[cfg(target_os = "windows")]
             "edge" => KnownBrowser::Edge,
             _ => panic!("浏览器未知"),
-        }).unwrap();
+        })
+        .unwrap();
     } else {
         println!("No args Find");
     }
