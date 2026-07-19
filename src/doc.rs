@@ -11,32 +11,61 @@ pub fn doc_generate() -> Result<(), Error> {
     // 生成 SUMMARY.md
     let mut summary = String::new();
     summary.push_str("# 官方文档\n");
+    let mut official_names: Vec<String> = Vec::new();
     if official_dir.is_dir() {
         for entry in std::fs::read_dir(&official_dir)? {
             let entry = entry?;
             let path = entry.path();
             if path.extension().map_or(false, |e| e == "md") {
-                let name = path.file_stem().unwrap().to_string_lossy();
-                summary.push_str(&format!(
-                    "- [{}](official/{})\n",
-                    name,
-                    path.file_name().unwrap().to_string_lossy()
-                ));
+                let name = path.file_stem().unwrap().to_string_lossy().to_string();
+                official_names.push(name);
             }
         }
     }
+    official_names.sort();
+    for name in &official_names {
+        summary.push_str(&format!("- [{}](official/{}.md)\n", name, name));
+    }
 
     summary.push_str("\n# 路由\n");
+    // 已定义的排序（Bilibili → CDE → Zhihu）
+    let route_order = &[
+        "bilibili_collection",
+        "bilibili_dynamic",
+        "bilibili_fav",
+        "bilibili_link_news",
+        "bilibili_partion",
+        "bilibili_partion_ranking",
+        "bilibili_popular",
+        "bilibili_precious",
+        "bilibili_series",
+        "bilibili_user_article",
+        "bilibili_user_coin",
+        "bilibili_user_fav",
+        "bilibili_user_like",
+        "bilibili_video_page",
+        "bilibili_video_reply",
+        "bilibili_vsearch",
+        "bilibili_weekly",
+        "cde",
+        "zhihu_hot",
+    ];
+    for name in route_order {
+        let file = format!("{}.md", name);
+        if source_root.join(&file).exists() {
+            summary.push_str(&format!("- [{}]({})\n", name, file));
+        }
+    }
+    // 未识别的 md 文件（避免遗漏）
     for entry in std::fs::read_dir(&source_root)? {
         let entry = entry?;
         let path = entry.path();
-        let file_name = path.file_name().unwrap().to_string_lossy();
-        if file_name == "official" || file_name == "SUMMARY.md" {
+        let file_name = path.file_stem().unwrap().to_string_lossy().to_string();
+        if file_name == "official" || file_name == "SUMMARY" || route_order.contains(&file_name.as_str()) {
             continue;
         }
         if path.extension().map_or(false, |e| e == "md") {
-            let name = path.file_stem().unwrap().to_string_lossy();
-            summary.push_str(&format!("- [{}]({})\n", name, file_name));
+            summary.push_str(&format!("- [{}]({})\n", file_name, path.file_name().unwrap().to_string_lossy()));
         }
     }
 
