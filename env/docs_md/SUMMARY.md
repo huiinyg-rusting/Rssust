@@ -33,4 +33,7 @@
 - [douban_movie_classification](douban_movie_classification.md)
 - [netease_today](netease_today.md)
 - [hupu_news](hupu_news.md)
+- [solidot](solidot.md)
+- [thepaper_featured](thepaper_featured.md)
+- [wallstreetcn_hot](wallstreetcn_hot.md)
 - [zhihu_hot](zhihu_hot.md)

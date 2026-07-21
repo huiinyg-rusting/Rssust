@@ -21,4 +21,7 @@ pub mod douban_event_hot;
 pub mod douban_movie_classification;
 pub mod hupu_news;
 pub mod netease_today;
+pub mod solidot;
+pub mod thepaper_featured;
+pub mod wallstreetcn_hot;
 pub mod zhihu_hot;

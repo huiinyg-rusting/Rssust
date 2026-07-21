@@ -53,6 +53,9 @@ pub fn doc_generate() -> Result<(), Error> {
         "douban_movie_classification",
         "netease_today",
         "hupu_news",
+        "solidot",
+        "thepaper_featured",
+        "wallstreetcn_hot",
         "zhihu_hot",
     ];
     for name in route_order {
