@@ -1,4 +1,3 @@
-use crate::router::cde;
 use crate::router::*;
 use anyhow::*;
 use std::collections::HashMap;
@@ -53,11 +52,21 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         bilibili_video_reply::get(parameters)
     } else if url == "/bilibili_vsearch" {
         bilibili_vsearch::get(parameters)
+    } else if url == "/douban_book_latest" {
+        douban_book_latest::get(parameters)
+    } else if url == "/douban_book_rank" {
+        douban_book_rank::get(parameters)
+    } else if url == "/douban_event_hot" {
+        douban_event_hot::get(parameters)
+    } else if url == "/douban_movie_classification" {
+        douban_movie_classification::get(parameters)
+    } else if url == "/netease_today" {
+        netease_today::get(parameters)
+    } else if url == "/hupu_news" {
+        hupu_news::get(parameters)
     } else if url == "/zhihu_hot" {
         zhihu_hot::get(parameters)
-    } else if url == "/cde" {
-        cde::get(parameters)
-    } else {
+} else {
         Err(anyhow!("404NotFound"))
     }
 }
