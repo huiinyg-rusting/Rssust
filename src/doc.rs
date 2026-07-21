@@ -28,7 +28,7 @@ pub fn doc_generate() -> Result<(), Error> {
     }
 
     summary.push_str("\n# 路由\n");
-    // 已定义的排序（Bilibili → CDE → Zhihu）
+    // 已定义的排序（Bilibili → Douban → NetEase → Hupu → CDE → Zhihu）
     let route_order = &[
         "bilibili_collection",
         "bilibili_dynamic",
@@ -47,7 +47,12 @@ pub fn doc_generate() -> Result<(), Error> {
         "bilibili_video_reply",
         "bilibili_vsearch",
         "bilibili_weekly",
-        "cde",
+        "douban_book_latest",
+        "douban_book_rank",
+        "douban_event_hot",
+        "douban_movie_classification",
+        "netease_today",
+        "hupu_news",
         "zhihu_hot",
     ];
     for name in route_order {

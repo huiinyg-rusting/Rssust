@@ -1,7 +1,7 @@
 use crate::crawler::fetch;
 use anyhow::{Error, Result, anyhow};
-use chrono::DateTime;
-use chrono::{Datelike, Local, NaiveDate};
+use chrono::{DateTime, FixedOffset, TimeZone};
+use chrono::{Datelike, Local, NaiveDate, NaiveDateTime};
 use serde_json::Value;
 use std::fs;
 use std::result::Result::Ok;
@@ -157,4 +157,16 @@ pub fn timestamp_to_rss(ts: i64) -> String {
     DateTime::from_timestamp(ts, 0)
         .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
         .unwrap_or_else(now)
+}
+
+/// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（东八区）
+pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String> {
+    let naive = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S").ok()?;
+    let fixed = chrono::FixedOffset::east_opt(8 * 3600)?;
+    Some(
+        fixed
+            .from_utc_datetime(&naive)
+            .format("%a, %d %b %Y %H:%M:%S %z")
+            .to_string(),
+    )
 }

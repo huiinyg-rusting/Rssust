@@ -37,8 +37,25 @@
 - [bilibili_weekly](../bilibili_weekly.md)
     Bilibili最新一期的每周精选
 
+#### Douban
+- [douban_book_latest](../douban_book_latest.md)
+    豆瓣新书速递
+- [douban_book_rank](../douban_book_rank.md)
+    豆瓣热门图书排行榜
+- [douban_event_hot](../douban_event_hot.md)
+    豆瓣同城热门活动
+- [douban_movie_classification](../douban_movie_classification.md)
+    豆瓣电影分类
+
+#### NetEase
+- [netease_today](../netease_today.md)
+    网易新闻今日关注
+
+#### Hupu
+- [hupu_news](../hupu_news.md)
+    虎扑球队新闻
+
 #### CDE
-- [cde](../cde.md)
     国家药品审评网站
 
 #### Zhihu
