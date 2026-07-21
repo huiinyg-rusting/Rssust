@@ -55,9 +55,6 @@
 - [hupu_news](../hupu_news.md)
     虎扑球队新闻
 
-#### CDE
-    国家药品审评网站
-
 #### Zhihu
 - [zhihu_hot](../zhihu_hot.md)
     知乎热榜
