@@ -51,6 +51,18 @@
 - [netease_today](../netease_today.md)
     网易新闻今日关注
 
+#### Solidot
+- [solidot](../solidot.md)
+    奇客的资讯，重要的东西
+
+#### ThePaper
+- [thepaper_featured](../thepaper_featured.md)
+    澎湃新闻首页头条推荐
+
+#### WallStreetCN
+- [wallstreetcn_hot](../wallstreetcn_hot.md)
+    华尔街见闻最热文章
+
 #### Hupu
 - [hupu_news](../hupu_news.md)
     虎扑球队新闻

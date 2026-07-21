@@ -1,6 +1,6 @@
 use crate::crawler::fetch;
 use anyhow::{Error, Result, anyhow};
-use chrono::{DateTime, FixedOffset, TimeZone};
+use chrono::{DateTime, TimeZone};
 use chrono::{Datelike, Local, NaiveDate, NaiveDateTime};
 use serde_json::Value;
 use std::fs;

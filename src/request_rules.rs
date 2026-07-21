@@ -64,6 +64,12 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         netease_today::get(parameters)
     } else if url == "/hupu_news" {
         hupu_news::get(parameters)
+    } else if url == "/thepaper_featured" {
+        thepaper_featured::get(parameters)
+    } else if url == "/solidot" {
+        solidot::get(parameters)
+    } else if url == "/wallstreetcn_hot" {
+        wallstreetcn_hot::get(parameters)
     } else if url == "/zhihu_hot" {
         zhihu_hot::get(parameters)
 } else {
