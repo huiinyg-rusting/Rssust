@@ -28,9 +28,8 @@ fn main() {
             _ => panic!("浏览器未知"),
         })
         .unwrap();
-    } else {
-        println!("No args Find");
     }
+    println!("No args Find");
     load_cookies().expect("cookies加载失败");
     println!("now,test the obscura");
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
