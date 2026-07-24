@@ -47,6 +47,22 @@
 - [douban_movie_classification](../douban_movie_classification.md)
     豆瓣电影分类
 
+#### Caixin (财新网)
+- [caixin_latest](../caixin_latest.md)
+    财新网最新文章
+
+#### iFeng (凤凰网)
+- [ifeng_news](../ifeng_news.md)
+    凤凰网资讯
+
+#### Cailianpress (财联社)
+- [cls_hot](../cls_hot.md)
+    财联社热门文章排行榜
+
+#### Guancha (观察者网)
+- [guancha_headline](../guancha_headline.md)
+    观察者网头条
+
 #### NetEase
 - [netease_today](../netease_today.md)
     网易新闻今日关注
@@ -63,9 +79,43 @@
 - [wallstreetcn_hot](../wallstreetcn_hot.md)
     华尔街见闻最热文章
 
+#### IT之家
+- [ithome_ranking](../ithome_ranking.md)
+    IT之家热榜
+
+#### Jianshu (简书)
+- [jianshu_home](../jianshu_home.md)
+    简书首页
+
+#### Gelonghui (格隆汇)
+- [gelonghui_home](../gelonghui_home.md)
+    格隆汇首页资讯
+
 #### Hupu
 - [hupu_news](../hupu_news.md)
     虎扑球队新闻
+
+#### Yicai (第一财经)
+- [yicai_latest](../yicai_latest.md)
+    第一财经最新文章
+- [yicai_headline](../yicai_headline.md)
+    第一财经头条
+
+#### STCN (证券时报网)
+- [stcn_article_list](../stcn_article_list.md)
+    证券时报网文章列表
+- [stcn_kx](../stcn_kx.md)
+    证券时报网快讯
+- [stcn_rank](../stcn_rank.md)
+    证券时报网热榜
+
+#### Leiphone (雷锋网)
+- [leiphone_newsflash](../leiphone_newsflash.md)
+    雷锋网业界资讯
+
+#### TMTpost (钛媒体)
+- [tmtpost_new](../tmtpost_new.md)
+    钛媒体最新文章
 
 #### Zhihu
 - [zhihu_hot](../zhihu_hot.md)

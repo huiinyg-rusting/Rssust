@@ -62,14 +62,42 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         douban_movie_classification::get(parameters)
     } else if url == "/netease_today" {
         netease_today::get(parameters)
+    } else if url == "/gelonghui_home" {
+        gelonghui_home::get(parameters)
     } else if url == "/hupu_news" {
         hupu_news::get(parameters)
     } else if url == "/thepaper_featured" {
         thepaper_featured::get(parameters)
+    } else if url == "/leiphone_newsflash" {
+        leiphone_newsflash::get(parameters)
     } else if url == "/solidot" {
         solidot::get(parameters)
+    } else if url == "/stcn_article_list" {
+        stcn_article_list::get(parameters)
+    } else if url == "/stcn_kx" {
+        stcn_kx::get(parameters)
+    } else if url == "/stcn_rank" {
+        stcn_rank::get(parameters)
     } else if url == "/wallstreetcn_hot" {
         wallstreetcn_hot::get(parameters)
+    } else if url == "/caixin_latest" {
+        caixin_latest::get(parameters)
+    } else if url == "/cls_hot" {
+        cls_hot::get(parameters)
+    } else if url == "/ifeng_news" {
+        ifeng_news::get(parameters)
+    } else if url == "/guancha_headline" {
+        guancha_headline::get(parameters)
+    } else if url == "/ithome_ranking" {
+        ithome_ranking::get(parameters)
+    } else if url == "/jianshu_home" {
+        jianshu_home::get(parameters)
+    } else if url == "/yicai_latest" {
+        yicai_latest::get(parameters)
+    } else if url == "/yicai_headline" {
+        yicai_headline::get(parameters)
+    } else if url == "/tmtpost_new" {
+        tmtpost_new::get(parameters)
     } else if url == "/zhihu_hot" {
         zhihu_hot::get(parameters)
 } else {

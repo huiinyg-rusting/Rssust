@@ -28,53 +28,21 @@ pub fn doc_generate() -> Result<(), Error> {
     }
 
     summary.push_str("\n# 路由\n");
-    // 已定义的排序（Bilibili → Douban → NetEase → Hupu → CDE → Zhihu）
-    let route_order = &[
-        "bilibili_collection",
-        "bilibili_dynamic",
-        "bilibili_fav",
-        "bilibili_link_news",
-        "bilibili_partion",
-        "bilibili_partion_ranking",
-        "bilibili_popular",
-        "bilibili_precious",
-        "bilibili_series",
-        "bilibili_user_article",
-        "bilibili_user_coin",
-        "bilibili_user_fav",
-        "bilibili_user_like",
-        "bilibili_video_page",
-        "bilibili_video_reply",
-        "bilibili_vsearch",
-        "bilibili_weekly",
-        "douban_book_latest",
-        "douban_book_rank",
-        "douban_event_hot",
-        "douban_movie_classification",
-        "netease_today",
-        "hupu_news",
-        "solidot",
-        "thepaper_featured",
-        "wallstreetcn_hot",
-        "zhihu_hot",
-    ];
-    for name in route_order {
-        let file = format!("{}.md", name);
-        if source_root.join(&file).exists() {
-            summary.push_str(&format!("- [{}]({})\n", name, file));
-        }
-    }
-    // 未识别的 md 文件（避免遗漏）
+    let mut route_names: Vec<String> = Vec::new();
     for entry in std::fs::read_dir(&source_root)? {
         let entry = entry?;
         let path = entry.path();
-        let file_name = path.file_stem().unwrap().to_string_lossy().to_string();
-        if file_name == "official" || file_name == "SUMMARY" || route_order.contains(&file_name.as_str()) {
-            continue;
-        }
         if path.extension().map_or(false, |e| e == "md") {
-            summary.push_str(&format!("- [{}]({})\n", file_name, path.file_name().unwrap().to_string_lossy()));
+            let name = path.file_stem().unwrap().to_string_lossy().to_string();
+            if name != "SUMMARY" {
+                route_names.push(name);
+            }
         }
+    }
+    route_names.sort();
+    for name in &route_names {
+        let file = format!("{}.md", name);
+        summary.push_str(&format!("- [{}]({})\n", name, file));
     }
 
     std::fs::write(source_root.join("SUMMARY.md"), summary)?;
