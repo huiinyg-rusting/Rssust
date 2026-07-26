@@ -1,4 +1,3 @@
-use crate::crawler::fetch;
 use anyhow::{Error, Result, anyhow};
 use chrono::{DateTime, TimeZone};
 use chrono::{Datelike, Local, NaiveDate, NaiveDateTime};
@@ -34,7 +33,14 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
 /// 从指定 URL 抓取 HTML。
 /// 推荐
 pub fn fetch_obscura(url: &str) -> Result<String, Error> {
-    let html = fetch(url)?;
+
+    let html = crate::crawler::with_browser(|rt, browser| {
+            rt.block_on(async {
+                let mut page = browser.new_page().await?;
+                page.goto(url).await?;
+                Ok(page.content())
+            })
+        })?;
     Ok(html)
 }
 

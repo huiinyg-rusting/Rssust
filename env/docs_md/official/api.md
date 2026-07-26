@@ -1,6 +1,10 @@
 ### The API provided by this server
 ### 本服务器所提供的API
 ---
+#### AP News
+- [apnews_topics](../apnews_topics.md)
+    AP News headlines by topic
+
 #### Bilibili
 - [bilibili_collection](../bilibili_collection.md)
     B站合集视频列表
@@ -37,6 +41,10 @@
 - [bilibili_weekly](../bilibili_weekly.md)
     Bilibili最新一期的每周精选
 
+#### Eastday (东方资讯)
+- [eastday_24](../eastday_24.md)
+    东方资讯24小时热闻
+
 #### Douban
 - [douban_book_latest](../douban_book_latest.md)
     豆瓣新书速递
@@ -47,9 +55,17 @@
 - [douban_movie_classification](../douban_movie_classification.md)
     豆瓣电影分类
 
+#### Chinanews (中国新闻网)
+- [chinanews](../chinanews.md)
+    中国新闻网滚动新闻
+
 #### Caixin (财新网)
 - [caixin_latest](../caixin_latest.md)
     财新网最新文章
+
+#### EEO (经济观察报)
+- [eeo_kuaixun](../eeo_kuaixun.md)
+    经济观察报快讯
 
 #### iFeng (凤凰网)
 - [ifeng_news](../ifeng_news.md)
@@ -62,6 +78,14 @@
 #### Guancha (观察者网)
 - [guancha_headline](../guancha_headline.md)
     观察者网头条
+
+#### Guanhai (观海新闻)
+- [guanhai](../guanhai.md)
+    观海新闻首页推荐
+
+#### BJNews (新京报)
+- [bjnews_cat](../bjnews_cat.md)
+    新京报分类文章
 
 #### NetEase
 - [netease_today](../netease_today.md)

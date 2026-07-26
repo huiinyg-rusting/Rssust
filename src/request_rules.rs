@@ -17,90 +17,62 @@ pub enum ShowToUser {
 
 ///这个函数相当于模块的注册表
 /// 给调用者的是html格式
-pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, Error> {
-    if url == "/bilibili_weekly" {
-        bilibili_weekly::get(parameters)
-    } else if url == "/bilibili_dynamic" {
-        bilibili_dynamic::get(parameters)
-    } else if url == "/bilibili_popular" {
-        bilibili_popular::get(parameters)
-    } else if url == "/bilibili_precious" {
-        bilibili_precious::get(parameters)
-    } else if url == "/bilibili_series" {
-        bilibili_series::get(parameters)
-    } else if url == "/bilibili_collection" {
-        bilibili_collection::get(parameters)
-    } else if url == "/bilibili_fav" {
-        bilibili_fav::get(parameters)
-    } else if url == "/bilibili_link_news" {
-        bilibili_link_news::get(parameters)
-    } else if url == "/bilibili_partion" {
-        bilibili_partion::get(parameters)
-    } else if url == "/bilibili_partion_ranking" {
-        bilibili_partion_ranking::get(parameters)
-    } else if url == "/bilibili_user_article" {
-        bilibili_user_article::get(parameters)
-    } else if url == "/bilibili_user_coin" {
-        bilibili_user_coin::get(parameters)
-    } else if url == "/bilibili_user_fav" {
-        bilibili_user_fav::get(parameters)
-    } else if url == "/bilibili_user_like" {
-        bilibili_user_like::get(parameters)
-    } else if url == "/bilibili_video_page" {
-        bilibili_video_page::get(parameters)
-    } else if url == "/bilibili_video_reply" {
-        bilibili_video_reply::get(parameters)
-    } else if url == "/bilibili_vsearch" {
-        bilibili_vsearch::get(parameters)
-    } else if url == "/douban_book_latest" {
-        douban_book_latest::get(parameters)
-    } else if url == "/douban_book_rank" {
-        douban_book_rank::get(parameters)
-    } else if url == "/douban_event_hot" {
-        douban_event_hot::get(parameters)
-    } else if url == "/douban_movie_classification" {
-        douban_movie_classification::get(parameters)
-    } else if url == "/netease_today" {
-        netease_today::get(parameters)
-    } else if url == "/gelonghui_home" {
-        gelonghui_home::get(parameters)
-    } else if url == "/hupu_news" {
-        hupu_news::get(parameters)
-    } else if url == "/thepaper_featured" {
-        thepaper_featured::get(parameters)
-    } else if url == "/leiphone_newsflash" {
-        leiphone_newsflash::get(parameters)
-    } else if url == "/solidot" {
-        solidot::get(parameters)
-    } else if url == "/stcn_article_list" {
-        stcn_article_list::get(parameters)
-    } else if url == "/stcn_kx" {
-        stcn_kx::get(parameters)
-    } else if url == "/stcn_rank" {
-        stcn_rank::get(parameters)
-    } else if url == "/wallstreetcn_hot" {
-        wallstreetcn_hot::get(parameters)
-    } else if url == "/caixin_latest" {
-        caixin_latest::get(parameters)
-    } else if url == "/cls_hot" {
-        cls_hot::get(parameters)
-    } else if url == "/ifeng_news" {
-        ifeng_news::get(parameters)
-    } else if url == "/guancha_headline" {
-        guancha_headline::get(parameters)
-    } else if url == "/ithome_ranking" {
-        ithome_ranking::get(parameters)
-    } else if url == "/jianshu_home" {
-        jianshu_home::get(parameters)
-    } else if url == "/yicai_latest" {
-        yicai_latest::get(parameters)
-    } else if url == "/yicai_headline" {
-        yicai_headline::get(parameters)
-    } else if url == "/tmtpost_new" {
-        tmtpost_new::get(parameters)
-    } else if url == "/zhihu_hot" {
-        zhihu_hot::get(parameters)
-} else {
+pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, anyhow::Error> {
+    // 静态路由映射表，避免运行时重复构建
+    const ROUTES: &[(&str, fn(HashMap<String, String>) -> Result<String, anyhow::Error>)] = &[
+        ("/apnews_topics", apnews_topics::get),
+        ("/bjnews_cat", bjnews_cat::get),
+        ("/bilibili_weekly", bilibili_weekly::get),
+        ("/bilibili_dynamic", bilibili_dynamic::get),
+        ("/bilibili_popular", bilibili_popular::get),
+        ("/bilibili_precious", bilibili_precious::get),
+        ("/bilibili_series", bilibili_series::get),
+        ("/bilibili_collection", bilibili_collection::get),
+        ("/bilibili_fav", bilibili_fav::get),
+        ("/bilibili_link_news", bilibili_link_news::get),
+        ("/bilibili_partion", bilibili_partion::get),
+        ("/bilibili_partion_ranking", bilibili_partion_ranking::get),
+        ("/bilibili_user_article", bilibili_user_article::get),
+        ("/bilibili_user_coin", bilibili_user_coin::get),
+        ("/bilibili_user_fav", bilibili_user_fav::get),
+        ("/bilibili_user_like", bilibili_user_like::get),
+        ("/bilibili_video_page", bilibili_video_page::get),
+        ("/bilibili_video_reply", bilibili_video_reply::get),
+        ("/bilibili_vsearch", bilibili_vsearch::get),
+        ("/douban_book_latest", douban_book_latest::get),
+        ("/douban_book_rank", douban_book_rank::get),
+        ("/douban_event_hot", douban_event_hot::get),
+        ("/douban_movie_classification", douban_movie_classification::get),
+        ("/eastday_24", eastday_24::get),
+        ("/eeo_kuaixun", eeo_kuaixun::get),
+        ("/netease_today", netease_today::get),
+        ("/gelonghui_home", gelonghui_home::get),
+        ("/hupu_news", hupu_news::get),
+        ("/thepaper_featured", thepaper_featured::get),
+        ("/leiphone_newsflash", leiphone_newsflash::get),
+        ("/solidot", solidot::get),
+        ("/stcn_article_list", stcn_article_list::get),
+        ("/stcn_kx", stcn_kx::get),
+        ("/stcn_rank", stcn_rank::get),
+        ("/wallstreetcn_hot", wallstreetcn_hot::get),
+        ("/caixin_latest", caixin_latest::get),
+        ("/chinanews", chinanews::get),
+        ("/cls_hot", cls_hot::get),
+        ("/ifeng_news", ifeng_news::get),
+        ("/guancha_headline", guancha_headline::get),
+        ("/guanhai", guanhai::get),
+        ("/ithome_ranking", ithome_ranking::get),
+        ("/jianshu_home", jianshu_home::get),
+        ("/yicai_latest", yicai_latest::get),
+        ("/yicai_headline", yicai_headline::get),
+        ("/tmtpost_new", tmtpost_new::get),
+        ("/zhihu_hot", zhihu_hot::get),
+    ];
+
+    // 查找匹配的路由处理器
+    if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
+        (handler.1)(parameters)
+    } else {
         Err(anyhow!("404NotFound"))
     }
 }

@@ -11,6 +11,7 @@ pub mod connect {
     use crate::request_rules::*;
     use anyhow::Error;
     use anyhow::*;
+    use log::warn;
     use std::collections::HashMap;
     use std::env;
     use std::fs;
@@ -23,24 +24,20 @@ pub mod connect {
         stream.read(&mut buffer).unwrap();
 
         let head = std::str::from_utf8(extract_between_spaces(&buffer).unwrap_or_else(|| {
-            eprintln!("Failed to slice header{:?}", buffer);
+            warn!("Failed to slice header{:?}", buffer);
             &[]
         }))
         .unwrap_or_else(|_| {
-            eprintln!("Invalid UTF-8{:?}", buffer);
+            warn!("Invalid UTF-8{:?}", buffer);
             ""
         });
-        let response = if head.contains("?") {
-            if let Some((before, after)) = head.split_once('?') {
-                let first_part = before;
-                let second_part = crate::easyuser::params_to_hashmap(after); //执行完second_part此时已经是hashmap格式了
-                root_rules(first_part, second_part)
-            } else {
-                root_rules(head, HashMap::new())
-            }
+        let (path, params) = if let Some((before, after)) = head.split_once('?') {
+            (before, crate::easyuser::params_to_hashmap(after))
         } else {
-            root_rules(head, HashMap::new())
+            (head, HashMap::new())
         };
+
+        let response = root_rules(path, params);
         let response = match response {
             ShowToUser::Html { res } => match res {
                 std::result::Result::Ok(i) => format!(
@@ -48,7 +45,10 @@ pub mod connect {
                     i.len(),
                     i
                 ),
-                Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
+                Err(i) => {
+                    warn!("‌Client error occurred when requesting HTML. Error details: {}", i);
+                    format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)
+            },
             },
             ShowToUser::Rss { res } => match res {
                 std::result::Result::Ok(i) => format!(
@@ -56,7 +56,10 @@ pub mod connect {
                     i.len(),
                     i
                 ),
-                Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
+                Err(i) => {
+                    warn!("Client error occurred when requesting XML. Error details:‌ {}", i);
+                    format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)
+                },
             },
             ShowToUser::File { res, content_type } => match res {
                 std::result::Result::Ok(i) => format!(
@@ -65,7 +68,9 @@ pub mod connect {
                     i.len(),
                     i
                 ),
-                Err(i) => format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i),
+                Err(i) => {
+                    warn!("Client error occurred when requesting data (file). Error details:‌ {}", i);
+                    format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)},
             },
         };
 
@@ -76,21 +81,21 @@ pub mod connect {
     fn extract_between_spaces(buffer: &[u8; 1024]) -> Option<&[u8]> {
         let bytes = buffer.as_slice();
 
-        // 找到第一个空格的位置
+        // Find the position of the first space.‌
         let first_space = bytes.iter().position(|&b| b == b' ')?;
 
-        // 从第一个空格之后开始，找第二个空格
+        // Extract the content between the first and second spaces.‌
         let second_space = bytes[first_space + 1..]
             .iter()
             .position(|&b| b == b' ')
             .map(|pos| first_space + 1 + pos)?;
 
-        // 截取两个空格之间的内容
+        // Extract the content between two spaces.‌
         Some(&bytes[first_space + 1..second_space])
     }
 
-    ///这个函数发送index.html的内容给调用者，否则发送错误及anyhow的文本错误类型 给调用者
-    /// 给调用者的是html格式
+    ///This function sends the content of index.html to the caller; otherwise, it sends an error with an anyhow text error type.‌
+    /// The response returned to the caller is in HTML format.
     pub fn show_index_doc() -> Result<String, Error> {
         let exe_path = env::current_exe()?;
         let exe_dir = exe_path
@@ -183,6 +188,7 @@ pub mod crawler {
     use serde_json::Value;
     use std::cell::RefCell;
     use std::env;
+    use log::info;
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::runtime::Builder as RuntimeBuilder;
 
@@ -212,9 +218,9 @@ pub mod crawler {
         })
     }
 
-    /// 将一个 JSON cookie 对象转换为 HTTP Set-Cookie 字符串。
+    /// Convert a JSON cookie object to an HTTP Set-Cookie string.‌
     ///
-    /// 示例格式：
+    /// e.g：
     /// {
     ///   "name": "session_id",
     ///   "value": "abc123",
@@ -229,15 +235,15 @@ pub mod crawler {
         let name = cookie
             .get("name")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("cookie 缺少 name 字段"))?;
+            .ok_or_else(|| anyhow!("cookie need name field‌"))?;
         let value = cookie
             .get("value")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("cookie 缺少 value 字段"))?;
+            .ok_or_else(|| anyhow!("cookie need value field‌"))?;
         let domain = cookie
             .get("domain")
             .and_then(Value::as_str)
-            .ok_or_else(|| anyhow!("cookie 缺少 domain 字段"))?;
+            .ok_or_else(|| anyhow!("cookie need domain field‌"))?;
         let path = cookie.get("path").and_then(Value::as_str).unwrap_or("/");
 
         let mut set_cookie = format!("{}={}; Domain={}; Path={}", name, value, domain, path);
@@ -276,8 +282,8 @@ pub mod crawler {
         })
     }
 
-    /// 从 JSON 文件加载 cookie，返回 Set-Cookie 字符串列表。
-    /// JSON 文件应为 cookie 对象数组。
+    /// Load cookies from a JSON file and return a list of Set-Cookie strings.‌
+    /// The JSON file should be an array of cookie objects.‌
     pub fn load_cookies() -> Result<String, Error> {
         let exe_path = env::current_exe()?;
 
@@ -297,11 +303,11 @@ pub mod crawler {
             .collect::<Result<Vec<_>, _>>()?;
 
         let _ = init(&coke_list);
-        println!("成功载入 {} 个 Cookie", cookies.len());
+        info!("Succse {} Cookie", cookies.len());
         Ok("Succse".to_string())
     }
 
-    /// 将 cookie 注入全局浏览器实例。
+    /// Inject cookies into the global browser instance.‌
     fn init(cookies: &[Coke]) -> Result<()> {
         with_browser(|_rt, browser| {
             for cmake in cookies {
@@ -313,13 +319,5 @@ pub mod crawler {
             Ok(())
         })
     }
-    pub fn fetch(url: &str) -> Result<String> {
-        with_browser(|rt, browser| {
-            rt.block_on(async {
-                let mut page = browser.new_page().await?;
-                page.goto(url).await?;
-                Ok(page.content())
-            })
-        })
-    }
+
 }

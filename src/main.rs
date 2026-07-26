@@ -6,6 +6,7 @@ use rssust::{
 use std::env;
 use std::net::TcpListener;
 use threadpool::ThreadPool;
+use log::{warn,trace};
 
 ///main函数
 /// 加载服务器
@@ -29,9 +30,9 @@ fn main() {
         })
         .unwrap();
     }
-    println!("No args Find");
+    warn!("No args Find");
     load_cookies().expect("cookies加载失败");
-    println!("now,test the obscura");
+    trace!("启动端口监听和Obscura");
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
     let pool = ThreadPool::new(4);
     for stream in listener.incoming() {
