@@ -1,6 +1,7 @@
 use bench_scraper::KnownBrowser;
 use rssust::{
-    connect::handle_connection, cookies::extract_cookies_to_json, crawler::load_cookies,
+    // crawler::load_cookies,
+    config, connect::handle_connection, cookies::extract_cookies_to_json,
     doc::doc_generate,
 };
 use std::env;
@@ -12,6 +13,7 @@ use log::{warn,trace};
 /// 加载服务器
 /// 启动threadpool多线程
 fn main() {
+    config::init();
     let args: Vec<String> = env::args().collect();
     if matches!(args.get(1), Some(s) if s == "docs") {
         doc_generate().unwrap();
@@ -31,7 +33,7 @@ fn main() {
         .unwrap();
     }
     warn!("No args Find");
-    load_cookies().expect("cookies加载失败");
+    // load_cookies().expect("cookies加载失败");
     trace!("启动端口监听和Obscura");
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
     let pool = ThreadPool::new(4);

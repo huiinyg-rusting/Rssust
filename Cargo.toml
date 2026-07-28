@@ -8,7 +8,6 @@ serde_json = "1.0.150"
 anyhow = "1.0.103"
 threadpool = "1.8"
 tokio = { version = "1.0", features = ["rt"] }
-obscura = { git = "https://github.com/h4ckf0r0day/obscura" }
 reqwest = { version = "0.13.4", features = ["cookies", "blocking", "form"] }
 scraper = "0.27.0"
 rss = "2.1.0"
@@ -23,6 +22,8 @@ urlencoding = "2.1"
 hex = "0.4"
 bench_scraper = "0.4.1"
 log = "0.4.33"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
 
 [profile.dev]
 incremental = true

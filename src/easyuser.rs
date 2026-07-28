@@ -30,6 +30,7 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
     response
 }
 
+/*
 /// 从指定 URL 抓取 HTML。
 /// 推荐
 pub fn fetch_obscura(url: &str) -> Result<String, Error> {
@@ -43,6 +44,7 @@ pub fn fetch_obscura(url: &str) -> Result<String, Error> {
         })?;
     Ok(html)
 }
+*/
 
 //下面是reqwest get的内容
 //不会使用线程池

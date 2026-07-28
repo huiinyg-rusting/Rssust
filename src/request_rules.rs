@@ -1,3 +1,4 @@
+use crate::config::is_route_disabled;
 use crate::router::*;
 use anyhow::*;
 use std::collections::HashMap;
@@ -71,6 +72,9 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 
     // 查找匹配的路由处理器
     if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
+        if is_route_disabled(url) {
+            return Err(anyhow!("404NotFound"));
+        }
         (handler.1)(parameters)
     } else {
         Err(anyhow!("404NotFound"))
