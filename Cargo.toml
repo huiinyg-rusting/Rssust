@@ -26,3 +26,8 @@ log = "0.4.33"
 
 [profile.dev]
 incremental = true
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
