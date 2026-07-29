@@ -10,6 +10,8 @@ pub mod guancha_headline;
 pub mod guanhai;
 pub mod ithome_ranking;
 pub mod jianshu_home;
+pub mod juejin_pins;
+pub mod juejin_trending;
 pub mod leiphone_newsflash;
 pub mod bilibili_dynamic;
 pub mod bilibili_fav;

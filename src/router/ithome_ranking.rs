@@ -47,6 +47,27 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 .map(|e| e.inner_html())
                 .unwrap_or_default();
 
+            let re_orig_before_src =
+                Regex::new(r#"(<img[^>]*?)data-original="([^"]+)"([^>]*?)src="[^"]*"([^>]*>)"#)?;
+            let re_src_before_orig =
+                Regex::new(r#"(<img[^>]*?)src="[^"]*"([^>]*?)data-original="([^"]+)"([^>]*>)"#)?;
+
+            let description = re_orig_before_src
+                .replace_all(&description, |caps: &regex::Captures| {
+                    format!("{}src=\"{}\"{}{}", &caps[1], &caps[2], &caps[3], &caps[4])
+                })
+                .to_string();
+            let description = re_src_before_orig
+                .replace_all(&description, |caps: &regex::Captures| {
+                    format!("{}src=\"{}\"{}{}", &caps[1], &caps[3], &caps[2], &caps[4])
+                })
+                .to_string();
+
+            let description = description.replace(
+                r#"src="//img.ithome.com"#,
+                r#"src="https://img.ithome.com"#,
+            );
+
             let pub_date = extract_ithome_date(&detail_html);
 
             let item = ItemBuilder::default()

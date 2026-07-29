@@ -64,6 +64,8 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         ("/guanhai", guanhai::get),
         ("/ithome_ranking", ithome_ranking::get),
         ("/jianshu_home", jianshu_home::get),
+        ("/juejin_pins", juejin_pins::get),
+        ("/juejin_trending", juejin_trending::get),
         ("/yicai_latest", yicai_latest::get),
         ("/yicai_headline", yicai_headline::get),
         ("/tmtpost_new", tmtpost_new::get),
