@@ -40,8 +40,12 @@ pub fn get(para: HashMap<String,String>) -> Result<String, Error> {
 项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在[easyuser_cn.html](easyuser_cn.md)查看
 具体的程序逻辑就由你自己编写吧。
 ### 写完怎么注册呢？
-在/src/router/mod.rs中，在最后新建一行，写上 `pub mod 你的路由名;`
-然后再在src/request_rules.rs中的request_rules()函数加一个else if 分支，条件为url == "/路由名"（仿照其他分支的例子抄），在{}中用绝调用你的函数，一般而言，路径是 `你的路由名::get(parameters)` 。
+在 `/src/router/mod.rs` 中，在最后新建一行，写上 `pub mod 你的路由名;`
+然后再在 `src/request_rules.rs` 的 `ROUTES` 常量数组中添加一个条目：
+```rust
+("/你的路由名", 你的路由名::get),
+```
+仿照其他条目的写法即可。
 ### 注册完怎么运行呢？
 我对二进制文件设置的一些**必要环境目录十分严苛**，`cookies.json`,`index`文件夹等，都必须在二进制文件同目录下，因此我创建了一个`env`文件夹，需要的环境都在里面。他应该是长这样的
 ```sh

@@ -12,14 +12,6 @@
 
 ## 爬虫类
 
-### fetch_obscura()
-
-**签名**: `pub fn fetch_obscura(url: &str) -> Result<String, Error>`
-
-使用无头浏览器（Obscura）爬取 URL 内容。会自动携带 `cookies.json` 中注入的 Cookie。适用于需要 JavaScript 渲染的页面。
-
-**内部调用**: `crawler::fetch(url)`
-
 ### fetch_reqwest_get()
 
 **签名**: `pub fn fetch_reqwest_get(url: &str) -> Result<String, Error>`
@@ -27,6 +19,18 @@
 使用 `reqwest` 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。
 
 **注意**: 每次调用都会创建新的 Tokio Runtime，开销较大。
+
+### fetch_reqwest_get_with_headers()
+
+**签名**: `pub fn fetch_reqwest_get_with_headers(url: &str, headers: &[(&str, &str)]) -> Result<String, Error>`
+
+使用 `reqwest` 库发送带自定义 Header 的 HTTP GET 请求。
+
+示例：
+```rust
+let headers = &[("Referer", "https://example.com"), ("Cookie", "session=abc")];
+fetch_reqwest_get_with_headers("https://api.example.com/data", headers)?;
+```
 
 ### fetch_reqwest_post()
 
@@ -78,6 +82,14 @@
 
 将 Unix 时间戳（i64）转换为 RSS 标准时间格式。
 
+### datetime_str_to_rss()
+
+**签名**: `pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String>`
+
+将 `"YYYY-MM-DD HH:MM:SS"` 格式的字符串转换为 RSS 标准时间格式（东八区）。
+
+示例：`"2026-07-11 12:00:00"` → `"Sat, 11 Jul 2026 12:00:00 +0800"`
+
 ---
 
 ## 字符类
@@ -104,8 +116,24 @@
 
 ---
 
+## 工具类
+
+### parse_bool()
+
+**签名**: `pub fn parse_bool(value: Option<&String>, default: bool) -> bool`
+
+将字符串值解析为布尔值。支持 `"1"` / `"true"` / `"True"` → `true`，`"0"` / `"false"` / `"False"` → `false`，其他值尝试 `parse()`，`None` 返回 `default`。
+
+### load_cookie_header()
+
+**签名**: `pub fn load_cookie_header(domain_filter: Option<&str>) -> Result<Option<String>>`
+
+从二进制同目录的 `cookies.json` 加载 Cookie，返回 `name=value; name=value...` 格式的字符串。可传入 `domain_filter` 只返回指定域名的 Cookie（如 `Some("bilibili.com")`）。
+
+---
+
 ## 开发者提示
 
 - 路由中必须导入 `use crate::easyuser::*;`
-- `fetch_obscura` 比 `fetch_reqwest_get` 慢（需要启动浏览器），但能处理 JS 渲染的页面
 - 从 JSON 提取字符串后记得用 `no_double_quotes()` 清理
+- 需要携带 Cookie 时，用 `fetch_reqwest_get_with_headers()` 配合 `load_cookie_header()`

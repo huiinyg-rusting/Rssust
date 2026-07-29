@@ -48,7 +48,11 @@ The specific program logic is up to you to write.
 ### How to register it after writing?
 In `/src/router/mod.rs`, add a new line at the end: `pub mod your_router_name;`
 
-Then in the `request_rules()` function in `src/request_rules.rs`, add an `else if` branch with the condition `url == "/router_name"` (follow the pattern of other branches), and call your function in the `{}` block. Generally, the path is `your_router_name::get(parameters)`.
+Then in `src/request_rules.rs`, add an entry to the `ROUTES` const array:
+```rust
+("/your_router_name", your_router_name::get),
+```
+Follow the pattern of other entries.
 
 ### How to run after registration?
 I'm very strict about the necessary environment directories for the binary file. Files like `cookies.json`, the `index` folder, etc., must be in the same directory as the binary file. Therefore, I created an `env` folder where all necessary environments are located. It should look like this:

@@ -7,8 +7,10 @@
 
 ## 功能流程
 
-1. **命令行参数处理**：如果第一个参数为 `"docs"`，则调用 `doc_generate()` 生成文档 HTML（遍历 `docs_md/` 下的 `.md` 文件，输出为 `.html` 到 `docs/` 目录）
-2. **Cookie 加载**：调用 `load_cookies()` 从二进制同目录的 `cookies.json` 加载 cookie，注入到无头浏览器实例
+1. **配置初始化**：调用 `config::init()` 确保 `config.toml` 存在
+2. **命令行参数处理**：
+   - 第一个参数为 `"docs"` → 调用 `doc_generate()` 生成文档 HTML
+   - 第一个参数为 `"cookie"` → 调用 `extract_cookies_to_json()` 导出浏览器 cookie
 3. **启动 TCP 服务器**：绑定 `127.0.0.1:7878`，使用 `ThreadPool`（4 线程）并发处理请求
 4. **请求处理**：每个连接由 `handle_connection()` 处理（定义在 `lib.rs` 的 `connect` 模块）
 
@@ -36,7 +38,8 @@ root_rules(url, params)
 
 ```
 env/
-├── cookies.json      # Cookie 文件，启动时加载到浏览器
+├── config.toml       # 配置文件（自动创建）
+├── cookies.json      # Cookie 文件
 ├── index/
 │   ├── 404.html      # 404 页面
 │   └── index.html    # 首页
@@ -45,11 +48,14 @@ env/
 │   └── 路由名.md     # 各路由的文档
 └── rssust            # 编译后的二进制
 ```
-# crawler 模块 - lib.rs
+
+# crawler 模块 — lib.rs（已禁用）
+
+> **注意**：`crawler` 模块目前在 `src/lib.rs` 中已被注释掉（`/* ... */`），当前版本不可用。以下文档仅作历史参考。
 
 ## 位置
 
-`src/lib.rs` 中的 `pub mod crawler` 模块。
+`src/lib.rs` 中的 `pub mod crawler` 模块（已注释）。
 
 ## 概述
 
@@ -150,6 +156,7 @@ thread_local! {
 5. 根据 `ShowToUser` 枚举类型构建 HTTP 响应：
    - `ShowToUser::Html` → `Content-Type: text/html`
    - `ShowToUser::Rss` → `Content-Type: application/xml`
+   - `ShowToUser::File` → 对应的 MIME 类型（css/js/svg/png 等）
 6. 写回 TCP 流
 
 ### extract_between_spaces()
@@ -178,11 +185,13 @@ thread_local! {
 pub enum ShowToUser {
     Html { res: Result<String, Error> },
     Rss { res: Result<String, Error> },
+    File { res: Result<String, Error>, content_type: String },
 }
 ```
 
 - `Html` — 返回 HTML 页面（首页、文档页面、错误页面）
 - `Rss` — 返回 RSS XML（路由器的输出）
+- `File` — 返回静态文件（CSS/JS/图片/字体等）
 
 # 路由注册表 - request_rules.rs
 
@@ -200,11 +209,13 @@ pub enum ShowToUser {
 pub enum ShowToUser {
     Html { res: Result<String, Error> },
     Rss { res: Result<String, Error> },
+    File { res: Result<String, Error>, content_type: String },
 }
 ```
 
 - `Html` — 返回 HTML 页面
 - `Rss` — 返回 RSS XML
+- `File` — 返回静态文件
 
 ## 核心函数
 
@@ -217,26 +228,34 @@ pub enum ShowToUser {
 | URL 路径 | 处理器 | 返回类型 |
 |----------|--------|----------|
 | `"/"` | `show_index_doc()` | `ShowToUser::Html` |
-| `以 "/docs/" 开头` | `show_doc(path)` | `ShowToUser::Html` |
+| 以 `"/docs/"` 或 `"/index/"` 开头 | `serve_static(path)` | `ShowToUser::Html` 或 `ShowToUser::File` |
 | 其他 | `request_rules()` | `ShowToUser::Rss` 或 `Html(错误)` |
 
 ### request_rules()
 
 **签名**: `pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, Error>`
 
-二级路由注册表，匹配 URL 路径到具体路由器：
+二级路由注册表，使用 `const` 静态数组匹配 URL 路径到具体路由器：
 
 ```rust
 pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, Error> {
-    if url == "/bilibili_weekly" {
-        bilibili_weekly::get(parameters)
+    const ROUTES: &[(&str, fn(HashMap<String, String>) -> Result<String, Error>)] = &[
+        ("/bilibili_weekly", bilibili_weekly::get),
+        ("/bilibili_dynamic", bilibili_dynamic::get),
+        // ... 其他路由
+    ];
+    if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
+        if is_route_disabled(url) {
+            return Err(anyhow!("404NotFound"));
+        }
+        (handler.1)(parameters)
     } else {
         Err(anyhow!("404NotFound"))
     }
 }
 ```
 
-**注意**：`bilibili_dynamic` 路由虽然在 `mod.rs` 中注册了 `pub mod bilibili_dynamic`，但当前 **未在 `request_rules()` 中添加匹配分支**，因此访问 `/bilibili_dynamic` 会返回 404。
+注册的路由会先检查 `config.toml` 中的 `routes.disabled` 列表，若被禁用则返回 404。
 
 ## 如何添加新路由
 
@@ -244,7 +263,7 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 
 1. 在 `src/router/` 下新建 `.rs` 文件，实现 `pub fn get(para: HashMap<String,String>) -> Result<String, Error>`
 2. 在 `src/router/mod.rs` 中添加 `pub mod 你的路由名;`
-3. 在 `request_rules()` 中添加 `else if` 分支匹配 URL
+3. 在 `request_rules.rs` 的 `ROUTES` 常量数组中添加 `("/你的路由名", 你的路由名::get)` 条目
 4. 在 `env/docs_md/` 下编写对应的路由文档 `.md` 文件
 
 # 文档生成器 - doc.rs
@@ -255,7 +274,7 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 
 ## 概述
 
-将 `docs_md/` 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在 `src/main.rs` 中通过 `cargo run docs` 触发。
+将 `docs_md/` 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在终端中执行 `./env/rssust docs` 触发。
 
 ## 核心函数
 
@@ -266,11 +285,9 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 #### 执行流程
 
 1. **定位目录**：以二进制文件所在目录为基础，输入目录为 `./docs_md`，输出目录为 `./docs`
-2. **收集文件**：mdbook干的事
-3. **排序**：按文件名（字母顺序，不区分大小写）排序
-4. **分类**：`docs_md/official/` 下的文件归为"官方"类，其余归为"Router"类，分别生成导航链接
-5. **转换**：使用 `mdbook` 库将 Markdown 转为 HTML
-6. **输出**：写入 `docs/目录名.html`
+2. **生成 SUMMARY.md**：自动扫描 `docs_md/` 下的所有 `.md` 文件，按分类生成导航目录
+3. **转换**：使用 `mdbook` 库将 Markdown 转为 HTML
+4. **后处理**：将 `official/` 子目录下的 HTML 提升到 `docs/` 根目录，修复所有资源文件和页面链接的路径
 
 #### 页面功能
 
