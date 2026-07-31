@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>new_router_en</title>
+        <title>api</title>
 
 
         <!-- Custom HTML head -->
@@ -175,128 +175,178 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h3 id="中文"><a class="header" href="#中文"><a href="new_router_cn.html">中文</a></a></h3>
-<h1 id="router-development-guide"><a class="header" href="#router-development-guide">Router Development Guide</a></h1>
-<p>This document is for both humans and AI to read.</p>
-<p>Before you start developing, you need:</p>
+                        <h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
+<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
+<hr />
+<h4 id="ap-news"><a class="header" href="#ap-news">AP News</a></h4>
 <ul>
-<li>A standard Cargo environment</li>
-<li>Git version control system</li>
-<li>An editor</li>
-<li><strong>Basic</strong> Rust knowledge, preferably through the official book, and familiarity with frequently used methods in the std library, such as various error handling methods for recoverable errors, etc.</li>
-<li>RSS knowledge from: <a href="https://www.rssboard.org/rss-specification">Official RSS 2.0.11 English</a> or <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">Blog Garden - Translated by Xiao Y RSS 2.0.10 Chinese</a></li>
-<li>Knowledge of RSS Crates, understanding how to build an RSS feed. <a href="https://docs.rs/rss/latest/rss/">Official English Documentation</a>
-<strong>Especially</strong> <a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a> and <a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
-<li>Since different upstream APIs have different formats, you need to learn different methods. For example, if your upstream API is in JSON format, you likely only need to learn the <code>.pointer()</code> and <code>.get()</code> methods from the serde_json Crate. If you need to directly process HTML and DOM, you need the methods recommended in the <a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a> documentation, and be careful to avoid causing panic!!!</li>
+<li><a href="apnews_topics.html">apnews_topics</a>
+AP News headlines by topic</li>
 </ul>
-<p>You can create your own .rs file under <code>/src/router</code>, but there are some requirements:</p>
-<ol>
-<li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
-<li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
-<li>The filename part (excluding the .rs extension) becomes your router name</li>
-<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
-<li>Each router can only correspond to one function</li>
-</ol>
-<p>Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
-<h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use std::collections::HashMap;
-use crate::easyuser::*;
-use anyhow::*;
-use rss::*;
-<span class="boring">}</span></code></pre></pre>
-<p>The above libraries <strong>must be imported</strong>. Import the following as needed:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use serde_json::Value;  // for JSON
-use scraper::*;  // for HTML
-<span class="boring">}</span></code></pre></pre>
-<h3 id="the-main-function-signature-for-each-router-should-look-like-this"><a class="header" href="#the-main-function-signature-for-each-router-should-look-like-this">The main function signature for each router should look like this:</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
-}
-<span class="boring">}</span></code></pre></pre>
-<p>The function signature and return type cannot be changed! (If you don't use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won't warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
-<p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="easyuser_cn.html">easyuser_cn.html</a>.</p>
-<p>The specific program logic is up to you to write.</p>
-<h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
-<p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
-<p>Then in the <code>request_rules()</code> function in <code>src/request_rules.rs</code>, add an <code>else if</code> branch with the condition <code>url == "/router_name"</code> (follow the pattern of other branches), and call your function in the <code>{}</code> block. Generally, the path is <code>your_router_name::get(parameters)</code>.</p>
-<h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
-<p>I'm very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
-<pre><code class="language-sh">├── cookies.json
-├── docs_md
-│   ├── .......md
-│   └── official
-│       └── ......md
-├── index
-│   ├── 404.html
-│   └── index.html
-└── rssust
-</code></pre>
-<p>I've also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
-<h3 id="cookie-management"><a class="header" href="#cookie-management">Cookie Management</a></h3>
-<p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
-<p>Example format:</p>
-<pre><code class="language-json">{
-  "name": "session_id",
-  "value": "abc123",
-  "domain": ".example.com",
-  "path": "/",
-  "secure": true,
-  "httpOnly": true,
-  "sameSite": "Lax",
-  "expirationDate": 1893456000
-}
-</code></pre>
-<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
-<p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
-<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing!</a></h3>
-<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
-<pre><code class="language-markdown"># Router-name: 
-**Commit time:** 
-**Cookies?:** 
-**Author:** 
-**Introduction:** 
-**Address:** 
-**Example:** 
-**Parameter:** 
-**Environment Variables:**
-</code></pre>
-<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I'll introduce them anyway:</p>
-<ol>
-<li><strong>Router-name:</strong> Fill in the router name</li>
-<li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
-<li><strong>Cookies?:</strong> Two cases: <code>no</code> or <code>yes</code>, with optional remarks after</li>
-<li><strong>Author:</strong> Submitter, write your GitHub username</li>
-<li><strong>Introduction:</strong> Write a brief introduction (note: if the platform is mainly in a certain language, use that language)</li>
-<li><strong>Address:</strong> Fill in <code>rssust://router_name</code></li>
-<li><strong>Example:</strong> Optional; if included, use a hyperlink: <code>[fill Address same as above](/router_name)</code></li>
-<li><strong>Parameter:</strong> This means HTTP GET parameters that might be used. You can fill in <code>no</code>, leave it empty, or start a new line with the following format:</li>
-</ol>
-<pre><code class="language-markdown">**Parameter:** 
-1. **disableembed** 
-   Type of parameter: bool
-   Default value: true
-   Meaning: Embedded videos
-2. Continue similarly for other parameters
-</code></pre>
-<p>The parameter name follows the number, wrapped with <code>** **</code> for emphasis.</p>
-<p><strong>Type of parameter:</strong> Fill in the type, define it yourself
-<strong>Default value:</strong> Default value, must conform to the <code>Type of parameter</code>
-<strong>Meaning:</strong> The meaning of the parameter</p>
-<h3 id="final-step-submit"><a class="header" href="#final-step-submit">Final Step: Submit!</a></h3>
-<p>Before submitting with git, run <code>cargo fmt</code> first. This helps others better understand your code.</p>
-<p>You need to submit:</p>
-<ol>
-<li><code>/src/router/your_router_name.rs</code></li>
-<li><code>env/docs_md/router_name.md</code> (generally please do not submit your <code>router_name.html</code> file)</li>
-<li><code>/src/router/mod.rs</code> and <code>src/request_rules.rs</code></li>
-</ol>
-<h4 id="this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code"><a class="header" href="#this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code">This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!</a></h4>
-<p>If you are insterested in pogram explanation,please turn to <a href="pogram_explanation_cn.html">pogram_explanation_cn</a>,but now it only has Chinese.</p>
+<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
+<ul>
+<li><a href="bilibili_collection.html">bilibili_collection</a>
+B站合集视频列表</li>
+<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
+Bilibili up主的动态</li>
+<li><a href="bilibili_fav.html">bilibili_fav</a>
+B站非默认收藏夹</li>
+<li><a href="bilibili_link_news.html">bilibili_link_news</a>
+B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_partion.html">bilibili_partion</a>
+B站分区视频</li>
+<li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
+B站分区视频排行榜</li>
+<li><a href="bilibili_popular.html">bilibili_popular</a>
+B站热门视频</li>
+<li><a href="bilibili_precious.html">bilibili_precious</a>
+B站入站必刷宝藏视频</li>
+<li><a href="bilibili_series.html">bilibili_series</a>
+B站系列视频列表</li>
+<li><a href="bilibili_user_article.html">bilibili_user_article</a>
+B站UP主图文</li>
+<li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
+B站UP主投币视频</li>
+<li><a href="bilibili_user_fav.html">bilibili_user_fav</a>
+B站UP主默认收藏夹</li>
+<li><a href="bilibili_user_like.html">bilibili_user_like</a>
+B站UP主点赞视频</li>
+<li><a href="bilibili_video_page.html">bilibili_video_page</a>
+B站视频选集列表</li>
+<li><a href="bilibili_video_reply.html">bilibili_video_reply</a>
+B站视频评论</li>
+<li><a href="bilibili_vsearch.html">bilibili_vsearch</a>
+B站视频搜索</li>
+<li><a href="bilibili_weekly.html">bilibili_weekly</a>
+Bilibili最新一期的每周精选</li>
+</ul>
+<h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
+<ul>
+<li><a href="eastday_24.html">eastday_24</a>
+东方资讯24小时热闻</li>
+</ul>
+<h4 id="douban"><a class="header" href="#douban">Douban</a></h4>
+<ul>
+<li><a href="douban_book_latest.html">douban_book_latest</a>
+豆瓣新书速递</li>
+<li><a href="douban_book_rank.html">douban_book_rank</a>
+豆瓣热门图书排行榜</li>
+<li><a href="douban_event_hot.html">douban_event_hot</a>
+豆瓣同城热门活动</li>
+<li><a href="douban_movie_classification.html">douban_movie_classification</a>
+豆瓣电影分类</li>
+</ul>
+<h4 id="chinanews-中国新闻网"><a class="header" href="#chinanews-中国新闻网">Chinanews (中国新闻网)</a></h4>
+<ul>
+<li><a href="chinanews.html">chinanews</a>
+中国新闻网滚动新闻</li>
+</ul>
+<h4 id="caixin-财新网"><a class="header" href="#caixin-财新网">Caixin (财新网)</a></h4>
+<ul>
+<li><a href="caixin_latest.html">caixin_latest</a>
+财新网最新文章</li>
+</ul>
+<h4 id="eeo-经济观察报"><a class="header" href="#eeo-经济观察报">EEO (经济观察报)</a></h4>
+<ul>
+<li><a href="eeo_kuaixun.html">eeo_kuaixun</a>
+经济观察报快讯</li>
+</ul>
+<h4 id="ifeng-凤凰网"><a class="header" href="#ifeng-凤凰网">iFeng (凤凰网)</a></h4>
+<ul>
+<li><a href="ifeng_news.html">ifeng_news</a>
+凤凰网资讯</li>
+</ul>
+<h4 id="cailianpress-财联社"><a class="header" href="#cailianpress-财联社">Cailianpress (财联社)</a></h4>
+<ul>
+<li><a href="cls_hot.html">cls_hot</a>
+财联社热门文章排行榜</li>
+</ul>
+<h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
+<ul>
+<li><a href="guancha_headline.html">guancha_headline</a>
+观察者网头条</li>
+</ul>
+<h4 id="guanhai-观海新闻"><a class="header" href="#guanhai-观海新闻">Guanhai (观海新闻)</a></h4>
+<ul>
+<li><a href="guanhai.html">guanhai</a>
+观海新闻首页推荐</li>
+</ul>
+<h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
+<ul>
+<li><a href="bjnews_cat.html">bjnews_cat</a>
+新京报分类文章</li>
+</ul>
+<h4 id="netease"><a class="header" href="#netease">NetEase</a></h4>
+<ul>
+<li><a href="netease_today.html">netease_today</a>
+网易新闻今日关注</li>
+</ul>
+<h4 id="solidot"><a class="header" href="#solidot">Solidot</a></h4>
+<ul>
+<li><a href="solidot.html">solidot</a>
+奇客的资讯，重要的东西</li>
+</ul>
+<h4 id="thepaper"><a class="header" href="#thepaper">ThePaper</a></h4>
+<ul>
+<li><a href="thepaper_featured.html">thepaper_featured</a>
+澎湃新闻首页头条推荐</li>
+</ul>
+<h4 id="wallstreetcn"><a class="header" href="#wallstreetcn">WallStreetCN</a></h4>
+<ul>
+<li><a href="wallstreetcn_hot.html">wallstreetcn_hot</a>
+华尔街见闻最热文章</li>
+</ul>
+<h4 id="it之家"><a class="header" href="#it之家">IT之家</a></h4>
+<ul>
+<li><a href="ithome_ranking.html">ithome_ranking</a>
+IT之家热榜</li>
+</ul>
+<h4 id="jianshu-简书"><a class="header" href="#jianshu-简书">Jianshu (简书)</a></h4>
+<ul>
+<li><a href="jianshu_home.html">jianshu_home</a>
+简书首页</li>
+</ul>
+<h4 id="gelonghui-格隆汇"><a class="header" href="#gelonghui-格隆汇">Gelonghui (格隆汇)</a></h4>
+<ul>
+<li><a href="gelonghui_home.html">gelonghui_home</a>
+格隆汇首页资讯</li>
+</ul>
+<h4 id="hupu"><a class="header" href="#hupu">Hupu</a></h4>
+<ul>
+<li><a href="hupu_news.html">hupu_news</a>
+虎扑球队新闻</li>
+</ul>
+<h4 id="yicai-第一财经"><a class="header" href="#yicai-第一财经">Yicai (第一财经)</a></h4>
+<ul>
+<li><a href="yicai_latest.html">yicai_latest</a>
+第一财经最新文章</li>
+<li><a href="yicai_headline.html">yicai_headline</a>
+第一财经头条</li>
+</ul>
+<h4 id="stcn-证券时报网"><a class="header" href="#stcn-证券时报网">STCN (证券时报网)</a></h4>
+<ul>
+<li><a href="stcn_article_list.html">stcn_article_list</a>
+证券时报网文章列表</li>
+<li><a href="stcn_kx.html">stcn_kx</a>
+证券时报网快讯</li>
+<li><a href="stcn_rank.html">stcn_rank</a>
+证券时报网热榜</li>
+</ul>
+<h4 id="leiphone-雷锋网"><a class="header" href="#leiphone-雷锋网">Leiphone (雷锋网)</a></h4>
+<ul>
+<li><a href="leiphone_newsflash.html">leiphone_newsflash</a>
+雷锋网业界资讯</li>
+</ul>
+<h4 id="tmtpost-钛媒体"><a class="header" href="#tmtpost-钛媒体">TMTpost (钛媒体)</a></h4>
+<ul>
+<li><a href="tmtpost_new.html">tmtpost_new</a>
+钛媒体最新文章</li>
+</ul>
+<h4 id="zhihu"><a class="header" href="#zhihu">Zhihu</a></h4>
+<ul>
+<li><a href="zhihu_hot.html">zhihu_hot</a>
+知乎热榜</li>
+</ul>
 
                     </main>
 

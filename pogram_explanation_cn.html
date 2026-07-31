@@ -178,33 +178,47 @@
                         <p>本文由AI撰写，但其他不是哦！</p>
 <h1 id="入口函数---mainrs"><a class="header" href="#入口函数---mainrs">入口函数 - main.rs</a></h1>
 <h2 id="入口函数"><a class="header" href="#入口函数">入口函数</a></h2>
-<p><strong><code>src/main.rs:9</code> — <code>fn main()</code></strong> 是整个程序的入口。</p>
+<p><strong><code>src/main.rs:18</code> — <code>#[tokio::main] async fn main()</code></strong> 是整个程序的入口。</p>
 <h2 id="功能流程"><a class="header" href="#功能流程">功能流程</a></h2>
 <ol>
-<li><strong>命令行参数处理</strong>：如果第一个参数为 <code>"docs"</code>，则调用 <code>doc_generate()</code> 生成文档 HTML（遍历 <code>docs_md/</code> 下的 <code>.md</code> 文件，输出为 <code>.html</code> 到 <code>docs/</code> 目录）</li>
-<li><strong>Cookie 加载</strong>：调用 <code>load_cookies()</code> 从二进制同目录的 <code>cookies.json</code> 加载 cookie，注入到无头浏览器实例</li>
-<li><strong>启动 TCP 服务器</strong>：绑定 <code>127.0.0.1:7878</code>，使用 <code>ThreadPool</code>（4 线程）并发处理请求</li>
-<li><strong>请求处理</strong>：每个连接由 <code>handle_connection()</code> 处理（定义在 <code>lib.rs</code> 的 <code>connect</code> 模块）</li>
+<li><strong>配置初始化</strong>：调用 <code>config::init()</code> 确保 <code>config.toml</code> 存在（不存在则写入默认配置）</li>
+<li><strong>命令行参数处理</strong>：
+<ul>
+<li>第一个参数为 <code>"docs"</code> → 调用 <code>doc_generate()</code> 生成文档 HTML</li>
+<li>第一个参数为 <code>"cookie"</code> → 调用 <code>extract_cookies_to_json()</code> 导出浏览器 cookie</li>
+</ul>
+</li>
+<li><strong>启动 tokio 服务器</strong>：绑定 <code>127.0.0.1:{port}</code>（默认 7878），使用 tokio <strong>多线程 runtime</strong>；
+接受连接后 <code>tokio::spawn</code> 交给 <code>connect::handle_connection</code> 异步处理</li>
+<li><strong>请求处理</strong>：<code>handle_connection</code> 异步读取请求头 → <code>spawn_blocking</code> 包装 <code>root_rules</code>（路由在阻塞线程池里<strong>同步</strong>执行） → 渲染响应 → 异步写回</li>
+<li><strong>并发受控</strong>：全局 <code>Semaphore</code> 限制<strong>同时处理</strong>的最大请求数 = <code>max_concurrent * 2</code>（默认 2 × CPU 核心数）。获取许可后才进入 <code>spawn_blocking</code>，防止阻塞线程池（上限 512）被耗尽</li>
 </ol>
 <h2 id="架构图"><a class="header" href="#架构图">架构图</a></h2>
 <pre><code>用户 HTTP 请求
     ↓
-TcpListener(:7878)
-    ↓  (ThreadPool 分配线程)
-handle_connection(stream)
-    ↓
-解析 HTTP 请求行 (GET /xxx?key=val HTTP/1.1)
-    ↓
-root_rules(url, params)
-    ├── "/"        → show_index_doc()       → index.html
-    ├── "/docs/*"  → show_doc(path)          → 文档 HTML
+tokio::net::TcpListener(:7878)      （多线程 runtime）
+    ↓  tokio::spawn                 （信号量Semaphore: max_concurrent*2 个并发上限）
+connect::handle_connection(stream)  → async 读取请求头（缓冲区自动扩容）
+    │   keep-alive 循环（文档路由）：收到请求 → 释放许可
+    │   动态路由：响应后按 Connection: close 断开
+    ↓  tokio::task::spawn_blocking   ···路由在阻塞线程同步执行，学习门槩为零
+root_rules(path, params)
+    ├── "/"        → show_index_doc()       → index.html      (HTML 200)
+    ├── "/docs/*"  → serve_static(path)     → 文档/静态文件     (HTML/File 200)
     └── 其他路由    → request_rules(url, params)
-                      └── 路由器名::get(params)  → RSS XML
+                       └── 路由器名::get(params)  → 路由器输出        → RSS XML (200)
+    ↓
+render(ShowToUser) → (status, content_type, body)
+    ··· 成功  → 200 OK
+    ··· HttpError → 用 HttpError.status + HttpError.message
+    ··· 普通 anyhow → 500 Internal Server Error
+    ↓  async write_all 响应写回，Connection: keep-alive 复用 TCP
 </code></pre>
 <h2 id="环境目录结构"><a class="header" href="#环境目录结构">环境目录结构</a></h2>
 <p>二进制运行所需的目录结构：</p>
 <pre><code>env/
-├── cookies.json      # Cookie 文件，启动时加载到浏览器
+├── config.toml       # 配置文件（自动创建）
+├── cookies.json      # Cookie 文件
 ├── index/
 │   ├── 404.html      # 404 页面
 │   └── index.html    # 首页
@@ -213,116 +227,88 @@ root_rules(url, params)
 │   └── 路由名.md     # 各路由的文档
 └── rssust            # 编译后的二进制
 </code></pre>
-<h1 id="crawler-模块---librs"><a class="header" href="#crawler-模块---librs">crawler 模块 - lib.rs</a></h1>
-<h2 id="位置"><a class="header" href="#位置">位置</a></h2>
-<p><code>src/lib.rs</code> 中的 <code>pub mod crawler</code> 模块。</p>
-<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
-<p>管理无头浏览器（Obscura）实例和 Cookie 的生命周期。所有浏览器操作通过线程局部存储（<code>thread_local!</code>）实现，每个线程持有独立的浏览器实例。</p>
-<h2 id="核心类型"><a class="header" href="#核心类型">核心类型</a></h2>
-<h3 id="coke"><a class="header" href="#coke">Coke</a></h3>
-<p>内部结构体，存储处理后的 Cookie 信息：</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>struct Coke {
-    url: String,    // 域名
-    mai: String,    // Set-Cookie 字符串
-}
-<span class="boring">}</span></code></pre></pre>
-<h3 id="browser线程局部变量"><a class="header" href="#browser线程局部变量">BROWSER（线程局部变量）</a></h3>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>thread_local! {
-    static BROWSER: RefCell&lt;Option&lt;(tokio::runtime::Runtime, Browser)&gt;&gt; = RefCell::new(None);
-}
-<span class="boring">}</span></code></pre></pre>
-<p>每个线程第一次使用时创建 <code>Runtime</code> + <code>Browser</code> 实例，后续复用。</p>
-<h2 id="核心函数"><a class="header" href="#核心函数">核心函数</a></h2>
-<h3 id="with_browser"><a class="header" href="#with_browser">with_browser()</a></h3>
-<p><strong>签名</strong>: <code>pub fn with_browser&lt;F, T&gt;(f: F) -&gt; Result&lt;T&gt;</code></p>
-<p>获取当前线程的浏览器实例，执行闭包。如果浏览器尚未初始化，则自动创建：</p>
-<ul>
-<li>使用 <code>tokio::runtime::Builder</code> 创建单线程运行时</li>
-<li>调用 <code>Browser::new()</code> 创建 Obscura 无头浏览器实例</li>
-</ul>
-<h3 id="load_cookies"><a class="header" href="#load_cookies">load_cookies()</a></h3>
-<p><strong>签名</strong>: <code>pub fn load_cookies() -&gt; Result&lt;String, Error&gt;</code></p>
-<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie：</p>
-<ol>
-<li>读取 JSON 文件（空文件跳过）</li>
-<li>反序列化为 <code>Vec&lt;Value&gt;</code>（Cookie 对象数组）</li>
-<li>对每个 Cookie 调用 <code>build_set_cookie()</code> 转换为 <code>Coke</code> 结构</li>
-<li>调用 <code>init()</code> 注入到全局浏览器</li>
-</ol>
-<h3 id="init"><a class="header" href="#init">init()</a></h3>
-<p><strong>签名</strong>: <code>fn init(cookies: &amp;[Coke]) -&gt; Result&lt;()&gt;</code></p>
-<p>将 Cookie 注入到浏览器实例中，通过 <code>browser.cookies().set()</code> 设置。</p>
-<h3 id="build_set_cookie"><a class="header" href="#build_set_cookie">build_set_cookie()</a></h3>
-<p><strong>签名</strong>: <code>fn build_set_cookie(cookie: &amp;Value) -&gt; Result&lt;Coke&gt;</code></p>
-<p>将 JSON Cookie 对象转换为 HTTP <code>Set-Cookie</code> 字符串：</p>
-<ul>
-<li>必填字段：<code>name</code>, <code>value</code>, <code>domain</code></li>
-<li>可选字段：<code>path</code>（默认 <code>/</code>）, <code>secure</code>, <code>httpOnly</code>, <code>sameSite</code>, <code>expirationDate</code></li>
-<li><code>expirationDate</code> 会计算 <code>Max-Age</code> 并附加到字符串</li>
-</ul>
-<h3 id="fetch"><a class="header" href="#fetch">fetch()</a></h3>
-<p><strong>签名</strong>: <code>pub fn fetch(url: &amp;str) -&gt; Result&lt;String&gt;</code></p>
-<p>使用无头浏览器访问指定 URL，返回页面 HTML 内容：</p>
-<ol>
-<li>创建新页面（<code>new_page()</code>）</li>
-<li>导航到 URL（<code>goto()</code>）</li>
-<li>返回页面内容（<code>content()</code>）</li>
-</ol>
+<h1 id="crawler-模块--librs已移除"><a class="header" href="#crawler-模块--librs已移除">crawler 模块 — lib.rs（已移除）</a></h1>
+<blockquote>
+<p><strong>注意</strong>：<code>crawler</code> 模块已从 <code>src/lib.rs</code> 中移除，不再存在。该模块曾管理无头浏览器（bench_scraper）
+与 Cookie 生命周期（通过 <code>thread_local!</code> 实现）。如仍需浏览器渲染能力，可参考
+<code>cookies</code> 子模块（<code>src/cookies.rs</code>，特性 <code>cookie</code>）。</p>
+</blockquote>
 <h1 id="connect-模块---librs"><a class="header" href="#connect-模块---librs">connect 模块 - lib.rs</a></h1>
-<h2 id="位置-1"><a class="header" href="#位置-1">位置</a></h2>
+<h2 id="位置"><a class="header" href="#位置">位置</a></h2>
 <p><code>src/lib.rs</code> 中的 <code>pub mod connect</code> 模块。</p>
-<h2 id="核心函数-1"><a class="header" href="#核心函数-1">核心函数</a></h2>
+<h2 id="核心函数"><a class="header" href="#核心函数">核心函数</a></h2>
 <h3 id="handle_connection"><a class="header" href="#handle_connection">handle_connection()</a></h3>
-<p><strong>签名</strong>: <code>pub fn handle_connection(mut stream: TcpStream)</code></p>
-<p>这是每个 HTTP 请求的入口处理函数：</p>
+<p><strong>签名</strong>: <code>pub async fn handle_connection(mut stream: tokio::net::TcpStream)</code></p>
+<p>每个 HTTP 请求的入口处理函数（async）：</p>
 <ol>
-<li>从 TCP 流读取 1024 字节缓冲区</li>
-<li>用 <code>extract_between_spaces()</code> 提取 HTTP 请求行中的 URL 路径（GET 和 POST 之间的部分）</li>
-<li>解析 URL 中的查询参数：
+<li>
+<p><strong>读取请求头</strong>：在 growable <code>Vec&lt;u8&gt;</code> 缓冲区读取到 <code>\r\n\r\n</code> 为止，带 30 秒空闲超时、
+16 KB 头尺寸上限；旧版固定 <code>[u8; 1024]</code> 缓冲区与 <code>extract_between_spaces</code> 已移除</p>
+</li>
+<li>
+<p><strong>解析请求</strong>：从请求行提取 method / path / version，并扫描 <code>Connection</code> 头；<strong>同时判定是否为文档路由</strong>
+(<code>/</code>、<code>/docs/*</code>、<code>/index/*</code>、<code>/favicon.ico</code> 是文档路由)。</p>
+</li>
+<li>
+<p><strong>并发控制</strong>：从全局 <code>Semaphore</code> 获取 1 个许可（上限 <code>max_concurrent * 2</code>）</p>
+</li>
+<li>
+<p><strong>调度</strong>：<code>tokio::task::spawn_blocking(move || root_rules(path, params))</code>，
+路由在阻塞线程池里<strong>同步</strong>执行，<code>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code>
+的签名不变，路由作者无需学习 async</p>
+</li>
+<li>
+<p><strong>渲染</strong>：<code>render()</code> 把 <code>ShowToUser</code> 转为 <code>(status, content_type, body)</code>：</p>
 <ul>
-<li>如果 URL 包含 <code>?</code>，用 <code>split_once('?')</code> 分割路径和查询字符串</li>
-<li>查询字符串通过 <code>params_to_hashmap()</code> 转为 <code>HashMap</code></li>
+<li><code>Ok(...)</code> → <code>200 OK</code>，Content-Type 按枚举类型决定（HTML / application/xml / 文件 MIME）</li>
+<li>错误 <code>downcast_ref::&lt;HttpError&gt;()</code> 命中 → 用 <code>HttpError.status</code> + <code>HttpError.message</code></li>
+<li>未命中（普通 anyhow） → 兜底 <code>500 Internal Server Error</code></li>
 </ul>
 </li>
-<li>调用 <code>root_rules(path, params)</code> 获取响应</li>
-<li>根据 <code>ShowToUser</code> 枚举类型构建 HTTP 响应：
-<ul>
-<li><code>ShowToUser::Html</code> → <code>Content-Type: text/html</code></li>
-<li><code>ShowToUser::Rss</code> → <code>Content-Type: application/xml</code></li>
-</ul>
+<li>
+<p><strong>写回</strong>：async <code>write_all</code>，响应头带 <code>Connection: keep-alive</code> / <code>Connection: close</code>。</p>
+<blockquote>
+<p><strong>作用域</strong>：keep-alive <strong>仅对文档/静态路由生效</strong>，即 <code>/</code>、<code>/docs/*</code>、<code>/index/*</code>、<code>/favicon.ico</code>。
+对动态 RSS 路由（抓取上游），服务器始终返回 <code>Connection: close</code>，每次请求一次连接，
+避免长期占着 <code>spawn_blocking</code> 线程池的许可。判定规则见 <code>lib.rs</code> 中的 <code>is_doc_route</code>。</p>
+</blockquote>
 </li>
-<li>写回 TCP 流</li>
 </ol>
-<h3 id="extract_between_spaces"><a class="header" href="#extract_between_spaces">extract_between_spaces()</a></h3>
-<p><strong>签名</strong>: <code>fn extract_between_spaces(buffer: &amp;[u8; 1024]) -&gt; Option&lt;&amp;[u8]&gt;</code></p>
-<p>从 HTTP 原始请求中提取两个空格之间的内容（即 URL 路径）。例如从 <code>GET /bilibili_weekly?key=val HTTP/1.1</code> 中提取 <code>/bilibili_weekly?key=val</code>。</p>
 <h3 id="show_index_doc"><a class="header" href="#show_index_doc">show_index_doc()</a></h3>
 <p><strong>签名</strong>: <code>pub fn show_index_doc() -&gt; Result&lt;String, Error&gt;</code></p>
 <p>读取二进制同目录下的 <code>index/index.html</code> 文件，返回 HTML 字符串。</p>
 <h3 id="show_doc"><a class="header" href="#show_doc">show_doc()</a></h3>
 <p><strong>签名</strong>: <code>pub fn show_doc(path: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
-<p>读取二进制同目录下的文档 HTML 文件（如 <code>/docs/new_router_cn.html</code> → 读取 <code>docs/new_router_cn.html</code>）。如果文件不存在，返回 <code>index/404.html</code>。</p>
+<p>读取二进制同目录下的文档 HTML 文件（如 <code>/docs/new.html</code> → 读取 <code>docs/new.html</code>）。
+如果文件不存在，返回 <code>index/404.html</code> 内容。</p>
+<h3 id="serve_static"><a class="header" href="#serve_static">serve_static()</a></h3>
+<p><strong>签名</strong>: <code>pub fn serve_static(path: &amp;str) -&gt; ShowToUser</code></p>
+<p>根据文件扩展名决定 MIME 类型：<code>.html</code>/<code>.md</code> 走 <code>show_doc</code>（HTML），其他静态资源（CSS/JS/SVG/PNG/字体等）
+走 <code>read_file_bytes</code> 返回 <code>File</code> 变体。找不到时降级为 <code>Html { res: Err(...) }</code>。</p>
+<h3 id="mime_type"><a class="header" href="#mime_type">mime_type()</a></h3>
+<p><strong>签名</strong>: <code>pub fn mime_type(path: &amp;str) -&gt; &amp;'static str</code></p>
+<p>根据扩展名返回 MIME 类型：<code>.css</code> → <code>text/css</code>，<code>.js</code> → <code>application/javascript</code>，
+<code>.svg</code>/<code>.png</code>/<code>.jpg</code>/<code>.gif</code>/<code>.ico</code> → 对应图片类型，<code>.woff2</code>/<code>.woff</code>/<code>.ttf</code> → 字/font 类型，
+<code>.json</code>/<code>.xml</code> → <code>application/...; charset=utf-8</code>，缺省 <code>text/html; charset=utf-8</code>。</p>
 <h2 id="showtouser-枚举"><a class="header" href="#showtouser-枚举">ShowToUser 枚举</a></h2>
-<p>定义在 <code>request_rules.rs</code> 中，但被 connect 模块使用：</p>
+<p>定义在 <code>request_rules.rs</code> 中，被 connect 模块使用：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub enum ShowToUser {
     Html { res: Result&lt;String, Error&gt; },
     Rss { res: Result&lt;String, Error&gt; },
+    File { res: Result&lt;Vec&lt;u8&gt;, Error&gt;, content_type: String },
 }
 <span class="boring">}</span></code></pre></pre>
 <ul>
 <li><code>Html</code> — 返回 HTML 页面（首页、文档页面、错误页面）</li>
 <li><code>Rss</code> — 返回 RSS XML（路由器的输出）</li>
+<li><code>File</code> — 返回静态文件（CSS/JS/图片/字体等）</li>
 </ul>
 <h1 id="路由注册表---request_rulesrs"><a class="header" href="#路由注册表---request_rulesrs">路由注册表 - request_rules.rs</a></h1>
-<h2 id="位置-2"><a class="header" href="#位置-2">位置</a></h2>
+<h2 id="位置-1"><a class="header" href="#位置-1">位置</a></h2>
 <p><code>src/request_rules.rs</code></p>
-<h2 id="概述-1"><a class="header" href="#概述-1">概述</a></h2>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
 <p>这是整个项目的路由调度中心。负责将 URL 路径分发给对应的处理器，并封装返回格式。</p>
 <h2 id="showtouser-枚举-1"><a class="header" href="#showtouser-枚举-1">ShowToUser 枚举</a></h2>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -330,60 +316,77 @@ root_rules(url, params)
 </span>pub enum ShowToUser {
     Html { res: Result&lt;String, Error&gt; },
     Rss { res: Result&lt;String, Error&gt; },
+    File { res: Result&lt;Vec&lt;u8&gt;, Error&gt;, content_type: String },
 }
 <span class="boring">}</span></code></pre></pre>
 <ul>
 <li><code>Html</code> — 返回 HTML 页面</li>
 <li><code>Rss</code> — 返回 RSS XML</li>
+<li><code>File</code> — 返回静态文件</li>
 </ul>
-<h2 id="核心函数-2"><a class="header" href="#核心函数-2">核心函数</a></h2>
+<h2 id="核心函数-1"><a class="header" href="#核心函数-1">核心函数</a></h2>
 <h3 id="root_rules"><a class="header" href="#root_rules">root_rules()</a></h3>
 <p><strong>签名</strong>: <code>pub fn root_rules(first_part: &amp;str, second_part: HashMap&lt;String, String&gt;) -&gt; ShowToUser</code></p>
 <p>一级路由分发函数：</p>
 <div class="table-wrapper"><table><thead><tr><th>URL 路径</th><th>处理器</th><th>返回类型</th></tr></thead><tbody>
 <tr><td><code>"/"</code></td><td><code>show_index_doc()</code></td><td><code>ShowToUser::Html</code></td></tr>
-<tr><td><code>以 "/docs/" 开头</code></td><td><code>show_doc(path)</code></td><td><code>ShowToUser::Html</code></td></tr>
-<tr><td>其他</td><td><code>request_rules()</code></td><td><code>ShowToUser::Rss</code> 或 <code>Html(错误)</code></td></tr>
+<tr><td><code>/favicon.ico</code></td><td><code>serve_static("/index/favicon.ico")</code></td><td><code>ShowToUser::File</code></td></tr>
+<tr><td>以 <code>"/docs/"</code> 或 <code>"/index/"</code> 开头</td><td><code>serve_static(path)</code></td><td><code>ShowToUser::Html</code> 或 <code>ShowToUser::File</code></td></tr>
+<tr><td>其他路由</td><td><code>request_rules()</code></td><td><code>ShowToUser::Rss</code> 或 <code>Html(错误)</code></td></tr>
 </tbody></table>
 </div>
 <h3 id="request_rules"><a class="header" href="#request_rules">request_rules()</a></h3>
-<p><strong>签名</strong>: <code>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code></p>
-<p>二级路由注册表，匹配 URL 路径到具体路由器：</p>
+<p><strong>签名</strong>: <code>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, anyhow::Error&gt;</code></p>
+<p>二级路由注册表，使用 <code>const</code> 静态数组匹配 URL 路径到具体路由器：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt; {
-    if url == "/bilibili_weekly" {
-        bilibili_weekly::get(parameters)
+</span>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, anyhow::Error&gt; {
+    const ROUTES: &amp;[(&amp;str, fn(HashMap&lt;String, String&gt;) -&gt; Result&lt;String, anyhow::Error&gt;)] = &amp;[
+        ("/nmc_alarm", nmc_alarm::get),
+        // ... 其他路由
+    ];
+    if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
+        if is_route_disabled(url) {
+            warn!("Route {} is disabled", url);
+            // 返回 HttpError::not_found → 服务器渲染层回响应 404
+            return Err(anyhow!(HttpError::not_found("404NotFound")));
+        }
+        debug!("Route {} matched, fetching", url);
+        let result = (handler.1)(parameters);
+        // ...
+        result
     } else {
-        Err(anyhow!("404NotFound"))
+        warn!("Unregistered route: {}", url);
+        Err(anyhow!(HttpError::not_found("404NotFound")))
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p><strong>注意</strong>：<code>bilibili_dynamic</code> 路由虽然在 <code>mod.rs</code> 中注册了 <code>pub mod bilibili_dynamic</code>，但当前 <strong>未在 <code>request_rules()</code> 中添加匹配分支</strong>，因此访问 <code>/bilibili_dynamic</code> 会返回 404。</p>
+<p>注册的路由会先检查 <code>config.toml</code> 中的 <code>routes.disabled</code> 列表，若被禁用则返回 <code>HttpError::not_found</code>（渲染为 404）。</p>
 <h2 id="如何添加新路由"><a class="header" href="#如何添加新路由">如何添加新路由</a></h2>
 <p>参考 <code>new_router_cn.md</code>，步骤：</p>
 <ol>
-<li>在 <code>src/router/</code> 下新建 <code>.rs</code> 文件，实现 <code>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code></li>
+<li>在 <code>src/router/</code> 下新建 <code>.rs</code> 文件，实现 <code>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code>
+（同步签名，内部使用 <code>fetch_reqwest_get</code> 等 <code>easyuser</code> 函数即可；抓取失败直接 <code>?</code> 向上抛出即可，
+<code>easyuser</code> 会自动包装为 <code>HttpError</code> 502）</li>
 <li>在 <code>src/router/mod.rs</code> 中添加 <code>pub mod 你的路由名;</code></li>
-<li>在 <code>request_rules()</code> 中添加 <code>else if</code> 分支匹配 URL</li>
+<li>在 <code>request_rules.rs</code> 的 <code>ROUTES</code> 常量数组中添加 <code>("/你的路由名", 你的路由名::get)</code> 条目</li>
 <li>在 <code>env/docs_md/</code> 下编写对应的路由文档 <code>.md</code> 文件</li>
+<li>如需自定义 HTTP 状态码，用 <code>anyhow!(HttpError::xxx("原因"))</code> 抛出（参见 <code>easyuser_cn.md</code> 错误类）</li>
 </ol>
 <h1 id="文档生成器---docrs"><a class="header" href="#文档生成器---docrs">文档生成器 - doc.rs</a></h1>
-<h2 id="位置-3"><a class="header" href="#位置-3">位置</a></h2>
+<h2 id="位置-2"><a class="header" href="#位置-2">位置</a></h2>
 <p><code>src/doc.rs</code></p>
-<h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
-<p>将 <code>docs_md/</code> 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在 <code>src/main.rs</code> 中通过 <code>cargo run docs</code> 触发。</p>
-<h2 id="核心函数-3"><a class="header" href="#核心函数-3">核心函数</a></h2>
+<h2 id="概述-1"><a class="header" href="#概述-1">概述</a></h2>
+<p>将 <code>docs_md/</code> 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在终端中执行 <code>./env/rssust docs</code> 触发。</p>
+<h2 id="核心函数-2"><a class="header" href="#核心函数-2">核心函数</a></h2>
 <h3 id="doc_generate"><a class="header" href="#doc_generate">doc_generate()</a></h3>
 <p><strong>签名</strong>: <code>pub fn doc_generate() -&gt; Result&lt;(), Error&gt;</code></p>
 <h4 id="执行流程"><a class="header" href="#执行流程">执行流程</a></h4>
 <ol>
 <li><strong>定位目录</strong>：以二进制文件所在目录为基础，输入目录为 <code>./docs_md</code>，输出目录为 <code>./docs</code></li>
-<li><strong>收集文件</strong>：mdbook干的事</li>
-<li><strong>排序</strong>：按文件名（字母顺序，不区分大小写）排序</li>
-<li><strong>分类</strong>：<code>docs_md/official/</code> 下的文件归为"官方"类，其余归为"Router"类，分别生成导航链接</li>
+<li><strong>生成 SUMMARY.md</strong>：自动扫描 <code>docs_md/</code> 下的所有 <code>.md</code> 文件，按分类生成导航目录</li>
 <li><strong>转换</strong>：使用 <code>mdbook</code> 库将 Markdown 转为 HTML</li>
-<li><strong>输出</strong>：写入 <code>docs/目录名.html</code></li>
+<li><strong>后处理</strong>：将 <code>official/</code> 子目录下的 HTML 提升到 <code>docs/</code> 根目录，修复所有资源文件和页面链接的路径</li>
 </ol>
 <h4 id="页面功能"><a class="header" href="#页面功能">页面功能</a></h4>
 <ul>
@@ -396,7 +399,7 @@ root_rules(url, params)
 <ul>
 <li>深紫色渐变背景</li>
 <li>代码块深色底 + 彩色高亮</li>
-<li>胶囊形状的"当前页面"指示器</li>
+<li>胶囊形状的“当前页面“指示器</li>
 <li>紫蓝色点缀色</li>
 </ul>
 
@@ -404,11 +407,11 @@ root_rules(url, params)
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="guide_en.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="new_router_en.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="bilibili_dynamic.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="apnews_topics.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -418,11 +421,11 @@ root_rules(url, params)
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="guide_en.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="new_router_en.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="bilibili_dynamic.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="apnews_topics.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

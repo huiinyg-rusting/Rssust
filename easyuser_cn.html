@@ -182,14 +182,20 @@
 <p>封装了一系列辅助函数，供路由开发者（router）方便地调用。所有函数通过 <code>use crate::easyuser::*;</code> 导入。</p>
 <hr />
 <h2 id="爬虫类"><a class="header" href="#爬虫类">爬虫类</a></h2>
-<h3 id="fetch_obscura"><a class="header" href="#fetch_obscura">fetch_obscura()</a></h3>
-<p><strong>签名</strong>: <code>pub fn fetch_obscura(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
-<p>使用无头浏览器（Obscura）爬取 URL 内容。会自动携带 <code>cookies.json</code> 中注入的 Cookie。适用于需要 JavaScript 渲染的页面。</p>
-<p><strong>内部调用</strong>: <code>crawler::fetch(url)</code></p>
 <h3 id="fetch_reqwest_get"><a class="header" href="#fetch_reqwest_get">fetch_reqwest_get()</a></h3>
 <p><strong>签名</strong>: <code>pub fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
 <p>使用 <code>reqwest</code> 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。</p>
-<p><strong>注意</strong>: 每次调用都会创建新的 Tokio Runtime，开销较大。</p>
+<p>全局共享的 <code>reqwest::blocking::Client</code>（<code>OnceLock</code> 单例）会自动复用 TCP 连接池；
+请求默认超时由 <code>config.toml</code> 的 <code>server.timeout</code> 控制（默认 60 秒），超时后抛出 <code>HttpError(502)</code>。</p>
+<h3 id="fetch_reqwest_get_with_headers"><a class="header" href="#fetch_reqwest_get_with_headers">fetch_reqwest_get_with_headers()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch_reqwest_get_with_headers(url: &amp;str, headers: &amp;[(&amp;str, &amp;str)]) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送带自定义 Header 的 HTTP GET 请求。</p>
+<p>示例：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let headers = &amp;[("Referer", "https://example.com"), ("Cookie", "session=abc")];
+fetch_reqwest_get_with_headers("https://api.example.com/data", headers)?;
+<span class="boring">}</span></code></pre></pre>
 <h3 id="fetch_reqwest_post"><a class="header" href="#fetch_reqwest_post">fetch_reqwest_post()</a></h3>
 <p><strong>签名</strong>: <code>pub fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
 <p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
@@ -215,6 +221,16 @@
 <h3 id="timestamp_to_rss"><a class="header" href="#timestamp_to_rss">timestamp_to_rss()</a></h3>
 <p><strong>签名</strong>: <code>pub fn timestamp_to_rss(ts: i64) -&gt; String</code></p>
 <p>将 Unix 时间戳（i64）转换为 RSS 标准时间格式。</p>
+<h3 id="datetime_str_to_rss"><a class="header" href="#datetime_str_to_rss">datetime_str_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn datetime_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为东八区本地时间</strong>（不做偏移，直接附加 +0800）。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 12:00:00 +0800"</code></p>
+<p>注意：若来源时间是 UTC，请改用 <code>utc_str_to_rss</code>。</p>
+<h3 id="utc_str_to_rss"><a class="header" href="#utc_str_to_rss">utc_str_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn utc_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为 UTC 时间</strong>，自动换算为东八区（+0800）后再输出。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 20:00:00 +0800"</code></p>
+<p>适用于带 <code>Z</code> 后缀的 ISO 时间（如 <code>datePublished</code>），调用前先 <code>s.replace('T', " ").replace('Z', "")</code> 归一化，参见 <code>apnews_topics</code> 的用法。</p>
 <hr />
 <h2 id="字符类"><a class="header" href="#字符类">字符类</a></h2>
 <h3 id="no_double_quotes"><a class="header" href="#no_double_quotes">no_double_quotes()</a></h3>
@@ -228,22 +244,62 @@
 <p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
 <p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
 <hr />
+<h2 id="工具类"><a class="header" href="#工具类">工具类</a></h2>
+<h3 id="parse_bool"><a class="header" href="#parse_bool">parse_bool()</a></h3>
+<p><strong>签名</strong>: <code>pub fn parse_bool(value: Option&lt;&amp;String&gt;, default: bool) -&gt; bool</code></p>
+<p>将字符串值解析为布尔值。支持 <code>"1"</code> / <code>"true"</code> / <code>"True"</code> → <code>true</code>，<code>"0"</code> / <code>"false"</code> / <code>"False"</code> → <code>false</code>，其他值尝试 <code>parse()</code>，<code>None</code> 返回 <code>default</code>。</p>
+<h3 id="load_cookie_header"><a class="header" href="#load_cookie_header">load_cookie_header()</a></h3>
+<p><strong>签名</strong>: <code>pub fn load_cookie_header(domain_filter: Option&lt;&amp;str&gt;) -&gt; Result&lt;Option&lt;String&gt;&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie，返回 <code>name=value; name=value...</code> 格式的字符串。可传入 <code>domain_filter</code> 只返回指定域名的 Cookie（如 <code>Some("bilibili.com")</code>）。</p>
+<hr />
+<h2 id="错误类--httperror"><a class="header" href="#错误类--httperror">错误类 — HttpError</a></h2>
+<p><strong>签名</strong>: <code>pub struct HttpError { pub status: u16, pub message: String }</code></p>
+<p>自定义 HTTP 错误类型。路由抛出带 <code>HttpError</code> 的错误时，服务器会用 <code>status</code> 作为 HTTP 状态码、
+<code>message</code> 作为响应正文返回给客户端（<code>Content-Type: text/plain</code>）。否则普通错误统一返回 <code>500</code>。</p>
+<p>构造方法：</p>
+<ul>
+<li><code>HttpError::not_found(msg)</code> → <strong>404</strong> — 资源未找到（如未注册 / 被禁用的路由）。</li>
+<li><code>HttpError::bad_request(msg)</code> → <strong>400</strong> — 用户输入错误（如缺少必需参数）。</li>
+<li><code>HttpError::upstream(msg)</code> → <strong>502</strong> — 上游请求失败。抓取类函数 (<code>fetch_reqwest_get*</code> 等) 遇到
+错误时<strong>自动</strong>包装为 <code>HttpError(502)</code>，路由只需用 <code>?</code> 向上抛出即可。</li>
+<li><code>HttpError::internal(msg)</code> → <strong>500</strong> — 服务器内部错误。</li>
+</ul>
+<p>用法：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 缺参数 → 400 Bad Request
+let kw = para.get("kw").ok_or_else(|| anyhow!(HttpError::bad_request("缺少 kw 参数")))?;
+
+// 显式报上游故障 → 502
+if body.is_empty() {
+    return Err(anyhow!(HttpError::upstream("上游返回空内容")));
+}
+
+// 普通 anyhow 错误 → 自动兜底 500
+some_parse()?;
+<span class="boring">}</span></code></pre></pre>
+<blockquote>
+<p>未命中 <code>HttpError</code> 的普通 <code>anyhow::Error</code> 由 <code>lib.rs</code> 渲染层兜底为 <code>500 Internal Server Error</code>。</p>
+</blockquote>
+<hr />
 <h2 id="开发者提示"><a class="header" href="#开发者提示">开发者提示</a></h2>
 <ul>
 <li>路由中必须导入 <code>use crate::easyuser::*;</code></li>
-<li><code>fetch_obscura</code> 比 <code>fetch_reqwest_get</code> 慢（需要启动浏览器），但能处理 JS 渲染的页面</li>
 <li>从 JSON 提取字符串后记得用 <code>no_double_quotes()</code> 清理</li>
+<li>需要携带 Cookie 时，用 <code>fetch_reqwest_get_with_headers()</code> 配合 <code>load_cookie_header()</code></li>
+<li>上游抓取失败不要自行 <code>map_err</code> 包裹——直接 <code>?</code> 向上抛出，<code>easyuser</code> 会自动转为 <code>HttpError(502)</code></li>
+<li>想返回自定义 HTTP 状态码，用 <code>anyhow!(HttpError::xxx("原因"))</code></li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="new_router_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="cookie.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="cookie.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="guide_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -253,11 +309,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="new_router_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="cookie.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="cookie.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="guide_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

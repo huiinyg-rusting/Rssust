@@ -197,7 +197,7 @@
 <li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
 <li>Each router can only correspond to one function</li>
 </ol>
-<p>Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<p>Before developing, it’s best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
 <h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -218,14 +218,19 @@ use scraper::*;  // for HTML
 </span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
 }
 <span class="boring">}</span></code></pre></pre>
-<p>The function signature and return type cannot be changed! (If you don't use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won't warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
+<p>The function signature and return type cannot be changed! (If you don’t use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won’t warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
 <p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="easyuser_cn.html">easyuser_cn.html</a>.</p>
 <p>The specific program logic is up to you to write.</p>
 <h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
 <p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
-<p>Then in the <code>request_rules()</code> function in <code>src/request_rules.rs</code>, add an <code>else if</code> branch with the condition <code>url == "/router_name"</code> (follow the pattern of other branches), and call your function in the <code>{}</code> block. Generally, the path is <code>your_router_name::get(parameters)</code>.</p>
+<p>Then in <code>src/request_rules.rs</code>, add an entry to the <code>ROUTES</code> const array:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>("/your_router_name", your_router_name::get),
+<span class="boring">}</span></code></pre></pre>
+<p>Follow the pattern of other entries.</p>
 <h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
-<p>I'm very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
+<p>I’m very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
 <pre><code class="language-sh">├── cookies.json
 ├── docs_md
 │   ├── .......md
@@ -236,7 +241,7 @@ use scraper::*;  // for HTML
 │   └── index.html
 └── rssust
 </code></pre>
-<p>I've also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
+<p>I’ve also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
 <h3 id="cookie-management"><a class="header" href="#cookie-management">Cookie Management</a></h3>
 <p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
 <p>Example format:</p>
@@ -265,7 +270,7 @@ use scraper::*;  // for HTML
 **Parameter:** 
 **Environment Variables:**
 </code></pre>
-<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I'll introduce them anyway:</p>
+<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I’ll introduce them anyway:</p>
 <ol>
 <li><strong>Router-name:</strong> Fill in the router name</li>
 <li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
@@ -302,8 +307,11 @@ use scraper::*;  // for HTML
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="new_router_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="pogram_explanation_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -313,8 +321,11 @@ use scraper::*;  // for HTML
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="new_router_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="pogram_explanation_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

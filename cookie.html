@@ -176,34 +176,40 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="cookies-配置指南"><a class="header" href="#cookies-配置指南">cookies 配置指南</a></h1>
-<p>因为有些路由需要cookies,而cookies又不好分发，故作此教程以告诉导出哪个网站的cookies,又或者是否需要登录或者额外配置,cookies 示例格式：
-Because some routes require cookies, and cookies are hard to distribute, this tutorial was made to show how to export cookies from a website, or whether login or additional setup is needed. Example cookie format:
-{
-"name": "session_id",
-"value": "abc123",
-"domain": ".example.com",
-"path": "/",
-"secure": true,
-"httpOnly": true,
-"sameSite": "Lax",
-"expirationDate": 1893456000
-}
-You can use the browser plugin Cookie-Editor to export it.</p>
-<p>Tips:现在自动cookies爬取已经出了，只要加<code> 二进制文件 cookies 浏览器名</code>
-但是实测linux下的firefox出了一些问题，上游crate的问题，可以通过链接文件夹修复</p>
+<p>因为有些路由需要cookies,而cookies又不好分发，故作此教程以告诉导出哪个网站的cookies,又或者是否需要登录或者额外配置,cookies 示例格式：<br />
+Because some routes require cookies, and cookies are hard to distribute, this tutorial was made to show how to export cookies from a website, or whether login or additional setup is needed. Example cookie format:<br />
+{<br />
+“name”: “session_id”,<br />
+“value”: “abc123”,<br />
+“domain”: “.example.com”,<br />
+“path”: “/”,<br />
+“secure”: true,<br />
+“httpOnly”: true,<br />
+“sameSite”: “Lax”,<br />
+“expirationDate”: 1893456000<br />
+}</p>
+<p>You can use the browser plugin Cookie-Editor to export it, or use the built-in CLI command:</p>
+<pre><code>rssust cookie &lt;browser&gt;
+</code></pre>
+<p>Supported browsers: <code>firefox</code>, <code>chrome</code>, <code>chromium</code>, <code>chromebeta</code> (macOS: <code>safari</code>, Windows: <code>edge</code>)</p>
+<p>Example:</p>
+<pre><code>./env/rssust cookie chrome
+</code></pre>
+<p>Tips: Linux 下 firefox 可能因为上游 crate 的问题需要链接文件夹修复</p>
 <h2 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h2>
-<p>bilibili.com
-无需登录</p>
+<p>bilibili.com<br />
+无需登录，访客 cookies 即可<br />
+注意：<code>bilibili_video_reply</code> 需要登录后的 cookies（需包含 SESSDATA）</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="easyuser_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="config.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="guide_en.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="easyuser_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -213,11 +219,11 @@ You can use the browser plugin Cookie-Editor to export it.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="easyuser_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="config.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="guide_en.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="easyuser_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -219,11 +219,30 @@ use scraper::*;//html用的
 }
 <span class="boring">}</span></code></pre></pre>
 <p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。
-项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.html</a>查看
+项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.md</a>查看
 具体的程序逻辑就由你自己编写吧。</p>
+<h3 id="如何返回自定义-http-状态码"><a class="header" href="#如何返回自定义-http-状态码">如何返回自定义 HTTP 状态码</a></h3>
+<p>函数体内抛出普通 <code>anyhow::Error</code> 会被服务器渲染层统一返回 <code>500 Internal Server Error</code>；
+如果想返回 <code>400/404/502</code> 等状态码，请用 <code>easyuser::HttpError</code> 封装后再抛出，
+渲染层会取 <code>HttpError.status</code> 作为状态码、<code>HttpError.message</code> 作为响应正文。
+详见 <a href="easyuser_cn.html">easyuser_cn.md</a> 的 “错误类 — HttpError”：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 缺参数 → 400
+let kw = para.get("kw")
+    .ok_or_else(|| anyhow!(HttpError::bad_request("缺少 kw 参数")))?;
+
+// 上游抓取失败不用包装，直接 ?，easyuser 会自动转为 502
+let body = fetch_reqwest_get(url)?;
+<span class="boring">}</span></code></pre></pre>
 <h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
-<p>在/src/router/mod.rs中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
-然后再在src/request_rules.rs中的request_rules()函数加一个else if 分支，条件为url == "/路由名"（仿照其他分支的例子抄），在{}中用绝调用你的函数，一般而言，路径是 <code>你的路由名::get(parameters)</code> 。</p>
+<p>在 <code>/src/router/mod.rs</code> 中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
+然后再在 <code>src/request_rules.rs</code> 的 <code>ROUTES</code> 常量数组中添加一个条目：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>("/你的路由名", 你的路由名::get),
+<span class="boring">}</span></code></pre></pre>
+<p>仿照其他条目的写法即可。</p>
 <h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
 <p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
 <pre><code class="language-sh">├── cookies.json
@@ -241,14 +260,14 @@ use scraper::*;//html用的
 <p>在与二进制文件同目录下的<code>cookies.json</code>中如下：
 示例格式：
 {
-"name": "session_id",
-"value": "abc123",
-"domain": ".example.com",
-"path": "/",
-"secure": true,
-"httpOnly": true,
-"sameSite": "Lax",
-"expirationDate": 1893456000
+“name”: “session_id”,
+“value”: “abc123”,
+“domain”: “.example.com”,
+“path”: “/”,
+“secure”: true,
+“httpOnly”: true,
+“sameSite”: “Lax”,
+“expirationDate”: 1893456000
 }
 所有的cookies挤在同一个json文件，程序启动时就会导入。
 Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
@@ -311,11 +330,11 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="api.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="guide_en.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="easyuser_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="new_router_en.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -325,11 +344,11 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="api.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="guide_en.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="easyuser_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="new_router_en.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
