@@ -51,8 +51,8 @@ pub fn doc_generate() -> Result<(), Error> {
     let mut config = Config::default();
     config.set("book.src", ".")?;
     config.set("output.html.site-url", "/docs/")?;
-    config.set("output.html.no-section-label", "true")?;
-    config.set("output.html.curly-quotes", "true")?;
+    config.set("output.html.no-section-label", true)?;
+    config.set("output.html.curly-quotes", true)?;
     config.set("build.build-dir", build_dir.to_string_lossy())?;
 
     let book = MDBook::load_with_config(source_root, config)?;

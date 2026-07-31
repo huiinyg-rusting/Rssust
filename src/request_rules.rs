@@ -2,6 +2,7 @@ use crate::config::is_route_disabled;
 use crate::router::*;
 use anyhow::*;
 use std::collections::HashMap;
+use tracing::{debug, warn};
 
 pub enum ShowToUser {
     Html {
@@ -11,7 +12,7 @@ pub enum ShowToUser {
         res: Result<String, Error>,
     },
     File {
-        res: Result<String, Error>,
+        res: Result<Vec<u8>, Error>,
         content_type: String,
     },
 }
@@ -75,10 +76,18 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
     // 查找匹配的路由处理器
     if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
         if is_route_disabled(url) {
+            warn!("Route {} is disabled", url);
             return Err(anyhow!("404NotFound"));
         }
-        (handler.1)(parameters)
+        debug!("Route {} matched, fetching", url);
+        let result = (handler.1)(parameters);
+        match &result {
+            std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
+            std::result::Result::Err(e) => warn!("Route {} generation failed: {}", url, e),
+        }
+        result
     } else {
+        warn!("Unregistered route: {}", url);
         Err(anyhow!("404NotFound"))
     }
 }
@@ -87,6 +96,8 @@ pub fn root_rules(first_part: &str, second_part: HashMap<String, String>) -> Sho
         ShowToUser::Html {
             res: crate::connect::show_index_doc(),
         }
+    } else if first_part == "/favicon.ico" {
+        crate::connect::serve_static("/index/favicon.ico")
     } else if first_part.starts_with("/docs/") || first_part.starts_with("/index/") {
         crate::connect::serve_static(first_part)
     } else {

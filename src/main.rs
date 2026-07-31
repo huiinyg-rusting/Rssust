@@ -1,25 +1,39 @@
-use bench_scraper::KnownBrowser;
-use rssust::{
-    // crawler::load_cookies,
-    config, connect::handle_connection, cookies::extract_cookies_to_json,
-    doc::doc_generate,
-};
 use std::env;
 use std::net::TcpListener;
 use threadpool::ThreadPool;
-use log::{warn,trace};
+use tracing::{error, info, warn};
+
+use rssust::{config, connect::handle_connection};
+
+#[cfg(feature = "cookie")]
+use bench_scraper::KnownBrowser;
+#[cfg(feature = "cookie")]
+use rssust::cookies::extract_cookies_to_json;
+#[cfg(feature = "docs")]
+use rssust::doc::doc_generate;
 
 ///main函数
 /// 加载服务器
 /// 启动threadpool多线程
 fn main() {
+    rssust::logger::init();
     config::init();
     let args: Vec<String> = env::args().collect();
-    if matches!(args.get(1), Some(s) if s == "docs") {
-        doc_generate().unwrap();
-        println!("DOCS:Done")
-    } else if matches!(args.get(1), Some(s) if s == "cookie") {
-        extract_cookies_to_json(match args.get(2).expect("没有指明浏览器").as_str() {
+    let subcommand = args.get(1).map(String::as_str);
+
+    #[cfg(feature = "docs")]
+    if subcommand == Some("docs") {
+        info!("Generating docs HTML");
+        match doc_generate() {
+            Ok(()) => info!("DOCS:Done"),
+            Err(e) => error!("Docs generation failed: {}", e),
+        }
+        return;
+    }
+    #[cfg(feature = "cookie")]
+    if matches!(subcommand, Some("cookie" | "cookies")) {
+        info!("Exporting browser cookies");
+        match extract_cookies_to_json(match args.get(2).expect("没有指明浏览器").as_str() {
             "firefox" => KnownBrowser::Firefox,
             "chrome" => KnownBrowser::Chrome,
             "chromium" => KnownBrowser::Chromium,
@@ -29,18 +43,47 @@ fn main() {
             #[cfg(target_os = "windows")]
             "edge" => KnownBrowser::Edge,
             _ => panic!("浏览器未知"),
-        })
-        .unwrap();
+        }) {
+            Ok(()) => info!("Cookies exported successfully"),
+            Err(e) => error!("Cookie export failed: {}", e),
+        }
+        return;
     }
-    warn!("No args Find");
-    // load_cookies().expect("cookies加载失败");
-    trace!("启动端口监听和Obscura");
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
-    let pool = ThreadPool::new(4);
+    if let Some(cmd) = subcommand {
+        eprintln!("Unknown subcommand: {}", cmd);
+        print_usage();
+        std::process::exit(1);
+    }
+    let port = config::server_port();
+    let addr = format!("127.0.0.1:{}", port);
+    let listener = match TcpListener::bind(&addr) {
+        Ok(l) => l,
+        Err(e) => {
+            error!("Failed to bind port {}: {}", port, e);
+            std::process::exit(1);
+        }
+    };
+    info!("Starting server, listening on {}", addr);
+    let pool = ThreadPool::new(config::numofcore() as usize);
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
+        let stream = match stream {
+            Ok(s) => s,
+            Err(e) => {
+                warn!("Failed to accept connection: {}", e);
+                continue;
+            }
+        };
         pool.execute(move || {
             handle_connection(stream);
         });
     }
+}
+
+fn print_usage() {
+    eprintln!("Usage: rssust [docs] [cookie <browser>]");
+    eprintln!("  (no args)           start the RSS server");
+    #[cfg(feature = "docs")]
+    eprintln!("  docs                generate documentation HTML");
+    #[cfg(feature = "cookie")]
+    eprintln!("  cookie <browser>    export browser cookies (firefox/chrome/chromium/chromebeta)");
 }

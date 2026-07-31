@@ -4,8 +4,14 @@ use chrono::{Datelike, Local, NaiveDate, NaiveDateTime};
 use serde_json::Value;
 use std::fs;
 use std::result::Result::Ok;
+use std::sync::OnceLock;
 use std::{collections::HashMap, env};
-use tokio::runtime::Runtime;
+use tracing::{debug, warn};
+
+fn client() -> &'static reqwest::blocking::Client {
+    static CLIENT: OnceLock<reqwest::blocking::Client> = OnceLock::new();
+    CLIENT.get_or_init(reqwest::blocking::Client::new)
+}
 
 ///这个函数序列化从key1=1&key2=2 到{"key1": "2", "key2": "2"}的Hashmap;
 pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
@@ -30,27 +36,22 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
     response
 }
 
-/*
-/// 从指定 URL 抓取 HTML。
-/// 推荐
-pub fn fetch_obscura(url: &str) -> Result<String, Error> {
-
-    let html = crate::crawler::with_browser(|rt, browser| {
-            rt.block_on(async {
-                let mut page = browser.new_page().await?;
-                page.goto(url).await?;
-                Ok(page.content())
-            })
-        })?;
-    Ok(html)
-}
-*/
-
 //下面是reqwest get的内容
 //不会使用线程池
 pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
-    let rt = Runtime::new().unwrap();
-    rt.block_on(async { Ok(reqwest::get(url).await?.text().await?) })
+    debug!("GET {}", url);
+    let result = (|| -> Result<String, Error> {
+        Ok(client()
+            .get(url)
+            .send()
+            .map_err(Error::from)?
+            .text()
+            .map_err(Error::from)?)
+    })();
+    if let Err(ref e) = result {
+        warn!("GET {} failed: {}", url, e);
+    }
+    result
 }
 
 ///This can be an array of tuples, or a HashMap, or a custom type that implements Serialize.
@@ -58,45 +59,56 @@ pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
 ///The feature form is required.
 ///必须使用 form 功能
 pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
-    let rt = Runtime::new().unwrap();
-    rt.block_on(async {
-        Ok(reqwest::Client::new()
+    debug!("POST {}", url);
+    let result = (|| -> Result<String, Error> {
+        Ok(client()
             .post(url)
             .body(body)
             .send()
-            .await?
+            .map_err(Error::from)?
             .text()
-            .await?)
-    })
+            .map_err(Error::from)?)
+    })();
+    if let Err(ref e) = result {
+        warn!("POST {} failed: {}", url, e);
+    }
+    result
 }
 
 pub fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<String, Error> {
-    let rt = Runtime::new().unwrap();
-    rt.block_on(async {
-        Ok(reqwest::Client::new()
+    debug!("POST {} (json)", url);
+    let result = (|| -> Result<String, Error> {
+        Ok(client()
             .post(url)
             .header("Content-Type", "application/json")
             .body(json_body.to_string())
             .send()
-            .await?
+            .map_err(Error::from)?
             .text()
-            .await?)
-    })
+            .map_err(Error::from)?)
+    })();
+    if let Err(ref e) = result {
+        warn!("POST {} failed: {}", url, e);
+    }
+    result
 }
 
 pub fn fetch_reqwest_get_with_headers(
     url: &str,
     headers: &[(&str, &str)],
 ) -> Result<String, Error> {
-    let rt = Runtime::new().unwrap();
-    rt.block_on(async {
-        let client = reqwest::Client::new();
-        let mut req = client.get(url);
+    debug!("GET {} (with headers)", url);
+    let result = (|| -> Result<String, Error> {
+        let mut req = client().get(url);
         for &(key, value) in headers {
             req = req.header(key, value);
         }
-        Ok(req.send().await?.text().await?)
-    })
+        Ok(req.send().map_err(Error::from)?.text().map_err(Error::from)?)
+    })();
+    if let Err(ref e) = result {
+        warn!("GET {} failed: {}", url, e);
+    }
+    result
 }
 
 ///简单的1,true,True转true
