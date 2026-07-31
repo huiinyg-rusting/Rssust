@@ -31,7 +31,8 @@ fn parse_article_date(html: &str) -> Option<String> {
 
 fn parse_article(html: &str, url: &str) -> Result<rss::Item> {
     let doc = Html::parse_document(html);
-    let sel_h2 = Selector::parse("div.ct_tittle div.bg_htit h2").map_err(|_| anyhow!("selector"))?;
+    let sel_h2 =
+        Selector::parse("div.ct_tittle div.bg_htit h2").map_err(|_| anyhow!("selector"))?;
     let sel_block = Selector::parse("div.block_m").map_err(|_| anyhow!("selector"))?;
     let sel_author = Selector::parse("div.talk_time b").map_err(|_| anyhow!("selector"))?;
     let sel_cat = Selector::parse("div.icon_float a").map_err(|_| anyhow!("selector"))?;

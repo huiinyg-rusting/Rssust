@@ -1,2 +1,6 @@
+[server]
+port = 7878
+
 [routes]
 disabled = []
+numofcore = 4

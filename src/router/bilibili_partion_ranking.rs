@@ -41,7 +41,17 @@ fn tid_to_name(tid: &str) -> &str {
     }
 }
 
-fn build_item(title: &str, bvid: &str, aid: i64, pic: &str, desc: &str, tag: &str, pubdate: i64, author: &str, embed: bool) -> Item {
+fn build_item(
+    title: &str,
+    bvid: &str,
+    aid: i64,
+    pic: &str,
+    desc: &str,
+    tag: &str,
+    pubdate: i64,
+    author: &str,
+    embed: bool,
+) -> Item {
     let description = if embed {
         format!(
             r#"<iframe width="640" height="360" src="https://www.bilibili.com/blackboard/html5mobileplayer.html?aid={}&amp;cid=undefined&amp;bvid={}" frameborder="0" allowfullscreen="" referrerpolicy="no-referrer"></iframe><br><img src="{}" referrerpolicy="no-referrer"><br>{}<br>{}"#,
@@ -61,9 +71,7 @@ fn build_item(title: &str, bvid: &str, aid: i64, pic: &str, desc: &str, tag: &st
 }
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let tid = para
-        .get("tid")
-        .ok_or_else(|| anyhow!("缺少 tid 参数"))?;
+    let tid = para.get("tid").ok_or_else(|| anyhow!("缺少 tid 参数"))?;
     let days = para
         .get("days")
         .and_then(|s| s.parse::<i64>().ok())
@@ -83,9 +91,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         chrono::Local::now().timestamp_millis()
     );
 
-    let hot_json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&hot_url, &headers)?.as_str(),
-    )?;
+    let hot_json: Value =
+        serde_json::from_str(fetch_reqwest_get_with_headers(&hot_url, &headers)?.as_str())?;
 
     let hot_result = hot_json
         .pointer("/result")
@@ -101,9 +108,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             tid,
             chrono::Local::now().timestamp_millis()
         );
-        let newlist_json: Value = serde_json::from_str(
-            fetch_reqwest_get_with_headers(&newlist_url, &headers)?.as_str(),
-        )?;
+        let newlist_json: Value =
+            serde_json::from_str(fetch_reqwest_get_with_headers(&newlist_url, &headers)?.as_str())?;
         let archives = newlist_json
             .pointer("/data/archives")
             .and_then(|v| v.as_array())
@@ -131,7 +137,17 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             let pubdate = item["pubdate"].as_i64().unwrap_or(0);
             let author = item["author"].as_str().unwrap_or("未知");
             let title = item["title"].as_str().unwrap_or("");
-            let item = build_item(title, bvid, id, pic, description_text, tag, pubdate, author, embed);
+            let item = build_item(
+                title,
+                bvid,
+                id,
+                pic,
+                description_text,
+                tag,
+                pubdate,
+                author,
+                embed,
+            );
             item_vec.push(item);
         }
     }

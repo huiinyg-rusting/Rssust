@@ -19,9 +19,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         let title = article["title"].as_str().unwrap_or("");
         let link = article["url"].as_str().unwrap_or("");
         let pub_ts = article["time"].as_i64().unwrap_or(0);
-        let category = article["channelObject"]["name"]
-            .as_str()
-            .unwrap_or("");
+        let category = article["channelObject"]["name"].as_str().unwrap_or("");
 
         if title.is_empty() || link.is_empty() {
             continue;
@@ -74,9 +72,11 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             .link(Some(link.to_string()))
             .pub_date(pub_date)
             .description(Some(description))
-            .categories(vec![CategoryBuilder::default()
-                .name(category.to_string())
-                .build()])
+            .categories(vec![
+                CategoryBuilder::default()
+                    .name(category.to_string())
+                    .build(),
+            ])
             .build();
         item_vec.push(rss_item);
     }

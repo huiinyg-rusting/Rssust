@@ -40,7 +40,8 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             }
         }
 
-        if let Ok(detail_json) = fetch_reqwest_get_with_headers(&detail_url, &[("app-version", "web1.0")])
+        if let Ok(detail_json) =
+            fetch_reqwest_get_with_headers(&detail_url, &[("app-version", "web1.0")])
         {
             if let Ok(detail) = serde_json::from_str::<Value>(&detail_json) {
                 if let Some(data) = detail["data"].as_object() {

@@ -8,8 +8,8 @@ use std::collections::HashMap;
 pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get("https://news.ifeng.com")?;
 
-    let news_stream_re = Regex::new(r#""newsstream":(\[.*?\]),"cooperation""#)
-        .map_err(|_| anyhow!("正则无效"))?;
+    let news_stream_re =
+        Regex::new(r#""newsstream":(\[.*?\]),"cooperation""#).map_err(|_| anyhow!("正则无效"))?;
     let news_json = news_stream_re
         .captures(&html)
         .and_then(|c| c.get(1))
@@ -42,15 +42,11 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             Ok(detail_html) => {
                 let mut desc = String::new();
                 if !thumbnail.is_empty() {
-                    desc.push_str(&format!(
-                        r#"<figure><img src="{}"></figure>"#,
-                        thumbnail
-                    ));
+                    desc.push_str(&format!(r#"<figure><img src="{}"></figure>"#, thumbnail));
                 }
 
                 let content_list_re =
-                    Regex::new(r#""contentList":(\[.*?\]),"#)
-                        .map_err(|_| anyhow!("正则无效"))?;
+                    Regex::new(r#""contentList":(\[.*?\]),"#).map_err(|_| anyhow!("正则无效"))?;
                 if let Some(caps) = content_list_re.captures(&detail_html) {
                     if let Ok(content_list) =
                         serde_json::from_str::<Value>(caps.get(1).unwrap().as_str())

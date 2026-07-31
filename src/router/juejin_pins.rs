@@ -58,9 +58,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .or_else(|| msg_info["ctime"].as_i64())
             .unwrap_or(0);
         let msg_id = item["msg_id"].as_str().unwrap_or("");
-        let author = item["author_user_info"]["user_name"]
-            .as_str()
-            .unwrap_or("");
+        let author = item["author_user_info"]["user_name"].as_str().unwrap_or("");
 
         let link = format!("https://juejin.cn/pin/{}", msg_id);
         let pub_date = timestamp_to_rss(ctime);

@@ -6,7 +6,10 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let tag = para.get("tag").map(|s| s.as_str()).unwrap_or("web_home_page");
+    let tag = para
+        .get("tag")
+        .map(|s| s.as_str())
+        .unwrap_or("web_home_page");
     let api_url = format!("https://www.gelonghui.com/api/channels/{}/articles/v8", tag);
 
     let json_str = fetch_reqwest_get(&api_url)?;
@@ -69,7 +72,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                         description = format!("{}{}", description, s);
                     }
                 }
-                if let Some(content) = doc.select(&Selector::parse("article.article-with-html").unwrap()).next() {
+                if let Some(content) = doc
+                    .select(&Selector::parse("article.article-with-html").unwrap())
+                    .next()
+                {
                     description = content.inner_html();
                 }
             }
@@ -77,11 +83,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let mut cats = Vec::new();
         if !source.is_empty() {
-            cats.push(
-                CategoryBuilder::default()
-                    .name(source.to_string())
-                    .build(),
-            );
+            cats.push(CategoryBuilder::default().name(source.to_string()).build());
         }
 
         let rss_item = ItemBuilder::default()

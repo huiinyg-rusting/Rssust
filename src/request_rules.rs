@@ -19,9 +19,15 @@ pub enum ShowToUser {
 
 ///这个函数相当于模块的注册表
 /// 给调用者的是html格式
-pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<String, anyhow::Error> {
+pub fn request_rules(
+    url: &str,
+    parameters: HashMap<String, String>,
+) -> Result<String, anyhow::Error> {
     // 静态路由映射表，避免运行时重复构建
-    const ROUTES: &[(&str, fn(HashMap<String, String>) -> Result<String, anyhow::Error>)] = &[
+    const ROUTES: &[(
+        &str,
+        fn(HashMap<String, String>) -> Result<String, anyhow::Error>,
+    )] = &[
         ("/apnews_topics", apnews_topics::get),
         ("/bjnews_cat", bjnews_cat::get),
         ("/bilibili_weekly", bilibili_weekly::get),
@@ -44,7 +50,10 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         ("/douban_book_latest", douban_book_latest::get),
         ("/douban_book_rank", douban_book_rank::get),
         ("/douban_event_hot", douban_event_hot::get),
-        ("/douban_movie_classification", douban_movie_classification::get),
+        (
+            "/douban_movie_classification",
+            douban_movie_classification::get,
+        ),
         ("/eastday_24", eastday_24::get),
         ("/eeo_kuaixun", eeo_kuaixun::get),
         ("/netease_today", netease_today::get),
@@ -52,6 +61,7 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
         ("/hupu_news", hupu_news::get),
         ("/thepaper_featured", thepaper_featured::get),
         ("/leiphone_newsflash", leiphone_newsflash::get),
+        ("/nmc_alarm", nmc_alarm::get),
         ("/solidot", solidot::get),
         ("/stcn_article_list", stcn_article_list::get),
         ("/stcn_kx", stcn_kx::get),

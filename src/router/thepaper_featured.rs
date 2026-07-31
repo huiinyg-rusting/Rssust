@@ -12,8 +12,8 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     )?;
 
     let doc = Html::parse_document(&html);
-    let sel = Selector::parse(r#"script[id="__NEXT_DATA__"]"#)
-        .map_err(|_| anyhow!("选择器无效"))?;
+    let sel =
+        Selector::parse(r#"script[id="__NEXT_DATA__"]"#).map_err(|_| anyhow!("选择器无效"))?;
     let json_str = doc
         .select(&sel)
         .next()

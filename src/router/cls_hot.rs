@@ -70,32 +70,21 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         let description = match fetch_reqwest_get(&link) {
             Ok(detail_html) => {
                 let detail_doc = Html::parse_document(&detail_html);
-                let sel = Selector::parse("script#__NEXT_DATA__")
-                    .map_err(|_| anyhow!("选择器无效"))?;
+                let sel =
+                    Selector::parse("script#__NEXT_DATA__").map_err(|_| anyhow!("选择器无效"))?;
                 if let Some(el) = detail_doc.select(&sel).next() {
                     let json_str: String = el.text().collect();
-                    if let Ok(next_data) =
-                        serde_json::from_str::<Value>(&json_str)
-                    {
+                    if let Ok(next_data) = serde_json::from_str::<Value>(&json_str) {
                         let article = &next_data["props"]["pageProps"]["articleDetail"];
-                        let content = article["content"]
-                            .as_str()
-                            .unwrap_or("");
+                        let content = article["content"].as_str().unwrap_or("");
                         let images = article["images"]
                             .as_array()
-                            .map(|arr| {
-                                arr.iter()
-                                    .filter_map(|v| v.as_str())
-                                    .collect::<Vec<_>>()
-                            })
+                            .map(|arr| arr.iter().filter_map(|v| v.as_str()).collect::<Vec<_>>())
                             .unwrap_or_default();
 
                         let mut desc = String::new();
                         for img in &images {
-                            desc.push_str(&format!(
-                                r#"<img src="{}"><br>"#,
-                                img
-                            ));
+                            desc.push_str(&format!(r#"<img src="{}"><br>"#, img));
                         }
                         desc.push_str(content);
                         desc

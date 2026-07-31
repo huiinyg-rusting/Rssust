@@ -31,7 +31,10 @@ pub mod connect {
         }
 
         let head = std::str::from_utf8(extract_between_spaces(&buffer).unwrap_or_else(|| {
-            warn!("Failed to extract path from request head: {:?}", &buffer[..64]);
+            warn!(
+                "Failed to extract path from request head: {:?}",
+                &buffer[..64]
+            );
             &[]
         }))
         .unwrap_or_else(|_| {
@@ -59,7 +62,7 @@ pub mod connect {
                 Err(i) => {
                     warn!("Error requesting HTML: {}", i);
                     format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)
-                },
+                }
             },
             ShowToUser::Rss { res } => match res {
                 std::result::Result::Ok(i) => {
@@ -73,7 +76,7 @@ pub mod connect {
                 Err(i) => {
                     warn!("Error requesting RSS: {}", i);
                     format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)
-                },
+                }
             },
             ShowToUser::File { res, content_type } => match res {
                 std::result::Result::Ok(i) => {
@@ -93,11 +96,14 @@ pub mod connect {
                 Err(i) => {
                     warn!("Error requesting file: {}", i);
                     format!("HTTP/1.1 200 OK\r\n\r\nError:{}", i)
-                },
+                }
             },
         };
 
-        if let Err(e) = stream.write(response.as_bytes()).and_then(|_| stream.flush()) {
+        if let Err(e) = stream
+            .write(response.as_bytes())
+            .and_then(|_| stream.flush())
+        {
             warn!("Failed to write response: {}", e);
         }
     }

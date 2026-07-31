@@ -27,21 +27,17 @@ fn get_video_name(bvid: &str, aid: Option<i64>) -> String {
     fetch_reqwest_get(&url)
         .ok()
         .and_then(|s| {
-            serde_json::from_str::<Value>(&s)
-                .ok()
-                .and_then(|v| {
-                    v.pointer("/data/title")
-                        .and_then(Value::as_str)
-                        .map(|t| t.to_string())
-                })
+            serde_json::from_str::<Value>(&s).ok().and_then(|v| {
+                v.pointer("/data/title")
+                    .and_then(Value::as_str)
+                    .map(|t| t.to_string())
+            })
         })
         .unwrap_or_else(|| bvid.to_string())
 }
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let bvid = para
-        .get("bvid")
-        .ok_or_else(|| anyhow!("缺少 bvid 参数"))?;
+    let bvid = para.get("bvid").ok_or_else(|| anyhow!("缺少 bvid 参数"))?;
 
     let aid = get_aid_from_bvid(bvid)?;
     let name = get_video_name(bvid, Some(aid));
@@ -51,16 +47,17 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         "https://api.bilibili.com/x/v2/reply?type=1&oid={}&sort=0",
         aid
     );
-    let cookie = load_cookie_header(Some("bilibili.com")).ok().flatten().unwrap_or_default();
+    let cookie = load_cookie_header(Some("bilibili.com"))
+        .ok()
+        .flatten()
+        .unwrap_or_default();
 
     let json: Value = serde_json::from_str(
         fetch_reqwest_get_with_headers(
             &url,
-            &[
-                ("Referer", link.as_str()),
-                ("Cookie", cookie.as_str()),
-            ],
-        )?.as_str(),
+            &[("Referer", link.as_str()), ("Cookie", cookie.as_str())],
+        )?
+        .as_str(),
     )?;
 
     let replies = json

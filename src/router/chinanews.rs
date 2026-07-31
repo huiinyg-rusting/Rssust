@@ -69,7 +69,11 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             .link(Some(link))
             .pub_date(pub_date)
             .description(Some(description))
-            .author(if author.is_empty() { None } else { Some(author) })
+            .author(if author.is_empty() {
+                None
+            } else {
+                Some(author)
+            })
             .build();
         item_vec.push(rss_item);
 

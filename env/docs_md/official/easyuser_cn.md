@@ -86,9 +86,21 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers)?;
 
 **签名**: `pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String>`
 
-将 `"YYYY-MM-DD HH:MM:SS"` 格式的字符串转换为 RSS 标准时间格式（东八区）。
+将 `"YYYY-MM-DD HH:MM:SS"` 格式的字符串转换为 RSS 标准时间格式。**输入视为东八区本地时间**（不做偏移，直接附加 +0800）。
 
 示例：`"2026-07-11 12:00:00"` → `"Sat, 11 Jul 2026 12:00:00 +0800"`
+
+注意：若来源时间是 UTC，请改用 `utc_str_to_rss`。
+
+### utc_str_to_rss()
+
+**签名**: `pub fn utc_str_to_rss(datetime_str: &str) -> Option<String>`
+
+将 `"YYYY-MM-DD HH:MM:SS"` 格式的字符串转换为 RSS 标准时间格式。**输入视为 UTC 时间**，自动换算为东八区（+0800）后再输出。
+
+示例：`"2026-07-11 12:00:00"` → `"Sat, 11 Jul 2026 20:00:00 +0800"`
+
+适用于带 `Z` 后缀的 ISO 时间（如 `datePublished`），调用前先 `s.replace('T', " ").replace('Z', "")` 归一化，参见 `apnews_topics` 的用法。
 
 ---
 

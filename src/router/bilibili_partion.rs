@@ -5,9 +5,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let tid = para
-        .get("tid")
-        .ok_or_else(|| anyhow!("缺少 tid 参数"))?;
+    let tid = para.get("tid").ok_or_else(|| anyhow!("缺少 tid 参数"))?;
 
     let url = format!(
         "https://api.bilibili.com/x/web-interface/newlist?ps=15&rid={}&_={}",
@@ -16,9 +14,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
     let headers: Vec<(&str, &str)> = vec![("Referer", "https://www.bilibili.com/")];
 
-    let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &headers)?.as_str(),
-    )?;
+    let json: Value =
+        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
 
     let list = json
         .pointer("/data/archives")

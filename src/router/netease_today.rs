@@ -5,7 +5,8 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let url = "https://gw.m.163.com/nc/api/v1/feed/static/normal-list?start=0&tid=T1573700340788&size=30";
+    let url =
+        "https://gw.m.163.com/nc/api/v1/feed/static/normal-list?start=0&tid=T1573700340788&size=30";
 
     let json: Value = serde_json::from_str(fetch_reqwest_get(url)?.as_str())?;
 
@@ -25,7 +26,10 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         let default_link = format!("https://c.m.163.com/news/a/{}.html", docid);
         let link = item["url"].as_str().unwrap_or(&default_link);
 
-        let description = format!("<p>{}</p><img src=\"{}\" referrerpolicy=\"no-referrer\">", digest, imgsrc);
+        let description = format!(
+            "<p>{}</p><img src=\"{}\" referrerpolicy=\"no-referrer\">",
+            digest, imgsrc
+        );
 
         let pub_date = if !ptime.is_empty() {
             datetime_str_to_rss(ptime).unwrap_or_else(now)

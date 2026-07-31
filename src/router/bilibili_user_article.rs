@@ -6,9 +6,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let uid = para
-        .get("uid")
-        .ok_or_else(|| anyhow!("缺少 uid 参数"))?;
+    let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
 
     let url = format!(
         "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/feed/space?host_mid={}",
@@ -17,9 +15,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let referer = format!("https://space.bilibili.com/{}/article", uid);
     let headers: Vec<(&str, &str)> = vec![("Referer", referer.as_str())];
 
-    let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &headers)?.as_str(),
-    )?;
+    let json: Value =
+        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
 
     let data = json
         .pointer("/data/items")
@@ -38,10 +35,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             format!("https:{}", jump_url)
         };
 
-        if let Some(name) = item
-            .pointer("/author/name")
-            .and_then(Value::as_str)
-        {
+        if let Some(name) = item.pointer("/author/name").and_then(Value::as_str) {
             if author == "UP主" {
                 author = name.to_string();
             }

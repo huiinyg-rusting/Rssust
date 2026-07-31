@@ -5,12 +5,8 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let uid = para
-        .get("uid")
-        .ok_or_else(|| anyhow!("缺少 uid 参数"))?;
-    let fid = para
-        .get("fid")
-        .ok_or_else(|| anyhow!("缺少 fid 参数"))?;
+    let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
+    let fid = para.get("fid").ok_or_else(|| anyhow!("缺少 fid 参数"))?;
 
     let url = format!(
         "https://api.bilibili.com/x/v3/fav/resource/list?media_id={}&ps=20",
@@ -24,9 +20,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         headers.push(("Cookie", c));
     }
 
-    let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &headers)?.as_str(),
-    )?;
+    let json: Value =
+        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
 
     let code = json["code"].as_i64().unwrap_or(-1);
     if code != 0 {
@@ -55,7 +50,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let cover = item["cover"].as_str().unwrap_or_default();
         let intro = item["intro"].as_str().unwrap_or_default();
         let fav_time = item["fav_time"].as_i64().unwrap_or(0);
-        let item_author = item.pointer("/upper/name").and_then(Value::as_str).unwrap_or("");
+        let item_author = item
+            .pointer("/upper/name")
+            .and_then(Value::as_str)
+            .unwrap_or("");
 
         let description = match para.get("disableembed") {
             Some(s) if s == "false" => "".to_owned(),

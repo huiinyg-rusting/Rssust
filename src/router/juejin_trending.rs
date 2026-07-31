@@ -22,7 +22,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let (url, body) = if category == "all" {
         (
             "https://api.juejin.cn/recommend_api/v1/article/recommend_all_feed".to_string(),
-            format!(r#"{{"cursor":"0","id_type":2,"limit":20,"sort_type":{}}}"#, sort_type),
+            format!(
+                r#"{{"cursor":"0","id_type":2,"limit":20,"sort_type":{}}}"#,
+                sort_type
+            ),
         )
     } else {
         let cat_resp = fetch_reqwest_get("https://api.juejin.cn/tag_api/v1/query_category_briefs")?;
@@ -69,18 +72,14 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .as_str()
             .unwrap_or("")
             .to_string();
-        let brief = item["article_info"]["brief_content"]
-            .as_str()
-            .unwrap_or("");
+        let brief = item["article_info"]["brief_content"].as_str().unwrap_or("");
         let ctime = item["article_info"]["ctime"]
             .as_str()
             .and_then(|s| s.parse::<i64>().ok())
             .or_else(|| item["article_info"]["ctime"].as_i64())
             .unwrap_or(0);
         let article_id = item["article_id"].as_str().unwrap_or("");
-        let author = item["author_user_info"]["user_name"]
-            .as_str()
-            .unwrap_or("");
+        let author = item["author_user_info"]["user_name"].as_str().unwrap_or("");
 
         let link = format!("https://juejin.cn/post/{}", article_id);
         let pub_date = timestamp_to_rss(ctime);
@@ -93,9 +92,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 }
             }
         }
-        let category_name = item["category"]["category_name"]
-            .as_str()
-            .unwrap_or("");
+        let category_name = item["category"]["category_name"].as_str().unwrap_or("");
         if !category_name.is_empty() {
             tags.push(category_name.to_string());
         }
@@ -107,8 +104,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .pub_date(pub_date)
             .author(Some(author.to_string()))
             .categories(
-                tags
-                    .into_iter()
+                tags.into_iter()
                     .map(|t| {
                         let mut cat = rss::Category::default();
                         cat.set_name(t);

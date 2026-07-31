@@ -61,7 +61,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if let Some(t) = info_spans.last() {
             let clean = t.trim();
             if clean.len() == 5 && clean.contains(':') {
-                pub_date = format!("{} {}:00 +0800", today_date_str(), clean);
+                if let Some(d) = datetime_str_to_rss(&format!("{} {}:00", today_date_str(), clean))
+                {
+                    pub_date = d;
+                }
             } else {
                 if let Some(d) = datetime_str_to_rss(clean) {
                     pub_date = d;
@@ -93,7 +96,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             }
         }
 
-        let author_str = if author.is_empty() { "证券时报" } else { &author };
+        let author_str = if author.is_empty() {
+            "证券时报"
+        } else {
+            &author
+        };
 
         let cats: Vec<Category> = categories
             .iter()

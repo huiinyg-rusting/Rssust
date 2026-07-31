@@ -8,14 +8,20 @@ use std::collections::HashMap;
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let topic = para.get("topic").map(|s| s.as_str()).unwrap_or("trending-news");
+    let topic = para
+        .get("topic")
+        .map(|s| s.as_str())
+        .unwrap_or("trending-news");
     let hub_url = format!("https://apnews.com/hub/{}", topic);
 
     let html = fetch_reqwest_get_with_headers(
         &hub_url,
         &[
             ("User-Agent", UA),
-            ("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+            (
+                "Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            ),
             ("Accept-Language", "en-US,en;q=0.9"),
             ("Referer", "https://apnews.com/"),
         ],
@@ -38,7 +44,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let headers = &[
         ("User-Agent", UA),
-        ("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+        (
+            "Accept",
+            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        ),
         ("Accept-Language", "en-US,en;q=0.9"),
         ("Referer", &hub_url),
     ];
@@ -49,13 +58,15 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
 
-                let (title, pub_date, author, description) = if let Some(ld) = extract_ldjson(&detail_html) {
+                let (title, pub_date, author, description) = if let Some(ld) =
+                    extract_ldjson(&detail_html)
+                {
                     let t = ld["headline"].as_str().unwrap_or("").to_string();
                     let pd = ld["datePublished"]
                         .as_str()
                         .and_then(|s| {
                             let dt = s.replace('T', " ").replace('Z', "");
-                            datetime_str_to_rss(&dt)
+                            utc_str_to_rss(&dt)
                         })
                         .unwrap_or_else(now);
 
@@ -140,14 +151,13 @@ fn topic_name(topic: &str) -> &str {
 }
 
 fn extract_ldjson(html: &str) -> Option<Value> {
-    let re = regex::Regex::new(
-        r#"<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>"#,
-    )
-    .ok()?;
+    let re =
+        regex::Regex::new(r#"<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>"#).ok()?;
     for cap in re.captures_iter(html) {
         if let Ok(data) = serde_json::from_str::<Value>(&cap[1]) {
             let article = if let Some(arr) = data.as_array() {
-                arr.iter().find(|v| v["@type"].as_str() == Some("NewsArticle"))?
+                arr.iter()
+                    .find(|v| v["@type"].as_str() == Some("NewsArticle"))?
             } else {
                 &data
             };

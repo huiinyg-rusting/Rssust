@@ -5,9 +5,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let uid = para
-        .get("uid")
-        .ok_or_else(|| anyhow!("缺少 uid 参数"))?;
+    let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
 
     let url = format!(
         "https://api.bilibili.com/x/v2/fav/video?vmid={}&ps=30&tid=0&keyword=&pn=1&order=fav_time",
@@ -21,9 +19,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         headers.push(("Cookie", c));
     }
 
-    let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &headers)?.as_str(),
-    )?;
+    let json: Value =
+        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
 
     let archives = json
         .pointer("/data/archives")

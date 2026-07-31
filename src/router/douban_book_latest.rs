@@ -34,7 +34,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://book.douban.com/latest")])?.as_str(),
+        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://book.douban.com/latest")])?
+            .as_str(),
     )?;
 
     let items = json
@@ -43,7 +44,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .ok_or_else(|| anyhow::anyhow!("找不到 items 字段或不是数组"))?;
 
     let name = subcat_name(book_type);
-    let title_suffix = if book_type == "all" { String::new() } else { format!("-{}", name) };
+    let title_suffix = if book_type == "all" {
+        String::new()
+    } else {
+        format!("-{}", name)
+    };
 
     let mut item_vec = Vec::new();
     for item in items {
@@ -79,7 +84,14 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let channel = ChannelBuilder::default()
         .title(format!("豆瓣新书速递{}", title_suffix))
-        .link(format!("https://book.douban.com/latest{}", if book_type == "all" { String::new() } else { format!("?subcat={}", name) }))
+        .link(format!(
+            "https://book.douban.com/latest{}",
+            if book_type == "all" {
+                String::new()
+            } else {
+                format!("?subcat={}", name)
+            }
+        ))
         .items(item_vec)
         .build();
     Ok(channel.to_string())

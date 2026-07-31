@@ -11,15 +11,12 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     )?;
     let doc = Html::parse_document(&html);
 
-    let sel = Selector::parse(".note-list li")
-        .map_err(|_| anyhow!("选择器无效"))?;
+    let sel = Selector::parse(".note-list li").map_err(|_| anyhow!("选择器无效"))?;
 
     let mut entries = Vec::new();
     for elem in doc.select(&sel) {
-        let title_sel = Selector::parse(".title")
-            .map_err(|_| anyhow!("选择器无效"))?;
-        let name_sel = Selector::parse(".nickname")
-            .map_err(|_| anyhow!("选择器无效"))?;
+        let title_sel = Selector::parse(".title").map_err(|_| anyhow!("选择器无效"))?;
+        let name_sel = Selector::parse(".nickname").map_err(|_| anyhow!("选择器无效"))?;
 
         let title = elem
             .select(&title_sel)
@@ -82,11 +79,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 fn extract_jianshu_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);
     let sel = Selector::parse("time").ok()?;
-    let datetime = doc
-        .select(&sel)
-        .next()?
-        .value()
-        .attr("datetime")?;
+    let datetime = doc.select(&sel).next()?.value().attr("datetime")?;
     Some(
         chrono::DateTime::parse_from_rfc3339(datetime)
             .ok()

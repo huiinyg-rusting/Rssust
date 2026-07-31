@@ -37,8 +37,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         if let Ok(detail_html) = fetch_reqwest_get(&detail_url) {
             let detail_doc = Html::parse_document(&detail_html);
 
-            let all_txt_sel = Selector::parse(".all-txt")
-                .map_err(|_| anyhow!("选择器无效"))?;
+            let all_txt_sel = Selector::parse(".all-txt").map_err(|_| anyhow!("选择器无效"))?;
             let description = detail_doc
                 .select(&all_txt_sel)
                 .next()
@@ -68,11 +67,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 fn extract_guancha_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);
     let sel = Selector::parse("div.time").ok()?;
-    let text = doc
-        .select(&sel)
-        .next()?
-        .text()
-        .collect::<String>();
+    let text = doc.select(&sel).next()?.text().collect::<String>();
     let re = Regex::new(r"(\d{4}-\d{2}-\d{2}\s*\d{2}:\d{2})").ok()?;
     let caps = re.captures(&text)?;
     datetime_str_to_rss(&format!("{}:00", &caps[1]))

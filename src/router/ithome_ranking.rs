@@ -22,8 +22,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get("https://www.ithome.com/block/rank.html")?;
     let doc = Html::parse_document(&html);
 
-    let sel = Selector::parse(&format!("#{} > li a", id))
-        .map_err(|_| anyhow!("选择器无效"))?;
+    let sel = Selector::parse(&format!("#{} > li a", id)).map_err(|_| anyhow!("选择器无效"))?;
 
     let mut entries = Vec::new();
     for elem in doc.select(&sel) {
@@ -39,8 +38,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if let Ok(detail_html) = fetch_reqwest_get(&link) {
             let detail_doc = Html::parse_document(&detail_html);
 
-            let content_sel = Selector::parse("#paragraph")
-                .map_err(|_| anyhow!("选择器无效"))?;
+            let content_sel = Selector::parse("#paragraph").map_err(|_| anyhow!("选择器无效"))?;
             let description = detail_doc
                 .select(&content_sel)
                 .next()
@@ -63,10 +61,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 })
                 .to_string();
 
-            let description = description.replace(
-                r#"src="//img.ithome.com"#,
-                r#"src="https://img.ithome.com"#,
-            );
+            let description =
+                description.replace(r#"src="//img.ithome.com"#, r#"src="https://img.ithome.com"#);
 
             let pub_date = extract_ithome_date(&detail_html);
 
@@ -91,12 +87,15 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 fn extract_ithome_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);
     let sel = Selector::parse("#pubtime_baidu").ok()?;
-    let text = doc
-        .select(&sel)
-        .next()?
-        .text()
-        .collect::<String>();
-    let re = Regex::new(r"(\d{4}-\d{2}-\d{2}\s*\d{2}:\d{2})").ok()?;
+    let text = doc.select(&sel).next()?.text().collect::<String>();
+    let re = Regex::new(r"(\d{4})[/-](\d{1,2})[/-](\d{1,2})\s+(\d{1,2}):(\d{2})").ok()?;
     let caps = re.captures(&text)?;
-    datetime_str_to_rss(&format!("{}:00", &caps[1]))
+    datetime_str_to_rss(&format!(
+        "{:04}-{:02}-{:02} {:02}:{:02}:00",
+        caps[1].parse::<i32>().ok()?,
+        caps[2].parse::<u32>().ok()?,
+        caps[3].parse::<u32>().ok()?,
+        caps[4].parse::<u32>().ok()?,
+        caps[5].parse::<u32>().ok()?,
+    ))
 }

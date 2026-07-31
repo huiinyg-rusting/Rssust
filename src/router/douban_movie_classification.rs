@@ -18,7 +18,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://movie.douban.com/tag/")])?.as_str(),
+        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://movie.douban.com/tag/")])?
+            .as_str(),
     )?;
 
     let movies = json
@@ -26,7 +27,14 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .and_then(|v| v.as_array())
         .ok_or_else(|| anyhow::anyhow!("找不到 data 字段或不是数组"))?;
 
-    let title = format!("豆瓣电影分类{}影视", if score > 0.0 { format!("超过 {} 分的", score) } else { String::new() });
+    let title = format!(
+        "豆瓣电影分类{}影视",
+        if score > 0.0 {
+            format!("超过 {} 分的", score)
+        } else {
+            String::new()
+        }
+    );
 
     let mut item_vec = Vec::new();
     for item in movies {
@@ -43,11 +51,21 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let rate = item["rate"].as_str().unwrap_or("");
         let directors = item["directors"]
             .as_array()
-            .map(|a| a.iter().filter_map(|v| v.as_str()).collect::<Vec<_>>().join(" / "))
+            .map(|a| {
+                a.iter()
+                    .filter_map(|v| v.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" / ")
+            })
             .unwrap_or_default();
         let casts = item["casts"]
             .as_array()
-            .map(|a| a.iter().filter_map(|v| v.as_str()).collect::<Vec<_>>().join(" / "))
+            .map(|a| {
+                a.iter()
+                    .filter_map(|v| v.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" / ")
+            })
             .unwrap_or_default();
         let cover = item["cover"].as_str().unwrap_or("");
         let link = item["url"].as_str().unwrap_or("");

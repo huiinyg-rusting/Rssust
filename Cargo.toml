@@ -31,7 +31,7 @@ docs = ["dep:mdbook"]
 cookie = ["dep:bench_scraper"]
 
 [profile.release]
-lto = "fat"
+lto = "thin"
 codegen-units = 1
 strip = "symbols"
 opt-level = "z"

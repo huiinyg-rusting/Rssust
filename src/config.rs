@@ -14,7 +14,10 @@ pub fn init() {
             realcorenum()
         );
         match fs::write(&path, default) {
-            Ok(()) => info!("Config file not found, created default config: {}", path.display()),
+            Ok(()) => info!(
+                "Config file not found, created default config: {}",
+                path.display()
+            ),
             Err(e) => warn!("Failed to create default config {}: {}", path.display(), e),
         }
     }
@@ -40,9 +43,12 @@ fn realcorenum() -> u8 {
             n
         }
         Err(e) => {
-            warn!("Failed to get CPU core count, defaulting to 1 thread: {}", e);
+            warn!(
+                "Failed to get CPU core count, defaulting to 1 thread: {}",
+                e
+            );
             1
-        },
+        }
     }
 }
 
@@ -82,6 +88,4 @@ pub fn numofcore() -> u8 {
         .routes
         .and_then(|r: RoutesConfig| r.numofcore)
         .unwrap_or_else(|| realcorenum())
-
 }
-

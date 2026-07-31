@@ -10,9 +10,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         "https://www.yicai.com/api/ajax/getlistbycid?cid=48&type=1&page=1&pagesize=30",
     )?)?;
 
-    let list = json
-        .as_array()
-        .ok_or_else(|| anyhow!("返回数据不是数组"))?;
+    let list = json.as_array().ok_or_else(|| anyhow!("返回数据不是数组"))?;
 
     let mut item_vec = Vec::new();
     for article in list {
@@ -61,10 +59,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
                 for selector in &[".multiText", "#multi-text", ".txt", ".m-txt"] {
-                    if let Some(content) = doc
-                        .select(&Selector::parse(selector).unwrap())
-                        .next()
-                    {
+                    if let Some(content) = doc.select(&Selector::parse(selector).unwrap()).next() {
                         description.push_str(&content.inner_html());
                         break;
                     }
@@ -79,9 +74,9 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             .author(Some(author.to_string()))
             .pub_date(pub_date)
             .description(Some(description))
-            .categories(vec![CategoryBuilder::default()
-                .name(channel.to_string())
-                .build()])
+            .categories(vec![
+                CategoryBuilder::default().name(channel.to_string()).build(),
+            ])
             .build();
         item_vec.push(rss_item);
     }

@@ -415,13 +415,25 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         Ok(v) => v,
         Err(e) => {
             if response.contains("412") || response.contains("security") {
-                return Err(anyhow!("B站API需要登录Cookie才能访问，请配置 cookies.json (bilibili.com)"));
+                return Err(anyhow!(
+                    "B站API需要登录Cookie才能访问，请配置 cookies.json (bilibili.com)"
+                ));
             }
-            return Err(anyhow!("JSON解析失败: {} — 响应片段: {}", e, &response.chars().take(200).collect::<String>()));
+            return Err(anyhow!(
+                "JSON解析失败: {} — 响应片段: {}",
+                e,
+                &response.chars().take(200).collect::<String>()
+            ));
         }
     };
     if json.pointer("/code").and_then(Value::as_i64) != Some(0) {
-        return Err(anyhow!("B站API返回错误 code={}: {}", json.pointer("/code").and_then(Value::as_i64).unwrap_or(-1), json.pointer("/message").and_then(Value::as_str).unwrap_or("")));
+        return Err(anyhow!(
+            "B站API返回错误 code={}: {}",
+            json.pointer("/code").and_then(Value::as_i64).unwrap_or(-1),
+            json.pointer("/message")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+        ));
     }
 
     let items = json

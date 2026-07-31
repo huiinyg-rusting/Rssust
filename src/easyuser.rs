@@ -19,7 +19,10 @@ pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
 
     for pair in query.split('&') {
         if let Some((key, value)) = pair.split_once('=') {
-            params.insert(key.to_string(), value.to_string());
+            let value = urlencoding::decode(value)
+                .map(|c| c.into_owned())
+                .unwrap_or_else(|_| value.to_string());
+            params.insert(key.to_string(), value);
         } else if !pair.is_empty() {
             // 处理没有等号的参数（如 "flag"），值设为空字符串
             params.insert(pair.to_string(), String::new());
@@ -103,7 +106,11 @@ pub fn fetch_reqwest_get_with_headers(
         for &(key, value) in headers {
             req = req.header(key, value);
         }
-        Ok(req.send().map_err(Error::from)?.text().map_err(Error::from)?)
+        Ok(req
+            .send()
+            .map_err(Error::from)?
+            .text()
+            .map_err(Error::from)?)
     })();
     if let Err(ref e) = result {
         warn!("GET {} failed: {}", url, e);
@@ -193,14 +200,23 @@ pub fn timestamp_to_rss(ts: i64) -> String {
         .unwrap_or_else(now)
 }
 
-/// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（东八区）
+/// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（输入视为东八区本地时间）
 pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String> {
     let naive = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S").ok()?;
     let fixed = chrono::FixedOffset::east_opt(8 * 3600)?;
     Some(
         fixed
-            .from_utc_datetime(&naive)
+            .from_local_datetime(&naive)
+            .single()?
             .format("%a, %d %b %Y %H:%M:%S %z")
             .to_string(),
     )
+}
+
+/// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（输入视为 UTC 时间，自动换算为东八区）
+pub fn utc_str_to_rss(datetime_str: &str) -> Option<String> {
+    let naive = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S").ok()?;
+    let fixed = chrono::FixedOffset::east_opt(8 * 3600)?;
+    let wall = fixed.from_utc_datetime(&naive).naive_local();
+    datetime_str_to_rss(&wall.format("%Y-%m-%d %H:%M:%S").to_string())
 }

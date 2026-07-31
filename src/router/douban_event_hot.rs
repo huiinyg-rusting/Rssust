@@ -13,7 +13,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://m.douban.com/app_topic/event_hot")])?.as_str(),
+        fetch_reqwest_get_with_headers(
+            &url,
+            &[("Referer", "https://m.douban.com/app_topic/event_hot")],
+        )?
+        .as_str(),
     )?;
 
     let items = json

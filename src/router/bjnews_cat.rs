@@ -10,7 +10,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let html = fetch_reqwest_get_with_headers(
         &url,
-        &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")],
+        &[(
+            "User-Agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        )],
     )?;
 
     let doc = Html::parse_document(&html);
@@ -38,7 +41,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     for link in &links {
         match fetch_reqwest_get_with_headers(
             link,
-            &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")],
+            &[(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            )],
         ) {
             Ok(detail_html) => {
                 let detail_doc = Html::parse_document(&detail_html);

@@ -66,7 +66,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         if let Ok(detail_html) = fetch_reqwest_get_with_headers(
             &link,
-            &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")],
+            &[(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            )],
         ) {
             let detail_doc = Html::parse_document(&detail_html);
 
@@ -83,7 +86,9 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             {
                 if let Some(date_str) = meta.value().attr("content") {
                     let dt = date_str.replace('T', " ").replace('Z', "");
-                    if let Some(d) = datetime_str_to_rss(&dt) {
+                    if date_str.ends_with('Z') {
+                        pub_date = utc_str_to_rss(&dt).unwrap_or_else(now);
+                    } else if let Some(d) = datetime_str_to_rss(&dt) {
                         pub_date = d;
                     }
                 }
@@ -92,7 +97,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             // handle pagination
             let detail_text = fetch_reqwest_get_with_headers(
                 &link,
-                &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")],
+                &[(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                )],
             )
             .unwrap_or_default();
 
@@ -110,7 +118,10 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                             };
                             if let Ok(page_html) = fetch_reqwest_get_with_headers(
                                 &page_link,
-                                &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")],
+                                &[(
+                                    "User-Agent",
+                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                                )],
                             ) {
                                 let page_doc = Html::parse_document(&page_html);
                                 if let Some(page_content) = page_doc
