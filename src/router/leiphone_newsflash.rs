@@ -5,8 +5,8 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let json_str = fetch_reqwest_get("https://www.leiphone.com/site/YejieKuaixun")?;
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+    let json_str = fetch_reqwest_get("https://www.leiphone.com/site/YejieKuaixun").await?;
     let json: Value = serde_json::from_str(&json_str)?;
     let articles = json["article"]
         .as_array()
@@ -29,7 +29,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         };
 
         let mut description = String::new();
-        if let Ok(detail_html) = fetch_reqwest_get(url) {
+        if let Ok(detail_html) = fetch_reqwest_get(url).await {
             let doc = Html::parse_document(&detail_html);
 
             if let Some(img) = doc.select(&Selector::parse(".top-img").unwrap()).next() {

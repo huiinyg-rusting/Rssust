@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let location_id = para.get("locationId").map(|s| s.as_str()).unwrap_or("0");
 
     let url = format!(
@@ -16,7 +16,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         fetch_reqwest_get_with_headers(
             &url,
             &[("Referer", "https://m.douban.com/app_topic/event_hot")],
-        )?
+        )
+        .await?
         .as_str(),
     )?;
 

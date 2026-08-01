@@ -4,16 +4,17 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let recommend = fetch_reqwest_get(
         "https://app.bilibili.com/x/v2/show/popular/selected/series?type=weekly_selected",
-    )?;
+    )
+    .await?;
     let recommend: Value = serde_json::from_str(recommend.as_str())?;
     let recommend = &recommend.pointer("/data/0/number").ok_or_else(|| {
         eprintln!("router.rs出现错误{}", recommend);
         anyhow!("router.rs出现错误{}", recommend)
     })?;
-    let json: Value = serde_json::from_str(fetch_reqwest_get(format!("https://app.bilibili.com/x/v2/show/popular/selected?type=weekly_selected&number={}",recommend.to_string()).as_str())?.as_str())?;
+    let json: Value = serde_json::from_str(fetch_reqwest_get(format!("https://app.bilibili.com/x/v2/show/popular/selected?type=weekly_selected&number={}",recommend.to_string()).as_str()).await?.as_str())?;
     let mut item_vec = Vec::new();
     let list = json
         .pointer("/data/list")

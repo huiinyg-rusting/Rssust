@@ -4,15 +4,18 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
 
     let url = format!("https://api.bilibili.com/x/space/like/video?vmid={}", uid);
     let referer = format!("https://space.bilibili.com/{}/", uid);
     let headers: Vec<(&str, &str)> = vec![("Referer", referer.as_str())];
 
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let code = json["code"].as_i64().unwrap_or(-1);
     if code != 0 {

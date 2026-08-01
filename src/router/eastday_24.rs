@@ -23,7 +23,7 @@ const CATEGORIES: &[(&str, &str)] = &[
     ("教育", "jiaoyu"),
 ];
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let cat_name = para.get("category").map(|s| s.as_str()).unwrap_or("社会");
     let cat_slug = CATEGORIES
         .iter()
@@ -36,7 +36,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         cat_slug
     );
 
-    let resp = fetch_reqwest_get(&api_url)?;
+    let resp = fetch_reqwest_get(&api_url).await?;
 
     let json_str = resp
         .strip_prefix("trustNews(")
@@ -70,26 +70,30 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             )],
-        ) {
-            let detail_doc = Html::parse_document(&detail_html);
-
-            if let Some(content) = detail_doc
-                .select(&Selector::parse("#J-contain_detail_cnt").unwrap())
-                .next()
+        )
+        .await
+        {
             {
-                description = content.inner_html();
-            }
+                let detail_doc = Html::parse_document(&detail_html);
 
-            if let Some(meta) = detail_doc
-                .select(&Selector::parse("meta[property='og:release_date']").unwrap())
-                .next()
-            {
-                if let Some(date_str) = meta.value().attr("content") {
-                    let dt = date_str.replace('T', " ").replace('Z', "");
-                    if date_str.ends_with('Z') {
-                        pub_date = utc_str_to_rss(&dt).unwrap_or_else(now);
-                    } else if let Some(d) = datetime_str_to_rss(&dt) {
-                        pub_date = d;
+                if let Some(content) = detail_doc
+                    .select(&Selector::parse("#J-contain_detail_cnt").unwrap())
+                    .next()
+                {
+                    description = content.inner_html();
+                }
+
+                if let Some(meta) = detail_doc
+                    .select(&Selector::parse("meta[property='og:release_date']").unwrap())
+                    .next()
+                {
+                    if let Some(date_str) = meta.value().attr("content") {
+                        let dt = date_str.replace('T', " ").replace('Z', "");
+                        if date_str.ends_with('Z') {
+                            pub_date = utc_str_to_rss(&dt).unwrap_or_else(now);
+                        } else if let Some(d) = datetime_str_to_rss(&dt) {
+                            pub_date = d;
+                        }
                     }
                 }
             }
@@ -102,6 +106,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 )],
             )
+            .await
             .unwrap_or_default();
 
             if let Some(caps) = regex::Regex::new(r"var page_num = '(\d+)'")
@@ -122,7 +127,9 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                                     "User-Agent",
                                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                                 )],
-                            ) {
+                            )
+                            .await
+                            {
                                 let page_doc = Html::parse_document(&page_html);
                                 if let Some(page_content) = page_doc
                                     .select(&Selector::parse("#J-contain_detail_cnt").unwrap())

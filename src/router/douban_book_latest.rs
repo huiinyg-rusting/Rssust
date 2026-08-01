@@ -25,7 +25,7 @@ fn subcat_name(t: &str) -> &str {
     "全部"
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let book_type = para.get("type").map(|s| s.as_str()).unwrap_or("all");
 
     let url = format!(
@@ -34,7 +34,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://book.douban.com/latest")])?
+        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://book.douban.com/latest")])
+            .await?
             .as_str(),
     )?;
 

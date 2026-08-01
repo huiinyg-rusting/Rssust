@@ -47,7 +47,7 @@ fn normalize_province(p: &str) -> String {
     p.to_string()
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let type_ = para.get("type").map(|s| s.as_str()).unwrap_or("");
     let level = para.get("level").map(|s| s.as_str()).unwrap_or("");
     let mut province = para.get("province").map(|s| s.as_str()).unwrap_or("");
@@ -85,7 +85,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             "https://www.nmc.cn/rest/findAlarm?pageNo={}&pageSize={}&{}",
             page, page_size, filters
         );
-        let resp = fetch_reqwest_get(&url)?;
+        let resp = fetch_reqwest_get(&url).await?;
         let json: Value = serde_json::from_str(&resp)?;
         if json["code"].as_i64() != Some(0) {
             return Err(anyhow!("API error: {}", json["msg"]));

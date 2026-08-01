@@ -4,11 +4,12 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let json: Value = serde_json::from_str(
         fetch_reqwest_get(
             "https://api.zhihu.com/topstory/hot-lists/total?limit=10&reverse_order=0",
-        )?
+        )
+        .await?
         .as_str(),
     )?;
     let mut item_vec = Vec::new();

@@ -4,13 +4,15 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-fn fetch_items(book_type: &str, referer: &str) -> Result<Vec<Value>, Error> {
+async fn fetch_items(book_type: &str, referer: &str) -> Result<Vec<Value>, Error> {
     let url = format!(
         "https://m.douban.com/rexxar/api/v2/subject_collection/book_{}/items?start=0&count=10",
         book_type
     );
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", referer)])?.as_str(),
+        fetch_reqwest_get_with_headers(&url, &[("Referer", referer)])
+            .await?
+            .as_str(),
     )?;
     Ok(json
         .pointer("/subject_collection_items")
@@ -19,16 +21,16 @@ fn fetch_items(book_type: &str, referer: &str) -> Result<Vec<Value>, Error> {
         .unwrap_or_default())
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let book_type = para.get("type").map(|s| s.as_str()).unwrap_or("");
 
     let referer = format!("https://m.douban.com/book/{}", book_type);
 
     let items: Vec<Value> = if !book_type.is_empty() {
-        fetch_items(book_type, &referer)?
+        fetch_items(book_type, &referer).await?
     } else {
-        let mut all = fetch_items("fiction", &referer)?;
-        all.extend(fetch_items("nonfiction", &referer)?);
+        let mut all = fetch_items("fiction", &referer).await?;
+        all.extend(fetch_items("nonfiction", &referer).await?);
         all
     };
 

@@ -1,6 +1,5 @@
 use std::env;
-use std::net::TcpListener;
-use threadpool::ThreadPool;
+use tokio::net::TcpListener;
 use tracing::{error, info, warn};
 
 use rssust::{config, connect::handle_connection};
@@ -14,8 +13,9 @@ use rssust::doc::doc_generate;
 
 ///main函数
 /// 加载服务器
-/// 启动threadpool多线程
-fn main() {
+/// 启动tokio多线程
+#[tokio::main]
+async fn main() {
     rssust::logger::init();
     config::init();
     let args: Vec<String> = env::args().collect();
@@ -56,7 +56,7 @@ fn main() {
     }
     let port = config::server_port();
     let addr = format!("127.0.0.1:{}", port);
-    let listener = match TcpListener::bind(&addr) {
+    let listener = match TcpListener::bind(&addr).await {
         Ok(l) => l,
         Err(e) => {
             error!("Failed to bind port {}: {}", port, e);
@@ -64,18 +64,15 @@ fn main() {
         }
     };
     info!("Starting server, listening on {}", addr);
-    let pool = ThreadPool::new(config::numofcore() as usize);
-    for stream in listener.incoming() {
-        let stream = match stream {
+    loop {
+        let (stream, _) = match listener.accept().await {
             Ok(s) => s,
             Err(e) => {
                 warn!("Failed to accept connection: {}", e);
                 continue;
             }
         };
-        pool.execute(move || {
-            handle_connection(stream);
-        });
+        tokio::spawn(handle_connection(stream));
     }
 }
 

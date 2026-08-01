@@ -4,86 +4,100 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let id = para.get("id").map(|s| s.as_str()).unwrap_or("yw");
     let base_url = "https://www.stcn.com";
     let list_url = format!("{}/article/list/{}.html", base_url, id);
 
-    let html = fetch_reqwest_get(&list_url)?;
-    let doc = Html::parse_document(&html);
+    let html = fetch_reqwest_get(&list_url).await?;
 
-    let selector = Selector::parse("ul.infinite-list li").unwrap();
-    let link_selector = Selector::parse("div.tt a").unwrap();
-    let text_selector = Selector::parse("div.text").unwrap();
-    let info_selector = Selector::parse("div.info span").unwrap();
-    let tags_selector = Selector::parse("div.tags a").unwrap();
+    let base_url = base_url.to_string();
+    let mut items = {
+        let doc = Html::parse_document(&html);
 
-    let mut item_vec = Vec::new();
-    for li in doc.select(&selector) {
-        let title = li
-            .select(&link_selector)
-            .next()
-            .map(|a| a.text().collect::<String>().trim().to_string())
-            .unwrap_or_default();
+        let selector = Selector::parse("ul.infinite-list li").unwrap();
+        let link_selector = Selector::parse("div.tt a").unwrap();
+        let text_selector = Selector::parse("div.text").unwrap();
+        let info_selector = Selector::parse("div.info span").unwrap();
+        let tags_selector = Selector::parse("div.tags a").unwrap();
 
-        let href = li
-            .select(&link_selector)
-            .next()
-            .and_then(|a| a.value().attr("href"))
-            .unwrap_or("");
+        let mut items = Vec::new();
+        for li in doc.select(&selector) {
+            let title = li
+                .select(&link_selector)
+                .next()
+                .map(|a| a.text().collect::<String>().trim().to_string())
+                .unwrap_or_default();
 
-        if title.is_empty() || href.is_empty() {
-            continue;
-        }
+            let href = li
+                .select(&link_selector)
+                .next()
+                .and_then(|a| a.value().attr("href"))
+                .unwrap_or("");
 
-        let link = if href.starts_with("http") {
-            href.to_string()
-        } else {
-            format!("{}{}", base_url, href)
-        };
+            if title.is_empty() || href.is_empty() {
+                continue;
+            }
 
-        let summary = li
-            .select(&text_selector)
-            .next()
-            .map(|e| e.text().collect::<String>().trim().to_string())
-            .unwrap_or_default();
-
-        let info_spans: Vec<String> = li
-            .select(&info_selector)
-            .map(|s| s.text().collect::<String>().trim().to_string())
-            .collect();
-
-        let mut author = String::new();
-        let mut pub_date = now();
-        if info_spans.len() >= 2 {
-            author = info_spans[1].clone();
-        }
-        if let Some(t) = info_spans.last() {
-            let clean = t.trim();
-            if clean.len() == 5 && clean.contains(':') {
-                if let Some(d) = datetime_str_to_rss(&format!("{} {}:00", today_date_str(), clean))
-                {
-                    pub_date = d;
-                }
+            let link = if href.starts_with("http") {
+                href.to_string()
             } else {
-                if let Some(d) = datetime_str_to_rss(clean) {
-                    pub_date = d;
+                format!("{}{}", base_url, href)
+            };
+
+            let summary = li
+                .select(&text_selector)
+                .next()
+                .map(|e| e.text().collect::<String>().trim().to_string())
+                .unwrap_or_default();
+
+            let info_spans: Vec<String> = li
+                .select(&info_selector)
+                .map(|s| s.text().collect::<String>().trim().to_string())
+                .collect();
+
+            let mut author = String::new();
+            let mut pub_date = now();
+            if info_spans.len() >= 2 {
+                author = info_spans[1].clone();
+            }
+            if let Some(t) = info_spans.last() {
+                let clean = t.trim();
+                if clean.len() == 5 && clean.contains(':') {
+                    if let Some(d) =
+                        datetime_str_to_rss(&format!("{} {}:00", today_date_str(), clean))
+                    {
+                        pub_date = d;
+                    }
+                } else {
+                    if let Some(d) = datetime_str_to_rss(clean) {
+                        pub_date = d;
+                    }
                 }
             }
+
+            let categories: Vec<String> = li
+                .select(&tags_selector)
+                .map(|e| e.text().collect::<String>().trim().to_string())
+                .collect();
+
+            items.push(StcnItem {
+                title,
+                link,
+                summary,
+                author,
+                pub_date,
+                categories,
+            });
         }
+        items
+    };
 
-        let categories: Vec<String> = li
-            .select(&tags_selector)
-            .map(|e| e.text().collect::<String>().trim().to_string())
-            .collect();
-
-        let mut description = summary.clone();
-        if let Ok(detail_html) = fetch_reqwest_get(&link) {
+    for item in items.iter_mut() {
+        if let Ok(detail_html) = fetch_reqwest_get(&item.link).await {
             let detail_doc = Html::parse_document(&detail_html);
-            if let Some(content) = detail_doc
-                .select(&Selector::parse("div.detail-content").unwrap())
-                .next()
-            {
+            let detail_selector = Selector::parse("div.detail-content").unwrap();
+            if let Some(content) = detail_doc.select(&detail_selector).next() {
                 let inner = content.inner_html();
                 let clean = inner
                     .split('<')
@@ -91,28 +105,32 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .collect::<Vec<_>>()
                     .join("<");
                 if !clean.is_empty() {
-                    description = clean;
+                    item.summary = clean;
                 }
             }
         }
+    }
 
-        let author_str = if author.is_empty() {
+    let mut item_vec = Vec::new();
+    for it in items {
+        let author_str = if it.author.is_empty() {
             "证券时报"
         } else {
-            &author
+            &it.author
         };
 
-        let cats: Vec<Category> = categories
+        let cats: Vec<Category> = it
+            .categories
             .iter()
             .map(|c| CategoryBuilder::default().name(c.clone()).build())
             .collect();
 
         let rss_item = ItemBuilder::default()
-            .title(Some(title))
-            .link(Some(link))
-            .pub_date(pub_date)
+            .title(Some(it.title))
+            .link(Some(it.link))
+            .pub_date(it.pub_date)
             .author(Some(author_str.to_string()))
-            .description(Some(description))
+            .description(Some(it.summary))
             .categories(cats)
             .build();
 
@@ -126,6 +144,15 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .items(item_vec)
         .build();
     Ok(channel.to_string())
+}
+
+struct StcnItem {
+    title: String,
+    link: String,
+    summary: String,
+    author: String,
+    pub_date: String,
+    categories: Vec<String>,
 }
 
 fn category_name(id: &str) -> &str {

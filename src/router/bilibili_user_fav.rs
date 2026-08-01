@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
 
     let url = format!(
@@ -19,8 +19,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         headers.push(("Cookie", c));
     }
 
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let archives = json
         .pointer("/data/archives")

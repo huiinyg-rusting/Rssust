@@ -11,10 +11,11 @@ If the file does not exist, it will be auto-created with default content.
 ```toml
 [server]
 port = 7878
+max_concurrent = 8
+timeout = 60
 
 [routes]
 disabled = []
-numofcore = 4
 ```
 
 ## Fields / 字段说明
@@ -22,23 +23,25 @@ numofcore = 4
 | Field / 字段 | Type / 类型 | Default / 默认值 | Description / 描述 |
 |--------------|-------------|------------------|---------------------|
 | `server.port` | `int` | `7878` | 服务器监听端口。Port the server listens on. |
+| `server.max_concurrent` | `int` | 自动检测的 CPU 核心数 | 并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2. |
+| `server.timeout` | `int` | `60` | 上游请求超时（秒）。Timeout for upstream requests, in seconds. |
 | `routes.disabled` | `string[]` | `[]` | 需要禁用的路由名列表。List of route names to disable. |
-| `routes.numofcore` | `int` | 自动检测的 CPU 核心数 | 线程池工作线程数。Number of threads used by the thread pool. |
 
 ## Examples / 示例
 
-禁用 `zhihu_hot` 和 `bilibili_weekly` 两个路由，并手动指定 8 个线程：
+禁用 `zhihu_hot` 和 `bilibili_weekly` 两个路由，并手动指定并发上限与超时：
 
 ```toml
 [server]
 port = 8080
+max_concurrent = 4
+timeout = 30
 
 [routes]
 disabled = ["zhihu_hot", "bilibili_weekly"]
-numofcore = 8
 ```
 
-不指定 `numofcore` 时，程序自动使用检测到的 CPU 核心数；不指定 `port` 时默认 `7878`：
+不指定 `max_concurrent` 时，程序自动使用检测到的 CPU 核心数；不指定 `timeout` 时默认 60 秒；不指定 `port` 时默认 `7878`：
 
 ```toml
 [routes]

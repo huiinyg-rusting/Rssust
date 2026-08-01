@@ -3,7 +3,7 @@
 
 ## 入口函数
 
-**`src/main.rs:9` — `fn main()`** 是整个程序的入口。
+**`src/main.rs:9` — `#[tokio::main] async fn main()`** 是整个程序的入口。
 
 ## 功能流程
 
@@ -11,7 +11,7 @@
 2. **命令行参数处理**：
    - 第一个参数为 `"docs"` → 调用 `doc_generate()` 生成文档 HTML
    - 第一个参数为 `"cookie"` → 调用 `extract_cookies_to_json()` 导出浏览器 cookie
-3. **启动 TCP 服务器**：绑定 `127.0.0.1:7878`，使用 `ThreadPool`（4 线程）并发处理请求
+3. **启动 TCP 服务器**：绑定 `127.0.0.1:7878`，使用 `tokio` 异步运行时，`tokio::spawn` 并发处理请求（`Semaphore` 信号量限制并发上限）
 4. **请求处理**：每个连接由 `handle_connection()` 处理（定义在 `lib.rs` 的 `connect` 模块）
 
 ## 架构图
@@ -19,17 +19,17 @@
 ```
 用户 HTTP 请求
     ↓
-TcpListener(:7878)
-    ↓  (ThreadPool 分配线程)
+TcpListener(:7878)  (tokio::spawn 每个连接一个任务)
+    ↓  (Semaphore 并发限流)
 handle_connection(stream)
     ↓
-解析 HTTP 请求行 (GET /xxx?key=val HTTP/1.1)
+解析 HTTP 请求头 (GET /xxx?key=val HTTP/1.1)  + keep-alive 处理
     ↓
 root_rules(url, params)
-    ├── "/"        → show_index_doc()       → index.html
-    ├── "/docs/*"  → show_doc(path)          → 文档 HTML
-    └── 其他路由    → request_rules(url, params)
-                      └── 路由器名::get(params)  → RSS XML
+    ├── "/"        → show_index_doc().await   → index.html
+    ├── "/docs/*"  → show_doc(path).await     → 文档 HTML
+    └── 其他路由    → request_rules(url, params).await
+                      └── 路由器名::get(params).await  → RSS XML
 ```
 
 ## 环境目录结构
@@ -143,37 +143,44 @@ thread_local! {
 
 ### handle_connection()
 
-**签名**: `pub fn handle_connection(mut stream: TcpStream)`
+**签名**: `pub async fn handle_connection(mut stream: TcpStream)`
 
-这是每个 HTTP 请求的入口处理函数：
+这是每个 HTTP 请求的入口处理函数，基于 `tokio` 异步 IO：
 
-1. 从 TCP 流读取 1024 字节缓冲区
-2. 用 `extract_between_spaces()` 提取 HTTP 请求行中的 URL 路径（GET 和 POST 之间的部分）
+1. 用 `read_head()` 从 TCP 流读取完整请求头（直到 `\r\n\r\n`），超过 30 秒无数据返回 `TimedOut`
+2. 解析 HTTP 请求行，提取方法、URL 路径（GET 和 POST 之间的部分）
 3. 解析 URL 中的查询参数：
    - 如果 URL 包含 `?`，用 `split_once('?')` 分割路径和查询字符串
    - 查询字符串通过 `params_to_hashmap()` 转为 `HashMap`
-4. 调用 `root_rules(path, params)` 获取响应
-5. 根据 `ShowToUser` 枚举类型构建 HTTP 响应：
+4. 判断 keep-alive：仅文档/静态路由（`/`、`/docs/*`、`/index/*`、`/favicon.ico`）保持连接，其余动态路由一律 `Connection: close`
+5. 获取 `Semaphore` 许可后，用 `tokio::spawn` 将请求任务调度到 worker 线程，调用 `root_rules(path, params).await` 获取响应
+6. 根据 `ShowToUser` 枚举类型构建 HTTP 响应：
    - `ShowToUser::Html` → `Content-Type: text/html`
    - `ShowToUser::Rss` → `Content-Type: application/xml`
    - `ShowToUser::File` → 对应的 MIME 类型（css/js/svg/png 等）
-6. 写回 TCP 流
+7. 写回 TCP 流；keep-alive 下循环读取下一个请求（`buf.drain(..head_len)` 复用缓冲）
 
-### extract_between_spaces()
+### read_head()
 
-**签名**: `fn extract_between_spaces(buffer: &[u8; 1024]) -> Option<&[u8]>`
+**签名**: `async fn read_head(stream: &mut TcpStream, buf: &mut Vec<u8>) -> std::io::Result<Option<usize>>`
 
-从 HTTP 原始请求中提取两个空格之间的内容（即 URL 路径）。例如从 `GET /bilibili_weekly?key=val HTTP/1.1` 中提取 `/bilibili_weekly?key=val`。
+读取完整请求头。返回 `Ok(None)` 表示对端干净关闭；`Err(TimedOut)` 表示空闲超时（30 秒）；`Err(UnexpectedEof)` 表示连接中断。
+
+### parse_keep_alive()
+
+**签名**: `fn parse_keep_alive(head: &str, version: &str) -> bool`
+
+解析 `Connection` 头。HTTP/1.1 默认 keep-alive（除非显式 `Connection: close`）；HTTP/1.0 需显式 `Connection: keep-alive`。
 
 ### show_index_doc()
 
-**签名**: `pub fn show_index_doc() -> Result<String, Error>`
+**签名**: `pub async fn show_index_doc() -> Result<String, Error>`
 
 读取二进制同目录下的 `index/index.html` 文件，返回 HTML 字符串。
 
 ### show_doc()
 
-**签名**: `pub fn show_doc(path: &str) -> Result<String, Error>`
+**签名**: `pub async fn show_doc(path: &str) -> Result<String, Error>`
 
 读取二进制同目录下的文档 HTML 文件（如 `/docs/new_router_cn.html` → 读取 `docs/new_router_cn.html`）。如果文件不存在，返回 `index/404.html`。
 
@@ -261,9 +268,9 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 
 参考 `new_router_cn.md`，步骤：
 
-1. 在 `src/router/` 下新建 `.rs` 文件，实现 `pub fn get(para: HashMap<String,String>) -> Result<String, Error>`
+1. 在 `src/router/` 下新建 `.rs` 文件，实现 `pub async fn get(para: HashMap<String,String>) -> Result<String, Error>`
 2. 在 `src/router/mod.rs` 中添加 `pub mod 你的路由名;`
-3. 在 `request_rules.rs` 的 `ROUTES` 常量数组中添加 `("/你的路由名", 你的路由名::get)` 条目
+3. 在 `request_rules.rs` 的 `match url` 分发中添加 `"/你的路由名" => run!(你的路由名, parameters)` 条目
 4. 在 `env/docs_md/` 下编写对应的路由文档 `.md` 文件
 
 # 文档生成器 - doc.rs
@@ -288,17 +295,3 @@ pub fn request_rules(url: &str, parameters: HashMap<String, String>) -> Result<S
 2. **生成 SUMMARY.md**：自动扫描 `docs_md/` 下的所有 `.md` 文件，按分类生成导航目录
 3. **转换**：使用 `mdbook` 库将 Markdown 转为 HTML
 4. **后处理**：将 `official/` 子目录下的 HTML 提升到 `docs/` 根目录，修复所有资源文件和页面链接的路径
-
-#### 页面功能
-
-- **侧边栏导航**：可折叠/展开，支持关键词搜索过滤目录
-- **文章搜索**：实时高亮文章中的匹配文本
-- **代码高亮**：支持 Rust、Python、JavaScript、Bash、XML 语言
-- **响应式设计**：深色主题，自适应布局
-
-#### 样式特点
-
-- 深紫色渐变背景
-- 代码块深色底 + 彩色高亮
-- 胶囊形状的"当前页面"指示器
-- 紫蓝色点缀色

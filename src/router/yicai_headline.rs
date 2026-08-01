@@ -5,10 +5,13 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let json: Value = serde_json::from_str(&fetch_reqwest_get(
-        "https://www.yicai.com/api/ajax/getlistbycid?cid=48&type=1&page=1&pagesize=30",
-    )?)?;
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+    let json: Value = serde_json::from_str(
+        &fetch_reqwest_get(
+            "https://www.yicai.com/api/ajax/getlistbycid?cid=48&type=1&page=1&pagesize=30",
+        )
+        .await?,
+    )?;
 
     let list = json.as_array().ok_or_else(|| anyhow!("返回数据不是数组"))?;
 
@@ -55,7 +58,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             description.push_str(&format!("<p>{}</p>", notes));
         }
 
-        match fetch_reqwest_get(&link) {
+        match fetch_reqwest_get(&link).await {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
                 for selector in &[".multiText", "#multi-text", ".txt", ".m-txt"] {

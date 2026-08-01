@@ -377,7 +377,7 @@ fn build_cookie_header() -> Result<Option<String>> {
     load_cookie_header(Some("bilibili.com"))
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let uid = para
         .get("uid")
         .ok_or_else(|| anyhow!("缺少 uid 参数，请在 /bilibili_dynamic?uid=xxx 中传入 uid"))?;
@@ -410,7 +410,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         headers.push(("Cookie", cookie));
     }
 
-    let response = fetch_reqwest_get_with_headers(&api_url, &headers)?;
+    let response = fetch_reqwest_get_with_headers(&api_url, &headers).await?;
     let json: Value = match serde_json::from_str(&response) {
         Ok(v) => v,
         Err(e) => {

@@ -55,7 +55,9 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 cargo build
 cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
 ./env/rssust docs
+./env/rssust
 ```
 
 Then when there's no version update, you can enter:
@@ -72,5 +74,7 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 cargo build
 robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
+.\env\rssust.exe
 ```

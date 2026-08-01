@@ -39,9 +39,11 @@ Linux用户：
 ```sh
 git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --release
 cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
 ./env/rssust docs
+./env/rssust
 ```
 然后没有版本更新的时候，你可以输入：
 ```sh
@@ -55,5 +57,7 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 cargo build
 robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
+.\env\rssust.exe
 ```

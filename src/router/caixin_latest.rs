@@ -5,10 +5,10 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let json: Value = serde_json::from_str(&fetch_reqwest_get(
-        "https://gateway.caixin.com/api/dataplatform/scroll/index",
-    )?)?;
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+    let json: Value = serde_json::from_str(
+        &fetch_reqwest_get("https://gateway.caixin.com/api/dataplatform/scroll/index").await?,
+    )?;
 
     let list = json["data"]["articleList"]
         .as_array()
@@ -27,7 +27,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
         let pub_date = timestamp_to_rss(pub_ts);
 
-        let description = match fetch_reqwest_get(link) {
+        let description = match fetch_reqwest_get(link).await {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
                 let mut desc = String::new();

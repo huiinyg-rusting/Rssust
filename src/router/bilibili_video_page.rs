@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let bvid = para.get("bvid").ok_or_else(|| anyhow!("缺少 bvid 参数"))?;
 
     let link = format!("https://www.bilibili.com/video/{}", bvid);
@@ -14,8 +14,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
     let headers: Vec<(&str, &str)> = vec![("Referer", link.as_str())];
 
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let data = json
         .pointer("/data")

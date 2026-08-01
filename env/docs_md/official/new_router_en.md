@@ -36,10 +36,129 @@ use scraper::*;  // for HTML
 
 ### The main function signature for each router should look like this:
 ```rust
-pub fn get(para: HashMap<String,String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
 }
 ```
 The function signature and return type cannot be changed! (If you don't use the `para` variable, you can write it as `_para` so the compiler won't warn you). The purpose of `para` is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.
+
+Note the `async` keyword: since the fetching helpers (`fetch_reqwest_get`, etc.) are async, `get` itself must be `async` so it can `.await` them.
+
+### Common async errors (the pitfalls you'll actually hit)
+
+These are the compile errors you're most likely to see in a new router, listed by error message. Find yours and fix it.
+
+**1. `await is only allowed inside async functions and blocks` (E0728)**
+
+You wrote `.await` in a function that is not `async`. This most often happens when you extract the "fetch detail page" logic into a plain helper function:
+
+```rust
+// wrong: helper is not async but tries to await
+fn fetch_detail(url: &str) -> Result<String, Error> {
+    fetch_reqwest_get(url).await?   // E0728
+}
+```
+Make it `async fn` — and `.await` the call site too:
+```rust
+async fn fetch_detail(url: &str) -> Result<String, Error> {
+    fetch_reqwest_get(url).await?
+}
+let detail = fetch_detail(&url).await?;
+```
+
+**2. `Result<String, Error> is not a future` (E0277)**
+
+You forgot `.await`. `fetch_reqwest_get(url)` does not return a `String` — it returns a Future that *will* become a `String` later. Only `.await` turns it into one:
+```rust
+// wrong: you got a Future, not a String
+let html = fetch_reqwest_get(&url)?;
+// right: add .await to get the String
+let html = fetch_reqwest_get(&url).await?;
+```
+Audit every `fetch_reqwest_get` / `fetch_reqwest_post` / `fetch_reqwest_get_with_headers` call in your file and make sure each one has `.await`.
+
+**3. `future cannot be sent between threads safely` (E0277, scraper only)**
+
+You only hit this when parsing HTML with `scraper`. `Html`, `Selector`, and `ElementRef` are **not `Send`**, so they can't survive across an `.await`. Typical case: you parse a list into `doc`, then loop over links fetching detail pages:
+
+```rust
+// wrong: doc (an Html) is still alive across the .await
+let doc = Html::parse_document(&html);
+for link in &links {
+    let detail_html = fetch_reqwest_get(link).await?;   // error: doc is still alive here
+}
+```
+Fix it with a **two-phase "parse first, fetch later"** pattern. Step one: fully parse the list page, collecting every field into `String`/`Vec<String>` inside a `{ }` block (so `doc` drops at the block end). Step two: loop and fetch — now you only hold plain data:
+
+```rust
+// step 1: parse the list, collect only Strings. doc drops at the end of the block
+let items: Vec<(String, String)> = {
+    let doc = Html::parse_document(&html);
+    let sel = Selector::parse("a.title").unwrap();
+    doc.select(&sel).map(|e| {
+        let title = e.text().collect::<String>().trim().to_string();
+        let href = e.value().attr("href").unwrap_or("").to_string();
+        (title, href)
+    }).collect()
+};
+// step 2: no scraper types around, feel free to await
+for (title, href) in &items {
+    let detail_html = fetch_reqwest_get(href).await?;
+}
+```
+
+**4. Need scraper for the detail page too? Same rule: parse, then let it go.**
+
+If you fetch a detail page and then need to parse it (or even fetch the next page), keep the same principle: drop `detail_doc` as soon as you're done with it. The idiomatic way is to parse inside `if let Ok(...) = fetch(...).await { ... }` — the doc is created, used, and released inside that block, and never referenced outside it.
+
+> TL;DR: **whenever you `.await`, don't hold `Html`/`Selector`/`ElementRef`**. If you see `not Send`, remember this.
+>
+> Reference implementations: `chinanews`, `stcn_article_list`, `bjnews_cat`, `eastday_24`, `solidot`, `guancha_headline`, `guanhai`, `ithome_ranking`, `jianshu_home` follow this pattern.
+
+### A complete minimal router (JSON endpoint version)
+
+Here's a full example you can copy. It fetches a JSON endpoint and turns it into RSS. Save it as `src/router/my_test.rs` and it compiles as-is:
+
+```rust
+use crate::easyuser::*;          // fetching helpers, date utils, etc.
+use anyhow::{Error, Result};
+use rss::*;                       // RSS generation
+use serde_json::Value;            // JSON parsing
+use std::collections::HashMap;
+
+pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
+    // 1. read user params (optional, with a default)
+    let id = para.get("id").cloned().unwrap_or_default();
+
+    // 2. fetch upstream. Note: fetch is async, add .await
+    let html = fetch_reqwest_get(&format!("https://api.example.com/list?id={}", id)).await?;
+
+    // 3. parse JSON
+    let json: Value = serde_json::from_str(&html)?;
+    let list = json["data"]["list"].as_array().ok_or_else(|| anyhow!("no list field"))?;
+
+    // 4. convert each entry into an RSS Item
+    let mut item_vec = Vec::new();
+    for item in list {
+        let rss_item = ItemBuilder::default()
+            .title(Some(item["title"].as_str().unwrap_or("").to_string()))
+            .link(Some(item["url"].as_str().unwrap_or("").to_string()))
+            .description(item["desc"].as_str().unwrap_or(""))
+            .pub_date(now())           // use now() if you can't parse the date yet
+            .build();
+        item_vec.push(rss_item);
+    }
+
+    // 5. assemble the channel
+    let channel = ChannelBuilder::default()
+        .title("My test channel")
+        .link("https://api.example.com")
+        .description("example")
+        .items(item_vec)
+        .build();
+    Ok(channel.to_string())
+}
+```
+After writing it, follow the two registration steps below, run `cargo build`, start the server and visit `/my_test` to see your RSS. If your upstream serves HTML instead of JSON, replace step 3 with `scraper` parsing (watch out for errors 3 and 4 above).
 
 The project has encapsulated some convenient functions for users, which you can check in `src/easyuser.rs` or view at [easyuser_cn.html](easyuser_cn.md).
 
@@ -48,11 +167,12 @@ The specific program logic is up to you to write.
 ### How to register it after writing?
 In `/src/router/mod.rs`, add a new line at the end: `pub mod your_router_name;`
 
-Then in `src/request_rules.rs`, add an entry to the `ROUTES` const array:
+Then in `src/request_rules.rs`, add a match arm to the `match url` dispatcher, following the pattern of other entries:
 ```rust
-("/your_router_name", your_router_name::get),
+"/your_router_name" => run!(your_router_name, parameters),
 ```
-Follow the pattern of other entries.
+The `run!` macro expands to `your_router_name::get(parameters.clone()).await`, so don't change its shape.
+> **Note**: `parameters` in the `run!` macro is the argument name of `request_rules`. Due to macro hygiene it can't refer to the outer variable, so it must be passed explicitly.
 
 ### How to run after registration?
 I'm very strict about the necessary environment directories for the binary file. Files like `cookies.json`, the `index` folder, etc., must be in the same directory as the binary file. Therefore, I created an `env` folder where all necessary environments are located. It should look like this:

@@ -5,8 +5,8 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let html = fetch_reqwest_get("https://news.ifeng.com")?;
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+    let html = fetch_reqwest_get("https://news.ifeng.com").await?;
 
     let news_stream_re =
         Regex::new(r#""newsstream":(\[.*?\]),"cooperation""#).map_err(|_| anyhow!("正则无效"))?;
@@ -38,7 +38,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
         let pub_date = datetime_str_to_rss(news_time);
 
-        let description = match fetch_reqwest_get(link) {
+        let description = match fetch_reqwest_get(link).await {
             Ok(detail_html) => {
                 let mut desc = String::new();
                 if !thumbnail.is_empty() {

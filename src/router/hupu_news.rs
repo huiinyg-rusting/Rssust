@@ -76,7 +76,7 @@ fn team_name_cn(name: &str) -> &'static str {
     }
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let team = para
         .get("team")
         .ok_or_else(|| anyhow!("缺少 team 参数 (如 spurs, lakers)"))?;
@@ -90,7 +90,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         tid
     );
 
-    let json: Value = serde_json::from_str(fetch_reqwest_get(&url)?.as_str())?;
+    let json: Value = serde_json::from_str(fetch_reqwest_get(&url).await?.as_str())?;
 
     let list = json
         .pointer("/result")

@@ -4,11 +4,12 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let period = para.get("period").map(|s| s.as_str()).unwrap_or("day");
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get("https://api-one-wscn.awtmt.com/apiv1/content/articles/hot?period=all")?
+        fetch_reqwest_get("https://api-one-wscn.awtmt.com/apiv1/content/articles/hot?period=all")
+            .await?
             .as_str(),
     )?;
 

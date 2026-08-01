@@ -1,6 +1,7 @@
 [server]
 port = 7878
+max_concurrent = 4
+timeout = 60
 
 [routes]
 disabled = []
-numofcore = 4

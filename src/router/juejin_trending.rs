@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let category = para.get("category").map(|s| s.as_str()).unwrap_or("all");
     let period = para.get("type").map(|s| s.as_str()).unwrap_or("weekly");
 
@@ -28,7 +28,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             ),
         )
     } else {
-        let cat_resp = fetch_reqwest_get("https://api.juejin.cn/tag_api/v1/query_category_briefs")?;
+        let cat_resp =
+            fetch_reqwest_get("https://api.juejin.cn/tag_api/v1/query_category_briefs").await?;
         let cat_json: Value = serde_json::from_str(&cat_resp)?;
         let categories = cat_json["data"]
             .as_array()
@@ -50,7 +51,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         )
     };
 
-    let resp = fetch_reqwest_post_json(&url, &body)?;
+    let resp = fetch_reqwest_post_json(&url, &body).await?;
     let json: Value = serde_json::from_str(&resp)?;
     let items = json["data"]
         .as_array()

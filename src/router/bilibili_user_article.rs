@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let uid = para.get("uid").ok_or_else(|| anyhow!("缺少 uid 参数"))?;
 
     let url = format!(
@@ -15,8 +15,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let referer = format!("https://space.bilibili.com/{}/article", uid);
     let headers: Vec<(&str, &str)> = vec![("Referer", referer.as_str())];
 
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let data = json
         .pointer("/data/items")
@@ -49,7 +52,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 ("User-Agent",
                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"),
             ],
-        )
+        ).await
         .unwrap_or_default();
 
         let description = if !detail_html.is_empty() {

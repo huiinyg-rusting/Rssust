@@ -16,7 +16,7 @@ fn strip_html_tags(s: &str) -> String {
         .replace("&#39;", "'")
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let kw = para.get("kw").ok_or_else(|| anyhow!("缺少 kw 参数"))?;
     let order = para.get("order").map(|s| s.as_str()).unwrap_or("pubdate");
     let tid = para.get("tid").map(|s| s.as_str()).unwrap_or("0");
@@ -34,8 +34,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         headers.push(("Cookie", c));
     }
 
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&url, &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let result = json
         .pointer("/data/result")

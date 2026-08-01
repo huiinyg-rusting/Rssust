@@ -5,9 +5,9 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let api_url = "https://app.eeo.com.cn?app=article&controller=index&action=getMoreArticle&catid=3690&uuid=b048c7211db949eeb7443cd5b9b3bfe3&page=1&pageSize=50";
-    let json_str = fetch_reqwest_get(api_url)?;
+    let json_str = fetch_reqwest_get(api_url).await?;
     let json: Value = serde_json::from_str(&json_str)?;
     let data = json["data"]
         .as_array()
@@ -31,7 +31,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         };
 
         let mut description = String::new();
-        if let Ok(detail_html) = fetch_reqwest_get(link) {
+        if let Ok(detail_html) = fetch_reqwest_get(link).await {
             let doc = Html::parse_document(&detail_html);
 
             let sel_h1 = Selector::parse("h1").unwrap();

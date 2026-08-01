@@ -5,11 +5,12 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
         "https://m.thepaper.cn",
         &[("Cookie", "blackAndWhiteMode=0; redTops=0")],
-    )?;
+    )
+    .await?;
 
     let doc = Html::parse_document(&html);
     let sel =

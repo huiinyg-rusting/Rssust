@@ -4,9 +4,11 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get("https://api.bilibili.com/x/web-interface/popular/precious")?.as_str(),
+        fetch_reqwest_get("https://api.bilibili.com/x/web-interface/popular/precious")
+            .await?
+            .as_str(),
     )?;
 
     let data_title = json

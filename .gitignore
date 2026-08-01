@@ -4,3 +4,5 @@ env/*.json
 env/docs
 env/rssust
 env/config.toml
+env/cookies.json
+*.json

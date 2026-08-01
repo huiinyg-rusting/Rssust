@@ -5,13 +5,14 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let base_url = "https://www.stcn.com";
 
     let json_str = fetch_reqwest_get_with_headers(
         "https://www.stcn.com/article/list.html?type=kx",
         &[("X-Requested-With", "XMLHttpRequest")],
-    )?;
+    )
+    .await?;
 
     let json: Value = serde_json::from_str(&json_str)?;
     let list = json["data"]
@@ -34,7 +35,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         let pub_date = timestamp_to_rss(ts_ms / 1000);
 
         let mut description = content.to_string();
-        if let Ok(detail_html) = fetch_reqwest_get(&link) {
+        if let Ok(detail_html) = fetch_reqwest_get(&link).await {
             let detail_doc = Html::parse_document(&detail_html);
             if let Some(dc) = detail_doc
                 .select(&Selector::parse("div.detail-content").unwrap())

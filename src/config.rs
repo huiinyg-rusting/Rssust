@@ -1,7 +1,11 @@
 use std::env;
 use std::fs;
+use std::sync::OnceLock;
 use std::thread;
+use std::time::Duration;
 use tracing::{info, warn};
+
+static CONFIG: OnceLock<Config> = OnceLock::new();
 
 pub fn init() {
     let path = match exe_config_path() {
@@ -10,7 +14,7 @@ pub fn init() {
     };
     if !path.exists() {
         let default = format!(
-            "[server]\nport = 7878\n\n[routes]\ndisabled = []\nnumofcore = {}",
+            "[server]\nport = 7878\nmax_concurrent = {}\ntimeout = 60\n\n[routes]\ndisabled = []",
             realcorenum()
         );
         match fs::write(&path, default) {
@@ -21,13 +25,23 @@ pub fn init() {
             Err(e) => warn!("Failed to create default config {}: {}", path.display(), e),
         }
     }
+    let _ = load_config();
 }
 
 fn load_config() -> Config {
     let path = exe_config_path().expect("Can't find Config.toml");
     let content = fs::read_to_string(&path).expect("Can't read Config.toml");
     let config: Config = toml::from_str(&content).expect("Can't Toml the config string");
+    let _ = CONFIG.set(config.clone());
     config
+}
+
+fn cached() -> &'static Config {
+    CONFIG.get_or_init(|| {
+        let path = exe_config_path().expect("Can't find Config.toml");
+        let content = fs::read_to_string(&path).expect("Can't read Config.toml");
+        toml::from_str(&content).expect("Can't Toml the config string")
+    })
 }
 
 fn exe_config_path() -> Option<std::path::PathBuf> {
@@ -52,40 +66,57 @@ fn realcorenum() -> u8 {
     }
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 struct Config {
     server: Option<ServerConfig>,
     routes: Option<RoutesConfig>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 struct ServerConfig {
     port: Option<u16>,
+    max_concurrent: Option<u32>,
+    timeout: Option<u64>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 struct RoutesConfig {
     disabled: Option<Vec<String>>,
-    numofcore: Option<u8>,
 }
 
 pub fn server_port() -> u16 {
-    load_config()
+    cached()
         .server
-        .and_then(|s: ServerConfig| s.port)
+        .as_ref()
+        .and_then(|s: &ServerConfig| s.port)
         .unwrap_or(7878)
 }
 
-pub fn is_route_disabled(route: &str) -> bool {
-    load_config()
-        .routes
-        .and_then(|r: RoutesConfig| r.disabled)
-        .map_or(false, |v| v.contains(&route.to_string()))
+///并发上限：max_concurrent * 2（默认 CPU 核心数 * 2）
+pub fn max_concurrent() -> u32 {
+    let base = cached()
+        .server
+        .as_ref()
+        .and_then(|s: &ServerConfig| s.max_concurrent)
+        .unwrap_or_else(|| realcorenum() as u32);
+    base.saturating_mul(2).max(1)
 }
 
-pub fn numofcore() -> u8 {
-    load_config()
+///上游请求超时（秒）
+pub fn request_timeout() -> Duration {
+    Duration::from_secs(
+        cached()
+            .server
+            .as_ref()
+            .and_then(|s: &ServerConfig| s.timeout)
+            .unwrap_or(60),
+    )
+}
+
+pub fn is_route_disabled(route: &str) -> bool {
+    cached()
         .routes
-        .and_then(|r: RoutesConfig| r.numofcore)
-        .unwrap_or_else(|| realcorenum())
+        .as_ref()
+        .and_then(|r: &RoutesConfig| r.disabled.as_ref())
+        .map_or(false, |v| v.iter().any(|d| d == route))
 }

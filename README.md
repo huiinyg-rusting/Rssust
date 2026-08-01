@@ -47,6 +47,8 @@ cp -r ./target/debug/rssust ./env
 然后没有版本更新的时候，你可以输入：
 ```sh
 cd Rssust
+./env/rssust cookie firefox
+./env/rssust docs
 ./env/rssust
 ```
 来启动
@@ -56,7 +58,9 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 cargo build
 robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
+.\env\rssust.exe
 ```
 ## 主页
 

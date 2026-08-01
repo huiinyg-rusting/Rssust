@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let topic = para
         .get("topic")
         .map(|s| s.as_str())
@@ -25,7 +25,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             ("Accept-Language", "en-US,en;q=0.9"),
             ("Referer", "https://apnews.com/"),
         ],
-    )?;
+    )
+    .await?;
 
     let mut links: Vec<String> = Vec::new();
     for m in regex::Regex::new(r#"href="(https://apnews\.com/article/[^"]+)"#)
@@ -54,7 +55,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let mut item_vec = Vec::new();
     for link in &links {
-        match fetch_reqwest_get_with_headers(link, headers) {
+        match fetch_reqwest_get_with_headers(link, headers).await {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
 

@@ -5,14 +5,14 @@ use scraper::{Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let tag = para
         .get("tag")
         .map(|s| s.as_str())
         .unwrap_or("web_home_page");
     let api_url = format!("https://www.gelonghui.com/api/channels/{}/articles/v8", tag);
 
-    let json_str = fetch_reqwest_get(&api_url)?;
+    let json_str = fetch_reqwest_get(&api_url).await?;
     let json: Value = serde_json::from_str(&json_str)?;
     let result = json["result"]
         .as_array()
@@ -41,7 +41,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             description.push_str(&format!("<p>{}</p>", summary));
         }
 
-        if let Ok(detail_html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]) {
+        if let Ok(detail_html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await {
             let doc = Html::parse_document(&detail_html);
             if let Some(article_title) = doc
                 .select(&Selector::parse(".article-title").unwrap())

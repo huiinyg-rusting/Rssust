@@ -4,11 +4,11 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let url =
         "https://gw.m.163.com/nc/api/v1/feed/static/normal-list?start=0&tid=T1573700340788&size=30";
 
-    let json: Value = serde_json::from_str(fetch_reqwest_get(url)?.as_str())?;
+    let json: Value = serde_json::from_str(fetch_reqwest_get(url).await?.as_str())?;
 
     let list = json
         .pointer("/data/items")

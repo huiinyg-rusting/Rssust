@@ -8,9 +8,50 @@ use std::sync::OnceLock;
 use std::{collections::HashMap, env};
 use tracing::{debug, warn};
 
-fn client() -> &'static reqwest::blocking::Client {
-    static CLIENT: OnceLock<reqwest::blocking::Client> = OnceLock::new();
-    CLIENT.get_or_init(reqwest::blocking::Client::new)
+///自定义错误类型，可携带 HTTP 状态码。渲染层会取 `status` 作为状态码、`message` 作为正文。
+#[derive(Debug)]
+pub struct HttpError {
+    pub status: u16,
+    pub message: String,
+}
+
+impl std::fmt::Display for HttpError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "HTTP {}: {}", self.status, self.message)
+    }
+}
+
+impl std::error::Error for HttpError {}
+
+impl HttpError {
+    pub fn new(status: u16, message: impl Into<String>) -> Self {
+        HttpError {
+            status,
+            message: message.into(),
+        }
+    }
+
+    pub fn bad_request(message: impl Into<String>) -> Self {
+        Self::new(400, message)
+    }
+
+    pub fn not_found(message: impl Into<String>) -> Self {
+        Self::new(404, message)
+    }
+
+    pub fn bad_gateway(message: impl Into<String>) -> Self {
+        Self::new(502, message)
+    }
+}
+
+fn client() -> &'static reqwest::Client {
+    static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+    CLIENT.get_or_init(|| {
+        reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(60))
+            .build()
+            .expect("failed to build reqwest client")
+    })
 }
 
 ///这个函数序列化从key1=1&key2=2 到{"key1": "2", "key2": "2"}的Hashmap;
@@ -41,16 +82,19 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
 
 //下面是reqwest get的内容
 //不会使用线程池
-pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
+pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
     debug!("GET {}", url);
-    let result = (|| -> Result<String, Error> {
+    let result = (|| async {
         Ok(client()
             .get(url)
             .send()
+            .await
             .map_err(Error::from)?
             .text()
+            .await
             .map_err(Error::from)?)
-    })();
+    })()
+    .await;
     if let Err(ref e) = result {
         warn!("GET {} failed: {}", url, e);
     }
@@ -61,57 +105,66 @@ pub fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
 ///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
 ///The feature form is required.
 ///必须使用 form 功能
-pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
+pub async fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
     debug!("POST {}", url);
-    let result = (|| -> Result<String, Error> {
+    let result = (|| async {
         Ok(client()
             .post(url)
             .body(body)
             .send()
+            .await
             .map_err(Error::from)?
             .text()
+            .await
             .map_err(Error::from)?)
-    })();
+    })()
+    .await;
     if let Err(ref e) = result {
         warn!("POST {} failed: {}", url, e);
     }
     result
 }
 
-pub fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<String, Error> {
+pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<String, Error> {
     debug!("POST {} (json)", url);
-    let result = (|| -> Result<String, Error> {
+    let result = (|| async {
         Ok(client()
             .post(url)
             .header("Content-Type", "application/json")
             .body(json_body.to_string())
             .send()
+            .await
             .map_err(Error::from)?
             .text()
+            .await
             .map_err(Error::from)?)
-    })();
+    })()
+    .await;
     if let Err(ref e) = result {
         warn!("POST {} failed: {}", url, e);
     }
     result
 }
 
-pub fn fetch_reqwest_get_with_headers(
+pub async fn fetch_reqwest_get_with_headers(
     url: &str,
     headers: &[(&str, &str)],
 ) -> Result<String, Error> {
     debug!("GET {} (with headers)", url);
-    let result = (|| -> Result<String, Error> {
+    let result = (|| async {
         let mut req = client().get(url);
         for &(key, value) in headers {
             req = req.header(key, value);
         }
         Ok(req
             .send()
+            .await
             .map_err(Error::from)?
             .text()
+            .await
             .map_err(Error::from)?)
-    })();
+    })()
+    .await;
     if let Err(ref e) = result {
         warn!("GET {} failed: {}", url, e);
     }

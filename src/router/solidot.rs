@@ -78,7 +78,7 @@ fn parse_article(html: &str, url: &str) -> Result<rss::Item> {
     Ok(item)
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let type_ = para.get("type").map(|s| s.as_str()).unwrap_or("www");
     let base_url = format!("https://{}.solidot.org", type_);
 
@@ -88,21 +88,23 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             "User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         )],
-    )?;
-    let doc = Html::parse_document(&html);
+    ).await?;
+    let urls: Vec<String> = {
+        let doc = Html::parse_document(&html);
 
-    let sel = Selector::parse("div.block_m div.bg_htit h2 a").map_err(|_| anyhow!("selector"))?;
-    let urls: Vec<String> = doc
-        .select(&sel)
-        .filter_map(|e| e.value().attr("href"))
-        .map(|href| {
-            if href.starts_with("http") {
-                href.to_string()
-            } else {
-                format!("https://www.solidot.org{}", href)
-            }
-        })
-        .collect();
+        let sel =
+            Selector::parse("div.block_m div.bg_htit h2 a").map_err(|_| anyhow!("selector"))?;
+        doc.select(&sel)
+            .filter_map(|e| e.value().attr("href"))
+            .map(|href| {
+                if href.starts_with("http") {
+                    href.to_string()
+                } else {
+                    format!("https://www.solidot.org{}", href)
+                }
+            })
+            .collect()
+    };
 
     let mut item_vec = Vec::new();
     for url in urls {
@@ -112,7 +114,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             )],
-        ) {
+        ).await {
             Ok(article_html) => {
                 if let Ok(item) = parse_article(&article_html, &url) {
                     item_vec.push(item);

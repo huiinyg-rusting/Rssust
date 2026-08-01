@@ -12,31 +12,43 @@
 
 ## 爬虫类
 
+> **异步**：项目已迁移到 `tokio` 异步运行时，以下 fetch 函数均为 `async fn`，调用时必须加 `.await`，例如 `fetch_reqwest_get(&url).await?`。所有 fetch 函数共享一个全局 `reqwest::Client`（`OnceLock` 懒加载），复用连接池，不会每次新建。
+
 ### fetch_reqwest_get()
 
-**签名**: `pub fn fetch_reqwest_get(url: &str) -> Result<String, Error>`
+**签名**: `pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error>`
 
 使用 `reqwest` 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。
 
-**注意**: 每次调用都会创建新的 Tokio Runtime，开销较大。
-
 ### fetch_reqwest_get_with_headers()
 
-**签名**: `pub fn fetch_reqwest_get_with_headers(url: &str, headers: &[(&str, &str)]) -> Result<String, Error>`
+**签名**: `pub async fn fetch_reqwest_get_with_headers(url: &str, headers: &[(&str, &str)]) -> Result<String, Error>`
 
 使用 `reqwest` 库发送带自定义 Header 的 HTTP GET 请求。
 
 示例：
 ```rust
 let headers = &[("Referer", "https://example.com"), ("Cookie", "session=abc")];
-fetch_reqwest_get_with_headers("https://api.example.com/data", headers)?;
+fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 ```
 
 ### fetch_reqwest_post()
 
-**签名**: `pub fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error>`
+**签名**: `pub async fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error>`
 
 使用 `reqwest` 库发送 HTTP POST 请求，返回响应文本。
+
+### fetch_reqwest_post_json()
+
+**签名**: `pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<String, Error>`
+
+使用 `reqwest` 库发送 Content-Type 为 `application/json` 的 HTTP POST 请求。
+
+### HttpError
+
+**签名**: `pub struct HttpError { pub status: u16, pub message: String }`
+
+自定义错误类型，可携带 HTTP 状态码。路由中可用 `HttpError::bad_request(msg)`、`HttpError::not_found(msg)`、`HttpError::bad_gateway(msg)` 构造。渲染层会优先使用 `HttpError` 的 `status` 作为响应状态码、`message` 作为正文（否则默认 500）。
 
 ---
 
@@ -149,3 +161,4 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers)?;
 - 路由中必须导入 `use crate::easyuser::*;`
 - 从 JSON 提取字符串后记得用 `no_double_quotes()` 清理
 - 需要携带 Cookie 时，用 `fetch_reqwest_get_with_headers()` 配合 `load_cookie_header()`
+- **所有 fetch 调用都要加 `.await`**（`async fn`），且不要在持有 scraper 的 `Html`/`Selector`/`ElementRef` 时跨 `.await`（它们不是 `Send`），详见 `new_router_cn.md` 的同步转异步章节

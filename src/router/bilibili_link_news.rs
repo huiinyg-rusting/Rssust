@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let product = para
         .get("product")
         .ok_or_else(|| anyhow!("缺少 product 参数 (live/vc/wh)"))?;
@@ -23,7 +23,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 product
             ),
             &[("Referer", "https://link.bilibili.com/p/eden/news")],
-        )?
+        ).await?
         .as_str(),
     )?;
 

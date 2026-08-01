@@ -5,27 +5,30 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let root_url = "https://www.guancha.cn";
     let list_url = format!("{}/GuanChaZheTouTiao/list_1.shtml", root_url);
 
-    let html = fetch_reqwest_get(&list_url)?;
-    let doc = Html::parse_document(&html);
+    let html = fetch_reqwest_get(&list_url).await?;
+    let entries: Vec<(String, String)> = {
+        let doc = Html::parse_document(&html);
 
-    let sel = Selector::parse(".headline-list li .content-headline h3 a")
-        .map_err(|_| anyhow!("选择器无效"))?;
+        let sel = Selector::parse(".headline-list li .content-headline h3 a")
+            .map_err(|_| anyhow!("选择器无效"))?;
 
-    let mut entries = Vec::new();
-    for elem in doc.select(&sel) {
-        let title = elem.text().collect::<String>().trim().to_string();
-        let href = elem.value().attr("href").unwrap_or("");
-        let link = if href.starts_with("http") {
-            href.to_string()
-        } else {
-            format!("{}{}", root_url, href)
-        };
-        entries.push((title, link));
-    }
+        let mut entries = Vec::new();
+        for elem in doc.select(&sel) {
+            let title = elem.text().collect::<String>().trim().to_string();
+            let href = elem.value().attr("href").unwrap_or("");
+            let link = if href.starts_with("http") {
+                href.to_string()
+            } else {
+                format!("{}{}", root_url, href)
+            };
+            entries.push((title, link));
+        }
+        entries
+    };
 
     let mut item_vec = Vec::new();
     for (title, link) in &entries {
@@ -34,7 +37,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         }
         let detail_url = link.replace(".shtml", "_s.shtml");
 
-        if let Ok(detail_html) = fetch_reqwest_get(&detail_url) {
+        if let Ok(detail_html) = fetch_reqwest_get(&detail_url).await {
             let detail_doc = Html::parse_document(&detail_html);
 
             let all_txt_sel = Selector::parse(".all-txt").map_err(|_| anyhow!("选择器无效"))?;

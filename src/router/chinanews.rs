@@ -5,35 +5,44 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let root_url = "https://www.chinanews.com.cn";
     let list_url = format!("{}/scroll-news/news1.html", root_url);
-    let html = fetch_reqwest_get(&list_url)?;
-    let doc = Html::parse_document(&html);
+    let html = fetch_reqwest_get(&list_url).await?;
 
-    let sel_item = Selector::parse("div.dd_bt a").unwrap();
+    let root_url = root_url.to_string();
+    let list_url = list_url.to_string();
+    let items = {
+        let doc = Html::parse_document(&html);
+        let sel_item = Selector::parse("div.dd_bt a").unwrap();
+
+        let mut items = Vec::new();
+        for a_el in doc.select(&sel_item) {
+            let href = a_el.value().attr("href").unwrap_or("");
+            if href.is_empty() || !href.ends_with(".shtml") {
+                continue;
+            }
+            let title = a_el.text().collect::<String>().trim().to_string();
+            if title.is_empty() {
+                continue;
+            }
+            let link = if href.starts_with("http") {
+                href.to_string()
+            } else {
+                format!("{}{}", root_url, href)
+            };
+            items.push((title, link));
+        }
+        items
+    };
 
     let mut item_vec = Vec::new();
-    for a_el in doc.select(&sel_item) {
-        let href = a_el.value().attr("href").unwrap_or("");
-        if href.is_empty() || !href.ends_with(".shtml") {
-            continue;
-        }
-        let title = a_el.text().collect::<String>().trim().to_string();
-        if title.is_empty() {
-            continue;
-        }
-        let link = if href.starts_with("http") {
-            href.to_string()
-        } else {
-            format!("{}{}", root_url, href)
-        };
-
+    for (title, link) in items.iter() {
         let mut description = String::new();
         let mut pub_date = now();
         let mut author = String::new();
 
-        if let Ok(detail_html) = fetch_reqwest_get(&link) {
+        if let Ok(detail_html) = fetch_reqwest_get(link).await {
             let detail_doc = Html::parse_document(&detail_html);
 
             let sel_content_desc = Selector::parse("div.content_desc").unwrap();
@@ -65,8 +74,8 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         }
 
         let rss_item = ItemBuilder::default()
-            .title(Some(title))
-            .link(Some(link))
+            .title(Some(title.clone()))
+            .link(Some(link.clone()))
             .pub_date(pub_date)
             .description(Some(description))
             .author(if author.is_empty() {

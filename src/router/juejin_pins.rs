@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let type_param = para.get("type").map(|s| s.as_str()).unwrap_or("recommend");
 
     let title_label = match type_param {
@@ -38,7 +38,7 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         )
     };
 
-    let resp = fetch_reqwest_post_json(&url, &body)?;
+    let resp = fetch_reqwest_post_json(&url, &body).await?;
     let json: Value = serde_json::from_str(&resp)?;
 
     let items_data = json

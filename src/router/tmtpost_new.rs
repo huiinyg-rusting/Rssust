@@ -4,11 +4,12 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let list_json = fetch_reqwest_get_with_headers(
         "https://api.tmtpost.com/v1/lists/new?limit=30",
         &[("app-version", "web1.0")],
-    )?;
+    )
+    .await?;
 
     let list: Value = serde_json::from_str(&list_json)?;
     let items = list["data"]
@@ -41,7 +42,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         }
 
         if let Ok(detail_json) =
-            fetch_reqwest_get_with_headers(&detail_url, &[("app-version", "web1.0")])
+            fetch_reqwest_get_with_headers(&detail_url, &[("app-version", "web1.0")]).await
         {
             if let Ok(detail) = serde_json::from_str::<Value>(&detail_json) {
                 if let Some(data) = detail["data"].as_object() {

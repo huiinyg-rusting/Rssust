@@ -1,13 +1,12 @@
 [package]
 name = "rssust"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
 
 [dependencies]
 serde_json = "1.0.150"
 anyhow = "1.0.103"
-threadpool = "1.8"
-reqwest = { version = "0.13.4", features = ["blocking"] }
+reqwest = { version = "0.13.4", features = ["json"] }
 scraper = "0.27.0"
 rss = "2.1.0"
 chrono = "0.4.45"
@@ -21,6 +20,7 @@ toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", default-features = false, features = ["std", "fmt", "ansi", "env-filter"] }
 tracing-log = "0.2"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-util", "fs", "time", "sync"] }
 
 mdbook = { version = "0.4", optional = true }
 bench_scraper = { version = "0.4.1", optional = true }

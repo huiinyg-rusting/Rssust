@@ -4,18 +4,18 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-fn get_aid_from_bvid(bvid: &str) -> Result<i64, Error> {
+async fn get_aid_from_bvid(bvid: &str) -> Result<i64, Error> {
     let url = format!(
         "https://api.bilibili.com/x/web-interface/view?bvid={}",
         bvid
     );
-    let json: Value = serde_json::from_str(fetch_reqwest_get(&url)?.as_str())?;
+    let json: Value = serde_json::from_str(fetch_reqwest_get(&url).await?.as_str())?;
     json.pointer("/data/aid")
         .and_then(Value::as_i64)
         .ok_or_else(|| anyhow!("无法从 BVID 获取 AID"))
 }
 
-fn get_video_name(bvid: &str, aid: Option<i64>) -> String {
+async fn get_video_name(bvid: &str, aid: Option<i64>) -> String {
     let url = if let Some(a) = aid {
         format!("https://api.bilibili.com/x/web-interface/view?aid={}", a)
     } else {
@@ -25,6 +25,7 @@ fn get_video_name(bvid: &str, aid: Option<i64>) -> String {
         )
     };
     fetch_reqwest_get(&url)
+        .await
         .ok()
         .and_then(|s| {
             serde_json::from_str::<Value>(&s).ok().and_then(|v| {
@@ -36,11 +37,11 @@ fn get_video_name(bvid: &str, aid: Option<i64>) -> String {
         .unwrap_or_else(|| bvid.to_string())
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let bvid = para.get("bvid").ok_or_else(|| anyhow!("缺少 bvid 参数"))?;
 
-    let aid = get_aid_from_bvid(bvid)?;
-    let name = get_video_name(bvid, Some(aid));
+    let aid = get_aid_from_bvid(bvid).await?;
+    let name = get_video_name(bvid, Some(aid)).await;
 
     let link = format!("https://www.bilibili.com/video/{}", bvid);
     let url = format!(
@@ -56,7 +57,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         fetch_reqwest_get_with_headers(
             &url,
             &[("Referer", link.as_str()), ("Cookie", cookie.as_str())],
-        )?
+        )
+        .await?
         .as_str(),
     )?;
 

@@ -11,7 +11,7 @@ const TYPES: &[(&str, &str, &str)] = &[
     ("monthly", "d-3", "月榜"),
 ];
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let type_ = para.get("type").map(|s| s.as_str()).unwrap_or("24h");
     let (id, title) = TYPES
         .iter()
@@ -19,23 +19,26 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .map(|(_, id, t)| (*id, *t))
         .ok_or_else(|| anyhow!("未知类型：{}", type_))?;
 
-    let html = fetch_reqwest_get("https://www.ithome.com/block/rank.html")?;
-    let doc = Html::parse_document(&html);
+    let html = fetch_reqwest_get("https://www.ithome.com/block/rank.html").await?;
+    let entries: Vec<(String, String)> = {
+        let doc = Html::parse_document(&html);
 
-    let sel = Selector::parse(&format!("#{} > li a", id)).map_err(|_| anyhow!("选择器无效"))?;
+        let sel = Selector::parse(&format!("#{} > li a", id)).map_err(|_| anyhow!("选择器无效"))?;
 
-    let mut entries = Vec::new();
-    for elem in doc.select(&sel) {
-        let title = elem.text().collect::<String>().trim().to_string();
-        let href = elem.value().attr("href").unwrap_or("");
-        if !title.is_empty() && !href.is_empty() {
-            entries.push((title, href.to_string()));
+        let mut entries = Vec::new();
+        for elem in doc.select(&sel) {
+            let title = elem.text().collect::<String>().trim().to_string();
+            let href = elem.value().attr("href").unwrap_or("");
+            if !title.is_empty() && !href.is_empty() {
+                entries.push((title, href.to_string()));
+            }
         }
-    }
+        entries
+    };
 
     let mut item_vec = Vec::new();
     for (title, link) in entries {
-        if let Ok(detail_html) = fetch_reqwest_get(&link) {
+        if let Ok(detail_html) = fetch_reqwest_get(&link).await {
             let detail_doc = Html::parse_document(&detail_html);
 
             let content_sel = Selector::parse("#paragraph").map_err(|_| anyhow!("选择器无效"))?;

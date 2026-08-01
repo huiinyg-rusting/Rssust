@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let series_id = para
         .get("series_id")
         .ok_or_else(|| anyhow!("缺少 series_id 参数"))?;
@@ -15,7 +15,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 series_id
             )
             .as_str(),
-        )?
+        )
+        .await?
         .as_str(),
     )?;
 
@@ -37,7 +38,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let view_json: Value = serde_json::from_str(
             fetch_reqwest_get(
                 format!("https://api.bilibili.com/x/web-interface/view?aid={}", aid).as_str(),
-            )?
+            )
+            .await?
             .as_str(),
         )?;
         let data = view_json

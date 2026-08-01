@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let pn = para.get("pn").map(|s| s.as_str()).unwrap_or("1");
     let ps = para.get("ps").map(|s| s.as_str()).unwrap_or("30");
     let json: Value = serde_json::from_str(
@@ -14,7 +14,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 pn, ps
             )
             .as_str(),
-        )?
+        )
+        .await?
         .as_str(),
     )?;
 

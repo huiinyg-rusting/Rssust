@@ -25,7 +25,7 @@ fn build_sign(params: &[(&str, &str)]) -> String {
     hex::encode(md5.finalize())
 }
 
-pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let root_url = "https://www.cls.cn";
     let api_url = format!("{}/v2/article/hot/list", root_url);
 
@@ -45,7 +45,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
     let url = format!("{}?{}", api_url, param_str);
 
-    let json: Value = serde_json::from_str(&fetch_reqwest_get(&url)?)?;
+    let json: Value = serde_json::from_str(&fetch_reqwest_get(&url).await?)?;
 
     let data = json["data"]
         .as_array()
@@ -67,7 +67,7 @@ pub fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             continue;
         }
 
-        let description = match fetch_reqwest_get(&link) {
+        let description = match fetch_reqwest_get(&link).await {
             Ok(detail_html) => {
                 let detail_doc = Html::parse_document(&detail_html);
                 let sel =

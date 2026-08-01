@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let uid = para.get("uid").ok_or_else(|| anyhow::anyhow!("没有uid"))?;
     let sid = para.get("sid").ok_or_else(|| anyhow::anyhow!("没有sid"))?;
     let sort_reverse = match para.get("sortreverse") {
@@ -30,8 +30,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let referer = format!("https://space.bilibili.com/{}/", uid);
     let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
     let headers: Vec<(&str, &str)> = vec![("Referer", referer.as_str()), ("User-Agent", ua)];
-    let json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(url.as_str(), &headers)?.as_str())?;
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(url.as_str(), &headers)
+            .await?
+            .as_str(),
+    )?;
     if json["code"] != 0 {
         return Err(anyhow!("请求失败，{}", json));
     }
@@ -44,7 +47,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .to_string()
             ),
             &headers,
-        )?
+        )
+        .await?
         .as_str(),
     )?
     .pointer("/data/owner/name")

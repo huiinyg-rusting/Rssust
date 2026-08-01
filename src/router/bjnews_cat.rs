@@ -4,7 +4,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let cat = para.get("cat").map(|s| s.as_str()).unwrap_or("depth");
     let url = format!("https://www.bjnews.com.cn/{}", cat);
 
@@ -14,24 +14,27 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             "User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         )],
-    )?;
+    ).await?;
 
-    let doc = Html::parse_document(&html);
-    let link_selector = Selector::parse("#waterfall-container .pin_demo > a").unwrap();
+    let links: Vec<String> = {
+        let doc = Html::parse_document(&html);
+        let link_selector = Selector::parse("#waterfall-container .pin_demo > a").unwrap();
 
-    let mut links: Vec<String> = Vec::new();
-    for a in doc.select(&link_selector) {
-        if let Some(href) = a.value().attr("href") {
-            let full_url = if href.starts_with("http") {
-                href.to_string()
-            } else {
-                format!("https://www.bjnews.com.cn{}", href)
-            };
-            if !links.contains(&full_url) {
-                links.push(full_url);
+        let mut links: Vec<String> = Vec::new();
+        for a in doc.select(&link_selector) {
+            if let Some(href) = a.value().attr("href") {
+                let full_url = if href.starts_with("http") {
+                    href.to_string()
+                } else {
+                    format!("https://www.bjnews.com.cn{}", href)
+                };
+                if !links.contains(&full_url) {
+                    links.push(full_url);
+                }
             }
         }
-    }
+        links
+    };
 
     if links.is_empty() {
         return Err(anyhow!("在 {} 中找不到文章链接", url));
@@ -45,7 +48,9 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             )],
-        ) {
+        )
+        .await
+        {
             Ok(detail_html) => {
                 let detail_doc = Html::parse_document(&detail_html);
 

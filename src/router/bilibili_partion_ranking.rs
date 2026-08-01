@@ -70,7 +70,7 @@ fn build_item(
         .build()
 }
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let tid = para.get("tid").ok_or_else(|| anyhow!("缺少 tid 参数"))?;
     let days = para
         .get("days")
@@ -91,8 +91,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
         chrono::Local::now().timestamp_millis()
     );
 
-    let hot_json: Value =
-        serde_json::from_str(fetch_reqwest_get_with_headers(&hot_url, &headers)?.as_str())?;
+    let hot_json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&hot_url, &headers)
+            .await?
+            .as_str(),
+    )?;
 
     let hot_result = hot_json
         .pointer("/result")
@@ -108,8 +111,11 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
             tid,
             chrono::Local::now().timestamp_millis()
         );
-        let newlist_json: Value =
-            serde_json::from_str(fetch_reqwest_get_with_headers(&newlist_url, &headers)?.as_str())?;
+        let newlist_json: Value = serde_json::from_str(
+            fetch_reqwest_get_with_headers(&newlist_url, &headers)
+                .await?
+                .as_str(),
+        )?;
         let archives = newlist_json
             .pointer("/data/archives")
             .and_then(|v| v.as_array())

@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
+pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let sort = para.get("sort").map(|s| s.as_str()).unwrap_or("U");
     let score = para
         .get("score")
@@ -18,7 +18,8 @@ pub fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://movie.douban.com/tag/")])?
+        fetch_reqwest_get_with_headers(&url, &[("Referer", "https://movie.douban.com/tag/")])
+            .await?
             .as_str(),
     )?;
 
