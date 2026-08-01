@@ -87,6 +87,7 @@ pub async fn request_rules(
         "/yicai_latest" => run!(yicai_latest, parameters),
         "/yicai_headline" => run!(yicai_headline, parameters),
         "/tmtpost_new" => run!(tmtpost_new, parameters),
+        "/videocardz_news" => run!(videocardz_news, parameters),
         "/zhihu_hot" => run!(zhihu_hot, parameters),
         _ => {
             warn!("Unregistered route: {}", url);

@@ -44,6 +44,7 @@ pub mod stcn_kx;
 pub mod stcn_rank;
 pub mod thepaper_featured;
 pub mod tmtpost_new;
+pub mod videocardz_news;
 pub mod wallstreetcn_hot;
 pub mod yicai_headline;
 pub mod yicai_latest;
