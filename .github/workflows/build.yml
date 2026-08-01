@@ -42,25 +42,9 @@ jobs:
           fi
           echo "cargo metadata output length: ${#meta}"
           
-          pkg_name=$(echo "$meta" | python3 << 'PYTHON_EOF'
-          import sys, json
-          data = sys.stdin.read()
-          if not data.strip():
-            print("ERROR: Empty input to JSON parser", file=sys.stderr)
-            sys.exit(1)
-          m = json.loads(data)
-          print(m["packages"][0]["name"])
-          PYTHON_EOF
+          pkg_name=$(echo "$meta" | python3 -c 'import sys, json\ndata = sys.stdin.read()\nif not data.strip():\n    print("ERROR: Empty input to JSON parser", file=sys.stderr)\n    sys.exit(1)\nm = json.loads(data)\nprint(m["packages"][0]["name"])'
           )
-          version=$(echo "$meta" | python3 << 'PYTHON_EOF'
-          import sys, json
-          data = sys.stdin.read()
-          if not data.strip():
-            print("ERROR: Empty input to JSON parser", file=sys.stderr)
-            sys.exit(1)
-          m = json.loads(data)
-          print(m["packages"][0]["version"])
-          PYTHON_EOF
+          version=$(echo "$meta" | python3 -c 'import sys, json\ndata = sys.stdin.read()\nif not data.strip():\n    print("ERROR: Empty input to JSON parser", file=sys.stderr)\n    sys.exit(1)\nm = json.loads(data)\nprint(m["packages"][0]["version"])'
           )
           tag="${GITHUB_REF#refs/tags/}"
           echo "pkg_name=$pkg_name" >> "$GITHUB_OUTPUT"
