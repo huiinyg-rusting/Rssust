@@ -273,3 +273,52 @@ pub fn utc_str_to_rss(datetime_str: &str) -> Option<String> {
     let wall = fixed.from_utc_datetime(&naive).naive_local();
     datetime_str_to_rss(&wall.format("%Y-%m-%d %H:%M:%S").to_string())
 }
+
+/// 带浏览器 TLS 指纹伪装的 GET 请求（绕过 Cloudflare 等反爬）
+/// 使用 curl-impersonate-cli (curl-impersonate) 模拟 Chrome 124 指纹
+/// 需要启用 cargo feature "download" 自动下载预编译二进制
+pub async fn fetch_browser_get(url: &str) -> Result<String, Error> {
+    debug!("GET (browser) {}", url);
+    let opts = curl_impersonate_cli::download::DownloadOptions::default();
+    let bin = curl_impersonate_cli::download::ensure_binary("chrome124", &opts)
+        .await
+        .map_err(|e| anyhow!("ensure binary failed: {}", e))?;
+    let resp = curl_impersonate_cli::Request::get(bin, url)
+        .follow_redirects(true)
+        .timeout_secs(30.0)
+        .send()
+        .await
+        .map_err(|e| anyhow!("browser get failed: {}", e))?;
+    let text = resp.body;
+    if text.is_empty() {
+        warn!("GET (browser) {} returned empty body", url);
+    }
+    Ok(text)
+}
+
+/// 带浏览器指纹伪装的 GET 请求（支持自定义头）
+pub async fn fetch_browser_get_with_headers(
+    url: &str,
+    headers: &[(&str, &str)],
+) -> Result<String, Error> {
+    debug!("GET (browser) {} (with headers)", url);
+    let opts = curl_impersonate_cli::download::DownloadOptions::default();
+    let bin = curl_impersonate_cli::download::ensure_binary("chrome124", &opts)
+        .await
+        .map_err(|e| anyhow!("ensure binary failed: {}", e))?;
+    let mut req = curl_impersonate_cli::Request::get(bin, url)
+        .follow_redirects(true)
+        .timeout_secs(30.0);
+    for (k, v) in headers {
+        req = req.header(*k, *v);
+    }
+    let resp = req
+        .send()
+        .await
+        .map_err(|e| anyhow!("browser get failed: {}", e))?;
+    let text = resp.body;
+    if text.is_empty() {
+        warn!("GET (browser) {} returned empty body", url);
+    }
+    Ok(text)
+}
