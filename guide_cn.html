@@ -211,9 +211,11 @@
 <p>Linux用户：</p>
 <pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --release
 cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
 ./env/rssust docs
+./env/rssust
 </code></pre>
 <p>然后没有版本更新的时候，你可以输入：</p>
 <pre><code class="language-sh">cd Rssust
@@ -225,7 +227,9 @@ Windows用户：CMD（未经验证）</p>
 cd Rssust
 cargo build
 robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
+.\env\rssust.exe
 </code></pre>
 
                     </main>

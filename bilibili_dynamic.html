@@ -179,7 +179,7 @@
 <p><strong>Commit time:</strong> 2026.7.11<br />
 <strong>Cookies?:</strong> yes (使用<code>cookies.json</code>直接注入到reqwest,需要鲜活的cookies,反爬中等)<br />
 <strong>Author:</strong> AI大部分转写自RSShub/huiinyg-rusting收拾烂摊子和审核-AGPL-3.0协议（已被传染）<br />
-<strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs:405</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
+<strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub async fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
 <p><strong>Address:</strong> <code>rssust://bilibili_dynamic</code><br />
 <strong>Example:</strong> <a href="../bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a><br />
 <strong>Parameter:</strong></p>

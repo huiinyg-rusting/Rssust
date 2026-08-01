@@ -213,7 +213,9 @@ Running the binary is very simple: extract and then start the binary file in the
 cd Rssust
 cargo build
 cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
 ./env/rssust docs
+./env/rssust
 </code></pre>
 <p>Then when there’s no version update, you can enter:</p>
 <pre><code class="language-sh">cd Rssust
@@ -225,7 +227,9 @@ cp -r ./target/debug/rssust ./env
 cd Rssust
 cargo build
 robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
+.\env\rssust.exe
 </code></pre>
 
                     </main>

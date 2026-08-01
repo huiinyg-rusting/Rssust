@@ -183,38 +183,34 @@ If the file does not exist, it will be auto-created with default content.</p>
 <h2 id="format--格式"><a class="header" href="#format--格式">Format / 格式</a></h2>
 <pre><code class="language-toml">[server]
 port = 7878
+max_concurrent = 8
 timeout = 60
 
 [routes]
 disabled = []
-max_concurrent = 4
 </code></pre>
 <h2 id="fields--字段说明"><a class="header" href="#fields--字段说明">Fields / 字段说明</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Field / 字段</th><th>Type / 类型</th><th>Default / 默认值</th><th>Description / 描述</th></tr></thead><tbody>
 <tr><td><code>server.port</code></td><td><code>int</code></td><td><code>7878</code></td><td>服务器监听端口。Port the server listens on.</td></tr>
-<tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游 HTTP 请求超时（秒）。到 0 或不指定时使用默认值 60。设为 0 表示不限。</td></tr>
+<tr><td><code>server.max_concurrent</code></td><td><code>int</code></td><td>自动检测的 CPU 核心数</td><td>并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2.</td></tr>
+<tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
 <tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
-<tr><td><code>routes.max_concurrent</code></td><td><code>int</code></td><td>自动检测的 CPU 核心数</td><td>并发基数，实际允许同时处理的最大连接数 = <strong>值 × 2</strong>。Number of threads used by the tokio worker thread pool.</td></tr>
 </tbody></table>
 </div>
 <h2 id="examples--示例"><a class="header" href="#examples--示例">Examples / 示例</a></h2>
-<p>禁用 <code>zhihu_hot</code> 和 <code>bilibili_weekly</code> 两个路由，并手动指定并发基数为 8（实际并发上限 16）：</p>
+<p>禁用 <code>zhihu_hot</code> 和 <code>bilibili_weekly</code> 两个路由，并手动指定并发上限与超时：</p>
 <pre><code class="language-toml">[server]
 port = 8080
+max_concurrent = 4
 timeout = 30
 
 [routes]
 disabled = ["zhihu_hot", "bilibili_weekly"]
-max_concurrent = 8
 </code></pre>
-<p>不指定 <code>max_concurrent</code> 时，程序自动使用检测到的 CPU 核心数；不指定 <code>port</code> 时默认 <code>7878</code>；<code>timeout</code> 不指定时默认 <code>60</code> 秒：</p>
-<pre><code class="language-toml">[server]
-port = 8080
-
-[routes]
+<p>不指定 <code>max_concurrent</code> 时，程序自动使用检测到的 CPU 核心数；不指定 <code>timeout</code> 时默认 60 秒；不指定 <code>port</code> 时默认 <code>7878</code>：</p>
+<pre><code class="language-toml">[routes]
 disabled = []
 </code></pre>
-<p><strong>向后兼容</strong>：旧配置文件中的 <code>numofcore</code> 字段仍会被读取（作为 <code>max_concurrent</code> 的别名）。</p>
 <h2 id="logging--日志"><a class="header" href="#logging--日志">Logging / 日志</a></h2>
 <p>The program uses <code>tracing</code> as the logging backend. Our own code uses <code>tracing</code> macros directly
 (<code>tracing::warn!</code>, <code>tracing::error!</code>, etc.). The <code>tracing-log</code> bridge forwards <code>log</code> crate records

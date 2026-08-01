@@ -215,34 +215,127 @@ use scraper::*;//html用的
 <h3 id="每个路由的主函数规范长这样"><a class="header" href="#每个路由的主函数规范长这样">每个路由的主函数规范长这样：</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>pub fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+</span>pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
 }
 <span class="boring">}</span></code></pre></pre>
-<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。
-项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.md</a>查看
-具体的程序逻辑就由你自己编写吧。</p>
-<h3 id="如何返回自定义-http-状态码"><a class="header" href="#如何返回自定义-http-状态码">如何返回自定义 HTTP 状态码</a></h3>
-<p>函数体内抛出普通 <code>anyhow::Error</code> 会被服务器渲染层统一返回 <code>500 Internal Server Error</code>；
-如果想返回 <code>400/404/502</code> 等状态码，请用 <code>easyuser::HttpError</code> 封装后再抛出，
-渲染层会取 <code>HttpError.status</code> 作为状态码、<code>HttpError.message</code> 作为响应正文。
-详见 <a href="easyuser_cn.html">easyuser_cn.md</a> 的 “错误类 — HttpError”：</p>
+<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。</p>
+<p>注意签名里的 <code>async</code>：因为 <code>fetch_reqwest_get</code> 等抓取函数都是异步的，<code>get</code> 自己也必须是 <code>async</code> 才能 <code>await</code> 它们。</p>
+<h3 id="异步常见错误写路由时最常踩的坑"><a class="header" href="#异步常见错误写路由时最常踩的坑">异步常见错误（写路由时最常踩的坑）</a></h3>
+<p>下面是新路由在 <code>cargo build</code> 时最常报的编译错误，按报错信息列出。遇到哪条照着改哪条。</p>
+<p><strong>1. <code>await is only allowed inside async functions and blocks</code>（E0728）</strong></p>
+<p>你在这个函数里写了 <code>.await</code>，但这个函数本身不是 <code>async</code>。最常见于：把抓详情页的逻辑拆成了一个普通辅助函数：</p>
+<pre><code>// 错误：helper 不是 async，却想 await
+fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?   // 编译报错 E0728
+}
+</code></pre>
+<p>改成 <code>async fn</code>，并且调用处也要 <code>.await</code>：</p>
+<pre><code>async fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?
+}
+let detail = fetch_detail(&amp;url).await?;
+</code></pre>
+<p><strong>2. <code>Result&lt;String, Error&gt; is not a future</code>（E0277）</strong></p>
+<p>忘了加 <code>.await</code>。<code>fetch_reqwest_get(url)</code> 返回的不是 <code>String</code>，而是一个“将来才拿到结果的 Future“；只有 <code>.await</code> 才能把它变成 <code>String</code>：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>// 缺参数 → 400
-let kw = para.get("kw")
-    .ok_or_else(|| anyhow!(HttpError::bad_request("缺少 kw 参数")))?;
-
-// 上游抓取失败不用包装，直接 ?，easyuser 会自动转为 502
-let body = fetch_reqwest_get(url)?;
+</span>// 错误：拿到的是 Future，不是 String
+let html = fetch_reqwest_get(&amp;url)?;
+// 正确：加 .await 才得到 String
+let html = fetch_reqwest_get(&amp;url).await?;
 <span class="boring">}</span></code></pre></pre>
+<p>检查你文件里所有 <code>fetch_reqwest_get</code> / <code>fetch_reqwest_post</code> / <code>fetch_reqwest_get_with_headers</code> 调用，是否都跟了 <code>.await</code>。</p>
+<p><strong>3. <code>future cannot be sent between threads safely</code>（E0277，scraper 专属）</strong></p>
+<p>只有用了 <code>scraper</code> 解析 HTML 才会碰到。<code>Html</code>、<code>Selector</code>、<code>ElementRef</code> 这些类型<strong>不是 <code>Send</code></strong>，不能带过 <code>.await</code>。典型场景：先解析出列表 <code>doc</code>，然后在循环里抓详情页：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 错误：doc（Html 类型）活着穿过 .await，编译报 not Send
+let doc = Html::parse_document(&amp;html);
+for link in &amp;links {
+    let detail_html = fetch_reqwest_get(link).await?;   // 报错：doc 在 await 那边还活着
+}
+<span class="boring">}</span></code></pre></pre>
+<p>修法是**“先解析、后抓取“两段式**：第一步先把列表页解析完，把需要的字段全存成 <code>String</code>/<code>Vec&lt;String&gt;</code>（在 <code>{ }</code> 块里用 <code>doc</code>，块结束就自动释放）；第二步才循环去抓详情页，此时手里只有纯数据：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 第一步：解析列表，只收集 String。doc 在块结束就 drop 了
+let items: Vec&lt;(String, String)&gt; = {
+    let doc = Html::parse_document(&amp;html);
+    let sel = Selector::parse("a.title").unwrap();
+    doc.select(&amp;sel).map(|e| {
+        let title = e.text().collect::&lt;String&gt;().trim().to_string();
+        let href = e.value().attr("href").unwrap_or("").to_string();
+        (title, href)
+    }).collect()
+};
+// 第二步：此时没有 scraper 类型了，随便 await
+for (title, href) in &amp;items {
+    let detail_html = fetch_reqwest_get(href).await?;
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>4. 详情页也要用 scraper？同样先解析完再放下</strong></p>
+<p>如果你抓完详情页还要再解析它、甚至再抓下一页，记住同一个原则：<code>detail_doc</code> 用完立刻丢弃。惯用写法是把详情解析放进 <code>if let Ok(...) = fetch(...).await { ... }</code> 块里，块内完成解析、块结束自动释放，块外不再引用它。</p>
+<blockquote>
+<p>小结：<strong>凡是要 <code>await</code>，身边就不要有 <code>Html</code>/<code>Selector</code>/<code>ElementRef</code></strong>。看到 <code>not Send</code> 就回想这一条。</p>
+<p>参考实现：<code>chinanews</code>、<code>stcn_article_list</code>、<code>bjnews_cat</code>、<code>eastday_24</code>、<code>solidot</code>、<code>guancha_headline</code>、<code>guanhai</code>、<code>ithome_ranking</code>、<code>jianshu_home</code> 这些路由就是按上面的模式写的。</p>
+</blockquote>
+<h3 id="一个完整的最小路由json-接口版"><a class="header" href="#一个完整的最小路由json-接口版">一个完整的最小路由（JSON 接口版）</a></h3>
+<p>下面是一个可以照抄的完整例子。它抓一个 JSON 接口，转成 RSS，保存为 <code>src/router/my_test.rs</code> 就能编译：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use crate::easyuser::*;          // 抓取函数、时间处理等都在这
+use anyhow::{Error, Result};
+use rss::*;                       // RSS 生成
+use serde_json::Value;            // 解析 JSON 用
+use std::collections::HashMap;
+
+pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+    // 1. 取用户参数（可选，默认给一个）
+    let id = para.get("id").cloned().unwrap_or_default();
+
+    // 2. 抓上游。注意：fetch 是异步的，调用后要加 .await
+    let html = fetch_reqwest_get(&amp;format!("https://api.example.com/list?id={}", id)).await?;
+
+    // 3. 解析 JSON
+    let json: Value = serde_json::from_str(&amp;html)?;
+    let list = json["data"]["list"].as_array().ok_or_else(|| anyhow!("没有 list 字段"))?;
+
+    // 4. 一条条转成 RSS Item
+    let mut item_vec = Vec::new();
+    for item in list {
+        let rss_item = ItemBuilder::default()
+            .title(Some(item["title"].as_str().unwrap_or("").to_string()))
+            .link(Some(item["url"].as_str().unwrap_or("").to_string()))
+            .description(item["desc"].as_str().unwrap_or(""))
+            .pub_date(now())           // 不会解析时间就先填当前时间
+            .build();
+        item_vec.push(rss_item);
+    }
+
+    // 5. 组装成频道输出
+    let channel = ChannelBuilder::default()
+        .title("我的测试频道")
+        .link("https://api.example.com")
+        .description("示例")
+        .items(item_vec)
+        .build();
+    Ok(channel.to_string())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>写好后按下面「注册」两步操作，<code>cargo build</code> 一下，跑起来访问 <code>/my_test</code> 就能看到你的 RSS 了。如果上游是 HTML 而非 JSON，把第 3 步换成 <code>scraper</code> 解析（注意上面第 3、4 条错误）。</p>
+<p>项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.html</a>查看
+具体的程序逻辑就由你自己编写吧。</p>
 <h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
 <p>在 <code>/src/router/mod.rs</code> 中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
-然后再在 <code>src/request_rules.rs</code> 的 <code>ROUTES</code> 常量数组中添加一个条目：</p>
+然后再在 <code>src/request_rules.rs</code> 的 <code>match url</code> 分发中，仿照其他条目添加一个分支：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>("/你的路由名", 你的路由名::get),
+</span>"/你的路由名" =&gt; run!(你的路由名, parameters),
 <span class="boring">}</span></code></pre></pre>
-<p>仿照其他条目的写法即可。</p>
+<p><code>run!</code> 宏会展开为 <code>你的路由名::get(parameters.clone()).await</code>，因此不要改动它的写法。</p>
+<blockquote>
+<p><strong>注意</strong>：<code>run!</code> 宏参数中的 <code>parameters</code> 是 <code>request_rules</code> 的入参名，宏内由于卫生性无法直接引用外层变量，所以必须显式传入。</p>
+</blockquote>
 <h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
 <p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
 <pre><code class="language-sh">├── cookies.json
