@@ -18,6 +18,7 @@ pub mod bilibili_vsearch;
 pub mod bilibili_weekly;
 pub mod bjnews_cat;
 pub mod caixin_latest;
+pub mod carnegieendowment_news;
 pub mod chinanews;
 pub mod cls_hot;
 pub mod douban_book_latest;

@@ -64,6 +64,7 @@ pub async fn request_rules(
         "/eastday_24" => run!(eastday_24, parameters),
         "/eeo_kuaixun" => run!(eeo_kuaixun, parameters),
         "/extremetech_news" => run!(extremetech_news, parameters),
+        "/carnegieendowment_news" => run!(carnegieendowment_news, parameters),
         "/netease_today" => run!(netease_today, parameters),
         "/gelonghui_home" => run!(gelonghui_home, parameters),
         "/hupu_news" => run!(hupu_news, parameters),
