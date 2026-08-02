@@ -91,10 +91,6 @@
 - [eeo_kuaixun](../eeo_kuaixun.md)
     经济观察报快讯
 
-#### ExtremeTech
-- [extremetech_news](../extremetech_news.md)
-    ExtremeTech - latest tech news (official RSS returns 403)
-
 #### Gelonghui (格隆汇)
 - [gelonghui_home](../gelonghui_home.md)
     格隆汇首页资讯
@@ -106,10 +102,6 @@
 #### Guanhai (观海新闻)
 - [guanhai](../guanhai.md)
     观海新闻首页推荐
-
-#### Hupu
-- [hupu_news](../hupu_news.md)
-    虎扑球队新闻
 
 #### iFeng (凤凰网)
 - [ifeng_news](../ifeng_news.md)
