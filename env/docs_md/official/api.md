@@ -41,9 +41,37 @@
 - [bilibili_weekly](../bilibili_weekly.md)
     Bilibili最新一期的每周精选
 
-#### Eastday (东方资讯)
-- [eastday_24](../eastday_24.md)
-    东方资讯24小时热闻
+#### BJNews (新京报)
+- [bjnews_cat](../bjnews_cat.md)
+    新京报分类文章
+
+#### Cailianpress (财联社)
+- [cls_hot](../cls_hot.md)
+    财联社热门文章排行榜
+
+#### Caixin (财新网)
+- [caixin_latest](../caixin_latest.md)
+    财新网最新文章
+
+#### Carnegie Endowment
+- [carnegieendowment_news](../carnegieendowment_news.md)
+    Carnegie Endowment for International Peace - international affairs think tank publications (no official RSS)
+
+#### Chinanews (中国新闻网)
+- [chinanews](../chinanews.md)
+    中国新闻网滚动新闻
+
+#### Defense News
+- [defensenews_news](../defensenews_news.md)
+    Defense News - global defense & military news (no official RSS)
+
+#### Defense One
+- [defenseone_news](../defenseone_news.md)
+    Defense One - defense & national security news (no official RSS)
+
+#### Discover Magazine
+- [discovermagazine_news](../discovermagazine_news.md)
+    Discover Magazine - science news (no official RSS)
 
 #### Douban
 - [douban_book_latest](../douban_book_latest.md)
@@ -55,25 +83,21 @@
 - [douban_movie_classification](../douban_movie_classification.md)
     豆瓣电影分类
 
-#### Chinanews (中国新闻网)
-- [chinanews](../chinanews.md)
-    中国新闻网滚动新闻
-
-#### Caixin (财新网)
-- [caixin_latest](../caixin_latest.md)
-    财新网最新文章
+#### Eastday (东方资讯)
+- [eastday_24](../eastday_24.md)
+    东方资讯24小时热闻
 
 #### EEO (经济观察报)
 - [eeo_kuaixun](../eeo_kuaixun.md)
     经济观察报快讯
 
-#### iFeng (凤凰网)
-- [ifeng_news](../ifeng_news.md)
-    凤凰网资讯
+#### ExtremeTech
+- [extremetech_news](../extremetech_news.md)
+    ExtremeTech - latest tech news (official RSS returns 403)
 
-#### Cailianpress (财联社)
-- [cls_hot](../cls_hot.md)
-    财联社热门文章排行榜
+#### Gelonghui (格隆汇)
+- [gelonghui_home](../gelonghui_home.md)
+    格隆汇首页资讯
 
 #### Guancha (观察者网)
 - [guancha_headline](../guancha_headline.md)
@@ -83,25 +107,13 @@
 - [guanhai](../guanhai.md)
     观海新闻首页推荐
 
-#### BJNews (新京报)
-- [bjnews_cat](../bjnews_cat.md)
-    新京报分类文章
+#### Hupu
+- [hupu_news](../hupu_news.md)
+    虎扑球队新闻
 
-#### NetEase
-- [netease_today](../netease_today.md)
-    网易新闻今日关注
-
-#### Solidot
-- [solidot](../solidot.md)
-    奇客的资讯，重要的东西
-
-#### ThePaper
-- [thepaper_featured](../thepaper_featured.md)
-    澎湃新闻首页头条推荐
-
-#### WallStreetCN
-- [wallstreetcn_hot](../wallstreetcn_hot.md)
-    华尔街见闻最热文章
+#### iFeng (凤凰网)
+- [ifeng_news](../ifeng_news.md)
+    凤凰网资讯
 
 #### IT之家
 - [ithome_ranking](../ithome_ranking.md)
@@ -111,19 +123,25 @@
 - [jianshu_home](../jianshu_home.md)
     简书首页
 
-#### Gelonghui (格隆汇)
-- [gelonghui_home](../gelonghui_home.md)
-    格隆汇首页资讯
+#### Leiphone (雷锋网)
+- [leiphone_newsflash](../leiphone_newsflash.md)
+    雷锋网业界资讯
 
-#### Hupu
-- [hupu_news](../hupu_news.md)
-    虎扑球队新闻
+#### NetEase
+- [netease_today](../netease_today.md)
+    网易新闻今日关注
 
-#### Yicai (第一财经)
-- [yicai_latest](../yicai_latest.md)
-    第一财经最新文章
-- [yicai_headline](../yicai_headline.md)
-    第一财经头条
+#### Scientific American
+- [scientificamerican_news](../scientificamerican_news.md)
+    Scientific American - science & technology news (no official RSS)
+
+#### Smithsonian Magazine
+- [smithsonianmag_news](../smithsonianmag_news.md)
+    Smithsonian Magazine - science, history & culture (official RSS returns 403)
+
+#### Solidot
+- [solidot](../solidot.md)
+    奇客的资讯，重要的东西
 
 #### STCN (证券时报网)
 - [stcn_article_list](../stcn_article_list.md)
@@ -133,13 +151,27 @@
 - [stcn_rank](../stcn_rank.md)
     证券时报网热榜
 
-#### Leiphone (雷锋网)
-- [leiphone_newsflash](../leiphone_newsflash.md)
-    雷锋网业界资讯
+#### ThePaper
+- [thepaper_featured](../thepaper_featured.md)
+    澎湃新闻首页头条推荐
 
 #### TMTpost (钛媒体)
 - [tmtpost_new](../tmtpost_new.md)
     钛媒体最新文章
+
+#### VideoCardz
+- [videocardz_news](../videocardz_news.md)
+    VideoCardz - latest GPU & hardware news (no official RSS)
+
+#### WallStreetCN
+- [wallstreetcn_hot](../wallstreetcn_hot.md)
+    华尔街见闻最热文章
+
+#### Yicai (第一财经)
+- [yicai_latest](../yicai_latest.md)
+    第一财经最新文章
+- [yicai_headline](../yicai_headline.md)
+    第一财经头条
 
 #### Zhihu
 - [zhihu_hot](../zhihu_hot.md)
