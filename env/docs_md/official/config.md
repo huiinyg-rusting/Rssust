@@ -16,6 +16,7 @@ timeout = 60
 
 [routes]
 disabled = []
+rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
 ```
 
 ## Fields / 字段说明
@@ -26,6 +27,7 @@ disabled = []
 | `server.max_concurrent` | `int` | 自动检测的 CPU 核心数 | 并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2. |
 | `server.timeout` | `int` | `60` | 上游请求超时（秒）。Timeout for upstream requests, in seconds. |
 | `routes.disabled` | `string[]` | `[]` | 需要禁用的路由名列表。List of route names to disable. |
+| `routes.rate_limit` | `table` | `{}` | 路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors. |
 
 ## Examples / 示例
 

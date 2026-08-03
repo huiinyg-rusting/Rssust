@@ -64,6 +64,7 @@ async fn main() {
         }
     };
     info!("Starting server, listening on {}", addr);
+    rssust::rate_limit::spawn_cleaner();
     loop {
         let (stream, _) = match listener.accept().await {
             Ok(s) => s,

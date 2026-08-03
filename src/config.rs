@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::sync::OnceLock;
@@ -82,6 +83,8 @@ struct ServerConfig {
 #[derive(serde::Deserialize, Clone)]
 struct RoutesConfig {
     disabled: Option<Vec<String>>,
+    /// 路由名 -> 缓存/限流间隔（秒）
+    rate_limit: Option<HashMap<String, u64>>,
 }
 
 pub fn server_port() -> u16 {
@@ -119,4 +122,13 @@ pub fn is_route_disabled(route: &str) -> bool {
         .as_ref()
         .and_then(|r: &RoutesConfig| r.disabled.as_ref())
         .map_or(false, |v| v.iter().any(|d| d == route))
+}
+
+/// 该路由的上游响应缓存间隔（秒）；未配置则返回 None（不缓存）。
+pub fn rate_limit_secs(route: &str) -> Option<u64> {
+    cached()
+        .routes
+        .as_ref()
+        .and_then(|r: &RoutesConfig| r.rate_limit.as_ref())
+        .and_then(|m| m.get(route).copied())
 }

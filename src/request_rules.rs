@@ -1,7 +1,8 @@
-use crate::config::is_route_disabled;
+use crate::config::{is_route_disabled, rate_limit_secs};
 use crate::router::*;
 use anyhow::*;
 use std::collections::HashMap;
+use std::time::Duration;
 use tracing::{debug, warn};
 
 pub enum ShowToUser {
@@ -37,73 +38,80 @@ pub async fn request_rules(
         return Err(anyhow!("404NotFound"));
     }
     debug!("Route {} matched, fetching", url);
-    let result: Result<String, anyhow::Error> = match url {
-        "/apnews_topics" => run!(apnews_topics, parameters),
-        "/bjnews_cat" => run!(bjnews_cat, parameters),
-        "/bilibili_weekly" => run!(bilibili_weekly, parameters),
-        "/bilibili_dynamic" => run!(bilibili_dynamic, parameters),
-        "/bilibili_popular" => run!(bilibili_popular, parameters),
-        "/bilibili_precious" => run!(bilibili_precious, parameters),
-        "/bilibili_series" => run!(bilibili_series, parameters),
-        "/bilibili_collection" => run!(bilibili_collection, parameters),
-        "/bilibili_fav" => run!(bilibili_fav, parameters),
-        "/bilibili_link_news" => run!(bilibili_link_news, parameters),
-        "/bilibili_partion" => run!(bilibili_partion, parameters),
-        "/bilibili_partion_ranking" => run!(bilibili_partion_ranking, parameters),
-        "/bilibili_user_article" => run!(bilibili_user_article, parameters),
-        "/bilibili_user_coin" => run!(bilibili_user_coin, parameters),
-        "/bilibili_user_fav" => run!(bilibili_user_fav, parameters),
-        "/bilibili_user_like" => run!(bilibili_user_like, parameters),
-        "/bilibili_video_page" => run!(bilibili_video_page, parameters),
-        "/bilibili_video_reply" => run!(bilibili_video_reply, parameters),
-        "/bilibili_vsearch" => run!(bilibili_vsearch, parameters),
-        "/douban_book_latest" => run!(douban_book_latest, parameters),
-        "/douban_book_rank" => run!(douban_book_rank, parameters),
-        "/douban_event_hot" => run!(douban_event_hot, parameters),
-        "/douban_movie_classification" => run!(douban_movie_classification, parameters),
-        "/defenseone_news" => run!(defenseone_news, parameters),
-        "/defensenews_news" => run!(defensenews_news, parameters),
-        "/discovermagazine_news" => run!(discovermagazine_news, parameters),
-        "/eastday_24" => run!(eastday_24, parameters),
-        "/eeo_kuaixun" => run!(eeo_kuaixun, parameters),
-        "/carnegieendowment_news" => run!(carnegieendowment_news, parameters),
-        "/netease_today" => run!(netease_today, parameters),
-        "/gelonghui_home" => run!(gelonghui_home, parameters),
-        "/thepaper_featured" => run!(thepaper_featured, parameters),
-        "/leiphone_newsflash" => run!(leiphone_newsflash, parameters),
-        "/nmc_alarm" => run!(nmc_alarm, parameters),
-        "/solidot" => run!(solidot, parameters),
-        "/smithsonianmag_news" => run!(smithsonianmag_news, parameters),
-        "/scientificamerican_news" => run!(scientificamerican_news, parameters),
-        "/stcn_article_list" => run!(stcn_article_list, parameters),
-        "/stcn_kx" => run!(stcn_kx, parameters),
-        "/stcn_rank" => run!(stcn_rank, parameters),
-        "/wallstreetcn_hot" => run!(wallstreetcn_hot, parameters),
-        "/caixin_latest" => run!(caixin_latest, parameters),
-        "/chinanews" => run!(chinanews, parameters),
-        "/cls_hot" => run!(cls_hot, parameters),
-        "/ifeng_news" => run!(ifeng_news, parameters),
-        "/guancha_headline" => run!(guancha_headline, parameters),
-        "/guanhai" => run!(guanhai, parameters),
-        "/ithome_ranking" => run!(ithome_ranking, parameters),
-        "/jianshu_home" => run!(jianshu_home, parameters),
-        "/juejin_pins" => run!(juejin_pins, parameters),
-        "/juejin_trending" => run!(juejin_trending, parameters),
-        "/yicai_latest" => run!(yicai_latest, parameters),
-        "/yicai_headline" => run!(yicai_headline, parameters),
-        "/tmtpost_new" => run!(tmtpost_new, parameters),
-        "/videocardz_news" => run!(videocardz_news, parameters),
-        "/zhihu_hot" => run!(zhihu_hot, parameters),
-        _ => {
-            warn!("Unregistered route: {}", url);
-            return Err(anyhow!("404NotFound"));
+    let ttl = rate_limit_secs(url).map(Duration::from_secs);
+    crate::rate_limit::with_cache_scope(ttl, async {
+        let result: Result<String, anyhow::Error> = match url {
+            "/apnews_topics" => run!(apnews_topics, parameters),
+            "/bjnews_cat" => run!(bjnews_cat, parameters),
+            "/bilibili_weekly" => run!(bilibili_weekly, parameters),
+            "/bilibili_dynamic" => run!(bilibili_dynamic, parameters),
+            "/bilibili_popular" => run!(bilibili_popular, parameters),
+            "/bilibili_precious" => run!(bilibili_precious, parameters),
+            "/bilibili_series" => run!(bilibili_series, parameters),
+            "/bilibili_collection" => run!(bilibili_collection, parameters),
+            "/bilibili_fav" => run!(bilibili_fav, parameters),
+            "/bilibili_link_news" => run!(bilibili_link_news, parameters),
+            "/bilibili_partion" => run!(bilibili_partion, parameters),
+            "/bilibili_partion_ranking" => run!(bilibili_partion_ranking, parameters),
+            "/bilibili_user_article" => run!(bilibili_user_article, parameters),
+            "/bilibili_user_coin" => run!(bilibili_user_coin, parameters),
+            "/bilibili_user_fav" => run!(bilibili_user_fav, parameters),
+            "/bilibili_user_like" => run!(bilibili_user_like, parameters),
+            "/bilibili_video_page" => run!(bilibili_video_page, parameters),
+            "/bilibili_video_reply" => run!(bilibili_video_reply, parameters),
+            "/bilibili_vsearch" => run!(bilibili_vsearch, parameters),
+            "/douban_book_latest" => run!(douban_book_latest, parameters),
+            "/douban_book_rank" => run!(douban_book_rank, parameters),
+            "/douban_event_hot" => run!(douban_event_hot, parameters),
+            "/douban_movie_classification" => run!(douban_movie_classification, parameters),
+            "/defenseone_news" => run!(defenseone_news, parameters),
+            "/defensenews_news" => run!(defensenews_news, parameters),
+            "/discovermagazine_news" => run!(discovermagazine_news, parameters),
+            "/eastday_24" => run!(eastday_24, parameters),
+            "/eeo_kuaixun" => run!(eeo_kuaixun, parameters),
+            "/carnegieendowment_news" => run!(carnegieendowment_news, parameters),
+            "/netease_today" => run!(netease_today, parameters),
+            "/gelonghui_home" => run!(gelonghui_home, parameters),
+            "/thepaper_featured" => run!(thepaper_featured, parameters),
+            "/leiphone_newsflash" => run!(leiphone_newsflash, parameters),
+            "/nmc_alarm" => run!(nmc_alarm, parameters),
+            "/solidot" => run!(solidot, parameters),
+            "/smithsonianmag_news" => run!(smithsonianmag_news, parameters),
+            "/scientificamerican_news" => run!(scientificamerican_news, parameters),
+            "/stcn_article_list" => run!(stcn_article_list, parameters),
+            "/stcn_kx" => run!(stcn_kx, parameters),
+            "/stcn_rank" => run!(stcn_rank, parameters),
+            "/wallstreetcn_hot" => run!(wallstreetcn_hot, parameters),
+            "/caixin_latest" => run!(caixin_latest, parameters),
+            "/chinanews" => run!(chinanews, parameters),
+            "/cls_hot" => run!(cls_hot, parameters),
+            "/ifeng_news" => run!(ifeng_news, parameters),
+            "/guancha_headline" => run!(guancha_headline, parameters),
+            "/guanhai" => run!(guanhai, parameters),
+            "/ithome_ranking" => run!(ithome_ranking, parameters),
+            "/jianshu_home" => run!(jianshu_home, parameters),
+            "/juejin_pins" => run!(juejin_pins, parameters),
+            "/juejin_trending" => run!(juejin_trending, parameters),
+            "/yicai_latest" => run!(yicai_latest, parameters),
+            "/yicai_headline" => run!(yicai_headline, parameters),
+            "/tmtpost_new" => run!(tmtpost_new, parameters),
+            "/videocardz_news" => run!(videocardz_news, parameters),
+            "/zhihu_hot" => run!(zhihu_hot, parameters),
+            _ => {
+                warn!("Unregistered route: {}", url);
+                return Err(anyhow!("404NotFound"));
+            }
+        };
+        match &result {
+            std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
+            std::result::Result::Err(e) => {
+                warn!("Route {} generation failed: {}", url, e);
+                crate::rate_limit::cleanup_on_error();
+            }
         }
-    };
-    match &result {
-        std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
-        std::result::Result::Err(e) => warn!("Route {} generation failed: {}", url, e),
-    }
-    result
+        result
+    })
+    .await
 }
 
 pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) -> ShowToUser {

@@ -5,6 +5,7 @@ pub mod cookies;
 pub mod doc;
 pub mod easyuser;
 pub mod logger;
+pub mod rate_limit;
 pub mod request_rules;
 pub mod router;
 

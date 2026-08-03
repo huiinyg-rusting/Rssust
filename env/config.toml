@@ -5,3 +5,4 @@ timeout = 60
 
 [routes]
 disabled = []
+rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1, "/douban_book_rank" = 3 }

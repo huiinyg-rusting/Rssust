@@ -85,14 +85,32 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
 pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
     debug!("GET {}", url);
     let result = (|| async {
-        Ok(client()
-            .get(url)
-            .send()
-            .await
-            .map_err(Error::from)?
-            .text()
-            .await
-            .map_err(Error::from)?)
+        if let Some(ttl) = crate::rate_limit::current_ttl() {
+            let key = crate::rate_limit::make_key("GET", url, &[]);
+            if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
+                debug!("GET cache hit: {}", url);
+                return Ok(cached);
+            }
+            let body = client()
+                .get(url)
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?;
+            crate::rate_limit::store(&key, &body);
+            Ok(body)
+        } else {
+            Ok(client()
+                .get(url)
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?)
+        }
     })()
     .await;
     if let Err(ref e) = result {
@@ -105,11 +123,21 @@ pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
 ///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
 ///The feature form is required.
 ///必须使用 form 功能
-pub async fn fetch_reqwest_post(url: &str, body: String) -> Result<String, Error> {
+pub async fn fetch_reqwest_post(
+    url: &str,
+    body: String,
+    header: Option<reqwest::header::HeaderMap>,
+) -> Result<String, Error> {
     debug!("POST {}", url);
+    let header_noop = if let Some(t) = header {
+        t
+    } else {
+        reqwest::header::HeaderMap::new()
+    };
     let result = (|| async {
         Ok(client()
             .post(url)
+            .headers(header_noop)
             .body(body)
             .send()
             .await
@@ -152,17 +180,38 @@ pub async fn fetch_reqwest_get_with_headers(
 ) -> Result<String, Error> {
     debug!("GET {} (with headers)", url);
     let result = (|| async {
-        let mut req = client().get(url);
-        for &(key, value) in headers {
-            req = req.header(key, value);
+        if let Some(ttl) = crate::rate_limit::current_ttl() {
+            let key = crate::rate_limit::make_key("GET", url, headers);
+            if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
+                debug!("GET cache hit: {}", url);
+                return Ok(cached);
+            }
+            let mut req = client().get(url);
+            for &(key, value) in headers {
+                req = req.header(key, value);
+            }
+            let body = req
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?;
+            crate::rate_limit::store(&key, &body);
+            Ok(body)
+        } else {
+            let mut req = client().get(url);
+            for &(key, value) in headers {
+                req = req.header(key, value);
+            }
+            Ok(req
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?)
         }
-        Ok(req
-            .send()
-            .await
-            .map_err(Error::from)?
-            .text()
-            .await
-            .map_err(Error::from)?)
     })()
     .await;
     if let Err(ref e) = result {
