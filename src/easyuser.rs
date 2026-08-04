@@ -54,6 +54,16 @@ fn client() -> &'static reqwest::Client {
     })
 }
 
+///构建带 cookie jar 的独立客户端（用于需要保持会话的路由，如 12306）。
+///与共享 client() 相同超时配置，构建逻辑集中在 easyuser，路由不应自行 new Client。
+pub fn client_with_cookie() -> Result<reqwest::Client, Error> {
+    reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(60))
+        .cookie_store(true)
+        .build()
+        .map_err(|e| anyhow!("failed to build cookie client: {}", e))
+}
+
 ///这个函数序列化从key1=1&key2=2 到{"key1": "2", "key2": "2"}的Hashmap;
 pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
     let mut params = HashMap::new();
