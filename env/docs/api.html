@@ -1,0 +1,459 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>api</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css"">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css"">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css"">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html"" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
+<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
+<hr />
+<h4 id="ap-news"><a class="header" href="#ap-news">AP News</a></h4>
+<ul>
+<li><a href="apnews_topics.html">apnews_topics</a>
+AP News headlines by topic</li>
+</ul>
+<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
+<ul>
+<li><a href="bilibili_collection.html">bilibili_collection</a>
+B站合集视频列表</li>
+<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
+Bilibili up主的动态</li>
+<li><a href="bilibili_fav.html">bilibili_fav</a>
+B站非默认收藏夹</li>
+<li><a href="bilibili_link_news.html">bilibili_link_news</a>
+B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_partion.html">bilibili_partion</a>
+B站分区视频</li>
+<li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
+B站分区视频排行榜</li>
+<li><a href="bilibili_popular.html">bilibili_popular</a>
+B站热门视频</li>
+<li><a href="bilibili_precious.html">bilibili_precious</a>
+B站入站必刷宝藏视频</li>
+<li><a href="bilibili_series.html">bilibili_series</a>
+B站系列视频列表</li>
+<li><a href="bilibili_user_article.html">bilibili_user_article</a>
+B站UP主图文</li>
+<li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
+B站UP主投币视频</li>
+<li><a href="bilibili_user_fav.html">bilibili_user_fav</a>
+B站UP主默认收藏夹</li>
+<li><a href="bilibili_user_like.html">bilibili_user_like</a>
+B站UP主点赞视频</li>
+<li><a href="bilibili_video_page.html">bilibili_video_page</a>
+B站视频选集列表</li>
+<li><a href="bilibili_video_reply.html">bilibili_video_reply</a>
+B站视频评论</li>
+<li><a href="bilibili_vsearch.html">bilibili_vsearch</a>
+B站视频搜索</li>
+<li><a href="bilibili_weekly.html">bilibili_weekly</a>
+Bilibili最新一期的每周精选</li>
+</ul>
+<h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
+<ul>
+<li><a href="bjnews_cat.html">bjnews_cat</a>
+新京报分类文章</li>
+</ul>
+<h4 id="cailianpress-财联社"><a class="header" href="#cailianpress-财联社">Cailianpress (财联社)</a></h4>
+<ul>
+<li><a href="cls_hot.html">cls_hot</a>
+财联社热门文章排行榜</li>
+</ul>
+<h4 id="caixin-财新网"><a class="header" href="#caixin-财新网">Caixin (财新网)</a></h4>
+<ul>
+<li><a href="caixin_latest.html">caixin_latest</a>
+财新网最新文章</li>
+</ul>
+<h4 id="carnegie-endowment"><a class="header" href="#carnegie-endowment">Carnegie Endowment</a></h4>
+<ul>
+<li><a href="carnegieendowment_news.html">carnegieendowment_news</a>
+Carnegie Endowment for International Peace - international affairs think tank publications (no official RSS)</li>
+</ul>
+<h4 id="cenc-中国地震台网中心"><a class="header" href="#cenc-中国地震台网中心">CENC (中国地震台网中心)</a></h4>
+<ul>
+<li><a href="cenc_earthquake.html">cenc_earthquake</a>
+中国地震台网中心最新地震速报</li>
+</ul>
+<h4 id="chinanews-中国新闻网"><a class="header" href="#chinanews-中国新闻网">Chinanews (中国新闻网)</a></h4>
+<ul>
+<li><a href="chinanews.html">chinanews</a>
+中国新闻网滚动新闻</li>
+</ul>
+<h4 id="defense-news"><a class="header" href="#defense-news">Defense News</a></h4>
+<ul>
+<li><a href="defensenews_news.html">defensenews_news</a>
+Defense News - global defense &amp; military news (no official RSS)</li>
+</ul>
+<h4 id="defense-one"><a class="header" href="#defense-one">Defense One</a></h4>
+<ul>
+<li><a href="defenseone_news.html">defenseone_news</a>
+Defense One - defense &amp; national security news (no official RSS)</li>
+</ul>
+<h4 id="discover-magazine"><a class="header" href="#discover-magazine">Discover Magazine</a></h4>
+<ul>
+<li><a href="discovermagazine_news.html">discovermagazine_news</a>
+Discover Magazine - science news (no official RSS)</li>
+</ul>
+<h4 id="douban"><a class="header" href="#douban">Douban</a></h4>
+<ul>
+<li><a href="douban_book_latest.html">douban_book_latest</a>
+豆瓣新书速递</li>
+<li><a href="douban_book_rank.html">douban_book_rank</a>
+豆瓣热门图书排行榜</li>
+<li><a href="douban_event_hot.html">douban_event_hot</a>
+豆瓣同城热门活动</li>
+<li><a href="douban_movie_classification.html">douban_movie_classification</a>
+豆瓣电影分类</li>
+</ul>
+<h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
+<ul>
+<li><a href="eastday_24.html">eastday_24</a>
+东方资讯24小时热闻</li>
+</ul>
+<h4 id="eeo-经济观察报"><a class="header" href="#eeo-经济观察报">EEO (经济观察报)</a></h4>
+<ul>
+<li><a href="eeo_kuaixun.html">eeo_kuaixun</a>
+经济观察报快讯</li>
+</ul>
+<h4 id="gelonghui-格隆汇"><a class="header" href="#gelonghui-格隆汇">Gelonghui (格隆汇)</a></h4>
+<ul>
+<li><a href="gelonghui_home.html">gelonghui_home</a>
+格隆汇首页资讯</li>
+</ul>
+<h4 id="github"><a class="header" href="#github">GitHub</a></h4>
+<ul>
+<li><a href="github_commits.html">github_commits</a>
+GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
+<li><a href="github_followers.html">github_followers</a>
+GitHub user followers query (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue_comments.html">github_issue_comments</a>
+GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
+<li><a href="github_stars.html">github_stars</a>
+GitHub single repository star count (requires GITHUB_TOKEN)</li>
+</ul>
+<h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
+<ul>
+<li><a href="guancha_headline.html">guancha_headline</a>
+观察者网头条</li>
+</ul>
+<h4 id="guanhai-观海新闻"><a class="header" href="#guanhai-观海新闻">Guanhai (观海新闻)</a></h4>
+<ul>
+<li><a href="guanhai.html">guanhai</a>
+观海新闻首页推荐</li>
+</ul>
+<h4 id="guokr-果壳网"><a class="header" href="#guokr-果壳网">Guokr (果壳网)</a></h4>
+<ul>
+<li><a href="guokr_scientific.html">guokr_scientific</a>
+果壳网科学人文章</li>
+</ul>
+<h4 id="ifeng-凤凰网"><a class="header" href="#ifeng-凤凰网">iFeng (凤凰网)</a></h4>
+<ul>
+<li><a href="ifeng_news.html">ifeng_news</a>
+凤凰网资讯</li>
+</ul>
+<h4 id="it之家"><a class="header" href="#it之家">IT之家</a></h4>
+<ul>
+<li><a href="ithome_ranking.html">ithome_ranking</a>
+IT之家热榜</li>
+</ul>
+<h4 id="jianshu-简书"><a class="header" href="#jianshu-简书">Jianshu (简书)</a></h4>
+<ul>
+<li><a href="jianshu_home.html">jianshu_home</a>
+简书首页</li>
+</ul>
+<h4 id="leiphone-雷锋网"><a class="header" href="#leiphone-雷锋网">Leiphone (雷锋网)</a></h4>
+<ul>
+<li><a href="leiphone_newsflash.html">leiphone_newsflash</a>
+雷锋网业界资讯</li>
+</ul>
+<h4 id="mit-technology-review-麻省理工科技评论"><a class="header" href="#mit-technology-review-麻省理工科技评论">MIT Technology Review (麻省理工科技评论)</a></h4>
+<ul>
+<li><a href="mittrchina.html">mittrchina</a>
+MIT Technology Review 麻省理工科技评论中文站</li>
+</ul>
+<h4 id="netease"><a class="header" href="#netease">NetEase</a></h4>
+<ul>
+<li><a href="netease_today.html">netease_today</a>
+网易新闻今日关注</li>
+</ul>
+<h4 id="rail12306-中国铁路12306"><a class="header" href="#rail12306-中国铁路12306">Rail12306 (中国铁路12306)</a></h4>
+<ul>
+<li><a href="rail12306_news.html">rail12306_news</a>
+12306最新动态公告</li>
+<li><a href="rail12306_ticket.html">rail12306_ticket</a>
+12306火车票余票查询</li>
+</ul>
+<h4 id="scientific-american"><a class="header" href="#scientific-american">Scientific American</a></h4>
+<ul>
+<li><a href="scientificamerican_news.html">scientificamerican_news</a>
+Scientific American - science &amp; technology news (no official RSS)</li>
+</ul>
+<h4 id="smithsonian-magazine"><a class="header" href="#smithsonian-magazine">Smithsonian Magazine</a></h4>
+<ul>
+<li><a href="smithsonianmag_news.html">smithsonianmag_news</a>
+Smithsonian Magazine - science, history &amp; culture (official RSS returns 403)</li>
+</ul>
+<h4 id="solidot"><a class="header" href="#solidot">Solidot</a></h4>
+<ul>
+<li><a href="solidot.html">solidot</a>
+奇客的资讯，重要的东西</li>
+</ul>
+<h4 id="stcn-证券时报网"><a class="header" href="#stcn-证券时报网">STCN (证券时报网)</a></h4>
+<ul>
+<li><a href="stcn_article_list.html">stcn_article_list</a>
+证券时报网文章列表</li>
+<li><a href="stcn_kx.html">stcn_kx</a>
+证券时报网快讯</li>
+<li><a href="stcn_rank.html">stcn_rank</a>
+证券时报网热榜</li>
+</ul>
+<h4 id="thepaper"><a class="header" href="#thepaper">ThePaper</a></h4>
+<ul>
+<li><a href="thepaper_featured.html">thepaper_featured</a>
+澎湃新闻首页头条推荐</li>
+</ul>
+<h4 id="tmtpost-钛媒体"><a class="header" href="#tmtpost-钛媒体">TMTpost (钛媒体)</a></h4>
+<ul>
+<li><a href="tmtpost_new.html">tmtpost_new</a>
+钛媒体最新文章</li>
+</ul>
+<h4 id="videocardz"><a class="header" href="#videocardz">VideoCardz</a></h4>
+<ul>
+<li><a href="videocardz_news.html">videocardz_news</a>
+VideoCardz - latest GPU &amp; hardware news (no official RSS)</li>
+</ul>
+<h4 id="wallstreetcn"><a class="header" href="#wallstreetcn">WallStreetCN</a></h4>
+<ul>
+<li><a href="wallstreetcn_hot.html">wallstreetcn_hot</a>
+华尔街见闻最热文章</li>
+</ul>
+<h4 id="yicai-第一财经"><a class="header" href="#yicai-第一财经">Yicai (第一财经)</a></h4>
+<ul>
+<li><a href="yicai_latest.html">yicai_latest</a>
+第一财经最新文章</li>
+<li><a href="yicai_headline.html">yicai_headline</a>
+第一财经头条</li>
+</ul>
+<h4 id="zhihu"><a class="header" href="#zhihu">Zhihu</a></h4>
+<ul>
+<li><a href="zhihu_hot.html">zhihu_hot</a>
+知乎热榜</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

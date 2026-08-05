@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>new_router_en</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css"">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css"">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css"">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html"" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="中文"><a class="header" href="#中文"><a href="new_router_cn.html">中文</a></a></h3>
+<h1 id="router-development-guide"><a class="header" href="#router-development-guide">Router Development Guide</a></h1>
+<p>This document is for both humans and AI to read.</p>
+<p>Before you start developing, you need:</p>
+<ul>
+<li>A standard Cargo environment</li>
+<li>Git version control system</li>
+<li>An editor</li>
+<li><strong>Basic</strong> Rust knowledge, preferably through the official book, and familiarity with frequently used methods in the std library, such as various error handling methods for recoverable errors, etc.</li>
+<li>RSS knowledge from: <a href="https://www.rssboard.org/rss-specification">Official RSS 2.0.11 English</a> or <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">Blog Garden - Translated by Xiao Y RSS 2.0.10 Chinese</a></li>
+<li>Knowledge of RSS Crates, understanding how to build an RSS feed. <a href="https://docs.rs/rss/latest/rss/">Official English Documentation</a>
+<strong>Especially</strong> <a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a> and <a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>Since different upstream APIs have different formats, you need to learn different methods. For example, if your upstream API is in JSON format, you likely only need to learn the <code>.pointer()</code> and <code>.get()</code> methods from the serde_json Crate. If you need to directly process HTML and DOM, you need the methods recommended in the <a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a> documentation, and be careful to avoid causing panic!!!</li>
+</ul>
+<p>You can create your own .rs file under <code>/src/router</code>, but there are some requirements:</p>
+<ol>
+<li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
+<li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
+<li>The filename part (excluding the .rs extension) becomes your router name</li>
+<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
+<li>Each router can only correspond to one function</li>
+</ol>
+<p>Before developing, it’s best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+<span class="boring">}</span></code></pre></pre>
+<p>The above libraries <strong>must be imported</strong>. Import the following as needed:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;  // for JSON
+use scraper::*;  // for HTML
+<span class="boring">}</span></code></pre></pre>
+<h3 id="the-main-function-signature-for-each-router-should-look-like-this"><a class="header" href="#the-main-function-signature-for-each-router-should-look-like-this">The main function signature for each router should look like this:</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+<span class="boring">}</span></code></pre></pre>
+<p>The function signature and return type cannot be changed! (If you don’t use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won’t warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
+<p>Note the <code>async</code> keyword: since the fetching helpers (<code>fetch_reqwest_get</code>, etc.) are async, <code>get</code> itself must be <code>async</code> so it can <code>.await</code> them.</p>
+<h3 id="common-async-errors-the-pitfalls-youll-actually-hit"><a class="header" href="#common-async-errors-the-pitfalls-youll-actually-hit">Common async errors (the pitfalls you’ll actually hit)</a></h3>
+<p>These are the compile errors you’re most likely to see in a new router, listed by error message. Find yours and fix it.</p>
+<p><strong>1. <code>await is only allowed inside async functions and blocks</code> (E0728)</strong></p>
+<p>You wrote <code>.await</code> in a function that is not <code>async</code>. This most often happens when you extract the “fetch detail page” logic into a plain helper function:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: helper is not async but tries to await
+fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?   // E0728
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Make it <code>async fn</code> — and <code>.await</code> the call site too:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?
+}
+let detail = fetch_detail(&amp;url).await?;
+<span class="boring">}</span></code></pre></pre>
+<p><strong>2. <code>Result&lt;String, Error&gt; is not a future</code> (E0277)</strong></p>
+<p>You forgot <code>.await</code>. <code>fetch_reqwest_get(url)</code> does not return a <code>String</code> — it returns a Future that <em>will</em> become a <code>String</code> later. Only <code>.await</code> turns it into one:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: you got a Future, not a String
+let html = fetch_reqwest_get(&amp;url)?;
+// right: add .await to get the String
+let html = fetch_reqwest_get(&amp;url).await?;
+<span class="boring">}</span></code></pre></pre>
+<p>Audit every <code>fetch_reqwest_get</code> / <code>fetch_reqwest_post</code> / <code>fetch_reqwest_get_with_headers</code> call in your file and make sure each one has <code>.await</code>.</p>
+<p><strong>3. <code>future cannot be sent between threads safely</code> (E0277, scraper only)</strong></p>
+<p>You only hit this when parsing HTML with <code>scraper</code>. <code>Html</code>, <code>Selector</code>, and <code>ElementRef</code> are <strong>not <code>Send</code></strong>, so they can’t survive across an <code>.await</code>. Typical case: you parse a list into <code>doc</code>, then loop over links fetching detail pages:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: doc (an Html) is still alive across the .await
+let doc = Html::parse_document(&amp;html);
+for link in &amp;links {
+    let detail_html = fetch_reqwest_get(link).await?;   // error: doc is still alive here
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Fix it with a <strong>two-phase “parse first, fetch later”</strong> pattern. Step one: fully parse the list page, collecting every field into <code>String</code>/<code>Vec&lt;String&gt;</code> inside a <code>{ }</code> block (so <code>doc</code> drops at the block end). Step two: loop and fetch — now you only hold plain data:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// step 1: parse the list, collect only Strings. doc drops at the end of the block
+let items: Vec&lt;(String, String)&gt; = {
+    let doc = Html::parse_document(&amp;html);
+    let sel = Selector::parse("a.title").unwrap();
+    doc.select(&amp;sel).map(|e| {
+        let title = e.text().collect::&lt;String&gt;().trim().to_string();
+        let href = e.value().attr("href").unwrap_or("").to_string();
+        (title, href)
+    }).collect()
+};
+// step 2: no scraper types around, feel free to await
+for (title, href) in &amp;items {
+    let detail_html = fetch_reqwest_get(href).await?;
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>4. Need scraper for the detail page too? Same rule: parse, then let it go.</strong></p>
+<p>If you fetch a detail page and then need to parse it (or even fetch the next page), keep the same principle: drop <code>detail_doc</code> as soon as you’re done with it. The idiomatic way is to parse inside <code>if let Ok(...) = fetch(...).await { ... }</code> — the doc is created, used, and released inside that block, and never referenced outside it.</p>
+<blockquote>
+<p>TL;DR: <strong>whenever you <code>.await</code>, don’t hold <code>Html</code>/<code>Selector</code>/<code>ElementRef</code></strong>. If you see <code>not Send</code>, remember this.</p>
+<p>Reference implementations: <code>chinanews</code>, <code>stcn_article_list</code>, <code>bjnews_cat</code>, <code>eastday_24</code>, <code>solidot</code>, <code>guancha_headline</code>, <code>guanhai</code>, <code>ithome_ranking</code>, <code>jianshu_home</code> follow this pattern.</p>
+</blockquote>
+<h3 id="a-complete-minimal-router-json-endpoint-version"><a class="header" href="#a-complete-minimal-router-json-endpoint-version">A complete minimal router (JSON endpoint version)</a></h3>
+<p>Here’s a full example you can copy. It fetches a JSON endpoint and turns it into RSS. Save it as <code>src/router/my_test.rs</code> and it compiles as-is:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use crate::easyuser::*;          // fetching helpers, date utils, etc.
+use anyhow::{Error, Result};
+use rss::*;                       // RSS generation
+use serde_json::Value;            // JSON parsing
+use std::collections::HashMap;
+
+pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+    // 1. read user params (optional, with a default)
+    let id = para.get("id").cloned().unwrap_or_default();
+
+    // 2. fetch upstream. Note: fetch is async, add .await
+    let html = fetch_reqwest_get(&amp;format!("https://api.example.com/list?id={}", id)).await?;
+
+    // 3. parse JSON
+    let json: Value = serde_json::from_str(&amp;html)?;
+    let list = json["data"]["list"].as_array().ok_or_else(|| anyhow!("no list field"))?;
+
+    // 4. convert each entry into an RSS Item
+    let mut item_vec = Vec::new();
+    for item in list {
+        let rss_item = ItemBuilder::default()
+            .title(Some(item["title"].as_str().unwrap_or("").to_string()))
+            .link(Some(item["url"].as_str().unwrap_or("").to_string()))
+            .description(item["desc"].as_str().unwrap_or(""))
+            .pub_date(now())           // use now() if you can't parse the date yet
+            .build();
+        item_vec.push(rss_item);
+    }
+
+    // 5. assemble the channel
+    let channel = ChannelBuilder::default()
+        .title("My test channel")
+        .link("https://api.example.com")
+        .description("example")
+        .items(item_vec)
+        .build();
+    Ok(channel.to_string())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>After writing it, follow the two registration steps below, run <code>cargo build</code>, start the server and visit <code>/my_test</code> to see your RSS. If your upstream serves HTML instead of JSON, replace step 3 with <code>scraper</code> parsing (watch out for errors 3 and 4 above).</p>
+<p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="easyuser_cn.html">easyuser_cn.html</a>.</p>
+<p>The specific program logic is up to you to write.</p>
+<h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
+<p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
+<p>Then in <code>src/request_rules.rs</code>, add a match arm to the <code>match url</code> dispatcher, following the pattern of other entries:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>"/your_router_name" =&gt; run!(your_router_name, parameters),
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>run!</code> macro expands to <code>your_router_name::get(parameters.clone()).await</code>, so don’t change its shape.</p>
+<blockquote>
+<p><strong>Note</strong>: <code>parameters</code> in the <code>run!</code> macro is the argument name of <code>request_rules</code>. Due to macro hygiene it can’t refer to the outer variable, so it must be passed explicitly.</p>
+</blockquote>
+<h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
+<p>I’m very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>I’ve also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
+<h3 id="cookie-management"><a class="header" href="#cookie-management">Cookie Management</a></h3>
+<p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
+<p>Example format:</p>
+<pre><code class="language-json">{
+  "name": "session_id",
+  "value": "abc123",
+  "domain": ".example.com",
+  "path": "/",
+  "secure": true,
+  "httpOnly": true,
+  "sameSite": "Lax",
+  "expirationDate": 1893456000
+}
+</code></pre>
+<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
+<p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
+<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing!</a></h3>
+<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I’ll introduce them anyway:</p>
+<ol>
+<li><strong>Router-name:</strong> Fill in the router name</li>
+<li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
+<li><strong>Cookies?:</strong> Two cases: <code>no</code> or <code>yes</code>, with optional remarks after</li>
+<li><strong>Author:</strong> Submitter, write your GitHub username</li>
+<li><strong>Introduction:</strong> Write a brief introduction (note: if the platform is mainly in a certain language, use that language)</li>
+<li><strong>Address:</strong> Fill in <code>rssust://router_name</code></li>
+<li><strong>Example:</strong> Optional; if included, use a hyperlink: <code>[fill Address same as above](/router_name)</code></li>
+<li><strong>Parameter:</strong> This means HTTP GET parameters that might be used. You can fill in <code>no</code>, leave it empty, or start a new line with the following format:</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: Embedded videos
+2. Continue similarly for other parameters
+</code></pre>
+<p>The parameter name follows the number, wrapped with <code>** **</code> for emphasis.</p>
+<p><strong>Type of parameter:</strong> Fill in the type, define it yourself
+<strong>Default value:</strong> Default value, must conform to the <code>Type of parameter</code>
+<strong>Meaning:</strong> The meaning of the parameter</p>
+<h3 id="final-step-submit"><a class="header" href="#final-step-submit">Final Step: Submit!</a></h3>
+<p>Before submitting with git, run <code>cargo fmt</code> first. This helps others better understand your code.</p>
+<p>You need to submit:</p>
+<ol>
+<li><code>/src/router/your_router_name.rs</code></li>
+<li><code>env/docs_md/router_name.md</code> (generally please do not submit your <code>router_name.html</code> file)</li>
+<li><code>/src/router/mod.rs</code> and <code>src/request_rules.rs</code></li>
+</ol>
+<h4 id="this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code"><a class="header" href="#this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code">This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!</a></h4>
+<p>If you are insterested in pogram explanation,please turn to <a href="pogram_explanation_cn.html">pogram_explanation_cn</a>,but now it only has Chinese.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="new_router_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="pogram_explanation_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="new_router_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="pogram_explanation_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

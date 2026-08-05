@@ -99,6 +99,16 @@
 - [gelonghui_home](../gelonghui_home.md)
     格隆汇首页资讯
 
+#### GitHub
+- [github_commits](../github_commits.md)
+    GitHub repository recent commits on default branch (requires GITHUB_TOKEN)
+- [github_followers](../github_followers.md)
+    GitHub user followers query (requires GITHUB_TOKEN)
+- [github_issue_comments](../github_issue_comments.md)
+    GitHub recent Issue/PR comments (requires GITHUB_TOKEN)
+- [github_stars](../github_stars.md)
+    GitHub single repository star count (requires GITHUB_TOKEN)
+
 #### Guancha (观察者网)
 - [guancha_headline](../guancha_headline.md)
     观察者网头条

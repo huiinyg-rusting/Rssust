@@ -1,0 +1,2371 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title></title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="the-api-provided-by-this-server"><a class="header" href="#the-api-provided-by-this-server">The API provided by this server</a></h3>
+<h3 id="本服务器所提供的api"><a class="header" href="#本服务器所提供的api">本服务器所提供的API</a></h3>
+<hr />
+<h4 id="ap-news"><a class="header" href="#ap-news">AP News</a></h4>
+<ul>
+<li><a href="apnews_topics.html">apnews_topics</a>
+AP News headlines by topic</li>
+</ul>
+<h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
+<ul>
+<li><a href="bilibili_collection.html">bilibili_collection</a>
+B站合集视频列表</li>
+<li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
+Bilibili up主的动态</li>
+<li><a href="bilibili_fav.html">bilibili_fav</a>
+B站非默认收藏夹</li>
+<li><a href="bilibili_link_news.html">bilibili_link_news</a>
+B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_partion.html">bilibili_partion</a>
+B站分区视频</li>
+<li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
+B站分区视频排行榜</li>
+<li><a href="bilibili_popular.html">bilibili_popular</a>
+B站热门视频</li>
+<li><a href="bilibili_precious.html">bilibili_precious</a>
+B站入站必刷宝藏视频</li>
+<li><a href="bilibili_series.html">bilibili_series</a>
+B站系列视频列表</li>
+<li><a href="bilibili_user_article.html">bilibili_user_article</a>
+B站UP主图文</li>
+<li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
+B站UP主投币视频</li>
+<li><a href="bilibili_user_fav.html">bilibili_user_fav</a>
+B站UP主默认收藏夹</li>
+<li><a href="bilibili_user_like.html">bilibili_user_like</a>
+B站UP主点赞视频</li>
+<li><a href="bilibili_video_page.html">bilibili_video_page</a>
+B站视频选集列表</li>
+<li><a href="bilibili_video_reply.html">bilibili_video_reply</a>
+B站视频评论</li>
+<li><a href="bilibili_vsearch.html">bilibili_vsearch</a>
+B站视频搜索</li>
+<li><a href="bilibili_weekly.html">bilibili_weekly</a>
+Bilibili最新一期的每周精选</li>
+</ul>
+<h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
+<ul>
+<li><a href="bjnews_cat.html">bjnews_cat</a>
+新京报分类文章</li>
+</ul>
+<h4 id="cailianpress-财联社"><a class="header" href="#cailianpress-财联社">Cailianpress (财联社)</a></h4>
+<ul>
+<li><a href="cls_hot.html">cls_hot</a>
+财联社热门文章排行榜</li>
+</ul>
+<h4 id="caixin-财新网"><a class="header" href="#caixin-财新网">Caixin (财新网)</a></h4>
+<ul>
+<li><a href="caixin_latest.html">caixin_latest</a>
+财新网最新文章</li>
+</ul>
+<h4 id="carnegie-endowment"><a class="header" href="#carnegie-endowment">Carnegie Endowment</a></h4>
+<ul>
+<li><a href="carnegieendowment_news.html">carnegieendowment_news</a>
+Carnegie Endowment for International Peace - international affairs think tank publications (no official RSS)</li>
+</ul>
+<h4 id="cenc-中国地震台网中心"><a class="header" href="#cenc-中国地震台网中心">CENC (中国地震台网中心)</a></h4>
+<ul>
+<li><a href="cenc_earthquake.html">cenc_earthquake</a>
+中国地震台网中心最新地震速报</li>
+</ul>
+<h4 id="chinanews-中国新闻网"><a class="header" href="#chinanews-中国新闻网">Chinanews (中国新闻网)</a></h4>
+<ul>
+<li><a href="chinanews.html">chinanews</a>
+中国新闻网滚动新闻</li>
+</ul>
+<h4 id="defense-news"><a class="header" href="#defense-news">Defense News</a></h4>
+<ul>
+<li><a href="defensenews_news.html">defensenews_news</a>
+Defense News - global defense &amp; military news (no official RSS)</li>
+</ul>
+<h4 id="defense-one"><a class="header" href="#defense-one">Defense One</a></h4>
+<ul>
+<li><a href="defenseone_news.html">defenseone_news</a>
+Defense One - defense &amp; national security news (no official RSS)</li>
+</ul>
+<h4 id="discover-magazine"><a class="header" href="#discover-magazine">Discover Magazine</a></h4>
+<ul>
+<li><a href="discovermagazine_news.html">discovermagazine_news</a>
+Discover Magazine - science news (no official RSS)</li>
+</ul>
+<h4 id="douban"><a class="header" href="#douban">Douban</a></h4>
+<ul>
+<li><a href="douban_book_latest.html">douban_book_latest</a>
+豆瓣新书速递</li>
+<li><a href="douban_book_rank.html">douban_book_rank</a>
+豆瓣热门图书排行榜</li>
+<li><a href="douban_event_hot.html">douban_event_hot</a>
+豆瓣同城热门活动</li>
+<li><a href="douban_movie_classification.html">douban_movie_classification</a>
+豆瓣电影分类</li>
+</ul>
+<h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
+<ul>
+<li><a href="eastday_24.html">eastday_24</a>
+东方资讯24小时热闻</li>
+</ul>
+<h4 id="eeo-经济观察报"><a class="header" href="#eeo-经济观察报">EEO (经济观察报)</a></h4>
+<ul>
+<li><a href="eeo_kuaixun.html">eeo_kuaixun</a>
+经济观察报快讯</li>
+</ul>
+<h4 id="gelonghui-格隆汇"><a class="header" href="#gelonghui-格隆汇">Gelonghui (格隆汇)</a></h4>
+<ul>
+<li><a href="gelonghui_home.html">gelonghui_home</a>
+格隆汇首页资讯</li>
+</ul>
+<h4 id="github"><a class="header" href="#github">GitHub</a></h4>
+<ul>
+<li><a href="github_commits.html">github_commits</a>
+GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
+<li><a href="github_followers.html">github_followers</a>
+GitHub user followers query (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue_comments.html">github_issue_comments</a>
+GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
+<li><a href="github_stars.html">github_stars</a>
+GitHub single repository star count (requires GITHUB_TOKEN)</li>
+</ul>
+<h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
+<ul>
+<li><a href="guancha_headline.html">guancha_headline</a>
+观察者网头条</li>
+</ul>
+<h4 id="guanhai-观海新闻"><a class="header" href="#guanhai-观海新闻">Guanhai (观海新闻)</a></h4>
+<ul>
+<li><a href="guanhai.html">guanhai</a>
+观海新闻首页推荐</li>
+</ul>
+<h4 id="guokr-果壳网"><a class="header" href="#guokr-果壳网">Guokr (果壳网)</a></h4>
+<ul>
+<li><a href="guokr_scientific.html">guokr_scientific</a>
+果壳网科学人文章</li>
+</ul>
+<h4 id="ifeng-凤凰网"><a class="header" href="#ifeng-凤凰网">iFeng (凤凰网)</a></h4>
+<ul>
+<li><a href="ifeng_news.html">ifeng_news</a>
+凤凰网资讯</li>
+</ul>
+<h4 id="it之家"><a class="header" href="#it之家">IT之家</a></h4>
+<ul>
+<li><a href="ithome_ranking.html">ithome_ranking</a>
+IT之家热榜</li>
+</ul>
+<h4 id="jianshu-简书"><a class="header" href="#jianshu-简书">Jianshu (简书)</a></h4>
+<ul>
+<li><a href="jianshu_home.html">jianshu_home</a>
+简书首页</li>
+</ul>
+<h4 id="leiphone-雷锋网"><a class="header" href="#leiphone-雷锋网">Leiphone (雷锋网)</a></h4>
+<ul>
+<li><a href="leiphone_newsflash.html">leiphone_newsflash</a>
+雷锋网业界资讯</li>
+</ul>
+<h4 id="mit-technology-review-麻省理工科技评论"><a class="header" href="#mit-technology-review-麻省理工科技评论">MIT Technology Review (麻省理工科技评论)</a></h4>
+<ul>
+<li><a href="mittrchina.html">mittrchina</a>
+MIT Technology Review 麻省理工科技评论中文站</li>
+</ul>
+<h4 id="netease"><a class="header" href="#netease">NetEase</a></h4>
+<ul>
+<li><a href="netease_today.html">netease_today</a>
+网易新闻今日关注</li>
+</ul>
+<h4 id="rail12306-中国铁路12306"><a class="header" href="#rail12306-中国铁路12306">Rail12306 (中国铁路12306)</a></h4>
+<ul>
+<li><a href="rail12306_news.html">rail12306_news</a>
+12306最新动态公告</li>
+<li><a href="rail12306_ticket.html">rail12306_ticket</a>
+12306火车票余票查询</li>
+</ul>
+<h4 id="scientific-american"><a class="header" href="#scientific-american">Scientific American</a></h4>
+<ul>
+<li><a href="scientificamerican_news.html">scientificamerican_news</a>
+Scientific American - science &amp; technology news (no official RSS)</li>
+</ul>
+<h4 id="smithsonian-magazine"><a class="header" href="#smithsonian-magazine">Smithsonian Magazine</a></h4>
+<ul>
+<li><a href="smithsonianmag_news.html">smithsonianmag_news</a>
+Smithsonian Magazine - science, history &amp; culture (official RSS returns 403)</li>
+</ul>
+<h4 id="solidot"><a class="header" href="#solidot">Solidot</a></h4>
+<ul>
+<li><a href="solidot.html">solidot</a>
+奇客的资讯，重要的东西</li>
+</ul>
+<h4 id="stcn-证券时报网"><a class="header" href="#stcn-证券时报网">STCN (证券时报网)</a></h4>
+<ul>
+<li><a href="stcn_article_list.html">stcn_article_list</a>
+证券时报网文章列表</li>
+<li><a href="stcn_kx.html">stcn_kx</a>
+证券时报网快讯</li>
+<li><a href="stcn_rank.html">stcn_rank</a>
+证券时报网热榜</li>
+</ul>
+<h4 id="thepaper"><a class="header" href="#thepaper">ThePaper</a></h4>
+<ul>
+<li><a href="thepaper_featured.html">thepaper_featured</a>
+澎湃新闻首页头条推荐</li>
+</ul>
+<h4 id="tmtpost-钛媒体"><a class="header" href="#tmtpost-钛媒体">TMTpost (钛媒体)</a></h4>
+<ul>
+<li><a href="tmtpost_new.html">tmtpost_new</a>
+钛媒体最新文章</li>
+</ul>
+<h4 id="videocardz"><a class="header" href="#videocardz">VideoCardz</a></h4>
+<ul>
+<li><a href="videocardz_news.html">videocardz_news</a>
+VideoCardz - latest GPU &amp; hardware news (no official RSS)</li>
+</ul>
+<h4 id="wallstreetcn"><a class="header" href="#wallstreetcn">WallStreetCN</a></h4>
+<ul>
+<li><a href="wallstreetcn_hot.html">wallstreetcn_hot</a>
+华尔街见闻最热文章</li>
+</ul>
+<h4 id="yicai-第一财经"><a class="header" href="#yicai-第一财经">Yicai (第一财经)</a></h4>
+<ul>
+<li><a href="yicai_latest.html">yicai_latest</a>
+第一财经最新文章</li>
+<li><a href="yicai_headline.html">yicai_headline</a>
+第一财经头条</li>
+</ul>
+<h4 id="zhihu"><a class="header" href="#zhihu">Zhihu</a></h4>
+<ul>
+<li><a href="zhihu_hot.html">zhihu_hot</a>
+知乎热榜</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="about-config"><a class="header" href="#about-config">About Config</a></h1>
+<h1 id="关于配置"><a class="header" href="#关于配置">关于配置</a></h1>
+<p>The server reads <code>config.toml</code> from the same directory as the executable.
+If the file does not exist, it will be auto-created with default content.</p>
+<p>服务器从可执行文件同目录读取 <code>config.toml</code>。如果文件不存在，会在首次启动时自动创建默认配置。</p>
+<h2 id="format--格式"><a class="header" href="#format--格式">Format / 格式</a></h2>
+<pre><code class="language-toml">[server]
+port = 7878
+max_concurrent = 8
+timeout = 60
+
+[routes]
+disabled = []
+rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
+</code></pre>
+<h2 id="fields--字段说明"><a class="header" href="#fields--字段说明">Fields / 字段说明</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Field / 字段</th><th>Type / 类型</th><th>Default / 默认值</th><th>Description / 描述</th></tr></thead><tbody>
+<tr><td><code>server.port</code></td><td><code>int</code></td><td><code>7878</code></td><td>服务器监听端口。Port the server listens on.</td></tr>
+<tr><td><code>server.max_concurrent</code></td><td><code>int</code></td><td>自动检测的 CPU 核心数</td><td>并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2.</td></tr>
+<tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
+<tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
+<tr><td><code>routes.rate_limit</code></td><td><code>table</code></td><td><code>{}</code></td><td>路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors.</td></tr>
+</tbody></table>
+</div>
+<h2 id="examples--示例"><a class="header" href="#examples--示例">Examples / 示例</a></h2>
+<p>禁用 <code>zhihu_hot</code> 和 <code>bilibili_weekly</code> 两个路由，并手动指定并发上限与超时：</p>
+<pre><code class="language-toml">[server]
+port = 8080
+max_concurrent = 4
+timeout = 30
+
+[routes]
+disabled = ["zhihu_hot", "bilibili_weekly"]
+</code></pre>
+<p>不指定 <code>max_concurrent</code> 时，程序自动使用检测到的 CPU 核心数；不指定 <code>timeout</code> 时默认 60 秒；不指定 <code>port</code> 时默认 <code>7878</code>：</p>
+<pre><code class="language-toml">[routes]
+disabled = []
+</code></pre>
+<h2 id="logging--日志"><a class="header" href="#logging--日志">Logging / 日志</a></h2>
+<p>The program uses <code>tracing</code> as the logging backend. Our own code uses <code>tracing</code> macros directly
+(<code>tracing::warn!</code>, <code>tracing::error!</code>, etc.). The <code>tracing-log</code> bridge forwards <code>log</code> crate records
+from third-party dependencies (reqwest, hyper, etc.) into the same <code>tracing</code> subscriber.</p>
+<p>程序使用 <code>tracing</code> 作为日志后端。项目自身代码直接使用 <code>tracing</code> 宏
+（<code>tracing::warn!</code>、<code>tracing::error!</code> 等）；第三方依赖（reqwest、hyper 等）仍使用
+<code>log</code> crate，通过 <code>tracing-log</code> 桥接统一转发到同一个 <code>tracing</code> 订阅器输出。</p>
+<p>Log level is controlled by the <code>RUST_LOG</code> environment variable, default is <code>info</code>.
+You can also set a per-target level, e.g. <code>RUST_LOG=info,rssust=debug</code>.</p>
+<p>日志级别通过环境变量 <code>RUST_LOG</code> 控制，默认级别为 <code>info</code>。
+也可以单独指定某个模块的级别，如 <code>RUST_LOG=info,rssust=debug</code>。</p>
+<pre><code class="language-bash"># 默认 info 级别
+./rssust
+
+# 显示 debug 级别日志
+RUST_LOG=debug ./rssust
+
+# 只显示 warn 及以上的日志
+RUST_LOG=warn ./rssust
+
+# 本项目模块用 debug，第三方库保持 info
+RUST_LOG=info,rssust=debug ./rssust
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cookies-配置指南"><a class="header" href="#cookies-配置指南">cookies 配置指南</a></h1>
+<p>因为有些路由需要cookies,而cookies又不好分发，故作此教程以告诉导出哪个网站的cookies,又或者是否需要登录或者额外配置,cookies 示例格式：<br />
+Because some routes require cookies, and cookies are hard to distribute, this tutorial was made to show how to export cookies from a website, or whether login or additional setup is needed. Example cookie format:<br />
+{<br />
+“name”: “session_id”,<br />
+“value”: “abc123”,<br />
+“domain”: “.example.com”,<br />
+“path”: “/”,<br />
+“secure”: true,<br />
+“httpOnly”: true,<br />
+“sameSite”: “Lax”,<br />
+“expirationDate”: 1893456000<br />
+}</p>
+<p>You can use the browser plugin Cookie-Editor to export it, or use the built-in CLI command:</p>
+<pre><code>rssust cookie &lt;browser&gt;
+</code></pre>
+<p>Supported browsers: <code>firefox</code>, <code>chrome</code>, <code>chromium</code>, <code>chromebeta</code> (macOS: <code>safari</code>, Windows: <code>edge</code>)</p>
+<p>Example:</p>
+<pre><code>./env/rssust cookie chrome
+</code></pre>
+<p>Tips: Linux 下 firefox 可能因为上游 crate 的问题需要链接文件夹修复</p>
+<h2 id="bilibili-1"><a class="header" href="#bilibili-1">Bilibili</a></h2>
+<p>bilibili.com<br />
+无需登录，访客 cookies 即可<br />
+注意：<code>bilibili_video_reply</code> 需要登录后的 cookies（需包含 SESSDATA）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="给用户使用的函数简便"><a class="header" href="#给用户使用的函数简便">给用户使用的函数——简便</a></h1>
+<h2 id="位置"><a class="header" href="#位置">位置</a></h2>
+<p><code>src/easyuser.rs</code></p>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p>封装了一系列辅助函数，供路由开发者（router）方便地调用。所有函数通过 <code>use crate::easyuser::*;</code> 导入。</p>
+<hr />
+<h2 id="爬虫类"><a class="header" href="#爬虫类">爬虫类</a></h2>
+<blockquote>
+<p><strong>异步</strong>：项目已迁移到 <code>tokio</code> 异步运行时，以下 fetch 函数均为 <code>async fn</code>，调用时必须加 <code>.await</code>，例如 <code>fetch_reqwest_get(&amp;url).await?</code>。所有 fetch 函数共享一个全局 <code>reqwest::Client</code>（<code>OnceLock</code> 懒加载），复用连接池，不会每次新建。</p>
+</blockquote>
+<h3 id="fetch_reqwest_get"><a class="header" href="#fetch_reqwest_get">fetch_reqwest_get()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。</p>
+<h3 id="fetch_reqwest_get_with_headers"><a class="header" href="#fetch_reqwest_get_with_headers">fetch_reqwest_get_with_headers()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_get_with_headers(url: &amp;str, headers: &amp;[(&amp;str, &amp;str)]) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送带自定义 Header 的 HTTP GET 请求。</p>
+<p>示例：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let headers = &amp;[("Referer", "https://example.com"), ("Cookie", "session=abc")];
+fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
+<span class="boring">}</span></code></pre></pre>
+<h3 id="fetch_reqwest_post"><a class="header" href="#fetch_reqwest_post">fetch_reqwest_post()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
+<h3 id="fetch_reqwest_post_json"><a class="header" href="#fetch_reqwest_post_json">fetch_reqwest_post_json()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post_json(url: &amp;str, json_body: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 Content-Type 为 <code>application/json</code> 的 HTTP POST 请求。</p>
+<h3 id="httperror"><a class="header" href="#httperror">HttpError</a></h3>
+<p><strong>签名</strong>: <code>pub struct HttpError { pub status: u16, pub message: String }</code></p>
+<p>自定义错误类型，可携带 HTTP 状态码。路由中可用 <code>HttpError::bad_request(msg)</code>、<code>HttpError::not_found(msg)</code>、<code>HttpError::bad_gateway(msg)</code> 构造。渲染层会优先使用 <code>HttpError</code> 的 <code>status</code> 作为响应状态码、<code>message</code> 作为正文（否则默认 500）。</p>
+<hr />
+<h2 id="序列化类"><a class="header" href="#序列化类">序列化类</a></h2>
+<h3 id="params_to_hashmap"><a class="header" href="#params_to_hashmap">params_to_hashmap()</a></h3>
+<p><strong>签名</strong>: <code>pub fn params_to_hashmap(query: &amp;str) -&gt; HashMap&lt;String, String&gt;</code></p>
+<p>将 <code>key1=value1&amp;key2=value2</code> 格式参数字符串解析为 <code>HashMap</code>。</p>
+<p><strong>用在</strong>: <code>connect::handle_connection()</code> 中解析 URL 查询参数。</p>
+<h3 id="hashmap_to_params"><a class="header" href="#hashmap_to_params">hashmap_to_params()</a></h3>
+<p><strong>签名</strong>: <code>pub fn hashmap_to_params(hashmap: HashMap&lt;String, String&gt;) -&gt; String</code></p>
+<p>将 <code>HashMap</code> 序列化为 <code>key1=value1&amp;key2=value2</code> 格式字符串。</p>
+<hr />
+<h2 id="时间类"><a class="header" href="#时间类">时间类</a></h2>
+<h3 id="now"><a class="header" href="#now">now()</a></h3>
+<p><strong>签名</strong>: <code>pub fn now() -&gt; String</code></p>
+<p>返回当前时间的 RSS 标准格式：<code>Sat, 11 Jul 2026 12:00:00 +0800</code></p>
+<p><strong>用在</strong>: 路由中设置 RSS Item 的 <code>pub_date</code> 字段。</p>
+<h3 id="chinese_date_to_parse"><a class="header" href="#chinese_date_to_parse">chinese_date_to_parse()</a></h3>
+<p><strong>签名</strong>: <code>pub fn chinese_date_to_parse(input: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将中文日期格式 <code>x月y日</code> 解析为 RSS 标准时间格式。年份取当前年份。</p>
+<p>示例：<code>"7月11日"</code> → <code>"Sat, 11 Jul 2026 00:00:00 +0800"</code></p>
+<h3 id="timestamp_to_rss"><a class="header" href="#timestamp_to_rss">timestamp_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn timestamp_to_rss(ts: i64) -&gt; String</code></p>
+<p>将 Unix 时间戳（i64）转换为 RSS 标准时间格式。</p>
+<h3 id="datetime_str_to_rss"><a class="header" href="#datetime_str_to_rss">datetime_str_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn datetime_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为东八区本地时间</strong>（不做偏移，直接附加 +0800）。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 12:00:00 +0800"</code></p>
+<p>注意：若来源时间是 UTC，请改用 <code>utc_str_to_rss</code>。</p>
+<h3 id="utc_str_to_rss"><a class="header" href="#utc_str_to_rss">utc_str_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn utc_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为 UTC 时间</strong>，自动换算为东八区（+0800）后再输出。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 20:00:00 +0800"</code></p>
+<p>适用于带 <code>Z</code> 后缀的 ISO 时间（如 <code>datePublished</code>），调用前先 <code>s.replace('T', " ").replace('Z', "")</code> 归一化，参见 <code>apnews_topics</code> 的用法。</p>
+<hr />
+<h2 id="字符类"><a class="header" href="#字符类">字符类</a></h2>
+<h3 id="no_double_quotes"><a class="header" href="#no_double_quotes">no_double_quotes()</a></h3>
+<p><strong>签名</strong>: <code>pub fn no_double_quotes(s: String) -&gt; String</code></p>
+<p>去除字符串首尾的双引号。</p>
+<p><strong>用在</strong>: 路由中清理从 JSON 提取的字符串值，因为 <code>serde_json::Value::to_string()</code> 会给字符串加双引号。</p>
+<h3 id="env_search"><a class="header" href="#env_search">env_search()</a></h3>
+<p><strong>签名</strong>: <code>pub fn env_search(s: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>查找环境变量值，找到返回 <code>Some(val)</code>，找不到返回 <code>None</code>。</p>
+<h3 id="extract_js_var"><a class="header" href="#extract_js_var">extract_js_var()</a></h3>
+<p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
+<p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
+<hr />
+<h2 id="工具类"><a class="header" href="#工具类">工具类</a></h2>
+<h3 id="parse_bool"><a class="header" href="#parse_bool">parse_bool()</a></h3>
+<p><strong>签名</strong>: <code>pub fn parse_bool(value: Option&lt;&amp;String&gt;, default: bool) -&gt; bool</code></p>
+<p>将字符串值解析为布尔值。支持 <code>"1"</code> / <code>"true"</code> / <code>"True"</code> → <code>true</code>，<code>"0"</code> / <code>"false"</code> / <code>"False"</code> → <code>false</code>，其他值尝试 <code>parse()</code>，<code>None</code> 返回 <code>default</code>。</p>
+<h3 id="load_cookie_header"><a class="header" href="#load_cookie_header">load_cookie_header()</a></h3>
+<p><strong>签名</strong>: <code>pub fn load_cookie_header(domain_filter: Option&lt;&amp;str&gt;) -&gt; Result&lt;Option&lt;String&gt;&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie，返回 <code>name=value; name=value...</code> 格式的字符串。可传入 <code>domain_filter</code> 只返回指定域名的 Cookie（如 <code>Some("bilibili.com")</code>）。</p>
+<hr />
+<h2 id="开发者提示"><a class="header" href="#开发者提示">开发者提示</a></h2>
+<ul>
+<li>路由中必须导入 <code>use crate::easyuser::*;</code></li>
+<li>从 JSON 提取字符串后记得用 <code>no_double_quotes()</code> 清理</li>
+<li>需要携带 Cookie 时，用 <code>fetch_reqwest_get_with_headers()</code> 配合 <code>load_cookie_header()</code></li>
+<li><strong>所有 fetch 调用都要加 <code>.await</code></strong>（<code>async fn</code>），且不要在持有 scraper 的 <code>Html</code>/<code>Selector</code>/<code>ElementRef</code> 时跨 <code>.await</code>（它们不是 <code>Send</code>），详见 <code>new_router_cn.md</code> 的同步转异步章节</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="english-here"><a class="header" href="#english-here"><a href="guide_en.html">English HERE</a></a></h3>
+<h1 id="what-is-rssust"><a class="header" href="#what-is-rssust">What is Rssust?</a></h1>
+<p>Rssust是一个使用Rust语言做的<strong>信息聚合转换软件</strong>，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，<em><strong>但目前还在开发</strong></em>，</p>
+<h2 id="我们希望得到你的帮助"><a class="header" href="#我们希望得到你的帮助">我们希望得到你的帮助</a></h2>
+<p>厌倦了<strong>庞大的内存占用和缓慢的运行速度</strong>以及<strong>依赖于别人</strong>建的Rsshub服务器但是有一天居然停服了，或者你干脆就是个<strong>Rust迷</strong>？</p>
+<hr />
+<p>插个U盘在别的电脑，然后<em><strong>双击</strong></em>打开二进制的程序和一个绿色的RSS客户端就可以在别人电脑上使用RSS，而不是费尽心思的去找别人的服务器。让每个人承担自己的算力反而拥有更多的稳定性。</p>
+<hr />
+<h5 id="那么本项目是一个本地运行项目吗并不是更多的是希望本地运行但是如果你家有台nas或者是有财力建服务器的就当我没说"><a class="header" href="#那么本项目是一个本地运行项目吗并不是更多的是希望本地运行但是如果你家有台nas或者是有财力建服务器的就当我没说">那么本项目是一个本地运行项目吗？并不是，<em>更多的是希望本地运行</em>，但是如果你家有台NAS或者是有财力建服务器的就当我没说，</a></h5>
+<h2 id="但是也不妨试一下rssust"><a class="header" href="#但是也不妨试一下rssust"><strong>但是也不妨试一下Rssust</strong>。</a></h2>
+<p>虽然现在Rssust的路由和Rsshub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这<strong>侵犯了你的权利</strong>，请邮件并且找所有可能的方式联系我，我会尽快处理。</p>
+<p>如果你想自己做一个路由可以点这里：<a href="new_router_cn.html">路由制作指南——中文</a>
+这里是目前服务器支持的API,你的左侧Router一栏都是，但这里有一些分类<a href="api.html">API DOCS</a></p>
+<h2 id="对于一般用户使用"><a class="header" href="#对于一般用户使用">对于一般用户使用：</a></h2>
+<h3 id="安装"><a class="header" href="#安装">安装：</a></h3>
+<p>值得一提的是，运行时，二进制的目录结构如下所示：</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>比较严苛</p>
+<h3 id="cookies"><a class="header" href="#cookies">cookies:</a></h3>
+<p>有些路由依赖于cookies,所以请看<a href="cookie.html">cookies的指南</a></p>
+<h3 id="二进制"><a class="header" href="#二进制">二进制：</a></h3>
+<p>早期版本可能不会附带二进制，只有版本号带S才会生成二进制
+运行二进制十分简单：解压，然后启动env文件夹下的二进制文件即可</p>
+<h3 id="从源码构建"><a class="header" href="#从源码构建">从源码构建：</a></h3>
+<p>Linux用户：</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build --release
+cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
+./env/rssust docs
+./env/rssust
+</code></pre>
+<p>然后没有版本更新的时候，你可以输入：</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>来启动
+Windows用户：CMD（未经验证）</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
+.\env\rssust.exe docs
+.\env\rssust.exe
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="中文"><a class="header" href="#中文"><a href="guide_cn.html">中文</a></a></h3>
+<h1 id="what-is-rssust-1"><a class="header" href="#what-is-rssust-1">What is Rssust?</a></h1>
+<p>Rssust is an <strong>information aggregation and conversion software</strong> built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, <em><strong>but currently still in development</strong></em>.</p>
+<h2 id="we-hope-for-your-help"><a class="header" href="#we-hope-for-your-help">We Hope for Your Help</a></h2>
+<p>Tired of <strong>massive memory consumption and slow running speed</strong>, or <strong>dependent on someone else’s</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
+<hr />
+<p>Plug a USB drive into someone else’s computer, then <em><strong>double-click</strong></em> to open the binary program and a lightweight RSS client to use RSS on their computer without having to find someone else’s server. Let everyone handle their own computing power while actually gaining more stability.</p>
+<hr />
+<h5 id="so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust"><a class="header" href="#so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust">So is this project meant to run locally? Not necessarily. <em>It’s more about hoping for local operation</em>, but if you have a NAS at home or have the financial means to build a server, never mind what I said. <strong>But it’s still worth trying Rssust</strong>.</a></h5>
+<hr />
+<p>Although Rssust’s routers are not on the same scale as Rsshub’s in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust’s router count can grow, but this may seem somewhat like plagiarism, so it’s better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
+<p>If you want to create your own router, click here: <a href="new_router_en.html">Router Development Guide — English</a>
+Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="api.html">API DOCS</a></p>
+<h2 id="for-general-users"><a class="header" href="#for-general-users">For General Users:</a></h2>
+<h3 id="installation"><a class="header" href="#installation">Installation:</a></h3>
+<p>It’s worth noting that when running, the binary directory structure should be as follows:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>It’s quite strict.</p>
+<h3 id="cookies-1"><a class="header" href="#cookies-1">cookies:</a></h3>
+<p>Some routes depend on cookies, so take a look <a href="cookie.html">guide of cookies</a></p>
+<h3 id="binary"><a class="header" href="#binary">Binary:</a></h3>
+<p>Early versions may not include binaries; only versions with an “S” suffix will generate binaries.
+Running the binary is very simple: extract and then start the binary file in the env folder.</p>
+<h3 id="building-from-source"><a class="header" href="#building-from-source">Building from Source:</a></h3>
+<p>Linux users:</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
+./env/rssust docs
+./env/rssust
+</code></pre>
+<p>Then when there’s no version update, you can enter:</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>to start it.</p>
+<p>Windows users: CMD (unverified)</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
+.\env\rssust.exe docs
+.\env\rssust.exe
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="english-here-1"><a class="header" href="#english-here-1"><a href="new_router_en.html">English HERE</a></a></h3>
+<h1 id="路由制作指南"><a class="header" href="#路由制作指南">路由制作指南</a></h1>
+<p>本文可以给人看，也可以给AI看
+在开发前，你需要：</p>
+<ul>
+<li>一个标准的cargo环境</li>
+<li>git 版本管理系统</li>
+<li>编辑器</li>
+<li><strong>基础</strong>rust的知识,最好是通过官方书籍，以及有一些std库里频率很高的方法也要学会，比如给可恢复错误做处理的几种方法之类的;</li>
+<li>RSS的知识 可以通过：<a href="https://www.rssboard.org/rss-specification">官方RSS 2.0.11 英文</a> 或者 <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">博客园-小y 翻译的RSS 2.0.10 中文</a>进行学习</li>
+<li>RSS Crates 的知识，懂得如何构建一个RSS <a href="https://docs.rs/rss/latest/rss/">官方英文文档</a>
+<strong>尤其</strong>是<a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a>和<a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>因为不同上游API,你需要学会不同的方法，比如说你的上游API是json格式，你其实实际大概率只需要学会serde_json Crates的.pointer()和.get()这两种方法，而如果你需要直接处理html和DOM,你需要<a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a>的文档中推荐的方法，以及避免导致panic！！！</li>
+</ul>
+<p>你可以在/src/router下新建一个你自己的.rs文件，但有一些要求：</p>
+<ol>
+<li>文件名只能包含小写字母或数字或下划线还有固定的.rs后缀，严禁在任何文件名或者网址路径中出现空格！</li>
+<li>路由的规范命名是这样的： 平台小写英文名_功能小写英文名</li>
+<li>文件名的除了后缀名的部分就是你的路由名;</li>
+<li>每一个路由在/docs下都必须有一个对应为 路由名.md的文档，待会再讲;</li>
+<li>每一个路由只能对应一种功能;</li>
+</ol>
+<p>开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事</p>
+<h3 id="导入库"><a class="header" href="#导入库">导入库</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+<span class="boring">}</span></code></pre></pre>
+<p>上面这几个库<strong>必须导入</strong>，下面的而看需要导入</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;//json用的
+use scraper::*;//html用的
+<span class="boring">}</span></code></pre></pre>
+<h3 id="每个路由的主函数规范长这样"><a class="header" href="#每个路由的主函数规范长这样">每个路由的主函数规范长这样：</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+<span class="boring">}</span></code></pre></pre>
+<p>函数的调入和返回结果类型不能改的！（如果你没有用到 para,变量，你可以直接把他写成 _para ,这样编译器就不会警告）其中，para的作用是传入用户访问时的通过http get协议传入的参数，以及序列化成HashMap格式了。</p>
+<p>注意签名里的 <code>async</code>：因为 <code>fetch_reqwest_get</code> 等抓取函数都是异步的，<code>get</code> 自己也必须是 <code>async</code> 才能 <code>await</code> 它们。</p>
+<h3 id="异步常见错误写路由时最常踩的坑"><a class="header" href="#异步常见错误写路由时最常踩的坑">异步常见错误（写路由时最常踩的坑）</a></h3>
+<p>下面是新路由在 <code>cargo build</code> 时最常报的编译错误，按报错信息列出。遇到哪条照着改哪条。</p>
+<p><strong>1. <code>await is only allowed inside async functions and blocks</code>（E0728）</strong></p>
+<p>你在这个函数里写了 <code>.await</code>，但这个函数本身不是 <code>async</code>。最常见于：把抓详情页的逻辑拆成了一个普通辅助函数：</p>
+<pre><code>// 错误：helper 不是 async，却想 await
+fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?   // 编译报错 E0728
+}
+</code></pre>
+<p>改成 <code>async fn</code>，并且调用处也要 <code>.await</code>：</p>
+<pre><code>async fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?
+}
+let detail = fetch_detail(&amp;url).await?;
+</code></pre>
+<p><strong>2. <code>Result&lt;String, Error&gt; is not a future</code>（E0277）</strong></p>
+<p>忘了加 <code>.await</code>。<code>fetch_reqwest_get(url)</code> 返回的不是 <code>String</code>，而是一个“将来才拿到结果的 Future“；只有 <code>.await</code> 才能把它变成 <code>String</code>：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 错误：拿到的是 Future，不是 String
+let html = fetch_reqwest_get(&amp;url)?;
+// 正确：加 .await 才得到 String
+let html = fetch_reqwest_get(&amp;url).await?;
+<span class="boring">}</span></code></pre></pre>
+<p>检查你文件里所有 <code>fetch_reqwest_get</code> / <code>fetch_reqwest_post</code> / <code>fetch_reqwest_get_with_headers</code> 调用，是否都跟了 <code>.await</code>。</p>
+<p><strong>3. <code>future cannot be sent between threads safely</code>（E0277，scraper 专属）</strong></p>
+<p>只有用了 <code>scraper</code> 解析 HTML 才会碰到。<code>Html</code>、<code>Selector</code>、<code>ElementRef</code> 这些类型<strong>不是 <code>Send</code></strong>，不能带过 <code>.await</code>。典型场景：先解析出列表 <code>doc</code>，然后在循环里抓详情页：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 错误：doc（Html 类型）活着穿过 .await，编译报 not Send
+let doc = Html::parse_document(&amp;html);
+for link in &amp;links {
+    let detail_html = fetch_reqwest_get(link).await?;   // 报错：doc 在 await 那边还活着
+}
+<span class="boring">}</span></code></pre></pre>
+<p>修法是**“先解析、后抓取“两段式**：第一步先把列表页解析完，把需要的字段全存成 <code>String</code>/<code>Vec&lt;String&gt;</code>（在 <code>{ }</code> 块里用 <code>doc</code>，块结束就自动释放）；第二步才循环去抓详情页，此时手里只有纯数据：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 第一步：解析列表，只收集 String。doc 在块结束就 drop 了
+let items: Vec&lt;(String, String)&gt; = {
+    let doc = Html::parse_document(&amp;html);
+    let sel = Selector::parse("a.title").unwrap();
+    doc.select(&amp;sel).map(|e| {
+        let title = e.text().collect::&lt;String&gt;().trim().to_string();
+        let href = e.value().attr("href").unwrap_or("").to_string();
+        (title, href)
+    }).collect()
+};
+// 第二步：此时没有 scraper 类型了，随便 await
+for (title, href) in &amp;items {
+    let detail_html = fetch_reqwest_get(href).await?;
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>4. 详情页也要用 scraper？同样先解析完再放下</strong></p>
+<p>如果你抓完详情页还要再解析它、甚至再抓下一页，记住同一个原则：<code>detail_doc</code> 用完立刻丢弃。惯用写法是把详情解析放进 <code>if let Ok(...) = fetch(...).await { ... }</code> 块里，块内完成解析、块结束自动释放，块外不再引用它。</p>
+<blockquote>
+<p>小结：<strong>凡是要 <code>await</code>，身边就不要有 <code>Html</code>/<code>Selector</code>/<code>ElementRef</code></strong>。看到 <code>not Send</code> 就回想这一条。</p>
+<p>参考实现：<code>chinanews</code>、<code>stcn_article_list</code>、<code>bjnews_cat</code>、<code>eastday_24</code>、<code>solidot</code>、<code>guancha_headline</code>、<code>guanhai</code>、<code>ithome_ranking</code>、<code>jianshu_home</code> 这些路由就是按上面的模式写的。</p>
+</blockquote>
+<h3 id="一个完整的最小路由json-接口版"><a class="header" href="#一个完整的最小路由json-接口版">一个完整的最小路由（JSON 接口版）</a></h3>
+<p>下面是一个可以照抄的完整例子。它抓一个 JSON 接口，转成 RSS，保存为 <code>src/router/my_test.rs</code> 就能编译：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use crate::easyuser::*;          // 抓取函数、时间处理等都在这
+use anyhow::{Error, Result};
+use rss::*;                       // RSS 生成
+use serde_json::Value;            // 解析 JSON 用
+use std::collections::HashMap;
+
+pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+    // 1. 取用户参数（可选，默认给一个）
+    let id = para.get("id").cloned().unwrap_or_default();
+
+    // 2. 抓上游。注意：fetch 是异步的，调用后要加 .await
+    let html = fetch_reqwest_get(&amp;format!("https://api.example.com/list?id={}", id)).await?;
+
+    // 3. 解析 JSON
+    let json: Value = serde_json::from_str(&amp;html)?;
+    let list = json["data"]["list"].as_array().ok_or_else(|| anyhow!("没有 list 字段"))?;
+
+    // 4. 一条条转成 RSS Item
+    let mut item_vec = Vec::new();
+    for item in list {
+        let rss_item = ItemBuilder::default()
+            .title(Some(item["title"].as_str().unwrap_or("").to_string()))
+            .link(Some(item["url"].as_str().unwrap_or("").to_string()))
+            .description(item["desc"].as_str().unwrap_or(""))
+            .pub_date(now())           // 不会解析时间就先填当前时间
+            .build();
+        item_vec.push(rss_item);
+    }
+
+    // 5. 组装成频道输出
+    let channel = ChannelBuilder::default()
+        .title("我的测试频道")
+        .link("https://api.example.com")
+        .description("示例")
+        .items(item_vec)
+        .build();
+    Ok(channel.to_string())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>写好后按下面「注册」两步操作，<code>cargo build</code> 一下，跑起来访问 <code>/my_test</code> 就能看到你的 RSS 了。如果上游是 HTML 而非 JSON，把第 3 步换成 <code>scraper</code> 解析（注意上面第 3、4 条错误）。</p>
+<p>项目封装了一些方便用户的函数，可以在src/easyuser.rs查看，或者在<a href="easyuser_cn.html">easyuser_cn.html</a>查看
+具体的程序逻辑就由你自己编写吧。</p>
+<h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
+<p>在 <code>/src/router/mod.rs</code> 中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
+然后再在 <code>src/request_rules.rs</code> 的 <code>match url</code> 分发中，仿照其他条目添加一个分支：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>"/你的路由名" =&gt; run!(你的路由名, parameters),
+<span class="boring">}</span></code></pre></pre>
+<p><code>run!</code> 宏会展开为 <code>你的路由名::get(parameters.clone()).await</code>，因此不要改动它的写法。</p>
+<blockquote>
+<p><strong>注意</strong>：<code>run!</code> 宏参数中的 <code>parameters</code> 是 <code>request_rules</code> 的入参名，宏内由于卫生性无法直接引用外层变量，所以必须显式传入。</p>
+</blockquote>
+<h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
+<p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>我还写了一个脚本叫build.sh供用户使用（目前只做了Linux系统的脚本，Windows系统用户可以自己做一个脚本或者手动操作），其内容是 编译，拷贝（把/target/debug/rssust拷贝到/env，接着运行。</p>
+<h3 id="cookies的防止"><a class="header" href="#cookies的防止">Cookies的防止</a></h3>
+<p>在与二进制文件同目录下的<code>cookies.json</code>中如下：
+示例格式：
+{
+“name”: “session_id”,
+“value”: “abc123”,
+“domain”: “.example.com”,
+“path”: “/”,
+“secure”: true,
+“httpOnly”: true,
+“sameSite”: “Lax”,
+“expirationDate”: 1893456000
+}
+所有的cookies挤在同一个json文件，程序启动时就会导入。
+Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
+<h3 id="文档的编写"><a class="header" href="#文档的编写">文档的编写！</a></h3>
+<p>在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>首先除了<code>**Cookies?:**</code>,<code>**Environment Variables:**</code>和<code>**Parameter:** </code>,其余基本上都是字面意思，但我还是介绍一下：</p>
+<ol>
+<li><strong>Router-name:</strong> 填路由名</li>
+<li><strong>Commit time:</strong> 提交时间，以<code>年.月.日</code>的形式填写</li>
+<li><strong>Cookies?:</strong> 两种情况，一种为<code>no</code>，一种为yes,后面也可以写备注解释</li>
+<li><strong>Author:</strong> 提交人，写你的Github名</li>
+<li><strong>Introduction:</strong> 写一下简介（注意，如果平台以什么语言为主就用什么语言）</li>
+<li><strong>Address:</strong> 填 <code>rssust://路由名</code>就好</li>
+<li><strong>Example:</strong> 可选项，如果要选就要用超链接<code>[填Address相同的](填/路由名)</code></li>
+<li><strong>Parameter:</strong> 这个意思是http get时可能用到的参数，可以填<code>no</code>, 或者空着，另起一行，像下面的示例</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: 内嵌视频
+2. 接下来如法炮制
+</code></pre>
+<p>注意：必填的项目把默认值设为null
+其中的参数名称跟在序号后面，用<code>** **</code>包裹强调
+<strong>Type of parameter:</strong> 填类型，自己定
+<strong>Default value:</strong> 默认值，要符合<code>Type of parameter</code>
+<strong>Meaning:</strong> 参数的含义
+9. <strong>Environment Variables:</strong> 可能用到的环境变量，填no,或者空着，另起一行，像下面的示例</p>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: 内嵌视频
+2. 接下来如法炮制
+</code></pre>
+<p>注意：必填的项目把默认值设为null，每个项目的意思参考<strong>Parameter:</strong> 的子项</p>
+<h3 id="最后一步提交"><a class="header" href="#最后一步提交">最后一步：提交！</a></h3>
+<p>使用git提交前，先运行<code>cargo fmt</code>，这可以使别人更好的识别你的代码
+你需要提交的有：</p>
+<ol>
+<li>/src/router/你的路由名.rs</li>
+<li>env/docs_md/路由名.md (一般情况下请不要提交您的<code>路由名.html</code>文件)</li>
+<li>/src/router/mod.rs以及src/request_rules.rs</li>
+</ol>
+<h4 id="这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善"><a class="header" href="#这只是路由的指南如果你想改进核心代码欢迎提交关于代码的改进完善">这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善</a></h4>
+<p>如果好奇程序构造的，可以看<a href="pogram_explanation_cn.html">rogram_explanation_cn</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="中文-1"><a class="header" href="#中文-1"><a href="new_router_cn.html">中文</a></a></h3>
+<h1 id="router-development-guide"><a class="header" href="#router-development-guide">Router Development Guide</a></h1>
+<p>This document is for both humans and AI to read.</p>
+<p>Before you start developing, you need:</p>
+<ul>
+<li>A standard Cargo environment</li>
+<li>Git version control system</li>
+<li>An editor</li>
+<li><strong>Basic</strong> Rust knowledge, preferably through the official book, and familiarity with frequently used methods in the std library, such as various error handling methods for recoverable errors, etc.</li>
+<li>RSS knowledge from: <a href="https://www.rssboard.org/rss-specification">Official RSS 2.0.11 English</a> or <a href="https://www.cnblogs.com/tuyile006/p/3691024.html">Blog Garden - Translated by Xiao Y RSS 2.0.10 Chinese</a></li>
+<li>Knowledge of RSS Crates, understanding how to build an RSS feed. <a href="https://docs.rs/rss/latest/rss/">Official English Documentation</a>
+<strong>Especially</strong> <a href="https://docs.rs/rss/latest/rss/struct.ChannelBuilder.html">ChannelBuilder</a> and <a href="https://docs.rs/rss/latest/rss/struct.ImageBuilder.html">ImageBuilder</a></li>
+<li>Since different upstream APIs have different formats, you need to learn different methods. For example, if your upstream API is in JSON format, you likely only need to learn the <code>.pointer()</code> and <code>.get()</code> methods from the serde_json Crate. If you need to directly process HTML and DOM, you need the methods recommended in the <a href="https://docs.rs/scraper/0.27.0/scraper/">scraper</a> documentation, and be careful to avoid causing panic!!!</li>
+</ul>
+<p>You can create your own .rs file under <code>/src/router</code>, but there are some requirements:</p>
+<ol>
+<li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
+<li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
+<li>The filename part (excluding the .rs extension) becomes your router name</li>
+<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
+<li>Each router can only correspond to one function</li>
+</ol>
+<p>Before developing, it’s best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use crate::easyuser::*;
+use anyhow::*;
+use rss::*;
+<span class="boring">}</span></code></pre></pre>
+<p>The above libraries <strong>must be imported</strong>. Import the following as needed:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde_json::Value;  // for JSON
+use scraper::*;  // for HTML
+<span class="boring">}</span></code></pre></pre>
+<h3 id="the-main-function-signature-for-each-router-should-look-like-this"><a class="header" href="#the-main-function-signature-for-each-router-should-look-like-this">The main function signature for each router should look like this:</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+}
+<span class="boring">}</span></code></pre></pre>
+<p>The function signature and return type cannot be changed! (If you don’t use the <code>para</code> variable, you can write it as <code>_para</code> so the compiler won’t warn you). The purpose of <code>para</code> is to receive parameters passed via HTTP GET protocol when users access the router, serialized into HashMap format.</p>
+<p>Note the <code>async</code> keyword: since the fetching helpers (<code>fetch_reqwest_get</code>, etc.) are async, <code>get</code> itself must be <code>async</code> so it can <code>.await</code> them.</p>
+<h3 id="common-async-errors-the-pitfalls-youll-actually-hit"><a class="header" href="#common-async-errors-the-pitfalls-youll-actually-hit">Common async errors (the pitfalls you’ll actually hit)</a></h3>
+<p>These are the compile errors you’re most likely to see in a new router, listed by error message. Find yours and fix it.</p>
+<p><strong>1. <code>await is only allowed inside async functions and blocks</code> (E0728)</strong></p>
+<p>You wrote <code>.await</code> in a function that is not <code>async</code>. This most often happens when you extract the “fetch detail page” logic into a plain helper function:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: helper is not async but tries to await
+fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?   // E0728
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Make it <code>async fn</code> — and <code>.await</code> the call site too:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn fetch_detail(url: &amp;str) -&gt; Result&lt;String, Error&gt; {
+    fetch_reqwest_get(url).await?
+}
+let detail = fetch_detail(&amp;url).await?;
+<span class="boring">}</span></code></pre></pre>
+<p><strong>2. <code>Result&lt;String, Error&gt; is not a future</code> (E0277)</strong></p>
+<p>You forgot <code>.await</code>. <code>fetch_reqwest_get(url)</code> does not return a <code>String</code> — it returns a Future that <em>will</em> become a <code>String</code> later. Only <code>.await</code> turns it into one:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: you got a Future, not a String
+let html = fetch_reqwest_get(&amp;url)?;
+// right: add .await to get the String
+let html = fetch_reqwest_get(&amp;url).await?;
+<span class="boring">}</span></code></pre></pre>
+<p>Audit every <code>fetch_reqwest_get</code> / <code>fetch_reqwest_post</code> / <code>fetch_reqwest_get_with_headers</code> call in your file and make sure each one has <code>.await</code>.</p>
+<p><strong>3. <code>future cannot be sent between threads safely</code> (E0277, scraper only)</strong></p>
+<p>You only hit this when parsing HTML with <code>scraper</code>. <code>Html</code>, <code>Selector</code>, and <code>ElementRef</code> are <strong>not <code>Send</code></strong>, so they can’t survive across an <code>.await</code>. Typical case: you parse a list into <code>doc</code>, then loop over links fetching detail pages:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// wrong: doc (an Html) is still alive across the .await
+let doc = Html::parse_document(&amp;html);
+for link in &amp;links {
+    let detail_html = fetch_reqwest_get(link).await?;   // error: doc is still alive here
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Fix it with a <strong>two-phase “parse first, fetch later”</strong> pattern. Step one: fully parse the list page, collecting every field into <code>String</code>/<code>Vec&lt;String&gt;</code> inside a <code>{ }</code> block (so <code>doc</code> drops at the block end). Step two: loop and fetch — now you only hold plain data:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// step 1: parse the list, collect only Strings. doc drops at the end of the block
+let items: Vec&lt;(String, String)&gt; = {
+    let doc = Html::parse_document(&amp;html);
+    let sel = Selector::parse("a.title").unwrap();
+    doc.select(&amp;sel).map(|e| {
+        let title = e.text().collect::&lt;String&gt;().trim().to_string();
+        let href = e.value().attr("href").unwrap_or("").to_string();
+        (title, href)
+    }).collect()
+};
+// step 2: no scraper types around, feel free to await
+for (title, href) in &amp;items {
+    let detail_html = fetch_reqwest_get(href).await?;
+}
+<span class="boring">}</span></code></pre></pre>
+<p><strong>4. Need scraper for the detail page too? Same rule: parse, then let it go.</strong></p>
+<p>If you fetch a detail page and then need to parse it (or even fetch the next page), keep the same principle: drop <code>detail_doc</code> as soon as you’re done with it. The idiomatic way is to parse inside <code>if let Ok(...) = fetch(...).await { ... }</code> — the doc is created, used, and released inside that block, and never referenced outside it.</p>
+<blockquote>
+<p>TL;DR: <strong>whenever you <code>.await</code>, don’t hold <code>Html</code>/<code>Selector</code>/<code>ElementRef</code></strong>. If you see <code>not Send</code>, remember this.</p>
+<p>Reference implementations: <code>chinanews</code>, <code>stcn_article_list</code>, <code>bjnews_cat</code>, <code>eastday_24</code>, <code>solidot</code>, <code>guancha_headline</code>, <code>guanhai</code>, <code>ithome_ranking</code>, <code>jianshu_home</code> follow this pattern.</p>
+</blockquote>
+<h3 id="a-complete-minimal-router-json-endpoint-version"><a class="header" href="#a-complete-minimal-router-json-endpoint-version">A complete minimal router (JSON endpoint version)</a></h3>
+<p>Here’s a full example you can copy. It fetches a JSON endpoint and turns it into RSS. Save it as <code>src/router/my_test.rs</code> and it compiles as-is:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use crate::easyuser::*;          // fetching helpers, date utils, etc.
+use anyhow::{Error, Result};
+use rss::*;                       // RSS generation
+use serde_json::Value;            // JSON parsing
+use std::collections::HashMap;
+
+pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt; {
+    // 1. read user params (optional, with a default)
+    let id = para.get("id").cloned().unwrap_or_default();
+
+    // 2. fetch upstream. Note: fetch is async, add .await
+    let html = fetch_reqwest_get(&amp;format!("https://api.example.com/list?id={}", id)).await?;
+
+    // 3. parse JSON
+    let json: Value = serde_json::from_str(&amp;html)?;
+    let list = json["data"]["list"].as_array().ok_or_else(|| anyhow!("no list field"))?;
+
+    // 4. convert each entry into an RSS Item
+    let mut item_vec = Vec::new();
+    for item in list {
+        let rss_item = ItemBuilder::default()
+            .title(Some(item["title"].as_str().unwrap_or("").to_string()))
+            .link(Some(item["url"].as_str().unwrap_or("").to_string()))
+            .description(item["desc"].as_str().unwrap_or(""))
+            .pub_date(now())           // use now() if you can't parse the date yet
+            .build();
+        item_vec.push(rss_item);
+    }
+
+    // 5. assemble the channel
+    let channel = ChannelBuilder::default()
+        .title("My test channel")
+        .link("https://api.example.com")
+        .description("example")
+        .items(item_vec)
+        .build();
+    Ok(channel.to_string())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>After writing it, follow the two registration steps below, run <code>cargo build</code>, start the server and visit <code>/my_test</code> to see your RSS. If your upstream serves HTML instead of JSON, replace step 3 with <code>scraper</code> parsing (watch out for errors 3 and 4 above).</p>
+<p>The project has encapsulated some convenient functions for users, which you can check in <code>src/easyuser.rs</code> or view at <a href="easyuser_cn.html">easyuser_cn.html</a>.</p>
+<p>The specific program logic is up to you to write.</p>
+<h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
+<p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
+<p>Then in <code>src/request_rules.rs</code>, add a match arm to the <code>match url</code> dispatcher, following the pattern of other entries:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>"/your_router_name" =&gt; run!(your_router_name, parameters),
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>run!</code> macro expands to <code>your_router_name::get(parameters.clone()).await</code>, so don’t change its shape.</p>
+<blockquote>
+<p><strong>Note</strong>: <code>parameters</code> in the <code>run!</code> macro is the argument name of <code>request_rules</code>. Due to macro hygiene it can’t refer to the outer variable, so it must be passed explicitly.</p>
+</blockquote>
+<h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
+<p>I’m very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>I’ve also written a script called <code>build.sh</code> for users (currently only Linux scripts available; Windows users can write their own script or do it manually). Its content: compile, copy (copy <code>/target/debug/rssust</code> to <code>/env</code>), then run.</p>
+<h3 id="cookie-management"><a class="header" href="#cookie-management">Cookie Management</a></h3>
+<p>In <code>cookies.json</code> in the same directory as the binary file, use the following format:</p>
+<p>Example format:</p>
+<pre><code class="language-json">{
+  "name": "session_id",
+  "value": "abc123",
+  "domain": ".example.com",
+  "path": "/",
+  "secure": true,
+  "httpOnly": true,
+  "sameSite": "Lax",
+  "expirationDate": 1893456000
+}
+</code></pre>
+<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
+<p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
+<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing!</a></h3>
+<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
+<pre><code class="language-markdown"># Router-name: 
+**Commit time:** 
+**Cookies?:** 
+**Author:** 
+**Introduction:** 
+**Address:** 
+**Example:** 
+**Parameter:** 
+**Environment Variables:**
+</code></pre>
+<p>First, except for <code>**Cookies?:**</code>, <code>**Environment Variables:**</code>, and <code>**Parameter:**</code>, the rest are mostly self-explanatory, but I’ll introduce them anyway:</p>
+<ol>
+<li><strong>Router-name:</strong> Fill in the router name</li>
+<li><strong>Commit time:</strong> Submission time, formatted as <code>year.month.day</code></li>
+<li><strong>Cookies?:</strong> Two cases: <code>no</code> or <code>yes</code>, with optional remarks after</li>
+<li><strong>Author:</strong> Submitter, write your GitHub username</li>
+<li><strong>Introduction:</strong> Write a brief introduction (note: if the platform is mainly in a certain language, use that language)</li>
+<li><strong>Address:</strong> Fill in <code>rssust://router_name</code></li>
+<li><strong>Example:</strong> Optional; if included, use a hyperlink: <code>[fill Address same as above](/router_name)</code></li>
+<li><strong>Parameter:</strong> This means HTTP GET parameters that might be used. You can fill in <code>no</code>, leave it empty, or start a new line with the following format:</li>
+</ol>
+<pre><code class="language-markdown">**Parameter:** 
+1. **disableembed** 
+   Type of parameter: bool
+   Default value: true
+   Meaning: Embedded videos
+2. Continue similarly for other parameters
+</code></pre>
+<p>The parameter name follows the number, wrapped with <code>** **</code> for emphasis.</p>
+<p><strong>Type of parameter:</strong> Fill in the type, define it yourself
+<strong>Default value:</strong> Default value, must conform to the <code>Type of parameter</code>
+<strong>Meaning:</strong> The meaning of the parameter</p>
+<h3 id="final-step-submit"><a class="header" href="#final-step-submit">Final Step: Submit!</a></h3>
+<p>Before submitting with git, run <code>cargo fmt</code> first. This helps others better understand your code.</p>
+<p>You need to submit:</p>
+<ol>
+<li><code>/src/router/your_router_name.rs</code></li>
+<li><code>env/docs_md/router_name.md</code> (generally please do not submit your <code>router_name.html</code> file)</li>
+<li><code>/src/router/mod.rs</code> and <code>src/request_rules.rs</code></li>
+</ol>
+<h4 id="this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code"><a class="header" href="#this-is-just-a-guide-for-routers-if-you-want-to-improve-the-core-code-feel-free-to-submit-improvements-to-the-code">This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!</a></h4>
+<p>If you are insterested in pogram explanation,please turn to <a href="pogram_explanation_cn.html">pogram_explanation_cn</a>,but now it only has Chinese.</p>
+<div style="break-before: page; page-break-before: always;"></div><p>本文由AI撰写，但其他不是哦！</p>
+<h1 id="入口函数---mainrs"><a class="header" href="#入口函数---mainrs">入口函数 - main.rs</a></h1>
+<h2 id="入口函数"><a class="header" href="#入口函数">入口函数</a></h2>
+<p><strong><code>src/main.rs:9</code> — <code>#[tokio::main] async fn main()</code></strong> 是整个程序的入口。</p>
+<h2 id="功能流程"><a class="header" href="#功能流程">功能流程</a></h2>
+<ol>
+<li><strong>配置初始化</strong>：调用 <code>config::init()</code> 确保 <code>config.toml</code> 存在</li>
+<li><strong>命令行参数处理</strong>：
+<ul>
+<li>第一个参数为 <code>"docs"</code> → 调用 <code>doc_generate()</code> 生成文档 HTML</li>
+<li>第一个参数为 <code>"cookie"</code> → 调用 <code>extract_cookies_to_json()</code> 导出浏览器 cookie</li>
+</ul>
+</li>
+<li><strong>启动 TCP 服务器</strong>：绑定 <code>127.0.0.1:7878</code>，使用 <code>tokio</code> 异步运行时，<code>tokio::spawn</code> 并发处理请求（<code>Semaphore</code> 信号量限制并发上限）</li>
+<li><strong>请求处理</strong>：每个连接由 <code>handle_connection()</code> 处理（定义在 <code>lib.rs</code> 的 <code>connect</code> 模块）</li>
+</ol>
+<h2 id="架构图"><a class="header" href="#架构图">架构图</a></h2>
+<pre><code>用户 HTTP 请求
+    ↓
+TcpListener(:7878)  (tokio::spawn 每个连接一个任务)
+    ↓  (Semaphore 并发限流)
+handle_connection(stream)
+    ↓
+解析 HTTP 请求头 (GET /xxx?key=val HTTP/1.1)  + keep-alive 处理
+    ↓
+root_rules(url, params)
+    ├── "/"        → show_index_doc().await   → index.html
+    ├── "/docs/*"  → show_doc(path).await     → 文档 HTML
+    └── 其他路由    → request_rules(url, params).await
+                      └── 路由器名::get(params).await  → RSS XML
+</code></pre>
+<h2 id="环境目录结构"><a class="header" href="#环境目录结构">环境目录结构</a></h2>
+<p>二进制运行所需的目录结构：</p>
+<pre><code>env/
+├── config.toml       # 配置文件（自动创建）
+├── cookies.json      # Cookie 文件
+├── index/
+│   ├── 404.html      # 404 页面
+│   └── index.html    # 首页
+├── docs_md/          # Markdown 文档源文件
+│   ├── official/     # 官方文档
+│   └── 路由名.md     # 各路由的文档
+└── rssust            # 编译后的二进制
+</code></pre>
+<h1 id="crawler-模块--librs已禁用"><a class="header" href="#crawler-模块--librs已禁用">crawler 模块 — lib.rs（已禁用）</a></h1>
+<blockquote>
+<p><strong>注意</strong>：<code>crawler</code> 模块目前在 <code>src/lib.rs</code> 中已被注释掉（<code>/* ... */</code>），当前版本不可用。以下文档仅作历史参考。</p>
+</blockquote>
+<h2 id="位置-1"><a class="header" href="#位置-1">位置</a></h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod crawler</code> 模块（已注释）。</p>
+<h2 id="概述-1"><a class="header" href="#概述-1">概述</a></h2>
+<p>管理无头浏览器（Obscura）实例和 Cookie 的生命周期。所有浏览器操作通过线程局部存储（<code>thread_local!</code>）实现，每个线程持有独立的浏览器实例。</p>
+<h2 id="核心类型"><a class="header" href="#核心类型">核心类型</a></h2>
+<h3 id="coke"><a class="header" href="#coke">Coke</a></h3>
+<p>内部结构体，存储处理后的 Cookie 信息：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Coke {
+    url: String,    // 域名
+    mai: String,    // Set-Cookie 字符串
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="browser线程局部变量"><a class="header" href="#browser线程局部变量">BROWSER（线程局部变量）</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>thread_local! {
+    static BROWSER: RefCell&lt;Option&lt;(tokio::runtime::Runtime, Browser)&gt;&gt; = RefCell::new(None);
+}
+<span class="boring">}</span></code></pre></pre>
+<p>每个线程第一次使用时创建 <code>Runtime</code> + <code>Browser</code> 实例，后续复用。</p>
+<h2 id="核心函数"><a class="header" href="#核心函数">核心函数</a></h2>
+<h3 id="with_browser"><a class="header" href="#with_browser">with_browser()</a></h3>
+<p><strong>签名</strong>: <code>pub fn with_browser&lt;F, T&gt;(f: F) -&gt; Result&lt;T&gt;</code></p>
+<p>获取当前线程的浏览器实例，执行闭包。如果浏览器尚未初始化，则自动创建：</p>
+<ul>
+<li>使用 <code>tokio::runtime::Builder</code> 创建单线程运行时</li>
+<li>调用 <code>Browser::new()</code> 创建 Obscura 无头浏览器实例</li>
+</ul>
+<h3 id="load_cookies"><a class="header" href="#load_cookies">load_cookies()</a></h3>
+<p><strong>签名</strong>: <code>pub fn load_cookies() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie：</p>
+<ol>
+<li>读取 JSON 文件（空文件跳过）</li>
+<li>反序列化为 <code>Vec&lt;Value&gt;</code>（Cookie 对象数组）</li>
+<li>对每个 Cookie 调用 <code>build_set_cookie()</code> 转换为 <code>Coke</code> 结构</li>
+<li>调用 <code>init()</code> 注入到全局浏览器</li>
+</ol>
+<h3 id="init"><a class="header" href="#init">init()</a></h3>
+<p><strong>签名</strong>: <code>fn init(cookies: &amp;[Coke]) -&gt; Result&lt;()&gt;</code></p>
+<p>将 Cookie 注入到浏览器实例中，通过 <code>browser.cookies().set()</code> 设置。</p>
+<h3 id="build_set_cookie"><a class="header" href="#build_set_cookie">build_set_cookie()</a></h3>
+<p><strong>签名</strong>: <code>fn build_set_cookie(cookie: &amp;Value) -&gt; Result&lt;Coke&gt;</code></p>
+<p>将 JSON Cookie 对象转换为 HTTP <code>Set-Cookie</code> 字符串：</p>
+<ul>
+<li>必填字段：<code>name</code>, <code>value</code>, <code>domain</code></li>
+<li>可选字段：<code>path</code>（默认 <code>/</code>）, <code>secure</code>, <code>httpOnly</code>, <code>sameSite</code>, <code>expirationDate</code></li>
+<li><code>expirationDate</code> 会计算 <code>Max-Age</code> 并附加到字符串</li>
+</ul>
+<h3 id="fetch"><a class="header" href="#fetch">fetch()</a></h3>
+<p><strong>签名</strong>: <code>pub fn fetch(url: &amp;str) -&gt; Result&lt;String&gt;</code></p>
+<p>使用无头浏览器访问指定 URL，返回页面 HTML 内容：</p>
+<ol>
+<li>创建新页面（<code>new_page()</code>）</li>
+<li>导航到 URL（<code>goto()</code>）</li>
+<li>返回页面内容（<code>content()</code>）</li>
+</ol>
+<h1 id="connect-模块---librs"><a class="header" href="#connect-模块---librs">connect 模块 - lib.rs</a></h1>
+<h2 id="位置-2"><a class="header" href="#位置-2">位置</a></h2>
+<p><code>src/lib.rs</code> 中的 <code>pub mod connect</code> 模块。</p>
+<h2 id="核心函数-1"><a class="header" href="#核心函数-1">核心函数</a></h2>
+<h3 id="handle_connection"><a class="header" href="#handle_connection">handle_connection()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn handle_connection(mut stream: TcpStream)</code></p>
+<p>这是每个 HTTP 请求的入口处理函数，基于 <code>tokio</code> 异步 IO：</p>
+<ol>
+<li>用 <code>read_head()</code> 从 TCP 流读取完整请求头（直到 <code>\r\n\r\n</code>），超过 30 秒无数据返回 <code>TimedOut</code></li>
+<li>解析 HTTP 请求行，提取方法、URL 路径（GET 和 POST 之间的部分）</li>
+<li>解析 URL 中的查询参数：
+<ul>
+<li>如果 URL 包含 <code>?</code>，用 <code>split_once('?')</code> 分割路径和查询字符串</li>
+<li>查询字符串通过 <code>params_to_hashmap()</code> 转为 <code>HashMap</code></li>
+</ul>
+</li>
+<li>判断 keep-alive：仅文档/静态路由（<code>/</code>、<code>/docs/*</code>、<code>/index/*</code>、<code>/favicon.ico</code>）保持连接，其余动态路由一律 <code>Connection: close</code></li>
+<li>获取 <code>Semaphore</code> 许可后，用 <code>tokio::spawn</code> 将请求任务调度到 worker 线程，调用 <code>root_rules(path, params).await</code> 获取响应</li>
+<li>根据 <code>ShowToUser</code> 枚举类型构建 HTTP 响应：
+<ul>
+<li><code>ShowToUser::Html</code> → <code>Content-Type: text/html</code></li>
+<li><code>ShowToUser::Rss</code> → <code>Content-Type: application/xml</code></li>
+<li><code>ShowToUser::File</code> → 对应的 MIME 类型（css/js/svg/png 等）</li>
+</ul>
+</li>
+<li>写回 TCP 流；keep-alive 下循环读取下一个请求（<code>buf.drain(..head_len)</code> 复用缓冲）</li>
+</ol>
+<h3 id="read_head"><a class="header" href="#read_head">read_head()</a></h3>
+<p><strong>签名</strong>: <code>async fn read_head(stream: &amp;mut TcpStream, buf: &amp;mut Vec&lt;u8&gt;) -&gt; std::io::Result&lt;Option&lt;usize&gt;&gt;</code></p>
+<p>读取完整请求头。返回 <code>Ok(None)</code> 表示对端干净关闭；<code>Err(TimedOut)</code> 表示空闲超时（30 秒）；<code>Err(UnexpectedEof)</code> 表示连接中断。</p>
+<h3 id="parse_keep_alive"><a class="header" href="#parse_keep_alive">parse_keep_alive()</a></h3>
+<p><strong>签名</strong>: <code>fn parse_keep_alive(head: &amp;str, version: &amp;str) -&gt; bool</code></p>
+<p>解析 <code>Connection</code> 头。HTTP/1.1 默认 keep-alive（除非显式 <code>Connection: close</code>）；HTTP/1.0 需显式 <code>Connection: keep-alive</code>。</p>
+<h3 id="show_index_doc"><a class="header" href="#show_index_doc">show_index_doc()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn show_index_doc() -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的 <code>index/index.html</code> 文件，返回 HTML 字符串。</p>
+<h3 id="show_doc"><a class="header" href="#show_doc">show_doc()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn show_doc(path: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>读取二进制同目录下的文档 HTML 文件（如 <code>/docs/new_router_cn.html</code> → 读取 <code>docs/new_router_cn.html</code>）。如果文件不存在，返回 <code>index/404.html</code>。</p>
+<h2 id="showtouser-枚举"><a class="header" href="#showtouser-枚举">ShowToUser 枚举</a></h2>
+<p>定义在 <code>request_rules.rs</code> 中，但被 connect 模块使用：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+    File { res: Result&lt;String, Error&gt;, content_type: String },
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面（首页、文档页面、错误页面）</li>
+<li><code>Rss</code> — 返回 RSS XML（路由器的输出）</li>
+<li><code>File</code> — 返回静态文件（CSS/JS/图片/字体等）</li>
+</ul>
+<h1 id="路由注册表---request_rulesrs"><a class="header" href="#路由注册表---request_rulesrs">路由注册表 - request_rules.rs</a></h1>
+<h2 id="位置-3"><a class="header" href="#位置-3">位置</a></h2>
+<p><code>src/request_rules.rs</code></p>
+<h2 id="概述-2"><a class="header" href="#概述-2">概述</a></h2>
+<p>这是整个项目的路由调度中心。负责将 URL 路径分发给对应的处理器，并封装返回格式。</p>
+<h2 id="showtouser-枚举-1"><a class="header" href="#showtouser-枚举-1">ShowToUser 枚举</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum ShowToUser {
+    Html { res: Result&lt;String, Error&gt; },
+    Rss { res: Result&lt;String, Error&gt; },
+    File { res: Result&lt;String, Error&gt;, content_type: String },
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>Html</code> — 返回 HTML 页面</li>
+<li><code>Rss</code> — 返回 RSS XML</li>
+<li><code>File</code> — 返回静态文件</li>
+</ul>
+<h2 id="核心函数-2"><a class="header" href="#核心函数-2">核心函数</a></h2>
+<h3 id="root_rules"><a class="header" href="#root_rules">root_rules()</a></h3>
+<p><strong>签名</strong>: <code>pub fn root_rules(first_part: &amp;str, second_part: HashMap&lt;String, String&gt;) -&gt; ShowToUser</code></p>
+<p>一级路由分发函数：</p>
+<div class="table-wrapper"><table><thead><tr><th>URL 路径</th><th>处理器</th><th>返回类型</th></tr></thead><tbody>
+<tr><td><code>"/"</code></td><td><code>show_index_doc()</code></td><td><code>ShowToUser::Html</code></td></tr>
+<tr><td>以 <code>"/docs/"</code> 或 <code>"/index/"</code> 开头</td><td><code>serve_static(path)</code></td><td><code>ShowToUser::Html</code> 或 <code>ShowToUser::File</code></td></tr>
+<tr><td>其他</td><td><code>request_rules()</code></td><td><code>ShowToUser::Rss</code> 或 <code>Html(错误)</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="request_rules"><a class="header" href="#request_rules">request_rules()</a></h3>
+<p><strong>签名</strong>: <code>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>二级路由注册表，使用 <code>const</code> 静态数组匹配 URL 路径到具体路由器：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn request_rules(url: &amp;str, parameters: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt; {
+    const ROUTES: &amp;[(&amp;str, fn(HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;)] = &amp;[
+        ("/bilibili_weekly", bilibili_weekly::get),
+        ("/bilibili_dynamic", bilibili_dynamic::get),
+        // ... 其他路由
+    ];
+    if let Some(handler) = ROUTES.iter().find(|(path, _)| *path == url) {
+        if is_route_disabled(url) {
+            return Err(anyhow!("404NotFound"));
+        }
+        (handler.1)(parameters)
+    } else {
+        Err(anyhow!("404NotFound"))
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>注册的路由会先检查 <code>config.toml</code> 中的 <code>routes.disabled</code> 列表，若被禁用则返回 404。</p>
+<h2 id="如何添加新路由"><a class="header" href="#如何添加新路由">如何添加新路由</a></h2>
+<p>参考 <code>new_router_cn.md</code>，步骤：</p>
+<ol>
+<li>在 <code>src/router/</code> 下新建 <code>.rs</code> 文件，实现 <code>pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Error&gt;</code></li>
+<li>在 <code>src/router/mod.rs</code> 中添加 <code>pub mod 你的路由名;</code></li>
+<li>在 <code>request_rules.rs</code> 的 <code>match url</code> 分发中添加 <code>"/你的路由名" =&gt; run!(你的路由名, parameters)</code> 条目</li>
+<li>在 <code>env/docs_md/</code> 下编写对应的路由文档 <code>.md</code> 文件</li>
+</ol>
+<h1 id="文档生成器---docrs"><a class="header" href="#文档生成器---docrs">文档生成器 - doc.rs</a></h1>
+<h2 id="位置-4"><a class="header" href="#位置-4">位置</a></h2>
+<p><code>src/doc.rs</code></p>
+<h2 id="概述-3"><a class="header" href="#概述-3">概述</a></h2>
+<p>将 <code>docs_md/</code> 目录下的 Markdown 文件批量转换为带样式的 HTML 文档页面。在终端中执行 <code>./env/rssust docs</code> 触发。</p>
+<h2 id="核心函数-3"><a class="header" href="#核心函数-3">核心函数</a></h2>
+<h3 id="doc_generate"><a class="header" href="#doc_generate">doc_generate()</a></h3>
+<p><strong>签名</strong>: <code>pub fn doc_generate() -&gt; Result&lt;(), Error&gt;</code></p>
+<h4 id="执行流程"><a class="header" href="#执行流程">执行流程</a></h4>
+<ol>
+<li><strong>定位目录</strong>：以二进制文件所在目录为基础，输入目录为 <code>./docs_md</code>，输出目录为 <code>./docs</code></li>
+<li><strong>生成 SUMMARY.md</strong>：自动扫描 <code>docs_md/</code> 下的所有 <code>.md</code> 文件，按分类生成导航目录</li>
+<li><strong>转换</strong>：使用 <code>mdbook</code> 库将 Markdown 转为 HTML</li>
+<li><strong>后处理</strong>：将 <code>official/</code> 子目录下的 HTML 提升到 <code>docs/</code> 根目录，修复所有资源文件和页面链接的路径</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-apnews_topics"><a class="header" href="#router-name-apnews_topics">Router-name: apnews_topics</a></h1>
+<p><strong>Commit time:</strong> 2026.07.24<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@zoenglinghou<br />
+<strong>Introduction:</strong> AP News headlines by topic<br />
+<strong>Address:</strong> rssust://apnews_topics<br />
+<strong>Example:</strong> <a href="/apnews_topics">rssust://apnews_topics</a><br />
+<strong>Parameter:</strong><br />
+topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/science/health/sports/entertainment)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_collection"><a class="header" href="#router-name-bilibili_collection">Router-name: bilibili_collection</a></h1>
+<p><strong>Commit time:</strong> 2026.07.14<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
+<strong>Introduction:</strong> B站合集（合集，不是系列）视频列表，通过 season_id 获取合集内的视频<br />
+<strong>Address:</strong> rssust://bilibili_collection<br />
+<strong>Example:</strong> <a href="../bilibili_collection?uid=245645656&amp;sid=529166">rssust://bilibili_collection?uid=245645656&amp;sid=529166</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: num<br />
+Default value: null<br />
+Meaning: B站用户 uid（必填）</li>
+<li><strong>sid</strong><br />
+Type of parameter: num<br />
+Default value: null<br />
+Meaning: 合集 season_id（必填）</li>
+<li><strong>sortreverse</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 排序方向，true 为倒序，false 为正序</li>
+<li><strong>pagenum</strong><br />
+Type of parameter: num<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>pagesize</strong><br />
+Type of parameter: num<br />
+Default value: 16<br />
+Meaning: 每页视频数量</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_dynamic"><a class="header" href="#router-name-bilibili_dynamic">Router-name: bilibili_dynamic</a></h1>
+<p><strong>Commit time:</strong> 2026.7.11<br />
+<strong>Cookies?:</strong> yes (使用<code>cookies.json</code>直接注入到reqwest,需要鲜活的cookies,反爬中等)<br />
+<strong>Author:</strong> AI大部分转写自RSShub/huiinyg-rusting收拾烂摊子和审核-AGPL-3.0协议（已被传染）<br />
+<strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub async fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
+<p><strong>Address:</strong> <code>rssust://bilibili_dynamic</code><br />
+<strong>Example:</strong> <a href="../bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong>
+<ul>
+<li>Type of parameter: string (必填)</li>
+<li>Default value: 无</li>
+<li>Meaning: Bilibili 用户 UID</li>
+</ul>
+</li>
+<li><strong>showEmoji</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否将动态正文中的 emoji 文本替换为图片</li>
+</ul>
+</li>
+<li><strong>embed</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: true</li>
+<li>Meaning: 视频动态是否内嵌 iframe 播放器</li>
+</ul>
+</li>
+<li><strong>useAvid</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 视频链接使用 av 号（默认使用 bv 号）</li>
+</ul>
+</li>
+<li><strong>directLink</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 链接直接跳转至内容页而非动态页</li>
+</ul>
+</li>
+<li><strong>hideGoods</strong>
+<ul>
+<li>Type of parameter: bool</li>
+<li>Default value: false</li>
+<li>Meaning: 是否隐藏带货类动态</li>
+</ul>
+</li>
+<li><strong>offset</strong>
+<ul>
+<li>Type of parameter: string</li>
+<li>Default value: 空</li>
+<li>Meaning: 翻页偏移量（从上次返回的 <code>data.offset</code> 取值，用于分页续抓）</li>
+</ul>
+</li>
+</ol>
+<p><strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_fav"><a class="header" href="#router-name-bilibili_fav">Router-name: bilibili_fav</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> yes (bilibili.com)<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> bilibili UP主非默认收藏夹<br />
+<strong>Address:</strong> rssust://bilibili_fav<br />
+<strong>Example:</strong> <a href="/bilibili_fav?uid=756508&amp;fid=50948568">rssust://bilibili_fav?uid=756508&amp;fid=50948568</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 用户 id，可在 UP 主主页中找到</li>
+<li><strong>fid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 收藏夹 ID，可在收藏夹 URL 中找到</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_link_news"><a class="header" href="#router-name-bilibili_link_news">Router-name: bilibili_link_news</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> bilibili 直播/小视频/相簿公告<br />
+<strong>Address:</strong> rssust://bilibili_link_news<br />
+<strong>Example:</strong> <a href="/bilibili_link_news?product=live">rssust://bilibili_link_news?product=live</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>product</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 公告分类，live=直播, vc=小视频, wh=相簿</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_partion"><a class="header" href="#router-name-bilibili_partion">Router-name: bilibili_partion</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> bilibili 分区视频<br />
+<strong>Address:</strong> rssust://bilibili_partion<br />
+<strong>Example:</strong> <a href="/bilibili_partion?tid=1">rssust://bilibili_partion?tid=1</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>tid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 分区 id</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<p>分区 id 取值（全部-各分区）：</p>
+<div class="table-wrapper"><table><thead><tr><th>全部分区</th><th>动画</th><th>番剧</th><th>国创</th><th>音乐</th><th>舞蹈</th><th>游戏</th><th>知识</th><th>科技</th><th>运动</th><th>汽车</th><th>生活</th><th>美食</th><th>动物圈</th><th>鬼畜</th><th>时尚</th><th>娱乐</th><th>影视</th><th>纪录片</th><th>电影</th><th>电视剧</th></tr></thead><tbody>
+<tr><td>0</td><td>1</td><td>13</td><td>167</td><td>3</td><td>129</td><td>4</td><td>36</td><td>188</td><td>234</td><td>223</td><td>160</td><td>211</td><td>217</td><td>119</td><td>155</td><td>5</td><td>181</td><td>177</td><td>23</td><td>11</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_partion_ranking"><a class="header" href="#router-name-bilibili_partion_ranking">Router-name: bilibili_partion_ranking</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@lengthmin<br />
+<strong>Introduction:</strong> bilibili 分区视频排行榜<br />
+<strong>Address:</strong> rssust://bilibili_partion_ranking<br />
+<strong>Example:</strong> <a href="/bilibili_partion_ranking?tid=1&amp;days=7">rssust://bilibili_partion_ranking?tid=1&amp;days=7</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>tid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 分区 id</li>
+</ol>
+<div class="table-wrapper"><table><thead><tr><th>全部分区</th><th>动画</th><th>番剧</th><th>国创</th><th>音乐</th><th>舞蹈</th><th>游戏</th><th>知识</th><th>科技</th><th>运动</th><th>汽车</th><th>生活</th><th>美食</th><th>动物圈</th><th>鬼畜</th><th>时尚</th><th>娱乐</th><th>影视</th><th>纪录片</th><th>电影</th><th>电视剧</th></tr></thead><tbody>
+<tr><td>0</td><td>1</td><td>13</td><td>167</td><td>3</td><td>129</td><td>4</td><td>36</td><td>188</td><td>234</td><td>223</td><td>160</td><td>211</td><td>217</td><td>119</td><td>155</td><td>5</td><td>181</td><td>177</td><td>23</td><td>11</td></tr>
+</tbody></table>
+</div>
+<ol start="2">
+<li><strong>days</strong><br />
+Type of parameter: number<br />
+Default value: 7<br />
+Meaning: 最近多少天内的热度排序</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_popular"><a class="header" href="#router-name-bilibili_popular">Router-name: bilibili_popular</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
+<strong>Introduction:</strong> B站热门视频<br />
+<strong>Address:</strong> rssust://bilibili_popular<br />
+<strong>Example:</strong> <a href="../bilibili_popular">rssust://bilibili_popular</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>pn</strong><br />
+Type of parameter: num<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>ps</strong><br />
+Type of parameter: num<br />
+Default value: 20<br />
+Meaning: 每页项数</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_precious"><a class="header" href="#router-name-bilibili_precious">Router-name: bilibili_precious</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
+<strong>Introduction:</strong> B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取<br />
+<strong>Address:</strong> rssust://bilibili_precious<br />
+<strong>Example:</strong> <a href="../bilibili_precious">rssust://bilibili_precious</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_series"><a class="header" href="#router-name-bilibili_series">Router-name: bilibili_series</a></h1>
+<p><strong>Commit time:</strong> 2026.07.12<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
+<strong>Introduction:</strong> B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频<br />
+<strong>Address:</strong> rssust://bilibili_series<br />
+<strong>Example:</strong> <a href="../bilibili_series?series_id=534502">rssust://bilibili_series?series_id=534502</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>series_id</strong><br />
+Type of parameter: num<br />
+Default value: null<br />
+Meaning: 系列合集ID（必填）</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_article"><a class="header" href="#router-name-bilibili_user_article">Router-name: bilibili_user_article</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@lengthmin &amp; Qixingchen<br />
+<strong>Introduction:</strong> bilibili UP 主图文(专栏)<br />
+<strong>Address:</strong> rssust://bilibili_user_article<br />
+<strong>Example:</strong> <a href="/bilibili_user_article?uid=334958638">rssust://bilibili_user_article?uid=334958638</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 用户 id，可在 UP 主主页中找到</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_coin"><a class="header" href="#router-name-bilibili_user_coin">Router-name: bilibili_user_coin</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> bilibili UP 主投币视频<br />
+<strong>Address:</strong> rssust://bilibili_user_coin<br />
+<strong>Example:</strong> <a href="/bilibili_user_coin?uid=208259">rssust://bilibili_user_coin?uid=208259</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 用户 id，可在 UP 主主页中找到</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_fav"><a class="header" href="#router-name-bilibili_user_fav">Router-name: bilibili_user_fav</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> yes (bilibili.com)<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> bilibili UP 主默认收藏夹<br />
+<strong>Address:</strong> rssust://bilibili_user_fav<br />
+<strong>Example:</strong> <a href="/bilibili_user_fav?uid=2267573">rssust://bilibili_user_fav?uid=2267573</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 用户 id，可在 UP 主主页中找到</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_like"><a class="header" href="#router-name-bilibili_user_like">Router-name: bilibili_user_like</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@ygguorun<br />
+<strong>Introduction:</strong> bilibili UP 主点赞视频<br />
+<strong>Address:</strong> rssust://bilibili_user_like<br />
+<strong>Example:</strong> <a href="/bilibili_user_like?uid=208259">rssust://bilibili_user_like?uid=208259</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>uid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 用户 id，可在 UP 主主页中找到</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_video_page"><a class="header" href="#router-name-bilibili_video_page">Router-name: bilibili_video_page</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@sxzz<br />
+<strong>Introduction:</strong> bilibili 视频选集列表<br />
+<strong>Address:</strong> rssust://bilibili_video_page<br />
+<strong>Example:</strong> <a href="/bilibili_video_page?bvid=BV1i7411M7N9">rssust://bilibili_video_page?bvid=BV1i7411M7N9</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>bvid</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 可在视频页 URL 中找到</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 10<br />
+Meaning: 返回集数</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_video_reply"><a class="header" href="#router-name-bilibili_video_reply">Router-name: bilibili_video_reply</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> yes (bilibili.com 需包含 SESSDATA) / 未测试<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> bilibili 视频评论<br />
+<strong>Address:</strong> rssust://bilibili_video_reply<br />
+<strong>Example:</strong> <a href="/bilibili_video_reply?bvid=BV1vA411b7ip">rssust://bilibili_video_reply?bvid=BV1vA411b7ip</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>bvid</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 可在视频页 URL 中找到</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_vsearch"><a class="header" href="#router-name-bilibili_vsearch">Router-name: bilibili_vsearch</a></h1>
+<p><strong>Commit time:</strong> 2026.07.19<br />
+<strong>Cookies?:</strong> yes (bilibili.com)<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@pcrtool &amp; DIYgod<br />
+<strong>Introduction:</strong> bilibili 视频搜索<br />
+<strong>Address:</strong> rssust://bilibili_vsearch<br />
+<strong>Example:</strong> <a href="/bilibili_vsearch?kw=linux">rssust://bilibili_vsearch?kw=linux</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>kw</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 检索关键字</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: pubdate<br />
+Meaning: 排序，综合:totalrank 最多点击:click 最新发布:pubdate 最多弹幕:dm 最多收藏:stow</li>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+<li><strong>tid</strong><br />
+Type of parameter: number<br />
+Default value: 0<br />
+Meaning: 分区 id</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_weekly"><a class="header" href="#router-name-bilibili_weekly">Router-name: <strong>bilibili_weekly</strong></a></h1>
+<p><strong>Commit time:</strong> 2026.07.09<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> Bilibili最新一期的每周精选<br />
+<strong>Address:</strong> rssust://bilibili_weekly<br />
+<strong>Example:</strong> <a href="../bilibili_weekly?disableembed=true">rssust://bilibili_weekly?disableembed=true</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>disableembed</strong><br />
+Type of parameter: bool<br />
+Default value: true<br />
+Meaning: 内嵌视频</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bjnews_cat"><a class="header" href="#router-name-bjnews_cat">Router-name: bjnews_cat</a></h1>
+<p><strong>Commit time:</strong> 2026.07.25<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@dzx-dzx<br />
+<strong>Introduction:</strong> 新京报分类文章<br />
+<strong>Address:</strong> rssust://bjnews_cat<br />
+<strong>Example:</strong> <a href="/bjnews_cat">rssust://bjnews_cat</a><br />
+<strong>Parameter:</strong><br />
+cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-caixin_latest"><a class="header" href="#router-name-caixin_latest">Router-name: caixin_latest</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@tpnonthealps<br />
+<strong>Introduction:</strong> 财新网最新文章<br />
+<strong>Address:</strong> rssust://caixin_latest<br />
+<strong>Example:</strong> <a href="/caixin_latest">rssust://caixin_latest</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-carnegieendowment_news"><a class="header" href="#router-name-carnegieendowment_news">Router-name: carnegieendowment_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.01<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Carnegie Endowment for International Peace - International affairs think tank publications, events &amp; videos (no official RSS)<br />
+<strong>Address:</strong> rssust://carnegieendowment_news<br />
+<strong>Example:</strong> <a href="/carnegieendowment_news">rssust://carnegieendowment_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cenc_earthquake"><a class="header" href="#router-name-cenc_earthquake">Router-name: cenc_earthquake</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 中国地震台网中心 最新地震速报<br />
+<strong>Address:</strong> rssust://cenc_earthquake<br />
+<strong>Example:</strong> <a href="/cenc_earthquake">rssust://cenc_earthquake</a><br />
+<strong>Parameter:</strong><br />
+limit（可选，最大 50，默认 20）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-chinanews"><a class="header" href="#router-name-chinanews">Router-name: chinanews</a></h1>
+<p><strong>Commit time:</strong> 2026.07.25<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@yuxinliu-alex<br />
+<strong>Introduction:</strong> 中国新闻网滚动新闻<br />
+<strong>Address:</strong> rssust://chinanews<br />
+<strong>Example:</strong> <a href="/chinanews">rssust://chinanews</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cls_hot"><a class="header" href="#router-name-cls_hot">Router-name: cls_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@5upernova-heng, nczitzk<br />
+<strong>Introduction:</strong> 财联社热门文章排行榜<br />
+<strong>Address:</strong> rssust://cls_hot<br />
+<strong>Example:</strong> <a href="/cls_hot">rssust://cls_hot</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defensenews_news"><a class="header" href="#router-name-defensenews_news">Router-name: defensenews_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.02<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Defense News - Global Defense &amp; Military News (no official RSS)<br />
+<strong>Address:</strong> rssust://defensenews_news<br />
+<strong>Example:</strong> <a href="/defensenews_news">rssust://defensenews_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defenseone_news"><a class="header" href="#router-name-defenseone_news">Router-name: defenseone_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.02<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Defense One - Defense &amp; National Security News (no official RSS)<br />
+<strong>Address:</strong> rssust://defenseone_news<br />
+<strong>Example:</strong> <a href="/defenseone_news">rssust://defenseone_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-discovermagazine_news"><a class="header" href="#router-name-discovermagazine_news">Router-name: discovermagazine_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.02<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Discover Magazine - Science News (no official RSS)<br />
+<strong>Address:</strong> rssust://discovermagazine_news<br />
+<strong>Example:</strong> <a href="/discovermagazine_news">rssust://discovermagazine_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_latest"><a class="header" href="#router-name-douban_book_latest">Router-name: douban_book_latest</a></h1>
+<p><strong>Commit time:</strong> 2026.07.20<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@fengkx<br />
+<strong>Introduction:</strong> 豆瓣新书速递<br />
+<strong>Address:</strong> rssust://douban_book_latest<br />
+<strong>Example:</strong> <a href="/douban_book_latest?type=fiction">rssust://douban_book_latest?type=fiction</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: all<br />
+Meaning: 分类，可选 all / prose_poetry / fiction / history / biography / science / art / business / comics</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_rank"><a class="header" href="#router-name-douban_book_rank">Router-name: douban_book_rank</a></h1>
+<p><strong>Commit time:</strong> 2026.07.20<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@xyqfer<br />
+<strong>Introduction:</strong> 豆瓣热门图书排行<br />
+<strong>Address:</strong> rssust://douban_book_rank<br />
+<strong>Example:</strong> <a href="/douban_book_rank?type=fiction">rssust://douban_book_rank?type=fiction</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 图书类型，fiction=虚构类, nonfiction=非虚构类，缺省合并两者</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_event_hot"><a class="header" href="#router-name-douban_event_hot">Router-name: douban_event_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.07.20<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@xyqfer<br />
+<strong>Introduction:</strong> 豆瓣同城热门活动<br />
+<strong>Address:</strong> rssust://douban_event_hot<br />
+<strong>Example:</strong> <a href="/douban_event_hot?locationId=118172">rssust://douban_event_hot?locationId=118172</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>locationId</strong><br />
+Type of parameter: string<br />
+Default value: 0<br />
+Meaning: 位置 id，同城首页控制台执行 <code>window.__loc_id__</code> 获取</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_movie_classification"><a class="header" href="#router-name-douban_movie_classification">Router-name: douban_movie_classification</a></h1>
+<p><strong>Commit time:</strong> 2026.07.20<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@zzwab<br />
+<strong>Introduction:</strong> 豆瓣电影分类<br />
+<strong>Address:</strong> rssust://douban_movie_classification<br />
+<strong>Example:</strong> <a href="/douban_movie_classification?sort=R&amp;score=7.5&amp;tags=Netflix">rssust://douban_movie_classification?sort=R&amp;score=7.5&amp;tags=Netflix</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>sort</strong><br />
+Type of parameter: string<br />
+Default value: U<br />
+Meaning: 排序方式，U=近期热门, T=标记最多, S=评分最高, R=最近上映</li>
+<li><strong>score</strong><br />
+Type of parameter: number<br />
+Default value: 0<br />
+Meaning: 最低评分</li>
+<li><strong>tags</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 分类标签，多个用逗号分隔</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eastday_24"><a class="header" href="#router-name-eastday_24">Router-name: eastday_24</a></h1>
+<p><strong>Commit time:</strong> 2026.07.25<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 东方资讯24小时热闻<br />
+<strong>Address:</strong> rssust://eastday_24<br />
+<strong>Example:</strong> <a href="/eastday_24">rssust://eastday_24</a><br />
+<strong>Parameter:</strong><br />
+category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽车/体育/财经/游戏/科技/国内/宠物/情感/人文/教育)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eeo_kuaixun"><a class="header" href="#router-name-eeo_kuaixun">Router-name: eeo_kuaixun</a></h1>
+<p><strong>Commit time:</strong> 2026.07.25<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 经济观察报快讯<br />
+<strong>Address:</strong> rssust://eeo_kuaixun<br />
+<strong>Example:</strong> <a href="/eeo_kuaixun">rssust://eeo_kuaixun</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-gelonghui_home"><a class="header" href="#router-name-gelonghui_home">Router-name: gelonghui_home</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@TonyRL<br />
+<strong>Introduction:</strong> 格隆汇首页，支持分类（推荐/股票/基金/新股/研报）<br />
+<strong>Address:</strong> rssust://gelonghui_home<br />
+<strong>Example:</strong> <a href="/gelonghui_home">rssust://gelonghui_home</a><br />
+<strong>Parameter:</strong><br />
+tag: 分类 (默认 web_home_page)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_commits"><a class="header" href="#router-name-github_commits">Router-name: github_commits</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub repository recent commits on default branch via GraphQL API<br />
+<strong>Address:</strong> rssust://github_commits<br />
+<strong>Example:</strong> <a href="/github_commits?owner=rust-lang&amp;repo=rust">rssust://github_commits?owner=rust-lang&amp;repo=rust</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+limit (optional, max 50, default 10)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_followers"><a class="header" href="#router-name-github_followers">Router-name: github_followers</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub user followers query via GraphQL API<br />
+<strong>Address:</strong> rssust://github_followers<br />
+<strong>Example:</strong> <a href="/github_followers?username=torvalds">rssust://github_followers?username=torvalds</a><br />
+<strong>Parameter:</strong><br />
+username (required, GitHub login)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_issue_comments"><a class="header" href="#router-name-github_issue_comments">Router-name: github_issue_comments</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub repository recent Issue / Pull Request comments via GraphQL API<br />
+<strong>Address:</strong> rssust://github_issue_comments<br />
+<strong>Example:</strong> <a href="/github_issue_comments?owner=facebook&amp;repo=react">rssust://github_issue_comments?owner=facebook&amp;repo=react</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+limit (optional, max 50, default 20, split between issues &amp; PRs, 2 latest comments each)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_stars"><a class="header" href="#router-name-github_stars">Router-name: github_stars</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub single repository star count via GraphQL API<br />
+<strong>Address:</strong> rssust://github_stars<br />
+<strong>Example:</strong> <a href="/github_stars?owner=torvalds&amp;repo=linux">rssust://github_stars?owner=torvalds&amp;repo=linux</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guancha_headline"><a class="header" href="#router-name-guancha_headline">Router-name: guancha_headline</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 观察者网头条<br />
+<strong>Address:</strong> rssust://guancha_headline<br />
+<strong>Example:</strong> <a href="/guancha_headline">rssust://guancha_headline</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guanhai"><a class="header" href="#router-name-guanhai">Router-name: guanhai</a></h1>
+<p><strong>Commit time:</strong> 2026.07.25<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@TonyRL<br />
+<strong>Introduction:</strong> 观海新闻首页推荐<br />
+<strong>Address:</strong> rssust://guanhai<br />
+<strong>Example:</strong> <a href="/guanhai">rssust://guanhai</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guokr_scientific"><a class="header" href="#router-name-guokr_scientific">Router-name: guokr_scientific</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 果壳网 科学人 文章<br />
+<strong>Address:</strong> rssust://guokr_scientific<br />
+<strong>Example:</strong> <a href="/guokr_scientific">rssust://guokr_scientific</a><br />
+<strong>Parameter:</strong><br />
+limit（可选，最大 50，默认 20）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-ifeng_news"><a class="header" href="#router-name-ifeng_news">Router-name: ifeng_news</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 凤凰网资讯<br />
+<strong>Address:</strong> rssust://ifeng_news<br />
+<strong>Example:</strong> <a href="/ifeng_news">rssust://ifeng_news</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-ithome_ranking"><a class="header" href="#router-name-ithome_ranking">Router-name: ithome_ranking</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@immmortal, luyuhuang<br />
+<strong>Introduction:</strong> IT之家热榜<br />
+<strong>Address:</strong> rssust://ithome_ranking<br />
+<strong>Example:</strong> <a href="/ithome_ranking?type=24h">rssust://ithome_ranking?type=24h</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: 24h<br />
+Meaning: 24h(24小时最热), 7days(7天最热), monthly(月榜)</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-jianshu_home"><a class="header" href="#router-name-jianshu_home">Router-name: jianshu_home</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod, HenryQW, JimenezLi<br />
+<strong>Introduction:</strong> 简书首页<br />
+<strong>Address:</strong> rssust://jianshu_home<br />
+<strong>Example:</strong> <a href="/jianshu_home">rssust://jianshu_home</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-juejin_pins"><a class="header" href="#router-name-juejin_pins">Router-name: juejin_pins</a></h1>
+<p><strong>Commit time:</strong> 2026.07.29<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核<br />
+<strong>Introduction:</strong> 掘金沸点<br />
+<strong>Address:</strong> rssust://juejin_pins<br />
+<strong>Example:</strong> <a href="/juejin_pins?type=hot">rssust://juejin_pins?type=hot</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: recommend<br />
+Meaning: 沸点分类：recommend(推荐), hot(热门)，或话题ID（如 6824710203301167112=上班摸鱼, 6819970850532360206=内推招聘, 6824710202487472141=一图胜千言, 6824710202562969614=今天学到了, 6824710202378436621=每天一道算法题, 6824710202000932877=开发工具推荐, 6824710203112423437=树洞一下）</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-juejin_trending"><a class="header" href="#router-name-juejin_trending">Router-name: juejin_trending</a></h1>
+<p><strong>Commit time:</strong> 2026.07.29<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核<br />
+<strong>Introduction:</strong> 掘金热门文章<br />
+<strong>Address:</strong> rssust://juejin_trending<br />
+<strong>Example:</strong> <a href="/juejin_trending">rssust://juejin_trending</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>category</strong><br />
+Type of parameter: string<br />
+Default value: all<br />
+Meaning: 分类：all(全部) 或分类URL名（如 frontend, backend, android 等）</li>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: weekly<br />
+Meaning: 时间范围：weekly(本周), monthly(本月), historical(历史)</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-leiphone_newsflash"><a class="header" href="#router-name-leiphone_newsflash">Router-name: leiphone_newsflash</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 雷锋网业界资讯<br />
+<strong>Address:</strong> rssust://leiphone_newsflash<br />
+<strong>Example:</strong> <a href="/leiphone_newsflash">rssust://leiphone_newsflash</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-mittrchina"><a class="header" href="#router-name-mittrchina">Router-name: mittrchina</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> MIT Technology Review 麻省理工科技评论中文站<br />
+<strong>Address:</strong> rssust://mittrchina<br />
+<strong>Example:</strong> <a href="/mittrchina">rssust://mittrchina</a><br />
+<strong>Parameter:</strong><br />
+type（可选，index=首页资讯 hot=本周热榜 breaking=快讯 video=视频，默认 index）<br />
+limit（可选，最大 30，默认 10）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-netease_today"><a class="header" href="#router-name-netease_today">Router-name: netease_today</a></h1>
+<p><strong>Commit time:</strong> 2026.07.20<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 网易新闻今日关注<br />
+<strong>Address:</strong> rssust://netease_today<br />
+<strong>Example:</strong> <a href="/netease_today">rssust://netease_today</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nmc_alarm"><a class="header" href="#router-name-nmc_alarm">Router-name: nmc_alarm</a></h1>
+<p><strong>Commit time:</strong> 2026.07.31<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 自行开发<br />
+<strong>Introduction:</strong> 中央气象台预警信号<br />
+<strong>Address:</strong> rssust://nmc_alarm<br />
+<strong>Example:</strong> <a href="/nmc_alarm?type=%E6%9A%B4%E9%9B%A8&amp;level=%E9%BB%84%E8%89%B2&amp;province=%E6%B2%B3%E5%8C%97">rssust://nmc_alarm?type=暴雨&amp;level=黄色&amp;province=河北</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 预警类型：台风/暴雨/暴雪/寒潮/大风/沙尘暴/高温/干旱/雷电/冰雹/霜冻/大雾/道路结冰</li>
+<li><strong>level</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 预警等级：蓝色/黄色/橙色/红色</li>
+<li><strong>province</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 省级区域，支持简称（如“河北“）或全称（如“河北省“）</li>
+<li><strong>date</strong><br />
+Type of parameter: string<br />
+Default value: null<br />
+Meaning: 指定日期（YYYY-MM-DD），只返回该日发布的预警</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 50<br />
+Meaning: 条目数量上限，最大 200</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_news"><a class="header" href="#router-name-rail12306_news">Router-name: rail12306_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 12306 最新动态公告<br />
+<strong>Address:</strong> rssust://rail12306_news<br />
+<strong>Example:</strong> <a href="/rail12306_news">rssust://rail12306_news</a><br />
+<strong>Parameter:</strong><br />
+limit（可选，最大 50，默认 20）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_ticket"><a class="header" href="#router-name-rail12306_ticket">Router-name: rail12306_ticket</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 12306 火车票余票查询<br />
+<strong>Address:</strong> rssust://rail12306_ticket<br />
+<strong>Example:</strong> <a href="/rail12306_ticket?date=2026-08-05&amp;from=%E5%8C%97%E4%BA%AC&amp;to=%E4%B8%8A%E6%B5%B7">rssust://rail12306_ticket</a><br />
+<strong>Parameter:</strong><br />
+date（必填，YYYY-MM-DD）<br />
+from（必填，出发站名，如“北京“）<br />
+to（必填，到达站名，如“上海“）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-scientificamerican_news"><a class="header" href="#router-name-scientificamerican_news">Router-name: scientificamerican_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.02<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Scientific American - Science &amp; Technology News (no official RSS)<br />
+<strong>Address:</strong> rssust://scientificamerican_news<br />
+<strong>Example:</strong> <a href="/scientificamerican_news">rssust://scientificamerican_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-smithsonianmag_news"><a class="header" href="#router-name-smithsonianmag_news">Router-name: smithsonianmag_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.01<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> Smithsonian Magazine - Science, History &amp; Culture (official RSS returns 403)<br />
+<strong>Address:</strong> rssust://smithsonianmag_news<br />
+<strong>Example:</strong> <a href="/smithsonianmag_news">rssust://smithsonianmag_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-solidot"><a class="header" href="#router-name-solidot">Router-name: solidot</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL<br />
+<strong>Introduction:</strong> 奇客的资讯，重要的东西<br />
+<strong>Address:</strong> rssust://solidot<br />
+<strong>Example:</strong> <a href="/solidot">rssust://solidot</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: www<br />
+Meaning: 分类名，如 www(主站), science(科学), mobile(移动), linux, bsd 等</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_article_list"><a class="header" href="#router-name-stcn_article_list">Router-name: stcn_article_list</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 证券时报网文章列表，按分类（要闻/股市/公司/基金/金融/评论/产经/科创板/新三板/ESG/滚动）<br />
+<strong>Address:</strong> rssust://stcn_article_list<br />
+<strong>Example:</strong> <a href="/stcn_article_list">rssust://stcn_article_list</a><br />
+<strong>Parameter:</strong><br />
+id: 分类 (默认 yw)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_kx"><a class="header" href="#router-name-stcn_kx">Router-name: stcn_kx</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 证券时报网快讯<br />
+<strong>Address:</strong> rssust://stcn_kx<br />
+<strong>Example:</strong> <a href="/stcn_kx">rssust://stcn_kx</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_rank"><a class="header" href="#router-name-stcn_rank">Router-name: stcn_rank</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 证券时报网热榜（按分类）<br />
+<strong>Address:</strong> rssust://stcn_rank<br />
+<strong>Example:</strong> <a href="/stcn_rank">rssust://stcn_rank</a><br />
+<strong>Parameter:</strong><br />
+id: 分类 (默认 yw)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-thepaper_featured"><a class="header" href="#router-name-thepaper_featured">Router-name: thepaper_featured</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 澎湃新闻首页头条推荐<br />
+<strong>Address:</strong> rssust://thepaper_featured<br />
+<strong>Example:</strong> <a href="/thepaper_featured">rssust://thepaper_featured</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-tmtpost_new"><a class="header" href="#router-name-tmtpost_new">Router-name: tmtpost_new</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 钛媒体最新文章<br />
+<strong>Address:</strong> rssust://tmtpost_new<br />
+<strong>Example:</strong> <a href="/tmtpost_new">rssust://tmtpost_new</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-videocardz_news"><a class="header" href="#router-name-videocardz_news">Router-name: videocardz_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.01<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huinyg<br />
+<strong>Introduction:</strong> VideoCardz.com - Latest GPU &amp; Hardware News (English tech site, no official RSS)<br />
+<strong>Address:</strong> rssust://videocardz_news<br />
+<strong>Example:</strong> <a href="/videocardz_news">rssust://videocardz_news</a><br />
+<strong>Parameter:</strong><br />
+(No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-wallstreetcn_hot"><a class="header" href="#router-name-wallstreetcn_hot">Router-name: wallstreetcn_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.07.21<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 华尔街见闻最热文章<br />
+<strong>Address:</strong> rssust://wallstreetcn_hot<br />
+<strong>Example:</strong> <a href="/wallstreetcn_hot?period=day">rssust://wallstreetcn_hot?period=day</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>period</strong><br />
+Type of parameter: string<br />
+Default value: day<br />
+Meaning: 时间范围，day(当日) 或 week(当周)</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-yicai_headline"><a class="header" href="#router-name-yicai_headline">Router-name: yicai_headline</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 第一财经头条<br />
+<strong>Address:</strong> rssust://yicai_headline<br />
+<strong>Example:</strong> <a href="/yicai_headline">rssust://yicai_headline</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-yicai_latest"><a class="header" href="#router-name-yicai_latest">Router-name: yicai_latest</a></h1>
+<p><strong>Commit time:</strong> 2026.07.22<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Introduction:</strong> 第一财经最新文章<br />
+<strong>Address:</strong> rssust://yicai_latest<br />
+<strong>Example:</strong> <a href="/yicai_latest">rssust://yicai_latest</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-zhihu_hot"><a class="header" href="#router-name-zhihu_hot">Router-name: zhihu_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.07.16<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> 知乎热榜<br />
+<strong>Address:</strong> rssust://zhihu_hot<br />
+<strong>Example:</strong> <a href="../zhihu_hot">rssust://zhihu_hot</a><br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

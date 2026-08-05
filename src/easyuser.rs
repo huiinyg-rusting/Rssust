@@ -184,6 +184,61 @@ pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<Strin
     result
 }
 
+///带自定义 header 的 JSON POST，并纳入限流缓存。
+///用于需要 Authorization 等头的接口（如 GitHub GraphQL）。
+pub async fn fetch_reqwest_post_json_with_headers(
+    url: &str,
+    json_body: &str,
+    headers: &[(&str, &str)],
+) -> Result<String, Error> {
+    debug!("POST {} (json, with headers)", url);
+    let result = (|| async {
+        if let Some(ttl) = crate::rate_limit::current_ttl() {
+            let key = crate::rate_limit::make_key("POST", url, headers);
+            if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
+                debug!("POST cache hit: {}", url);
+                return Ok(cached);
+            }
+            let mut req = client()
+                .post(url)
+                .header("Content-Type", "application/json")
+                .body(json_body.to_string());
+            for &(k, v) in headers {
+                req = req.header(k, v);
+            }
+            let body = req
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?;
+            crate::rate_limit::store(&key, &body);
+            Ok(body)
+        } else {
+            let mut req = client()
+                .post(url)
+                .header("Content-Type", "application/json")
+                .body(json_body.to_string());
+            for &(k, v) in headers {
+                req = req.header(k, v);
+            }
+            Ok(req
+                .send()
+                .await
+                .map_err(Error::from)?
+                .text()
+                .await
+                .map_err(Error::from)?)
+        }
+    })()
+    .await;
+    if let Err(ref e) = result {
+        warn!("POST {} failed: {}", url, e);
+    }
+    result
+}
+
 pub async fn fetch_reqwest_get_with_headers(
     url: &str,
     headers: &[(&str, &str)],
