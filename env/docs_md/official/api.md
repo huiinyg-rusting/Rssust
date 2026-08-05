@@ -57,6 +57,10 @@
 - [carnegieendowment_news](../carnegieendowment_news.md)
     Carnegie Endowment for International Peace - international affairs think tank publications (no official RSS)
 
+#### CENC (中国地震台网中心)
+- [cenc_earthquake](../cenc_earthquake.md)
+    中国地震台网中心最新地震速报
+
 #### Chinanews (中国新闻网)
 - [chinanews](../chinanews.md)
     中国新闻网滚动新闻
@@ -103,6 +107,10 @@
 - [guanhai](../guanhai.md)
     观海新闻首页推荐
 
+#### Guokr (果壳网)
+- [guokr_scientific](../guokr_scientific.md)
+    果壳网科学人文章
+
 #### iFeng (凤凰网)
 - [ifeng_news](../ifeng_news.md)
     凤凰网资讯
@@ -119,9 +127,19 @@
 - [leiphone_newsflash](../leiphone_newsflash.md)
     雷锋网业界资讯
 
+#### MIT Technology Review (麻省理工科技评论)
+- [mittrchina](../mittrchina.md)
+    MIT Technology Review 麻省理工科技评论中文站
+
 #### NetEase
 - [netease_today](../netease_today.md)
     网易新闻今日关注
+
+#### Rail12306 (中国铁路12306)
+- [rail12306_news](../rail12306_news.md)
+    12306最新动态公告
+- [rail12306_ticket](../rail12306_ticket.md)
+    12306火车票余票查询
 
 #### Scientific American
 - [scientificamerican_news](../scientificamerican_news.md)
