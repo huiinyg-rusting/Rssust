@@ -1,6 +1,7 @@
 <div align=center>  <img src="/Readme Image Hosting/2026-07-10_16-19.png" width=8%></div>
 
 ### [English HERE](env/docs_md/official/guide_en.md)
+## 在线文档好像出了点问题，缓存没办法更新，所以还是推荐各位把主分支clone下来以后手动运行程序生成最新文档
 ## [在线文档](https://huiinyg-rusting.github.io/Rssust/guide_cn.html)
 # What is Rssust? 
 Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每个人在桌面电脑上使用网站转RSS这项技术，类似于Rsshub，***但目前还在开发***，
