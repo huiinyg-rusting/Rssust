@@ -4,6 +4,8 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
+use tokio::sync::Semaphore;
+use std::sync::Arc;
 
 const MAINTAINER: &str = "huinyg / Defense News (defense & military news, no official RSS)";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -13,24 +15,49 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         .await?;
 
     let cards = extract_cards(&html);
+    tracing::info!("defensenews: extracted {} cards", cards.len());
+
+    // Parallelize article date fetching with concurrency limit
+    let semaphore = Arc::new(Semaphore::new(10));
+    let mut handles = Vec::new();
+
+    for (title, link, author) in cards {
+        let semaphore = semaphore.clone();
+        let ua = UA.to_string();
+        let link_clone = link.clone();
+        let title_clone = title.clone();
+        let author_clone = author.clone();
+
+        handles.push(tokio::spawn(async move {
+            let _permit = semaphore.acquire().await.unwrap();
+            let pub_date = fetch_article_date(&link_clone, &ua).await;
+            (title_clone, link_clone, author_clone, pub_date)
+        }));
+    }
 
     let mut items = Vec::new();
-    for (title, link, author) in cards {
-        let pub_date = fetch_article_date(&link).await;
-
-        items.push(
-            ItemBuilder::default()
-                .title(Some(title))
-                .link(link)
-                .pub_date(pub_date)
-                .description(if author.is_empty() {
-                    None
-                } else {
-                    Some(format!("By {}", author))
-                })
-                .build(),
-        );
+    for handle in handles {
+        match handle.await {
+            Ok((title, link, author, pub_date)) => {
+                items.push(
+                    ItemBuilder::default()
+                        .title(Some(title))
+                        .link(link)
+                        .pub_date(pub_date)
+                        .description(if author.is_empty() {
+                            None
+                        } else {
+                            Some(format!("By {}", author))
+                        })
+                        .build(),
+                );
+            }
+            Err(e) => {
+                tracing::warn!("defensenews: task join error: {}", e);
+            }
+        }
     }
+    tracing::info!("defensenews: built {} items", items.len());
 
     let channel = ChannelBuilder::default()
         .title("Defense News - Global Defense & Military News")
@@ -47,21 +74,25 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
 fn extract_cards(html: &str) -> Vec<(String, String, String)> {
     let doc = Html::parse_document(html);
-    let card_sel = Selector::parse("article[data-story-url]").unwrap();
-    let title_sel = Selector::parse("h6[itemprop='headline'] a").unwrap();
-    let author_sel = Selector::parse("span[class*='Byline__Author']").unwrap();
+    // Article cards have data-story-url and itemType="http://schema.org/Article"
+    let card_sel = Selector::parse(r#"article[data-story-url]"#).unwrap();
+    // Headline is in h3/h4/h5 with itemProp="headline" or class o-storyCard__headline
+    let title_sel = Selector::parse(r#"[itemProp="headline"], .o-storyCard__headline"#).unwrap();
+    // Author byline
+    let author_sel = Selector::parse(r#"span[class*="Byline__Author"]"#).unwrap();
 
     let mut cards = Vec::new();
     for card in doc.select(&card_sel) {
+        // Try multiple selectors for title
         let title = card
             .select(&title_sel)
             .next()
             .map(|e| e.text().collect::<String>().trim().to_string())
             .unwrap_or_default();
+
         let link = card
-            .select(&title_sel)
-            .next()
-            .and_then(|e| e.value().attr("href"))
+            .value()
+            .attr("data-story-url")
             .map(|h| {
                 if h.starts_with("http") {
                     h.to_string()
@@ -83,7 +114,7 @@ fn extract_cards(html: &str) -> Vec<(String, String, String)> {
 
         cards.push((title, link, author));
 
-        if cards.len() >= 20 {
+        if cards.len() >= 15 {
             break;
         }
     }
@@ -91,8 +122,8 @@ fn extract_cards(html: &str) -> Vec<(String, String, String)> {
     cards
 }
 
-async fn fetch_article_date(link: &str) -> String {
-    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", UA)]).await {
+async fn fetch_article_date(link: &str, ua: &str) -> String {
+    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await {
         if let Some(date) = extract_date_from_json(&html) {
             return date;
         }

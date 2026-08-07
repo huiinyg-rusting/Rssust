@@ -277,6 +277,11 @@ Discover Magazine - science news (no official RSS)</li>
 <li><a href="douban_movie_classification.html">douban_movie_classification</a>
 豆瓣电影分类</li>
 </ul>
+<h4 id="devto"><a class="header" href="#devto">DEV.to</a></h4>
+<ul>
+<li><a href="devto_guides.html">devto_guides</a>
+DEV.to trending guides (no official RSS)</li>
+</ul>
 <h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
 <ul>
 <li><a href="eastday_24.html">eastday_24</a>
@@ -294,6 +299,8 @@ Discover Magazine - science news (no official RSS)</li>
 </ul>
 <h4 id="github"><a class="header" href="#github">GitHub</a></h4>
 <ul>
+<li><a href="github_advisor.html">github_advisor</a>
+GitHub Advisory Database security advisories (requires GITHUB_TOKEN)</li>
 <li><a href="github_commits.html">github_commits</a>
 GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
 <li><a href="github_followers.html">github_followers</a>
@@ -302,6 +309,11 @@ GitHub user followers query (requires GITHUB_TOKEN)</li>
 GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
 <li><a href="github_stars.html">github_stars</a>
 GitHub single repository star count (requires GITHUB_TOKEN)</li>
+</ul>
+<h4 id="hacker-news"><a class="header" href="#hacker-news">Hacker News</a></h4>
+<ul>
+<li><a href="hackernews.html">hackernews</a>
+Hacker News stories by section/user/points (official Algolia API)</li>
 </ul>
 <h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
 <ul>
@@ -347,6 +359,17 @@ MIT Technology Review 麻省理工科技评论中文站</li>
 <ul>
 <li><a href="netease_today.html">netease_today</a>
 网易新闻今日关注</li>
+</ul>
+<h4 id="openai"><a class="header" href="#openai">OpenAI</a></h4>
+<ul>
+<li><a href="openai_chatgpt_atlas_release.html">openai_chatgpt_atlas_release</a>
+OpenAI ChatGPT Atlas official release notes (no official RSS)</li>
+<li><a href="openai_chatgpt_release.html">openai_chatgpt_release</a>
+OpenAI ChatGPT official release notes (no official RSS)</li>
+<li><a href="openai_news.html">openai_news</a>
+OpenAI news with full article content</li>
+<li><a href="openai_research.html">openai_research</a>
+OpenAI research articles (category=Research)</li>
 </ul>
 <h4 id="rail12306-中国铁路12306"><a class="header" href="#rail12306-中国铁路12306">Rail12306 (中国铁路12306)</a></h4>
 <ul>
@@ -1861,14 +1884,16 @@ limit（可选，最大 50，默认 20）</p>
 <strong>Parameter:</strong><br />
 无参数</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defensenews_news"><a class="header" href="#router-name-defensenews_news">Router-name: defensenews_news</a></h1>
-<p><strong>Commit time:</strong> 2026.08.02<br />
+<p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
 <strong>Author:</strong> huinyg<br />
-<strong>Introduction:</strong> Defense News - Global Defense &amp; Military News (no official RSS)<br />
+<strong>Introduction:</strong> Defense News - Global Defense &amp; Military News (no official RSS, scraped)<br />
 <strong>Address:</strong> rssust://defensenews_news<br />
 <strong>Example:</strong> <a href="/defensenews_news">rssust://defensenews_news</a><br />
 <strong>Parameter:</strong><br />
-(No parameters)</p>
+limit (optional, max 15, default 15)<br />
+<strong>Note:</strong><br />
+Fetches article dates in parallel (up to 10 concurrent) from detail pages.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defenseone_news"><a class="header" href="#router-name-defenseone_news">Router-name: defenseone_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.02<br />
 <strong>Cookies?:</strong> no<br />
@@ -1878,6 +1903,15 @@ limit（可选，最大 50，默认 20）</p>
 <strong>Example:</strong> <a href="/defenseone_news">rssust://defenseone_news</a><br />
 <strong>Parameter:</strong><br />
 (No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-devto_guides"><a class="header" href="#router-name-devto_guides">Router-name: devto_guides</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> DEV.to Trending Guides (official RSS feed tag=guides)<br />
+<strong>Address:</strong> rssust://devto_guides<br />
+<strong>Example:</strong> <a href="/devto_guides">rssust://devto_guides</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-discovermagazine_news"><a class="header" href="#router-name-discovermagazine_news">Router-name: discovermagazine_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.02<br />
 <strong>Cookies?:</strong> no<br />
@@ -1978,6 +2012,19 @@ category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽�
 <strong>Example:</strong> <a href="/gelonghui_home">rssust://gelonghui_home</a><br />
 <strong>Parameter:</strong><br />
 tag: 分类 (默认 web_home_page)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_advisor"><a class="header" href="#router-name-github_advisor">Router-name: github_advisor</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub Advisory Database Security Advisories (REST API)<br />
+<strong>Address:</strong> rssust://github_advisor<br />
+<strong>Example:</strong> <a href="/github_advisor?type=reviewed&amp;ecosystem=npm">rssust://github_advisor?type=reviewed&amp;ecosystem=npm</a><br />
+<strong>Parameter:</strong><br />
+type (optional, reviewed=reviewed unreviewed=unreviewed, default reviewed)<br />
+ecosystem (optional, composer/go/maven/npm/nuget/pip/pub/rubygems/rust/erlang/actions/swift, default all)<br />
+limit (optional, max 50, default 20)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_commits"><a class="header" href="#router-name-github_commits">Router-name: github_commits</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2054,6 +2101,20 @@ Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Toke
 <strong>Example:</strong> <a href="/guokr_scientific">rssust://guokr_scientific</a><br />
 <strong>Parameter:</strong><br />
 limit（可选，最大 50，默认 20）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-hackernews"><a class="header" href="#router-name-hackernews">Router-name: hackernews</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> Hacker News Stories (official Algolia API)<br />
+<strong>Address:</strong> rssust://hackernews<br />
+<strong>Example:</strong> <a href="/hackernews">rssust://hackernews</a><br />
+<strong>Parameter:</strong><br />
+section (optional, index/newest/ask/show/jobs/best/over, default index)<br />
+type (optional, sources=story links comments=with comment summary, default sources)<br />
+value (optional, section=over for min points threshold default 100; others can append author=xxx)<br />
+limit (optional, max 50, default 30)<br />
+<strong>Rate limit:</strong><br />
+Recommend config “/hackernews” = 30 in config.toml routes.rate_limit (respect robots Crawl-delay: 30)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-ifeng_news"><a class="header" href="#router-name-ifeng_news">Router-name: ifeng_news</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
@@ -2176,6 +2237,42 @@ Type of parameter: number<br />
 Default value: 50<br />
 Meaning: 条目数量上限，最大 200</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_atlas_release"><a class="header" href="#router-name-openai_chatgpt_atlas_release">Router-name: openai_chatgpt_atlas_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> ChatGPT Atlas Release Notes (help.openai.com single page scrape)<br />
+<strong>Address:</strong> rssust://openai_chatgpt_atlas_release<br />
+<strong>Example:</strong> <a href="/openai_chatgpt_atlas_release">rssust://openai_chatgpt_atlas_release</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_release"><a class="header" href="#router-name-openai_chatgpt_release">Router-name: openai_chatgpt_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> ChatGPT Release Notes (help.openai.com single page scrape)<br />
+<strong>Address:</strong> rssust://openai_chatgpt_release<br />
+<strong>Example:</strong> <a href="/openai_chatgpt_release">rssust://openai_chatgpt_release</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_news"><a class="header" href="#router-name-openai_news">Router-name: openai_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> OpenAI Official News (rss.xml + full article content)<br />
+<strong>Address:</strong> rssust://openai_news<br />
+<strong>Example:</strong> <a href="/openai_news">rssust://openai_news</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_research"><a class="header" href="#router-name-openai_research">Router-name: openai_research</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> OpenAI Research Articles (filtered from official RSS by category=Research)<br />
+<strong>Address:</strong> rssust://openai_research<br />
+<strong>Example:</strong> <a href="/openai_research">rssust://openai_research</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_news"><a class="header" href="#router-name-rail12306_news">Router-name: rail12306_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />

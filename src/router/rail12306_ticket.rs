@@ -105,7 +105,22 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .map_err(|e| anyhow!("读取余票失败: {}", e))?
     };
 
-    let json: serde_json::Value = serde_json::from_str(&query_resp)?;
+    let json: serde_json::Value = match serde_json::from_str(&query_resp) {
+        Ok(v) => v,
+        Err(_) => {
+            // API 可能返回错误页面（如日期已过期），尝试提取错误信息
+            let err_msg = if query_resp.contains("日期") || query_resp.contains("过期") || query_resp.contains("已过") {
+                "查询日期已过期或不可售，请选择未来日期"
+            } else if query_resp.contains("验证码") || query_resp.contains("captcha") {
+                "12306 需要验证码验证，请稍后再试"
+            } else if query_resp.contains("登录") || query_resp.contains("login") {
+                "12306 会话过期，请稍后再试"
+            } else {
+                "12306 返回数据异常，可能是日期不可售或接口变更"
+            };
+            return Err(anyhow!(err_msg));
+        }
+    };
     let result = json["data"]["result"]
         .as_array()
         .ok_or_else(|| anyhow!("没有找到相关车次，请检查参数是否正确"))?;

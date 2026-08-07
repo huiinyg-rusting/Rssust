@@ -4,6 +4,8 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
+use tokio::sync::Semaphore;
+use std::sync::Arc;
 
 const MAINTAINER: &str = "huinyg / Discover Magazine (science news, no official RSS)";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -16,26 +18,45 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     // Extract cards first (synchronous, doc dropped here so it can be reused across awaits).
     let cards = extract_cards(&html);
 
-    let mut items = Vec::new();
+    // Parallelize article date fetching with concurrency limit
+    let semaphore = Arc::new(Semaphore::new(5));
+    let mut handles = Vec::new();
+
     for (title, link, summary, category) in cards {
-        let pub_date = fetch_article_date(&link).await;
+        let semaphore = semaphore.clone();
+        let ua = UA.to_string();
+        let link_clone = link.clone();
+        let title_clone = title.clone();
+        let summary_clone = summary.clone();
+        let category_clone = category.clone();
 
-        let mut desc = String::new();
-        if !category.is_empty() {
-            desc.push_str(&format!("[{}]<br/>", category));
-        }
-        if !summary.is_empty() {
-            desc.push_str(&summary);
-        }
+        handles.push(tokio::spawn(async move {
+            let _permit = semaphore.acquire().await.unwrap();
+            let pub_date = fetch_article_date(&link_clone, &ua).await;
+            (title_clone, link_clone, summary_clone, category_clone, pub_date)
+        }));
+    }
 
-        items.push(
-            ItemBuilder::default()
-                .title(Some(title))
-                .link(link)
-                .pub_date(pub_date)
-                .description(if desc.is_empty() { None } else { Some(desc) })
-                .build(),
-        );
+    let mut items = Vec::new();
+    for handle in handles {
+        if let Ok((title, link, summary, category, pub_date)) = handle.await {
+            let mut desc = String::new();
+            if !category.is_empty() {
+                desc.push_str(&format!("[{}]<br/>", category));
+            }
+            if !summary.is_empty() {
+                desc.push_str(&summary);
+            }
+
+            items.push(
+                ItemBuilder::default()
+                    .title(Some(title))
+                    .link(link)
+                    .pub_date(pub_date)
+                    .description(if desc.is_empty() { None } else { Some(desc) })
+                    .build(),
+            );
+        }
     }
 
     let channel = ChannelBuilder::default()
@@ -127,8 +148,8 @@ fn extract_cards(html: &str) -> Vec<(String, String, String, String)> {
     cards
 }
 
-async fn fetch_article_date(link: &str) -> String {
-    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", UA)]).await {
+async fn fetch_article_date(link: &str, ua: &str) -> String {
+    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await {
         if let Some(date) = extract_date_from_json(&html) {
             return date;
         }

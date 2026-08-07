@@ -87,6 +87,10 @@
 - [douban_movie_classification](../douban_movie_classification.md)
     豆瓣电影分类
 
+#### DEV.to
+- [devto_guides](../devto_guides.md)
+    DEV.to trending guides (no official RSS)
+
 #### Eastday (东方资讯)
 - [eastday_24](../eastday_24.md)
     东方资讯24小时热闻
@@ -100,6 +104,8 @@
     格隆汇首页资讯
 
 #### GitHub
+- [github_advisor](../github_advisor.md)
+    GitHub Advisory Database security advisories (requires GITHUB_TOKEN)
 - [github_commits](../github_commits.md)
     GitHub repository recent commits on default branch (requires GITHUB_TOKEN)
 - [github_followers](../github_followers.md)
@@ -108,6 +114,10 @@
     GitHub recent Issue/PR comments (requires GITHUB_TOKEN)
 - [github_stars](../github_stars.md)
     GitHub single repository star count (requires GITHUB_TOKEN)
+
+#### Hacker News
+- [hackernews](../hackernews.md)
+    Hacker News stories by section/user/points (official Algolia API)
 
 #### Guancha (观察者网)
 - [guancha_headline](../guancha_headline.md)
@@ -144,6 +154,16 @@
 #### NetEase
 - [netease_today](../netease_today.md)
     网易新闻今日关注
+
+#### OpenAI
+- [openai_chatgpt_atlas_release](../openai_chatgpt_atlas_release.md)
+    OpenAI ChatGPT Atlas official release notes (no official RSS)
+- [openai_chatgpt_release](../openai_chatgpt_release.md)
+    OpenAI ChatGPT official release notes (no official RSS)
+- [openai_news](../openai_news.md)
+    OpenAI news with full article content
+- [openai_research](../openai_research.md)
+    OpenAI research articles (category=Research)
 
 #### Rail12306 (中国铁路12306)
 - [rail12306_news](../rail12306_news.md)

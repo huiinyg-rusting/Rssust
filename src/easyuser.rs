@@ -389,12 +389,22 @@ pub fn utc_str_to_rss(datetime_str: &str) -> Option<String> {
 }
 
 /// 带浏览器 TLS 指纹伪装的 GET 请求（绕过 Cloudflare 等反爬）
-/// 使用 curl-impersonate-cli (curl-impersonate) 模拟 Chrome 124 指纹
+/// 使用 curl-impersonate-cli (curl-impersonate) 模拟浏览器指纹
+/// 默认 chrome124；某些站点（如 openai.com）仅对特定旧指纹放行，可换用
+/// `fetch_browser_get_with_profile` 指定其它 profile。
 /// 需要启用 cargo feature "download" 自动下载预编译二进制
 pub async fn fetch_browser_get(url: &str) -> Result<String, Error> {
-    debug!("GET (browser) {}", url);
+    fetch_browser_get_with_profile(url, "chrome124").await
+}
+
+/// 带浏览器指纹伪装的 GET 请求（可指定 profile，如 chrome110 / edge99）
+pub async fn fetch_browser_get_with_profile(
+    url: &str,
+    profile: &str,
+) -> Result<String, Error> {
+    debug!("GET (browser/{}) {}", profile, url);
     let opts = curl_impersonate_cli::download::DownloadOptions::default();
-    let bin = curl_impersonate_cli::download::ensure_binary("chrome124", &opts)
+    let bin = curl_impersonate_cli::download::ensure_binary(profile, &opts)
         .await
         .map_err(|e| anyhow!("ensure binary failed: {}", e))?;
     let resp = curl_impersonate_cli::Request::get(bin, url)
@@ -405,7 +415,7 @@ pub async fn fetch_browser_get(url: &str) -> Result<String, Error> {
         .map_err(|e| anyhow!("browser get failed: {}", e))?;
     let text = resp.body;
     if text.is_empty() {
-        warn!("GET (browser) {} returned empty body", url);
+        warn!("GET (browser/{}) {} returned empty body", profile, url);
     }
     Ok(text)
 }
@@ -415,9 +425,18 @@ pub async fn fetch_browser_get_with_headers(
     url: &str,
     headers: &[(&str, &str)],
 ) -> Result<String, Error> {
-    debug!("GET (browser) {} (with headers)", url);
+    fetch_browser_get_with_headers_profile(url, headers, "chrome124").await
+}
+
+/// 带浏览器指纹伪装的 GET 请求（支持自定义头 + 指定 profile）
+pub async fn fetch_browser_get_with_headers_profile(
+    url: &str,
+    headers: &[(&str, &str)],
+    profile: &str,
+) -> Result<String, Error> {
+    debug!("GET (browser/{}) {} (with headers)", profile, url);
     let opts = curl_impersonate_cli::download::DownloadOptions::default();
-    let bin = curl_impersonate_cli::download::ensure_binary("chrome124", &opts)
+    let bin = curl_impersonate_cli::download::ensure_binary(profile, &opts)
         .await
         .map_err(|e| anyhow!("ensure binary failed: {}", e))?;
     let mut req = curl_impersonate_cli::Request::get(bin, url)
@@ -432,7 +451,7 @@ pub async fn fetch_browser_get_with_headers(
         .map_err(|e| anyhow!("browser get failed: {}", e))?;
     let text = resp.body;
     if text.is_empty() {
-        warn!("GET (browser) {} returned empty body", url);
+        warn!("GET (browser/{}) {} returned empty body", profile, url);
     }
     Ok(text)
 }
