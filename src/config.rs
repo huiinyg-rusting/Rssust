@@ -15,7 +15,7 @@ pub fn init() {
     };
     if !path.exists() {
         let default = format!(
-            "[server]\nport = 7878\nmax_concurrent = {}\ntimeout = 60\n\n[routes]\ndisabled = []",
+            "[server]\nport = 7878\nmax_concurrent = {}\ntimeout = 60\n\n[routes]\ndisabled = []\n\n[cookie]\norigins = [\"https://bilibili.com\"]",
             realcorenum()
         );
         match fs::write(&path, default) {
@@ -71,6 +71,7 @@ fn realcorenum() -> u8 {
 struct Config {
     server: Option<ServerConfig>,
     routes: Option<RoutesConfig>,
+    cookie: Option<CookieConfig>,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -85,6 +86,12 @@ struct RoutesConfig {
     disabled: Option<Vec<String>>,
     /// 路由名 -> 缓存/限流间隔（秒）
     rate_limit: Option<HashMap<String, u64>>,
+}
+
+#[derive(serde::Deserialize, Clone)]
+struct CookieConfig {
+    /// 需要导出的网址列表（`rssust cookie <browser>` 会导出这些站点的 cookies）
+    origins: Option<Vec<String>>,
 }
 
 pub fn server_port() -> u16 {
@@ -131,4 +138,14 @@ pub fn rate_limit_secs(route: &str) -> Option<u64> {
         .as_ref()
         .and_then(|r: &RoutesConfig| r.rate_limit.as_ref())
         .and_then(|m| m.get(route).copied())
+}
+
+/// `rssust cookie` 需要导出的网址列表（`[cookie].origins`）。
+pub fn cookie_origins() -> Vec<String> {
+    cached()
+        .cookie
+        .as_ref()
+        .and_then(|c: &CookieConfig| c.origins.as_ref())
+        .cloned()
+        .unwrap_or_default()
 }

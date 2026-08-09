@@ -5,7 +5,7 @@ use tracing::{error, info, warn};
 use rssust::{config, connect::handle_connection};
 
 #[cfg(feature = "cookie")]
-use bench_scraper::KnownBrowser;
+use cookie_scoop::BrowserName;
 #[cfg(feature = "cookie")]
 use rssust::cookies::extract_cookies_to_json;
 #[cfg(feature = "docs")]
@@ -34,16 +34,16 @@ async fn main() {
     if matches!(subcommand, Some("cookie" | "cookies")) {
         info!("Exporting browser cookies");
         match extract_cookies_to_json(match args.get(2).expect("没有指明浏览器").as_str() {
-            "firefox" => KnownBrowser::Firefox,
-            "chrome" => KnownBrowser::Chrome,
-            "chromium" => KnownBrowser::Chromium,
-            "chromebeta" => KnownBrowser::ChromeBeta,
+            "firefox" => BrowserName::Firefox,
+            "chrome" | "chromium" | "chromebeta" => BrowserName::Chrome,
             #[cfg(target_os = "macos")]
-            "safari" => KnownBrowser::Safari,
+            "safari" => BrowserName::Safari,
             #[cfg(target_os = "windows")]
-            "edge" => KnownBrowser::Edge,
+            "edge" => BrowserName::Edge,
             _ => panic!("浏览器未知"),
-        }) {
+        })
+        .await
+        {
             Ok(()) => info!("Cookies exported successfully"),
             Err(e) => error!("Cookie export failed: {}", e),
         }
@@ -83,5 +83,5 @@ fn print_usage() {
     #[cfg(feature = "docs")]
     eprintln!("  docs                generate documentation HTML");
     #[cfg(feature = "cookie")]
-    eprintln!("  cookie <browser>    export browser cookies (firefox/chrome/chromium/chromebeta)");
+    eprintln!("  cookie <browser>    export browser cookies (firefox/chrome/edge/safari)");
 }
