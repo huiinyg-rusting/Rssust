@@ -18,12 +18,16 @@ You can use the browser plugin Cookie-Editor to export it, or use the built-in C
 rssust cookie <browser>
 ```
 
-Supported browsers: `firefox`, `chrome`, `chromium`, `chromebeta` (macOS: `safari`, Windows: `edge`)
+Supported browsers: `firefox`, `chrome` (`chromium`/`chromebeta` 也映射到 chrome)（macOS: `safari`，Windows: `edge`）
 
 Example:
 ```
 ./env/rssust cookie chrome
 ```
+
+导出哪些网址由 `config.toml` 的 `[cookie] origins = ["https://bilibili.com"]` 控制，可自行增删。
+已存在于 `cookies.json` 中的域名也会一并刷新。
+The URLs to export are controlled by `[cookie] origins = ["https://bilibili.com"]` in `config.toml`; existing domains in `cookies.json` are also refreshed.
 
 Tips: Linux 下 firefox 可能因为上游 crate 的问题需要链接文件夹修复  
 ## Bilibili  

@@ -53,10 +53,10 @@ pub async fn extract_cookies_to_json(target_browser: BrowserName) -> Result<(), 
     }
 
     if result.cookies.is_empty() && !result.warnings.is_empty() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            format!("Failed to find cookies: {}", result.warnings.join("; ")),
-        ));
+        return Err(io::Error::other(format!(
+            "Failed to find cookies: {}",
+            result.warnings.join("; ")
+        )));
     }
 
     let mut merged = existing;
@@ -90,7 +90,7 @@ pub async fn extract_cookies_to_json(target_browser: BrowserName) -> Result<(), 
     }
 
     let final_json = serde_json::to_string_pretty(&merged)
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+        .map_err(io::Error::other)?;
 
     fs::write(&output_path, final_json)?;
     println!("Download cookies from {:?} done", target_browser);
