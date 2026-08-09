@@ -28,18 +28,19 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let title = item["title"].as_str().unwrap_or("").to_string();
         let summary = item["summary"].as_str().unwrap_or("").to_string();
         let link = format!("https://www.guokr.com/article/{}/", id);
-        let author = item["author"]["nickname"].as_str().unwrap_or("").to_string();
+        let author = item["author"]["nickname"]
+            .as_str()
+            .unwrap_or("")
+            .to_string();
 
         let pub_date = item["date_published"]
             .as_str()
             .and_then(|s| {
-                DateTime::parse_from_rfc3339(s)
-                    .ok()
-                    .map(|dt| {
-                        dt.with_timezone(&Utc)
-                            .format("%a, %d %b %Y %H:%M:%S %z")
-                            .to_string()
-                    })
+                DateTime::parse_from_rfc3339(s).ok().map(|dt| {
+                    dt.with_timezone(&Utc)
+                        .format("%a, %d %b %Y %H:%M:%S %z")
+                        .to_string()
+                })
             })
             .unwrap_or_else(now);
 

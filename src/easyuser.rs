@@ -398,10 +398,7 @@ pub async fn fetch_browser_get(url: &str) -> Result<String, Error> {
 }
 
 /// 带浏览器指纹伪装的 GET 请求（可指定 profile，如 chrome110 / edge99）
-pub async fn fetch_browser_get_with_profile(
-    url: &str,
-    profile: &str,
-) -> Result<String, Error> {
+pub async fn fetch_browser_get_with_profile(url: &str, profile: &str) -> Result<String, Error> {
     debug!("GET (browser/{}) {}", profile, url);
     let opts = curl_impersonate_cli::download::DownloadOptions::default();
     let bin = curl_impersonate_cli::download::ensure_binary(profile, &opts)

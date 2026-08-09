@@ -11,8 +11,14 @@ use std::collections::HashMap;
 ///  - value: 追加搜索参数（如 author=xxx）
 ///限流：请在上游配置 routes.rate_limit["/hackernews"]（建议 30s，遵守 robots Crawl-delay）
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let section = para.get("section").cloned().unwrap_or_else(|| "index".to_string());
-    let route_type = para.get("type").cloned().unwrap_or_else(|| "sources".to_string());
+    let section = para
+        .get("section")
+        .cloned()
+        .unwrap_or_else(|| "index".to_string());
+    let route_type = para
+        .get("type")
+        .cloned()
+        .unwrap_or_else(|| "sources".to_string());
     let value = para.get("value").cloned().unwrap_or_default();
     let limit = para
         .get("limit")
@@ -24,7 +30,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     api.push_str(&limit.to_string());
 
     let query = if section == "over" {
-        let points = if value.is_empty() { "100".to_string() } else { value.clone() };
+        let points = if value.is_empty() {
+            "100".to_string()
+        } else {
+            value.clone()
+        };
         format!("&tags=front_page&numericFilters=points%3E{}", points)
     } else {
         let mut q = String::new();
@@ -49,7 +59,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     };
     api.push_str(&query);
 
-    let resp = fetch_reqwest_get_with_headers(&api, &[("User-Agent", "rssust-hn-router/1.0")]).await?;
+    let resp =
+        fetch_reqwest_get_with_headers(&api, &[("User-Agent", "rssust-hn-router/1.0")]).await?;
     let json: Value = serde_json::from_str(&resp)?;
     let hits = json["hits"]
         .as_array()

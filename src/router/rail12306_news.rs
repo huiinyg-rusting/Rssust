@@ -46,7 +46,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 let link = if href.starts_with("http") {
                     href
                 } else {
-                    format!("https://www.12306.cn/mormhweb/zxdt/{}", href.trim_start_matches("./"))
+                    format!(
+                        "https://www.12306.cn/mormhweb/zxdt/{}",
+                        href.trim_start_matches("./")
+                    )
                 };
                 let date = li
                     .select(&time_sel)

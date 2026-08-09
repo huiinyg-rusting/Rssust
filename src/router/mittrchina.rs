@@ -9,7 +9,10 @@ const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (
 ///麻省理工科技评论 (MIT Technology Review 中文站)
 ///type: index=首页资讯 hot=本周热榜 breaking=快讯 video=视频，默认 index
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let route_type = para.get("type").cloned().unwrap_or_else(|| "index".to_string());
+    let route_type = para
+        .get("type")
+        .cloned()
+        .unwrap_or_else(|| "index".to_string());
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())
@@ -25,25 +28,20 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let api = format!("https://apii.web.mittrchina.com{}", api_path);
     let resp = if route_type == "breaking" {
-        fetch_reqwest_post(
-            &api,
-            format!("page=1&size={}", limit),
-            None,
-        )
-        .await?
+        fetch_reqwest_post(&api, format!("page=1&size={}", limit), None).await?
     } else {
-        fetch_reqwest_get_with_headers(
-            &format!("{}?limit={}", api, limit),
-            &[("User-Agent", UA)],
-        )
-        .await?
+        fetch_reqwest_get_with_headers(&format!("{}?limit={}", api, limit), &[("User-Agent", UA)])
+            .await?
     };
 
     let json: Value = serde_json::from_str(&resp)?;
     let articles = if route_type == "hot" {
         json["data"].as_array().cloned().unwrap_or_default()
     } else {
-        json["data"]["items"].as_array().cloned().unwrap_or_default()
+        json["data"]["items"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
     };
 
     let mut item_vec = Vec::new();
@@ -105,7 +103,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         // 非 breaking/video 类型抓详情页补全正文
         if !is_video && route_type != "breaking" && !description.is_empty() {
             if let Ok(detail) = fetch_reqwest_get_with_headers(
-                &format!("https://apii.web.mittrchina.com/information/details?id={}", id),
+                &format!(
+                    "https://apii.web.mittrchina.com/information/details?id={}",
+                    id
+                ),
                 &[("User-Agent", UA)],
             )
             .await

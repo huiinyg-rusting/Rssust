@@ -4,8 +4,8 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
-use tokio::sync::Semaphore;
 use std::sync::Arc;
+use tokio::sync::Semaphore;
 
 const MAINTAINER: &str = "huinyg / Defense News (defense & military news, no official RSS)";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";

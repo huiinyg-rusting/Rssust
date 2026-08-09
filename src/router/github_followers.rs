@@ -46,7 +46,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let user = json["data"]["user"]
         .as_object()
         .ok_or_else(|| anyhow!("User not found. Check username parameter"))?;
-    let login = user.get("login").and_then(Value::as_str).unwrap_or(&username);
+    let login = user
+        .get("login")
+        .and_then(Value::as_str)
+        .unwrap_or(&username);
     let name = user.get("name").and_then(Value::as_str).unwrap_or("");
     let followers = user["followers"]["totalCount"].as_i64().unwrap_or(0);
     let fallback_url = format!("https://github.com/{}", username);
@@ -56,10 +59,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(&fallback_url);
 
     let display = if name.is_empty() { login } else { name };
-    let description = format!(
-        "{} followers: {}\nGitHub: {}",
-        display, followers, url
-    );
+    let description = format!("{} followers: {}\nGitHub: {}", display, followers, url);
 
     let item = ItemBuilder::default()
         .title(Some(format!("{} ({} followers)", display, followers)))

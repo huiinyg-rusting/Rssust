@@ -18,14 +18,16 @@ pub fn parse_pub_date(s: &str) -> String {
 }
 
 /// 抓取文章详情页，返回 (内容HTML, 分类列表, 作者, 图片)
-pub async fn fetch_article_details(url: &str) -> Result<(String, Vec<String>, String, String), Error> {
+pub async fn fetch_article_details(
+    url: &str,
+) -> Result<(String, Vec<String>, String, String), Error> {
     let normalized = if url.ends_with('/') {
         url.to_string()
     } else {
         format!("{}/", url)
     };
-    let html = fetch_browser_get_with_headers_profile(&normalized, &[("User-Agent", UA)], PROFILE)
-        .await?;
+    let html =
+        fetch_browser_get_with_headers_profile(&normalized, &[("User-Agent", UA)], PROFILE).await?;
     let doc = Html::parse_document(&html);
 
     let article_sel = Selector::parse("#main article").map_err(|e| anyhow!("{}", e))?;
@@ -45,7 +47,8 @@ pub async fn fetch_article_details(url: &str) -> Result<(String, Vec<String>, St
     }
 
     let mut authors = Vec::new();
-    let auth_sel = Selector::parse("[data-testid=\"author-list\"] a").map_err(|e| anyhow!("{}", e))?;
+    let auth_sel =
+        Selector::parse("[data-testid=\"author-list\"] a").map_err(|e| anyhow!("{}", e))?;
     for el in doc.select(&auth_sel) {
         let t = el.text().collect::<String>().trim().to_string();
         if !t.is_empty() {
@@ -67,8 +70,8 @@ pub async fn fetch_article_details(url: &str) -> Result<(String, Vec<String>, St
 /// 拉取官方 RSS，按 category 过滤（None 不过滤），抓取前 limit 条的详情
 pub async fn fetch_articles(limit: usize, category: Option<&str>) -> Result<Vec<rss::Item>, Error> {
     let xml = fetch_reqwest_get_with_headers(RSS_URL, &[("User-Agent", UA)]).await?;
-    let channel = Channel::read_from(xml.as_bytes())
-        .map_err(|e| anyhow!("解析 RSS 失败: {}", e))?;
+    let channel =
+        Channel::read_from(xml.as_bytes()).map_err(|e| anyhow!("解析 RSS 失败: {}", e))?;
 
     let sources: Vec<rss::Item> = channel
         .items
@@ -185,8 +188,8 @@ pub async fn fetch_release_notes(
 ) -> Result<(String, Vec<rss::Item>), Error> {
     const PROFILE: &str = "chrome110";
     const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
-    let html = fetch_browser_get_with_headers_profile(article_url, &[("User-Agent", UA)], PROFILE)
-        .await?;
+    let html =
+        fetch_browser_get_with_headers_profile(article_url, &[("User-Agent", UA)], PROFILE).await?;
     let doc = Html::parse_document(&html);
 
     let h1_sel = Selector::parse("h1").map_err(|e| anyhow!("{}", e))?;
@@ -235,7 +238,11 @@ pub async fn fetch_release_notes(
         let title = if use_h2_title {
             // 取紧随第一个 h2 的文本
             let h2_text = extract_first_h2_text(&desc);
-            if h2_text.is_empty() { clean.clone() } else { h2_text }
+            if h2_text.is_empty() {
+                clean.clone()
+            } else {
+                h2_text
+            }
         } else {
             clean.clone()
         };
@@ -251,7 +258,10 @@ pub async fn fetch_release_notes(
                 .title(Some(title))
                 .link(article_url.to_string())
                 .description(Some(desc))
-                .guid(rss::Guid { value: guid, permalink: false })
+                .guid(rss::Guid {
+                    value: guid,
+                    permalink: false,
+                })
                 .pub_date(pub_date.unwrap_or_else(now))
                 .build(),
         );
@@ -281,9 +291,18 @@ fn parse_release_date(s: &str) -> Option<String> {
     let year: i32 = caps.get(3)?.as_str().parse().ok()?;
 
     let month_map: HashMap<&str, u32> = [
-        ("January", 1), ("February", 2), ("March", 3), ("April", 4),
-        ("May", 5), ("June", 6), ("July", 7), ("August", 8),
-        ("September", 9), ("October", 10), ("November", 11), ("December", 12),
+        ("January", 1),
+        ("February", 2),
+        ("March", 3),
+        ("April", 4),
+        ("May", 5),
+        ("June", 6),
+        ("July", 7),
+        ("August", 8),
+        ("September", 9),
+        ("October", 10),
+        ("November", 11),
+        ("December", 12),
     ]
     .iter()
     .cloned()

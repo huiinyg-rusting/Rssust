@@ -2074,6 +2074,18 @@ owner (required, repository owner)<br />
 repo (required, repository name)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_trending"><a class="header" href="#router-name-github_trending">Router-name: github_trending</a></h1>
+<p><strong>Commit time:</strong> 2026.08.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> GitHub Trending repositories (no official RSS, scraped)<br />
+<strong>Address:</strong> rssust://github_trending<br />
+<strong>Example:</strong> <a href="/github_trending?since=daily">rssust://github_trending</a><br />
+<strong>Parameter:</strong><br />
+since (optional, daily/weekly/monthly, default daily)<br />
+limit (optional, max 25, default 25)<br />
+<strong>Note:</strong><br />
+robots.txt allows /trending. Returns repo name, description, language and stars-today.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guancha_headline"><a class="header" href="#router-name-guancha_headline">Router-name: guancha_headline</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
@@ -2273,6 +2285,17 @@ limit (optional, max 30, default 10)</p>
 <strong>Example:</strong> <a href="/openai_research">rssust://openai_research</a><br />
 <strong>Parameter:</strong><br />
 limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-pingwest_news"><a class="header" href="#router-name-pingwest_news">Router-name: pingwest_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> 品玩 PingWest 首页精选资讯（无官方 RSS，抓取首页静态区块）<br />
+<strong>Address:</strong> rssust://pingwest_news<br />
+<strong>Example:</strong> <a href="/pingwest_news">rssust://pingwest_news</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 20, default 14)<br />
+<strong>Note:</strong><br />
+robots.txt 允许抓取（仅禁 /search、/api-error-file、/mpview 等路径）。首页 headline / hot-recommend / 精选区块为服务端渲染，可抓取标题、作者与日期。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_news"><a class="header" href="#router-name-rail12306_news">Router-name: rail12306_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />

@@ -14,9 +14,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(10)
         .min(30);
 
-    let xml = crate::easyuser::fetch_reqwest_get_with_headers(RSS_URL, &[("User-Agent", UA)]).await?;
-    let channel = Channel::read_from(xml.as_bytes())
-        .map_err(|e| anyhow!("解析 RSS 失败: {}", e))?;
+    let xml =
+        crate::easyuser::fetch_reqwest_get_with_headers(RSS_URL, &[("User-Agent", UA)]).await?;
+    let channel =
+        Channel::read_from(xml.as_bytes()).map_err(|e| anyhow!("解析 RSS 失败: {}", e))?;
 
     let mut item_vec = Vec::new();
     for src in channel.items.iter().take(limit) {
@@ -54,7 +55,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     permalink: false,
                 }
             })
-            .author(if author.is_empty() { None } else { Some(author) })
+            .author(if author.is_empty() {
+                None
+            } else {
+                Some(author)
+            })
             .categories(
                 src.categories
                     .iter()

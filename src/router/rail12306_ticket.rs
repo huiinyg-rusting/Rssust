@@ -109,7 +109,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         Ok(v) => v,
         Err(_) => {
             // API 可能返回错误页面（如日期已过期），尝试提取错误信息
-            let err_msg = if query_resp.contains("日期") || query_resp.contains("过期") || query_resp.contains("已过") {
+            let err_msg = if query_resp.contains("日期")
+                || query_resp.contains("过期")
+                || query_resp.contains("已过")
+            {
                 "查询日期已过期或不可售，请选择未来日期"
             } else if query_resp.contains("验证码") || query_resp.contains("captcha") {
                 "12306 需要验证码验证，请稍后再试"
@@ -136,8 +139,14 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let train_no = f[3];
         let from_code = f[6];
         let to_code = f[7];
-        let from_name = code_map.get(from_code).cloned().unwrap_or_else(|| from_code.to_string());
-        let to_name = code_map.get(to_code).cloned().unwrap_or_else(|| to_code.to_string());
+        let from_name = code_map
+            .get(from_code)
+            .cloned()
+            .unwrap_or_else(|| from_code.to_string());
+        let to_name = code_map
+            .get(to_code)
+            .cloned()
+            .unwrap_or_else(|| to_code.to_string());
         let start_time = f[8];
         let arrive_time = f[9];
         let duration = f[10];
@@ -148,20 +157,35 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         );
         let mut desc = String::new();
         desc.push_str(&format!("车次：{}<br>", train_no));
-        desc.push_str(&format!(
-            "始发站：{} → {}<br>",
-            from_name, to_name
-        ));
+        desc.push_str(&format!("始发站：{} → {}<br>", from_name, to_name));
         desc.push_str(&format!("出发时间：{}<br>", start_time));
         desc.push_str(&format!("到达时间：{}<br>", arrive_time));
         desc.push_str(&format!("历时：{}<br>", duration));
-        desc.push_str(&format!("商务座/特等座：{}<br>", f.get(32).copied().unwrap_or("无")));
-        desc.push_str(&format!("一等座：{}<br>", f.get(31).copied().unwrap_or("无")));
-        desc.push_str(&format!("二等座/二等包座：{}<br>", f.get(30).copied().unwrap_or("无")));
-        desc.push_str(&format!("高级软卧：{}<br>", f.get(29).copied().unwrap_or("无")));
-        desc.push_str(&format!("软卧/一等卧：{}<br>", f.get(28).copied().unwrap_or("无")));
+        desc.push_str(&format!(
+            "商务座/特等座：{}<br>",
+            f.get(32).copied().unwrap_or("无")
+        ));
+        desc.push_str(&format!(
+            "一等座：{}<br>",
+            f.get(31).copied().unwrap_or("无")
+        ));
+        desc.push_str(&format!(
+            "二等座/二等包座：{}<br>",
+            f.get(30).copied().unwrap_or("无")
+        ));
+        desc.push_str(&format!(
+            "高级软卧：{}<br>",
+            f.get(29).copied().unwrap_or("无")
+        ));
+        desc.push_str(&format!(
+            "软卧/一等卧：{}<br>",
+            f.get(28).copied().unwrap_or("无")
+        ));
         desc.push_str(&format!("动卧：{}<br>", f.get(27).copied().unwrap_or("无")));
-        desc.push_str(&format!("硬卧/二等卧：{}<br>", f.get(26).copied().unwrap_or("无")));
+        desc.push_str(&format!(
+            "硬卧/二等卧：{}<br>",
+            f.get(26).copied().unwrap_or("无")
+        ));
         desc.push_str(&format!("软座：{}<br>", f.get(25).copied().unwrap_or("无")));
         desc.push_str(&format!("硬座：{}<br>", f.get(24).copied().unwrap_or("无")));
         desc.push_str(&format!("无座：{}<br>", f.get(23).copied().unwrap_or("无")));
@@ -221,5 +245,7 @@ fn parse_station_codes(
 ///解码 queryG 返回的 result 行：先 URL 解码，再 split('|')
 fn decode_row(raw: &str) -> String {
     use urlencoding::decode as urldecode;
-    urldecode(raw).map(|c| c.into_owned()).unwrap_or_else(|_| raw.to_string())
+    urldecode(raw)
+        .map(|c| c.into_owned())
+        .unwrap_or_else(|_| raw.to_string())
 }

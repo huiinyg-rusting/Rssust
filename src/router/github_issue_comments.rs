@@ -79,13 +79,25 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 .unwrap_or(&vec![])
                 .iter()
             {
-                let author = c["author"]["login"].as_str().unwrap_or("unknown").to_string();
+                let author = c["author"]["login"]
+                    .as_str()
+                    .unwrap_or("unknown")
+                    .to_string();
                 let body = c["body"].as_str().unwrap_or("").to_string();
                 let created = c["createdAt"].as_str().unwrap_or("");
-                let preview: String = body.chars().take(300).collect::<String>().replace('\n', " ");
+                let preview: String = body
+                    .chars()
+                    .take(300)
+                    .collect::<String>()
+                    .replace('\n', " ");
                 let desc = format!(
                     "{} #{} | comment {} · {} total\nAuthor: {}\n{}",
-                    kind, number, fmt_date(created), total, author, preview
+                    kind,
+                    number,
+                    fmt_date(created),
+                    total,
+                    author,
+                    preview
                 );
                 let item = ItemBuilder::default()
                     .title(Some(format!("{} #{}: {}", kind, number, title)))

@@ -51,8 +51,14 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .as_object()
         .ok_or_else(|| anyhow!("Repository not found. Check owner/repo parameters"))?;
     let name = repo_json.get("name").and_then(Value::as_str).unwrap_or("");
-    let stars = repo_json.get("stargazerCount").and_then(Value::as_i64).unwrap_or(0);
-    let pushed_at = repo_json.get("pushedAt").and_then(Value::as_str).unwrap_or("");
+    let stars = repo_json
+        .get("stargazerCount")
+        .and_then(Value::as_i64)
+        .unwrap_or(0);
+    let pushed_at = repo_json
+        .get("pushedAt")
+        .and_then(Value::as_str)
+        .unwrap_or("");
 
     let description = format!(
         "{} stars\nLast pushed: {}\nGitHub: https://github.com/{}/{}",

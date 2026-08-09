@@ -4,8 +4,8 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
-use tokio::sync::Semaphore;
 use std::sync::Arc;
+use tokio::sync::Semaphore;
 
 const MAINTAINER: &str = "huinyg / Discover Magazine (science news, no official RSS)";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -33,7 +33,13 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         handles.push(tokio::spawn(async move {
             let _permit = semaphore.acquire().await.unwrap();
             let pub_date = fetch_article_date(&link_clone, &ua).await;
-            (title_clone, link_clone, summary_clone, category_clone, pub_date)
+            (
+                title_clone,
+                link_clone,
+                summary_clone,
+                category_clone,
+                pub_date,
+            )
         }));
     }
 

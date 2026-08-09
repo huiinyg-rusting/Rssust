@@ -60,7 +60,10 @@ fn render_markdown(s: &str) -> String {
 ///GitHub Advisory Database RSS via REST API `GET /advisories`.
 ///Params: type (reviewed/unreviewed, default reviewed), ecosystem (composer/go/maven/npm/nuget/pip/pub/rubygems/rust/erlang/actions/swift, default all), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let route_type = para.get("type").cloned().unwrap_or_else(|| "reviewed".to_string());
+    let route_type = para
+        .get("type")
+        .cloned()
+        .unwrap_or_else(|| "reviewed".to_string());
     let ecosystem = para.get("ecosystem").cloned().unwrap_or_default();
     let limit = para
         .get("limit")

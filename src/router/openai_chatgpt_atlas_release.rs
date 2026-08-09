@@ -6,7 +6,8 @@ use std::collections::HashMap;
 /// OpenAI ChatGPT Atlas Release Notes
 /// 来源：help.openai.com 官方发布说明单页
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    const ARTICLE_URL: &str = "https://help.openai.com/en/articles/12591856-chatgpt-atlas-release-notes";
+    const ARTICLE_URL: &str =
+        "https://help.openai.com/en/articles/12591856-chatgpt-atlas-release-notes";
 
     let (feed_title, items) = fetch_release_notes(ARTICLE_URL, false).await?;
 

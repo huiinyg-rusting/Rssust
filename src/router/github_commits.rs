@@ -57,7 +57,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             "repo": repo,
             "first": limit,
         }
-    }).to_string();
+    })
+    .to_string();
 
     let resp = fetch_reqwest_post_json_with_headers(
         GQL,
@@ -82,19 +83,21 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or_default();
 
     if commits.is_empty() {
-        return Err(anyhow!("Repository not found or no commits. Check owner/repo parameters"));
+        return Err(anyhow!(
+            "Repository not found or no commits. Check owner/repo parameters"
+        ));
     }
 
     let mut item_vec = Vec::new();
     for c in &commits {
         let oid = c["oid"].as_str().unwrap_or("");
         let short = if oid.len() >= 7 { &oid[..7] } else { oid };
-        let title = c["messageHeadline"].as_str().unwrap_or("(no message)").to_string();
+        let title = c["messageHeadline"]
+            .as_str()
+            .unwrap_or("(no message)")
+            .to_string();
         let author = c["author"]["name"].as_str().unwrap_or("").to_string();
-        let link = format!(
-            "https://github.com/{}/{}/commit/{}",
-            owner, repo, oid
-        );
+        let link = format!("https://github.com/{}/{}/commit/{}", owner, repo, oid);
         let pub_date = c["committedDate"]
             .as_str()
             .and_then(|s| DateTime::parse_from_rfc3339(s).ok())
