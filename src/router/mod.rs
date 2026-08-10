@@ -1,4 +1,7 @@
 pub mod apnews_topics;
+pub mod bilibili_audio_rank;
+pub mod bilibili_bangumi_follow;
+pub mod bilibili_blackroom;
 pub mod bilibili_collection;
 pub mod bilibili_dynamic;
 pub mod bilibili_fav;
@@ -8,6 +11,8 @@ pub mod bilibili_partion_ranking;
 pub mod bilibili_popular;
 pub mod bilibili_precious;
 pub mod bilibili_series;
+pub mod bilibili_search_hot;
+pub mod bilibili_splash;
 pub mod bilibili_user_article;
 pub mod bilibili_user_coin;
 pub mod bilibili_user_fav;

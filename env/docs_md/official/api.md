@@ -6,6 +6,12 @@
     AP News headlines by topic
 
 #### Bilibili
+- [bilibili_audio_rank](../bilibili_audio_rank.md)
+    B站音频榜单最新一期（热榜/原创榜）
+- [bilibili_bangumi_follow](../bilibili_bangumi_follow.md)
+    用户追番（追剧）列表，含总集数、最新一话
+- [bilibili_blackroom](../bilibili_blackroom.md)
+    B站小黑屋封禁公示列表
 - [bilibili_collection](../bilibili_collection.md)
     B站合集视频列表
 - [bilibili_dynamic](../bilibili_dynamic.md)
@@ -24,6 +30,10 @@
     B站入站必刷宝藏视频
 - [bilibili_series](../bilibili_series.md)
     B站系列视频列表
+- [bilibili_search_hot](../bilibili_search_hot.md)
+    B站热搜榜前10关键词
+- [bilibili_splash](../bilibili_splash.md)
+    B站APP端开屏广告信息
 - [bilibili_user_article](../bilibili_user_article.md)
     B站UP主图文
 - [bilibili_user_coin](../bilibili_user_coin.md)

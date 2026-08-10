@@ -11,6 +11,9 @@
 
 # 路由
 - [apnews_topics](apnews_topics.md)
+- [bilibili_audio_rank](bilibili_audio_rank.md)
+- [bilibili_bangumi_follow](bilibili_bangumi_follow.md)
+- [bilibili_blackroom](bilibili_blackroom.md)
 - [bilibili_collection](bilibili_collection.md)
 - [bilibili_dynamic](bilibili_dynamic.md)
 - [bilibili_fav](bilibili_fav.md)
@@ -20,6 +23,8 @@
 - [bilibili_popular](bilibili_popular.md)
 - [bilibili_precious](bilibili_precious.md)
 - [bilibili_series](bilibili_series.md)
+- [bilibili_search_hot](bilibili_search_hot.md)
+- [bilibili_splash](bilibili_splash.md)
 - [bilibili_user_article](bilibili_user_article.md)
 - [bilibili_user_coin](bilibili_user_coin.md)
 - [bilibili_user_fav](bilibili_user_fav.md)
