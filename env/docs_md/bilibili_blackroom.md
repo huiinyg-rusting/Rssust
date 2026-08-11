@@ -1,7 +1,7 @@
 # Router-name: bilibili_blackroom  
 **Commit time:** 2026.08.10  
 **Cookies?:** no  
-**Author:** huiinyg-rusting  
+**Author:** AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）  
 **Introduction:** B站小黑屋封禁公示列表  
 **Address:** rssust://bilibili_blackroom  
 **Example:** [rssust://bilibili_blackroom](/bilibili_blackroom)  

@@ -5,3 +5,4 @@ env/rssust
 env/config.toml
 env/cookies.json
 *.json
+env/rssust.exe

@@ -1,7 +1,7 @@
 # Router-name: bilibili_splash  
 **Commit time:** 2026.08.10  
 **Cookies?:** no  
-**Author:** huiinyg-rusting  
+**Author:** AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）  
 **Introduction:** B站APP端开屏广告信息  
 **Address:** rssust://bilibili_splash  
 **Example:** [rssust://bilibili_splash](/bilibili_splash)  

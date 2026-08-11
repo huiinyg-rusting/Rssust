@@ -186,14 +186,24 @@ AP News headlines by topic</li>
 </ul>
 <h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
 <ul>
+<li><a href="bilibili_audio_rank.html">bilibili_audio_rank</a>
+B站音频榜单最新一期（热榜/原创榜）</li>
+<li><a href="bilibili_bangumi_follow.html">bilibili_bangumi_follow</a>
+用户追番（追剧）列表，含总集数、最新一话</li>
+<li><a href="bilibili_blackroom.html">bilibili_blackroom</a>
+B站小黑屋封禁公示列表</li>
 <li><a href="bilibili_collection.html">bilibili_collection</a>
 B站合集视频列表</li>
 <li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
 Bilibili up主的动态</li>
 <li><a href="bilibili_fav.html">bilibili_fav</a>
 B站非默认收藏夹</li>
+<li><a href="bilibili_followers.html">bilibili_followers</a>
+某 UP 主粉丝列表 (需 bilibili.com Cookie 登录态)</li>
 <li><a href="bilibili_link_news.html">bilibili_link_news</a>
 B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_live_area.html">bilibili_live_area</a>
+B站直播分区房间列表</li>
 <li><a href="bilibili_partion.html">bilibili_partion</a>
 B站分区视频</li>
 <li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
@@ -204,6 +214,10 @@ B站热门视频</li>
 B站入站必刷宝藏视频</li>
 <li><a href="bilibili_series.html">bilibili_series</a>
 B站系列视频列表</li>
+<li><a href="bilibili_search_hot.html">bilibili_search_hot</a>
+B站热搜榜前10关键词</li>
+<li><a href="bilibili_splash.html">bilibili_splash</a>
+B站APP端开屏广告信息</li>
 <li><a href="bilibili_user_article.html">bilibili_user_article</a>
 B站UP主图文</li>
 <li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
@@ -301,14 +315,42 @@ DEV.to trending guides (no official RSS)</li>
 <ul>
 <li><a href="github_advisor.html">github_advisor</a>
 GitHub Advisory Database security advisories (requires GITHUB_TOKEN)</li>
+<li><a href="github_branch.html">github_branch</a>
+GitHub repository branches (requires GITHUB_TOKEN)</li>
 <li><a href="github_commits.html">github_commits</a>
 GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
+<li><a href="github_contributors.html">github_contributors</a>
+GitHub repository contributors (requires GITHUB_TOKEN)</li>
+<li><a href="github_discussions.html">github_discussions</a>
+GitHub repository discussions via GraphQL (requires GITHUB_TOKEN)</li>
 <li><a href="github_followers.html">github_followers</a>
 GitHub user followers query (requires GITHUB_TOKEN)</li>
+<li><a href="github_gist.html">github_gist</a>
+GitHub user gists (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue.html">github_issue</a>
+GitHub repository issues (requires GITHUB_TOKEN)</li>
 <li><a href="github_issue_comments.html">github_issue_comments</a>
 GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
+<li><a href="github_pull.html">github_pull</a>
+GitHub repository pull requests (requires GITHUB_TOKEN)</li>
+<li><a href="github_release.html">github_release</a>
+GitHub repository releases (requires GITHUB_TOKEN)</li>
+<li><a href="github_repo_events.html">github_repo_events</a>
+GitHub repository events stream (requires GITHUB_TOKEN)</li>
+<li><a href="github_search.html">github_search</a>
+GitHub repository search (requires GITHUB_TOKEN)</li>
+<li><a href="github_starred.html">github_starred</a>
+Repositories starred by a GitHub user (requires GITHUB_TOKEN)</li>
 <li><a href="github_stars.html">github_stars</a>
 GitHub single repository star count (requires GITHUB_TOKEN)</li>
+<li><a href="github_tag.html">github_tag</a>
+GitHub repository tags (requires GITHUB_TOKEN)</li>
+<li><a href="github_topic.html">github_topic</a>
+GitHub Topics repositories (scraped HTML, no token required)</li>
+<li><a href="github_user_events.html">github_user_events</a>
+GitHub user recent public events (requires GITHUB_TOKEN)</li>
+<li><a href="github_user_repos.html">github_user_repos</a>
+GitHub user repositories list (requires GITHUB_TOKEN)</li>
 </ul>
 <h4 id="hacker-news"><a class="header" href="#hacker-news">Hacker News</a></h4>
 <ul>
@@ -448,6 +490,9 @@ timeout = 60
 [routes]
 disabled = []
 rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
+
+[cookie]
+origins = ["https://bilibili.com"]
 </code></pre>
 <h2 id="fields--字段说明"><a class="header" href="#fields--字段说明">Fields / 字段说明</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Field / 字段</th><th>Type / 类型</th><th>Default / 默认值</th><th>Description / 描述</th></tr></thead><tbody>
@@ -456,6 +501,7 @@ rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
 <tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
 <tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
 <tr><td><code>routes.rate_limit</code></td><td><code>table</code></td><td><code>{}</code></td><td>路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors.</td></tr>
+<tr><td><code>cookie.origins</code></td><td><code>string[]</code></td><td><code>["https://bilibili.com"]</code></td><td><code>rssust cookie &lt;browser&gt;</code> 导出 cookies 的网址列表。List of URLs whose cookies are exported by <code>rssust cookie &lt;browser&gt;</code>.</td></tr>
 </tbody></table>
 </div>
 <h2 id="examples--示例"><a class="header" href="#examples--示例">Examples / 示例</a></h2>
@@ -511,10 +557,13 @@ Because some routes require cookies, and cookies are hard to distribute, this tu
 <p>You can use the browser plugin Cookie-Editor to export it, or use the built-in CLI command:</p>
 <pre><code>rssust cookie &lt;browser&gt;
 </code></pre>
-<p>Supported browsers: <code>firefox</code>, <code>chrome</code>, <code>chromium</code>, <code>chromebeta</code> (macOS: <code>safari</code>, Windows: <code>edge</code>)</p>
+<p>Supported browsers: <code>firefox</code>, <code>chrome</code> (<code>chromium</code>/<code>chromebeta</code> 也映射到 chrome)（macOS: <code>safari</code>，Windows: <code>edge</code>）</p>
 <p>Example:</p>
 <pre><code>./env/rssust cookie chrome
 </code></pre>
+<p>导出哪些网址由 <code>config.toml</code> 的 <code>[cookie] origins = ["https://bilibili.com"]</code> 控制，可自行增删。
+已存在于 <code>cookies.json</code> 中的域名也会一并刷新。
+The URLs to export are controlled by <code>[cookie] origins = ["https://bilibili.com"]</code> in <code>config.toml</code>; existing domains in <code>cookies.json</code> are also refreshed.</p>
 <p>Tips: Linux 下 firefox 可能因为上游 crate 的问题需要链接文件夹修复</p>
 <h2 id="bilibili-1"><a class="header" href="#bilibili-1">Bilibili</a></h2>
 <p>bilibili.com<br />
@@ -1447,6 +1496,68 @@ root_rules(url, params)
 <strong>Example:</strong> <a href="/apnews_topics">rssust://apnews_topics</a><br />
 <strong>Parameter:</strong><br />
 topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/science/health/sports/entertainment)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_audio_rank"><a class="header" href="#router-name-bilibili_audio_rank">Router-name: bilibili_audio_rank</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站音频榜单最新一期（热榜/原创榜）<br />
+<strong>Address:</strong> rssust://bilibili_audio_rank<br />
+<strong>Example:</strong> <a href="/bilibili_audio_rank">rssust://bilibili_audio_rank</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>list_type</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 榜单类型，1=热榜, 2=原创榜</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_bangumi_follow"><a class="header" href="#router-name-bilibili_bangumi_follow">Router-name: bilibili_bangumi_follow</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> yes (如目标用户设置隐私则需 cookies.json 的 bilibili.com Cookie)<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@wdssmq<br />
+<strong>Introduction:</strong> 用户追番（追剧）列表，含总集数、最新一话与更新时间<br />
+<strong>Address:</strong> rssust://bilibili_bangumi_follow<br />
+<strong>Example:</strong> <a href="/bilibili_bangumi_follow?vmid=14082">rssust://bilibili_bangumi_follow?vmid=14082</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>vmid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 目标用户 mid (必填)</li>
+<li><strong>type</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 查询类型, 1=追番, 2=追剧</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>ps</strong><br />
+Type of parameter: number<br />
+Default value: 15<br />
+Meaning: 每页项数, 定义域 1-30</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_blackroom"><a class="header" href="#router-name-bilibili_blackroom">Router-name: bilibili_blackroom</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站小黑屋封禁公示列表<br />
+<strong>Address:</strong> rssust://bilibili_blackroom<br />
+<strong>Example:</strong> <a href="/bilibili_blackroom">rssust://bilibili_blackroom</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>btype</strong><br />
+Type of parameter: number<br />
+Default value: 空<br />
+Meaning: 来源筛选，空=全部, 0=系统封禁, 1=风纪仲裁</li>
+<li><strong>otype</strong><br />
+Type of parameter: number<br />
+Default value: 0<br />
+Meaning: 类型筛选，0=全部, 1=评论, 2=弹幕, 3=私信, 4=标签, 5=个人资料, 6=投稿, 8=专栏, 10=动态, 11=相簿</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码，每页最多10项</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_collection"><a class="header" href="#router-name-bilibili_collection">Router-name: bilibili_collection</a></h1>
 <p><strong>Commit time:</strong> 2026.07.14<br />
 <strong>Cookies?:</strong> no<br />
@@ -1564,6 +1675,28 @@ Type of parameter: bool<br />
 Default value: true<br />
 Meaning: 内嵌视频</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_followers"><a class="header" href="#router-name-bilibili_followers">Router-name: bilibili_followers</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> yes (需 cookies.json 中的 bilibili.com Cookie 登录态)<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> 某 UP 主的粉丝列表<br />
+<strong>Address:</strong> rssust://bilibili_followers<br />
+<strong>Example:</strong> <a href="/bilibili_followers?vmid=2">rssust://bilibili_followers?vmid=2</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>vmid</strong><br />
+Type of parameter: number<br />
+Default value: 无<br />
+Meaning: 目标用户 mid (必填)</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 每页条数, 最大 20</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_link_news"><a class="header" href="#router-name-bilibili_link_news">Router-name: bilibili_link_news</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
@@ -1577,6 +1710,32 @@ Meaning: 内嵌视频</li>
 Type of parameter: string<br />
 Default value: null<br />
 Meaning: 公告分类，live=直播, vc=小视频, wh=相簿</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_live_area"><a class="header" href="#router-name-bilibili_live_area">Router-name: bilibili_live_area</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> B站直播分区 (某分区下房间列表)<br />
+<strong>Address:</strong> rssust://bilibili_live_area<br />
+<strong>Example:</strong> <a href="/bilibili_live_area?area_id=1&amp;order=online">rssust://bilibili_live_area?area_id=1&amp;order=online</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>area_id</strong><br />
+Type of parameter: number<br />
+Default value: 无<br />
+Meaning: 直播分区ID (可通过 room/v1/Area/getList 查询)</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 排序方式, live_time=最新开播 / online=人气直播</li>
+<li><strong>page_size</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 每页条数, 最大 30</li>
+<li><strong>page_no</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_partion"><a class="header" href="#router-name-bilibili_partion">Router-name: bilibili_partion</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
@@ -1666,6 +1825,15 @@ Default value: true<br />
 Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_search_hot"><a class="header" href="#router-name-bilibili_search_hot">Router-name: bilibili_search_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@CaoMeiYouRen<br />
+<strong>Introduction:</strong> B站热搜榜前10关键词<br />
+<strong>Address:</strong> rssust://bilibili_search_hot<br />
+<strong>Example:</strong> <a href="/bilibili_search_hot">rssust://bilibili_search_hot</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_series"><a class="header" href="#router-name-bilibili_series">Router-name: bilibili_series</a></h1>
 <p><strong>Commit time:</strong> 2026.07.12<br />
 <strong>Cookies?:</strong> no<br />
@@ -1684,6 +1852,40 @@ Type of parameter: bool<br />
 Default value: true<br />
 Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
 <strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_splash"><a class="header" href="#router-name-bilibili_splash">Router-name: bilibili_splash</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站APP端开屏广告信息<br />
+<strong>Address:</strong> rssust://bilibili_splash<br />
+<strong>Example:</strong> <a href="/bilibili_splash">rssust://bilibili_splash</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>build</strong><br />
+Type of parameter: number<br />
+Default value: 999999999<br />
+Meaning: 客户端内部版本号</li>
+<li><strong>mobi_app</strong><br />
+Type of parameter: string<br />
+Default value: android<br />
+Meaning: android, iphone, ipad</li>
+<li><strong>platform</strong><br />
+Type of parameter: string<br />
+Default value: android<br />
+Meaning: android, ios</li>
+<li><strong>height</strong><br />
+Type of parameter: number<br />
+Default value: 1920<br />
+Meaning: 屏幕高度</li>
+<li><strong>width</strong><br />
+Type of parameter: number<br />
+Default value: 1080<br />
+Meaning: 屏幕宽度</li>
+<li><strong>birth</strong><br />
+Type of parameter: string<br />
+Default value: 0101<br />
+Meaning: 生日日期(四位数，例 0101)</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_article"><a class="header" href="#router-name-bilibili_user_article">Router-name: bilibili_user_article</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
@@ -2025,6 +2227,28 @@ ecosystem (optional, composer/go/maven/npm/nuget/pip/pub/rubygems/rust/erlang/ac
 limit (optional, max 50, default 20)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_branch"><a class="header" href="#router-name-github_branch">Router-name: github_branch</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@max-arnold<br />
+<strong>Introduction:</strong> GitHub 仓库分支列表<br />
+<strong>Address:</strong> rssust://github_branch<br />
+<strong>Example:</strong> <a href="/github_branch?owner=nodejs&amp;repo=node">rssust://github_branch?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_commits"><a class="header" href="#router-name-github_commits">Router-name: github_commits</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2038,6 +2262,66 @@ repo (required, repository name)<br />
 limit (optional, max 50, default 10)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_contributors"><a class="header" href="#router-name-github_contributors">Router-name: github_contributors</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@zoenglinghou<br />
+<strong>Introduction:</strong> GitHub 仓库贡献者列表<br />
+<strong>Address:</strong> rssust://github_contributors<br />
+<strong>Example:</strong> <a href="/github_contributors?owner=rust-lang&amp;repo=rust">rssust://github_contributors?owner=rust-lang&amp;repo=rust</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: desc<br />
+Meaning: 排序, desc=贡献数降序 / asc=升序</li>
+<li><strong>anon</strong><br />
+Type of parameter: boolean<br />
+Default value: false<br />
+Meaning: 是否包含匿名贡献者</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_discussions"><a class="header" href="#router-name-github_discussions">Router-name: github_discussions</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@waynzh<br />
+<strong>Introduction:</strong> GitHub 仓库 Discussion 讨论列表 (GraphQL)<br />
+<strong>Address:</strong> rssust://github_discussions<br />
+<strong>Example:</strong> <a href="/github_discussions?owner=community&amp;repo=discussions">rssust://github_discussions?owner=community&amp;repo=discussions</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: 状态, open/closed/answered/unanswered/locked/unlocked/all</li>
+<li><strong>category</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 讨论分类名 (可选)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数, 最大 100</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_followers"><a class="header" href="#router-name-github_followers">Router-name: github_followers</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2049,6 +2333,50 @@ Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Toke
 username (required, GitHub login)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_gist"><a class="header" href="#router-name-github_gist">Router-name: github_gist</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@TonyRL<br />
+<strong>Introduction:</strong> 用户公开/私密 Gist 列表<br />
+<strong>Address:</strong> rssust://github_gist<br />
+<strong>Example:</strong> <a href="/github_gist?username=octocat">rssust://github_gist?username=octocat</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名 (必填)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_issue"><a class="header" href="#router-name-github_issue">Router-name: github_issue</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@HenryQW、AndreyMZ<br />
+<strong>Introduction:</strong> GitHub 仓库 Issue 列表<br />
+<strong>Address:</strong> rssust://github_issue<br />
+<strong>Example:</strong> <a href="/github_issue?owner=nodejs&amp;repo=node">rssust://github_issue?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: issue 状态，open/closed/all</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_issue_comments"><a class="header" href="#router-name-github_issue_comments">Router-name: github_issue_comments</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2062,6 +2390,124 @@ repo (required, repository name)<br />
 limit (optional, max 50, default 20, split between issues &amp; PRs, 2 latest comments each)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_pull"><a class="header" href="#router-name-github_pull">Router-name: github_pull</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@hashman、TonyRL<br />
+<strong>Introduction:</strong> GitHub 仓库 Pull Request 列表<br />
+<strong>Address:</strong> rssust://github_pull<br />
+<strong>Example:</strong> <a href="/github_pull?owner=nodejs&amp;repo=node">rssust://github_pull?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: PR 状态，open/closed/all</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_release"><a class="header" href="#router-name-github_release">Router-name: github_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库 Release 列表<br />
+<strong>Address:</strong> rssust://github_release<br />
+<strong>Example:</strong> <a href="/github_release?owner=nodejs&amp;repo=node">rssust://github_release?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_repo_events"><a class="header" href="#router-name-github_repo_events">Router-name: github_repo_events</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@mslxl<br />
+<strong>Introduction:</strong> GitHub 仓库事件流 (push/issue/PR/release/star 等)<br />
+<strong>Address:</strong> rssust://github_repo_events<br />
+<strong>Example:</strong> <a href="/github_repo_events?owner=octocat&amp;repo=Hello-World">rssust://github_repo_events?owner=octocat&amp;repo=Hello-World</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>types</strong><br />
+Type of parameter: string<br />
+Default value: all<br />
+Meaning: 事件类型过滤, 逗号分隔 (create/delete/fork/issue/issuecomm/member/pr/prcomm/prrev/public/push/release/star/wiki/cmcomm/discussion)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_search"><a class="header" href="#router-name-github_search">Router-name: github_search</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@LogicJake<br />
+<strong>Introduction:</strong> GitHub 仓库搜索<br />
+<strong>Address:</strong> rssust://github_search<br />
+<strong>Example:</strong> <a href="/github_search?q=rust">rssust://github_search?q=rust</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>q</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 搜索关键词（必填）</li>
+<li><strong>sort</strong><br />
+Type of parameter: string<br />
+Default value: stars<br />
+Meaning: 排序方式，stars/forks/updated/help-wanted-issues/best-match</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: desc<br />
+Meaning: 排序方向，asc/desc</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_starred"><a class="header" href="#router-name-github_starred">Router-name: github_starred</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@LanceZhu<br />
+<strong>Introduction:</strong> GitHub 用户收藏的仓库列表<br />
+<strong>Address:</strong> rssust://github_starred<br />
+<strong>Example:</strong> <a href="/github_starred?username=torvalds">rssust://github_starred?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大100</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_stars"><a class="header" href="#router-name-github_stars">Router-name: github_stars</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2074,6 +2520,50 @@ owner (required, repository owner)<br />
 repo (required, repository name)<br />
 <strong>Token:</strong><br />
 Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_tag"><a class="header" href="#router-name-github_tag">Router-name: github_tag</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库 Tag 列表<br />
+<strong>Address:</strong> rssust://github_tag<br />
+<strong>Example:</strong> <a href="/github_tag?owner=nodejs&amp;repo=node">rssust://github_tag?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_topic"><a class="header" href="#router-name-github_topic">Router-name: github_topic</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@queensferryme<br />
+<strong>Introduction:</strong> GitHub Topics 话题下的仓库列表（抓取网页）<br />
+<strong>Address:</strong> rssust://github_topic<br />
+<strong>Example:</strong> <a href="/github_topic?name=framework">rssust://github_topic?name=framework</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>name</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 话题名（必填），如 framework</li>
+<li><strong>qs</strong><br />
+Type of parameter: string<br />
+Default value: 空<br />
+Meaning: 查询串，如 <code>l=php&amp;o=desc&amp;s=stars</code></li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 25<br />
+Meaning: 条数，最大25</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_trending"><a class="header" href="#router-name-github_trending">Router-name: github_trending</a></h1>
 <p><strong>Commit time:</strong> 2026.08.08<br />
 <strong>Cookies?:</strong> no<br />
@@ -2086,6 +2576,46 @@ since (optional, daily/weekly/monthly, default daily)<br />
 limit (optional, max 25, default 25)<br />
 <strong>Note:</strong><br />
 robots.txt allows /trending. Returns repo name, description, language and stars-today.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_user_events"><a class="header" href="#router-name-github_user_events">Router-name: github_user_events</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@mslxl<br />
+<strong>Introduction:</strong> GitHub 用户最近公开动态（events）<br />
+<strong>Address:</strong> rssust://github_user_events<br />
+<strong>Example:</strong> <a href="/github_user_events?username=torvalds">rssust://github_user_events?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_user_repos"><a class="header" href="#router-name-github_user_repos">Router-name: github_user_repos</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> GitHub 用户的仓库列表<br />
+<strong>Address:</strong> rssust://github_user_repos<br />
+<strong>Example:</strong> <a href="/github_user_repos?username=torvalds">rssust://github_user_repos?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: owner<br />
+Meaning: 仓库类型，all/owner/member</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大100</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guancha_headline"><a class="header" href="#router-name-guancha_headline">Router-name: guancha_headline</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />

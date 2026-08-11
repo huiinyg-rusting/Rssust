@@ -1,7 +1,7 @@
 # Router-name: bilibili_audio_rank  
 **Commit time:** 2026.08.10  
 **Cookies?:** no  
-**Author:** huiinyg-rusting  
+**Author:** AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）  
 **Introduction:** B站音频榜单最新一期（热榜/原创榜）  
 **Address:** rssust://bilibili_audio_rank  
 **Example:** [rssust://bilibili_audio_rank](/bilibili_audio_rank)  

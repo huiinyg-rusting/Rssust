@@ -56,7 +56,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let list = json
         .pointer("/data/list")
         .and_then(Value::as_array)
-        .ok_or_else(|| anyhow!("找不到 data/list 字段或不是数组"))?;
+        .cloned()
+        .unwrap_or_default();
 
     let mut item_vec = Vec::new();
 

@@ -1,7 +1,7 @@
 # Router-name: bilibili_bangumi_follow  
 **Commit time:** 2026.08.10  
 **Cookies?:** yes (如目标用户设置隐私则需 cookies.json 的 bilibili.com Cookie)  
-**Author:** huiinyg-rusting  
+**Author:** AI转写 / huiinyg-rusting审核 - 来源于RSShub@wdssmq  
 **Introduction:** 用户追番（追剧）列表，含总集数、最新一话与更新时间  
 **Address:** rssust://bilibili_bangumi_follow  
 **Example:** [rssust://bilibili_bangumi_follow?vmid=14082](/bilibili_bangumi_follow?vmid=14082)  
