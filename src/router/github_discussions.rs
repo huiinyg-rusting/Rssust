@@ -52,28 +52,21 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let owner_q = serde_json::to_string(&owner).unwrap_or_else(|_| format!("\"{}\"", owner));
     let repo_q = serde_json::to_string(&repo).unwrap_or_else(|_| format!("\"{}\"", repo));
 
+    // GitHub GraphQL 的 discussions 连接参数是 states: [DiscussionState]（OPEN/CLOSED/LOCKED/
+    // UNLOCKED/ANSWERED/UNANSWERED），不存在 closed/locked/answered 布尔参数。
     let mut filters = format!("first: {}", limit);
-    let mut answered: Option<bool> = None;
-    let mut closed: Option<bool> = None;
-    let mut locked: Option<bool> = None;
-    match state.as_str() {
-        "answered" => answered = Some(true),
-        "unanswered" => answered = Some(false),
-        "closed" => closed = Some(true),
-        "open" => closed = Some(false),
-        "locked" => locked = Some(true),
-        "unlocked" => locked = Some(false),
-        "all" => {}
+    let state_enum: Option<&str> = match state.as_str() {
+        "answered" => Some("ANSWERED"),
+        "unanswered" => Some("UNANSWERED"),
+        "closed" => Some("CLOSED"),
+        "open" => Some("OPEN"),
+        "locked" => Some("LOCKED"),
+        "unlocked" => Some("UNLOCKED"),
+        "all" => None,
         _ => return Err(anyhow!("state 参数仅支持 open/closed/answered/unanswered/locked/unlocked/all")),
-    }
-    if let Some(v) = answered {
-        filters.push_str(&format!(", answered: {}", v));
-    }
-    if let Some(v) = closed {
-        filters.push_str(&format!(", closed: {}", v));
-    }
-    if let Some(v) = locked {
-        filters.push_str(&format!(", locked: {}", v));
+    };
+    if let Some(s) = state_enum {
+        filters.push_str(&format!(", states: [{}]", s));
     }
 
     if let Some(cat) = &category {
@@ -81,7 +74,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             "{{ repository(owner: {}, name: {}) {{ discussionCategories(first: 25) {{ nodes {{ id name }} }} }} }}",
             owner_q, repo_q
         );
-        let cat_resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &cat_query, &headers).await?;
+        let cat_body = serde_json::json!({ "query": cat_query }).to_string();
+        let cat_resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &cat_body, &headers).await?;
         let cat_json: Value = serde_json::from_str(&cat_resp)?;
         let mut cat_id: Option<String> = None;
         if let Some(nodes) = cat_json
@@ -105,7 +99,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         owner_q, repo_q, filters
     );
 
-    let resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &query, &headers).await?;
+    // GitHub GraphQL 要求 body 为 JSON: {"query": "..."}，不能直接发送原始查询字符串
+    let query_body = serde_json::json!({ "query": query }).to_string();
+    let resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &query_body, &headers).await?;
     let json: Value = serde_json::from_str(&resp)?;
 
     let nodes = json
@@ -115,19 +111,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let mut item_vec = Vec::new();
     for d in nodes {
-        let node_closed = d["closed"].as_bool().unwrap_or(false);
-        let node_locked = d["locked"].as_bool().unwrap_or(false);
-        if let Some(v) = closed {
-            if node_closed != v {
-                continue;
-            }
-        }
-        if let Some(v) = locked {
-            if node_locked != v {
-                continue;
-            }
-        }
-
         let title = d["title"].as_str().unwrap_or("");
         let author = d["author"]["login"].as_str().unwrap_or("ghost");
         let created = d["createdAt"].as_str().unwrap_or("");
@@ -141,10 +124,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 escape_html(&body.chars().take(2000).collect::<String>())
             );
         }
-        if node_closed {
+        if d["closed"].as_bool().unwrap_or(false) {
             desc.push_str("<br>状态: 已关闭");
         }
-        if node_locked {
+        if d["locked"].as_bool().unwrap_or(false) {
             desc.push_str("<br>状态: 已锁定");
         }
 

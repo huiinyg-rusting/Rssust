@@ -178,6 +178,7 @@
                         <h1 id="router-name-openai_chatgpt_atlas_release"><a class="header" href="#router-name-openai_chatgpt_atlas_release">Router-name: openai_chatgpt_atlas_release</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 抓取 help.openai.com 需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译 curl-impersonate 或使用 WSL；否则本路由 500（无降级）。参考 <code>openai_common.rs::fetch_release_notes</code><br />
 <strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
 <strong>Introduction:</strong> ChatGPT Atlas Release Notes (help.openai.com single page scrape)<br />
 <strong>Address:</strong> rssust://openai_chatgpt_atlas_release<br />

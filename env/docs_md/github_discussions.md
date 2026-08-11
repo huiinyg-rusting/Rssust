@@ -4,7 +4,7 @@
 **Author:** AI转写 / huiinyg-rusting审核 - 来源于RSShub@waynzh  
 **Introduction:** GitHub 仓库 Discussion 讨论列表 (GraphQL)  
 **Address:** rssust://github_discussions  
-**Example:** [rssust://github_discussions?owner=community&repo=discussions](/github_discussions?owner=community&repo=discussions)  
+**Example:** [rssust://github_discussions?owner=vercel&repo=next.js](/github_discussions?owner=vercel&repo=next.js)  
 **Parameter:**  
 1. **owner**  
    Type of parameter: string  

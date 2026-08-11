@@ -2298,7 +2298,7 @@ Meaning: 条数, 最大 100</li>
 <strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@waynzh<br />
 <strong>Introduction:</strong> GitHub 仓库 Discussion 讨论列表 (GraphQL)<br />
 <strong>Address:</strong> rssust://github_discussions<br />
-<strong>Example:</strong> <a href="/github_discussions?owner=community&amp;repo=discussions">rssust://github_discussions?owner=community&amp;repo=discussions</a><br />
+<strong>Example:</strong> <a href="/github_discussions?owner=vercel&amp;repo=next.js">rssust://github_discussions?owner=vercel&amp;repo=next.js</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>owner</strong><br />
@@ -2782,6 +2782,7 @@ Meaning: 条目数量上限，最大 200</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_atlas_release"><a class="header" href="#router-name-openai_chatgpt_atlas_release">Router-name: openai_chatgpt_atlas_release</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 抓取 help.openai.com 需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译 curl-impersonate 或使用 WSL；否则本路由 500（无降级）。参考 <code>openai_common.rs::fetch_release_notes</code><br />
 <strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
 <strong>Introduction:</strong> ChatGPT Atlas Release Notes (help.openai.com single page scrape)<br />
 <strong>Address:</strong> rssust://openai_chatgpt_atlas_release<br />
@@ -2791,6 +2792,7 @@ limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_release"><a class="header" href="#router-name-openai_chatgpt_release">Router-name: openai_chatgpt_release</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 抓取 help.openai.com 需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译 curl-impersonate 或使用 WSL；否则本路由 500（无降级）。参考 <code>openai_common.rs::fetch_release_notes</code><br />
 <strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
 <strong>Introduction:</strong> ChatGPT Release Notes (help.openai.com single page scrape)<br />
 <strong>Address:</strong> rssust://openai_chatgpt_release<br />
@@ -2800,6 +2802,7 @@ limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_news"><a class="header" href="#router-name-openai_news">Router-name: openai_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 文章详情抓取需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译或使用 WSL；此路由失败时降级为 RSS 摘要（不 500）。参考 <code>openai_common.rs::fetch_article_details</code><br />
 <strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
 <strong>Introduction:</strong> OpenAI Official News (rss.xml + full article content)<br />
 <strong>Address:</strong> rssust://openai_news<br />
@@ -2809,6 +2812,7 @@ limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_research"><a class="header" href="#router-name-openai_research">Router-name: openai_research</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 文章详情抓取需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译或使用 WSL；此路由失败时降级为 RSS 摘要（不 500）。参考 <code>openai_common.rs::fetch_article_details</code><br />
 <strong>Author:</strong> AI-converted / huinyg-reviewed - based on RSSHub<br />
 <strong>Introduction:</strong> OpenAI Research Articles (filtered from official RSS by category=Research)<br />
 <strong>Address:</strong> rssust://openai_research<br />
