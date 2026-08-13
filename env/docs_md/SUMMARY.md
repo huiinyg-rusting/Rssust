@@ -64,6 +64,7 @@
 - [github_pull](github_pull.md)
 - [github_release](github_release.md)
 - [github_repo_events](github_repo_events.md)
+- [github_repo_stargazers](github_repo_stargazers.md)
 - [github_search](github_search.md)
 - [github_starred](github_starred.md)
 - [github_stars](github_stars.md)

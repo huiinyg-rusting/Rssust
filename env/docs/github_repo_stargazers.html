@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>github_search</title>
+        <title>github_repo_stargazers</title>
 
 
         <!-- Custom HTML head -->
@@ -175,42 +175,38 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="router-name-github_search"><a class="header" href="#router-name-github_search">Router-name: github_search</a></h1>
+                        <h1 id="router-name-github_repo_stargazers"><a class="header" href="#router-name-github_repo_stargazers">Router-name: github_repo_stargazers</a></h1>
 <p><strong>Commit time:</strong> 2026.08.11<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@LogicJake<br />
-<strong>Introduction:</strong> GitHub 仓库搜索<br />
-<strong>Address:</strong> rssust://github_search<br />
-<strong>Example:</strong> <a href="/github_search?q=rust">rssust://github_search?q=rust</a><br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库加星用户时间线（含 Star 时间）<br />
+<strong>Address:</strong> rssust://github_repo_stargazers<br />
+<strong>Example:</strong> <a href="/github_repo_stargazers?owner=rust-lang&amp;repo=rust">rssust://github_repo_stargazers?owner=rust-lang&amp;repo=rust</a><br />
 <strong>Parameter:</strong></p>
 <ol>
-<li><strong>q</strong><br />
+<li><strong>owner</strong><br />
 Type of parameter: string<br />
 Default value: 无<br />
-Meaning: 搜索关键词（必填）</li>
-<li><strong>sort</strong><br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
 Type of parameter: string<br />
-Default value: stars<br />
-Meaning: 排序方式，stars/forks/updated/help-wanted-issues/best-match</li>
-<li><strong>order</strong><br />
-Type of parameter: string<br />
-Default value: desc<br />
-Meaning: 排序方向，asc/desc</li>
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
 <li><strong>limit</strong><br />
 Type of parameter: number<br />
-Default value: 20<br />
-Meaning: 条数，最大50</li>
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
 </ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="github_repo_stargazers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="github_repo_events.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="github_starred.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="github_search.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -220,11 +216,11 @@ Meaning: 条数，最大50</li>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="github_repo_stargazers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="github_repo_events.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="github_starred.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="github_search.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

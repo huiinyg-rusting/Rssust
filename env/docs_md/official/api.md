@@ -142,6 +142,8 @@
     GitHub repository releases (requires GITHUB_TOKEN)
 - [github_repo_events](../github_repo_events.md)
     GitHub repository events stream (requires GITHUB_TOKEN)
+- [github_repo_stargazers](../github_repo_stargazers.md)
+    GitHub repository stargazers timeline (requires GITHUB_TOKEN)
 - [github_search](../github_search.md)
     GitHub repository search (requires GITHUB_TOKEN)
 - [github_starred](../github_starred.md)

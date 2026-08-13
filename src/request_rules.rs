@@ -110,6 +110,7 @@ pub async fn request_rules(
             "/github_pull" => run!(github_pull, parameters),
             "/github_release" => run!(github_release, parameters),
             "/github_repo_events" => run!(github_repo_events, parameters),
+            "/github_repo_stargazers" => run!(github_repo_stargazers, parameters),
             "/github_search" => run!(github_search, parameters),
             "/github_starred" => run!(github_starred, parameters),
             "/github_stars" => run!(github_stars, parameters),

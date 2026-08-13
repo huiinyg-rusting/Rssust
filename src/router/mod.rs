@@ -52,6 +52,7 @@ pub mod github_issue_comments;
 pub mod github_pull;
 pub mod github_release;
 pub mod github_repo_events;
+pub mod github_repo_stargazers;
 pub mod github_search;
 pub mod github_starred;
 pub mod github_stars;
