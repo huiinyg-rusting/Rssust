@@ -123,6 +123,8 @@ pub async fn request_rules(
             "/guanhai" => run!(guanhai, parameters),
             "/guokr_scientific" => run!(guokr_scientific, parameters),
             "/hackernews" => run!(hackernews, parameters),
+            "/kali_blog" => run!(kali_blog, parameters),
+            "/lwn" => run!(lwn, parameters),
             "/openai_news" => run!(openai_news, parameters),
             "/openai_research" => run!(openai_research, parameters),
             "/openai_chatgpt_release" => run!(openai_chatgpt_release, parameters),

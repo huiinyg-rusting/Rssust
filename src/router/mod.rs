@@ -66,6 +66,8 @@ pub mod guanhai;
 pub mod guokr_scientific;
 pub mod hackernews;
 pub mod ifeng_news;
+pub mod kali_blog;
+pub mod lwn;
 pub mod ithome_ranking;
 pub mod jianshu_home;
 pub mod juejin_pins;
