@@ -55,6 +55,10 @@
 - [bilibili_weekly](../bilibili_weekly.md)
     Bilibili最新一期的每周精选
 
+#### Baidu (百度热搜)
+- [baidu_top](../baidu_top.md)
+    百度热搜榜单（实时/科技/娱乐等分类，本服务转置，无官方 RSS）
+
 #### BJNews (新京报)
 - [bjnews_cat](../bjnews_cat.md)
     新京报分类文章
@@ -66,6 +70,10 @@
 #### Caixin (财新网)
 - [caixin_latest](../caixin_latest.md)
     财新网最新文章
+
+#### crates.io
+- [crates_new](../crates_new.md)
+    crates.io newly published Rust crates (official API, no official RSS)
 
 #### Carnegie Endowment
 - [carnegieendowment_news](../carnegieendowment_news.md)
@@ -195,6 +203,10 @@
 - [mittrchina](../mittrchina.md)
     MIT Technology Review 麻省理工科技评论中文站
 
+#### NASA
+- [nasa_apod](../nasa_apod.md)
+    NASA 每日天文一图（APOD，官方 API，无官方 RSS）
+
 #### NetEase
 - [netease_today](../netease_today.md)
     网易新闻今日关注
@@ -258,5 +270,7 @@
     第一财经头条
 
 #### Zhihu
+- [zhihu_daily](../zhihu_daily.md)
+    知乎日报
 - [zhihu_hot](../zhihu_hot.md)
     知乎热榜

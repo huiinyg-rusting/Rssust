@@ -42,6 +42,7 @@ pub async fn request_rules(
     crate::rate_limit::with_cache_scope(ttl, async {
         let result: Result<String, anyhow::Error> = match url {
             "/apnews_topics" => run!(apnews_topics, parameters),
+            "/baidu_top" => run!(baidu_top, parameters),
             "/bjnews_cat" => run!(bjnews_cat, parameters),
             "/bilibili_audio_rank" => run!(bilibili_audio_rank, parameters),
             "/bilibili_bangumi_follow" => run!(bilibili_bangumi_follow, parameters),
@@ -85,6 +86,7 @@ pub async fn request_rules(
             "/leiphone_newsflash" => run!(leiphone_newsflash, parameters),
             "/nmc_alarm" => run!(nmc_alarm, parameters),
             "/mittrchina" => run!(mittrchina, parameters),
+            "/nasa_apod" => run!(nasa_apod, parameters),
             "/rail12306_news" => run!(rail12306_news, parameters),
             "/rail12306_ticket" => run!(rail12306_ticket, parameters),
             "/solidot" => run!(solidot, parameters),
@@ -97,6 +99,7 @@ pub async fn request_rules(
             "/caixin_latest" => run!(caixin_latest, parameters),
             "/chinanews" => run!(chinanews, parameters),
             "/cls_hot" => run!(cls_hot, parameters),
+            "/crates_new" => run!(crates_new, parameters),
             "/ifeng_news" => run!(ifeng_news, parameters),
             "/github_advisor" => run!(github_advisor, parameters),
             "/github_commits" => run!(github_commits, parameters),
@@ -139,6 +142,7 @@ pub async fn request_rules(
             "/tmtpost_new" => run!(tmtpost_new, parameters),
             "/videocardz_news" => run!(videocardz_news, parameters),
             "/zhihu_hot" => run!(zhihu_hot, parameters),
+            "/zhihu_daily" => run!(zhihu_daily, parameters),
             _ => {
                 warn!("Unregistered route: {}", url);
                 return Err(anyhow!("404NotFound"));
