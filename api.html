@@ -185,14 +185,24 @@ AP News headlines by topic</li>
 </ul>
 <h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
 <ul>
+<li><a href="bilibili_audio_rank.html">bilibili_audio_rank</a>
+B站音频榜单最新一期（热榜/原创榜）</li>
+<li><a href="bilibili_bangumi_follow.html">bilibili_bangumi_follow</a>
+用户追番（追剧）列表，含总集数、最新一话</li>
+<li><a href="bilibili_blackroom.html">bilibili_blackroom</a>
+B站小黑屋封禁公示列表</li>
 <li><a href="bilibili_collection.html">bilibili_collection</a>
 B站合集视频列表</li>
 <li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
 Bilibili up主的动态</li>
 <li><a href="bilibili_fav.html">bilibili_fav</a>
 B站非默认收藏夹</li>
+<li><a href="bilibili_followers.html">bilibili_followers</a>
+某 UP 主粉丝列表 (需 bilibili.com Cookie 登录态)</li>
 <li><a href="bilibili_link_news.html">bilibili_link_news</a>
 B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_live_area.html">bilibili_live_area</a>
+B站直播分区房间列表</li>
 <li><a href="bilibili_partion.html">bilibili_partion</a>
 B站分区视频</li>
 <li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
@@ -203,6 +213,10 @@ B站热门视频</li>
 B站入站必刷宝藏视频</li>
 <li><a href="bilibili_series.html">bilibili_series</a>
 B站系列视频列表</li>
+<li><a href="bilibili_search_hot.html">bilibili_search_hot</a>
+B站热搜榜前10关键词</li>
+<li><a href="bilibili_splash.html">bilibili_splash</a>
+B站APP端开屏广告信息</li>
 <li><a href="bilibili_user_article.html">bilibili_user_article</a>
 B站UP主图文</li>
 <li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
@@ -220,6 +234,11 @@ B站视频搜索</li>
 <li><a href="bilibili_weekly.html">bilibili_weekly</a>
 Bilibili最新一期的每周精选</li>
 </ul>
+<h4 id="baidu-百度热搜"><a class="header" href="#baidu-百度热搜">Baidu (百度热搜)</a></h4>
+<ul>
+<li><a href="baidu_top.html">baidu_top</a>
+百度热搜榜单（实时/科技/娱乐等分类，本服务转置，无官方 RSS）</li>
+</ul>
 <h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
 <ul>
 <li><a href="bjnews_cat.html">bjnews_cat</a>
@@ -234,6 +253,11 @@ Bilibili最新一期的每周精选</li>
 <ul>
 <li><a href="caixin_latest.html">caixin_latest</a>
 财新网最新文章</li>
+</ul>
+<h4 id="cratesio"><a class="header" href="#cratesio">crates.io</a></h4>
+<ul>
+<li><a href="crates_new.html">crates_new</a>
+crates.io newly published Rust crates (official API, no official RSS)</li>
 </ul>
 <h4 id="carnegie-endowment"><a class="header" href="#carnegie-endowment">Carnegie Endowment</a></h4>
 <ul>
@@ -276,6 +300,11 @@ Discover Magazine - science news (no official RSS)</li>
 <li><a href="douban_movie_classification.html">douban_movie_classification</a>
 豆瓣电影分类</li>
 </ul>
+<h4 id="devto"><a class="header" href="#devto">DEV.to</a></h4>
+<ul>
+<li><a href="devto_guides.html">devto_guides</a>
+DEV.to trending guides (no official RSS)</li>
+</ul>
 <h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
 <ul>
 <li><a href="eastday_24.html">eastday_24</a>
@@ -290,6 +319,54 @@ Discover Magazine - science news (no official RSS)</li>
 <ul>
 <li><a href="gelonghui_home.html">gelonghui_home</a>
 格隆汇首页资讯</li>
+</ul>
+<h4 id="github"><a class="header" href="#github">GitHub</a></h4>
+<ul>
+<li><a href="github_advisor.html">github_advisor</a>
+GitHub Advisory Database security advisories (requires GITHUB_TOKEN)</li>
+<li><a href="github_branch.html">github_branch</a>
+GitHub repository branches (requires GITHUB_TOKEN)</li>
+<li><a href="github_commits.html">github_commits</a>
+GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
+<li><a href="github_contributors.html">github_contributors</a>
+GitHub repository contributors (requires GITHUB_TOKEN)</li>
+<li><a href="github_discussions.html">github_discussions</a>
+GitHub repository discussions via GraphQL (requires GITHUB_TOKEN)</li>
+<li><a href="github_followers.html">github_followers</a>
+GitHub user followers query (requires GITHUB_TOKEN)</li>
+<li><a href="github_gist.html">github_gist</a>
+GitHub user gists (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue.html">github_issue</a>
+GitHub repository issues (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue_comments.html">github_issue_comments</a>
+GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
+<li><a href="github_pull.html">github_pull</a>
+GitHub repository pull requests (requires GITHUB_TOKEN)</li>
+<li><a href="github_release.html">github_release</a>
+GitHub repository releases (requires GITHUB_TOKEN)</li>
+<li><a href="github_repo_events.html">github_repo_events</a>
+GitHub repository events stream (requires GITHUB_TOKEN)</li>
+<li><a href="github_repo_stargazers.html">github_repo_stargazers</a>
+GitHub repository stargazers timeline (requires GITHUB_TOKEN)</li>
+<li><a href="github_search.html">github_search</a>
+GitHub repository search (requires GITHUB_TOKEN)</li>
+<li><a href="github_starred.html">github_starred</a>
+Repositories starred by a GitHub user (requires GITHUB_TOKEN)</li>
+<li><a href="github_stars.html">github_stars</a>
+GitHub single repository star count (requires GITHUB_TOKEN)</li>
+<li><a href="github_tag.html">github_tag</a>
+GitHub repository tags (requires GITHUB_TOKEN)</li>
+<li><a href="github_topic.html">github_topic</a>
+GitHub Topics repositories (scraped HTML, no token required)</li>
+<li><a href="github_user_events.html">github_user_events</a>
+GitHub user recent public events (requires GITHUB_TOKEN)</li>
+<li><a href="github_user_repos.html">github_user_repos</a>
+GitHub user repositories list (requires GITHUB_TOKEN)</li>
+</ul>
+<h4 id="hacker-news"><a class="header" href="#hacker-news">Hacker News</a></h4>
+<ul>
+<li><a href="hackernews.html">hackernews</a>
+Hacker News stories by section/user/points (official Algolia API)</li>
 </ul>
 <h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
 <ul>
@@ -331,10 +408,26 @@ IT之家热榜</li>
 <li><a href="mittrchina.html">mittrchina</a>
 MIT Technology Review 麻省理工科技评论中文站</li>
 </ul>
+<h4 id="nasa"><a class="header" href="#nasa">NASA</a></h4>
+<ul>
+<li><a href="nasa_apod.html">nasa_apod</a>
+NASA 每日天文一图（APOD，官方 API，无官方 RSS）</li>
+</ul>
 <h4 id="netease"><a class="header" href="#netease">NetEase</a></h4>
 <ul>
 <li><a href="netease_today.html">netease_today</a>
 网易新闻今日关注</li>
+</ul>
+<h4 id="openai"><a class="header" href="#openai">OpenAI</a></h4>
+<ul>
+<li><a href="openai_chatgpt_atlas_release.html">openai_chatgpt_atlas_release</a>
+OpenAI ChatGPT Atlas official release notes (no official RSS)</li>
+<li><a href="openai_chatgpt_release.html">openai_chatgpt_release</a>
+OpenAI ChatGPT official release notes (no official RSS)</li>
+<li><a href="openai_news.html">openai_news</a>
+OpenAI news with full article content</li>
+<li><a href="openai_research.html">openai_research</a>
+OpenAI research articles (category=Research)</li>
 </ul>
 <h4 id="rail12306-中国铁路12306"><a class="header" href="#rail12306-中国铁路12306">Rail12306 (中国铁路12306)</a></h4>
 <ul>
@@ -396,6 +489,8 @@ VideoCardz - latest GPU &amp; hardware news (no official RSS)</li>
 </ul>
 <h4 id="zhihu"><a class="header" href="#zhihu">Zhihu</a></h4>
 <ul>
+<li><a href="zhihu_daily.html">zhihu_daily</a>
+知乎日报</li>
 <li><a href="zhihu_hot.html">zhihu_hot</a>
 知乎热榜</li>
 </ul>

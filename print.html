@@ -186,14 +186,24 @@ AP News headlines by topic</li>
 </ul>
 <h4 id="bilibili"><a class="header" href="#bilibili">Bilibili</a></h4>
 <ul>
+<li><a href="bilibili_audio_rank.html">bilibili_audio_rank</a>
+B站音频榜单最新一期（热榜/原创榜）</li>
+<li><a href="bilibili_bangumi_follow.html">bilibili_bangumi_follow</a>
+用户追番（追剧）列表，含总集数、最新一话</li>
+<li><a href="bilibili_blackroom.html">bilibili_blackroom</a>
+B站小黑屋封禁公示列表</li>
 <li><a href="bilibili_collection.html">bilibili_collection</a>
 B站合集视频列表</li>
 <li><a href="bilibili_dynamic.html">bilibili_dynamic</a>
 Bilibili up主的动态</li>
 <li><a href="bilibili_fav.html">bilibili_fav</a>
 B站非默认收藏夹</li>
+<li><a href="bilibili_followers.html">bilibili_followers</a>
+某 UP 主粉丝列表 (需 bilibili.com Cookie 登录态)</li>
 <li><a href="bilibili_link_news.html">bilibili_link_news</a>
 B站公告（直播/小视频/相簿）</li>
+<li><a href="bilibili_live_area.html">bilibili_live_area</a>
+B站直播分区房间列表</li>
 <li><a href="bilibili_partion.html">bilibili_partion</a>
 B站分区视频</li>
 <li><a href="bilibili_partion_ranking.html">bilibili_partion_ranking</a>
@@ -204,6 +214,10 @@ B站热门视频</li>
 B站入站必刷宝藏视频</li>
 <li><a href="bilibili_series.html">bilibili_series</a>
 B站系列视频列表</li>
+<li><a href="bilibili_search_hot.html">bilibili_search_hot</a>
+B站热搜榜前10关键词</li>
+<li><a href="bilibili_splash.html">bilibili_splash</a>
+B站APP端开屏广告信息</li>
 <li><a href="bilibili_user_article.html">bilibili_user_article</a>
 B站UP主图文</li>
 <li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
@@ -221,6 +235,11 @@ B站视频搜索</li>
 <li><a href="bilibili_weekly.html">bilibili_weekly</a>
 Bilibili最新一期的每周精选</li>
 </ul>
+<h4 id="baidu-百度热搜"><a class="header" href="#baidu-百度热搜">Baidu (百度热搜)</a></h4>
+<ul>
+<li><a href="baidu_top.html">baidu_top</a>
+百度热搜榜单（实时/科技/娱乐等分类，本服务转置，无官方 RSS）</li>
+</ul>
 <h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
 <ul>
 <li><a href="bjnews_cat.html">bjnews_cat</a>
@@ -235,6 +254,11 @@ Bilibili最新一期的每周精选</li>
 <ul>
 <li><a href="caixin_latest.html">caixin_latest</a>
 财新网最新文章</li>
+</ul>
+<h4 id="cratesio"><a class="header" href="#cratesio">crates.io</a></h4>
+<ul>
+<li><a href="crates_new.html">crates_new</a>
+crates.io newly published Rust crates (official API, no official RSS)</li>
 </ul>
 <h4 id="carnegie-endowment"><a class="header" href="#carnegie-endowment">Carnegie Endowment</a></h4>
 <ul>
@@ -277,6 +301,11 @@ Discover Magazine - science news (no official RSS)</li>
 <li><a href="douban_movie_classification.html">douban_movie_classification</a>
 豆瓣电影分类</li>
 </ul>
+<h4 id="devto"><a class="header" href="#devto">DEV.to</a></h4>
+<ul>
+<li><a href="devto_guides.html">devto_guides</a>
+DEV.to trending guides (no official RSS)</li>
+</ul>
 <h4 id="eastday-东方资讯"><a class="header" href="#eastday-东方资讯">Eastday (东方资讯)</a></h4>
 <ul>
 <li><a href="eastday_24.html">eastday_24</a>
@@ -291,6 +320,54 @@ Discover Magazine - science news (no official RSS)</li>
 <ul>
 <li><a href="gelonghui_home.html">gelonghui_home</a>
 格隆汇首页资讯</li>
+</ul>
+<h4 id="github"><a class="header" href="#github">GitHub</a></h4>
+<ul>
+<li><a href="github_advisor.html">github_advisor</a>
+GitHub Advisory Database security advisories (requires GITHUB_TOKEN)</li>
+<li><a href="github_branch.html">github_branch</a>
+GitHub repository branches (requires GITHUB_TOKEN)</li>
+<li><a href="github_commits.html">github_commits</a>
+GitHub repository recent commits on default branch (requires GITHUB_TOKEN)</li>
+<li><a href="github_contributors.html">github_contributors</a>
+GitHub repository contributors (requires GITHUB_TOKEN)</li>
+<li><a href="github_discussions.html">github_discussions</a>
+GitHub repository discussions via GraphQL (requires GITHUB_TOKEN)</li>
+<li><a href="github_followers.html">github_followers</a>
+GitHub user followers query (requires GITHUB_TOKEN)</li>
+<li><a href="github_gist.html">github_gist</a>
+GitHub user gists (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue.html">github_issue</a>
+GitHub repository issues (requires GITHUB_TOKEN)</li>
+<li><a href="github_issue_comments.html">github_issue_comments</a>
+GitHub recent Issue/PR comments (requires GITHUB_TOKEN)</li>
+<li><a href="github_pull.html">github_pull</a>
+GitHub repository pull requests (requires GITHUB_TOKEN)</li>
+<li><a href="github_release.html">github_release</a>
+GitHub repository releases (requires GITHUB_TOKEN)</li>
+<li><a href="github_repo_events.html">github_repo_events</a>
+GitHub repository events stream (requires GITHUB_TOKEN)</li>
+<li><a href="github_repo_stargazers.html">github_repo_stargazers</a>
+GitHub repository stargazers timeline (requires GITHUB_TOKEN)</li>
+<li><a href="github_search.html">github_search</a>
+GitHub repository search (requires GITHUB_TOKEN)</li>
+<li><a href="github_starred.html">github_starred</a>
+Repositories starred by a GitHub user (requires GITHUB_TOKEN)</li>
+<li><a href="github_stars.html">github_stars</a>
+GitHub single repository star count (requires GITHUB_TOKEN)</li>
+<li><a href="github_tag.html">github_tag</a>
+GitHub repository tags (requires GITHUB_TOKEN)</li>
+<li><a href="github_topic.html">github_topic</a>
+GitHub Topics repositories (scraped HTML, no token required)</li>
+<li><a href="github_user_events.html">github_user_events</a>
+GitHub user recent public events (requires GITHUB_TOKEN)</li>
+<li><a href="github_user_repos.html">github_user_repos</a>
+GitHub user repositories list (requires GITHUB_TOKEN)</li>
+</ul>
+<h4 id="hacker-news"><a class="header" href="#hacker-news">Hacker News</a></h4>
+<ul>
+<li><a href="hackernews.html">hackernews</a>
+Hacker News stories by section/user/points (official Algolia API)</li>
 </ul>
 <h4 id="guancha-观察者网"><a class="header" href="#guancha-观察者网">Guancha (观察者网)</a></h4>
 <ul>
@@ -332,10 +409,26 @@ IT之家热榜</li>
 <li><a href="mittrchina.html">mittrchina</a>
 MIT Technology Review 麻省理工科技评论中文站</li>
 </ul>
+<h4 id="nasa"><a class="header" href="#nasa">NASA</a></h4>
+<ul>
+<li><a href="nasa_apod.html">nasa_apod</a>
+NASA 每日天文一图（APOD，官方 API，无官方 RSS）</li>
+</ul>
 <h4 id="netease"><a class="header" href="#netease">NetEase</a></h4>
 <ul>
 <li><a href="netease_today.html">netease_today</a>
 网易新闻今日关注</li>
+</ul>
+<h4 id="openai"><a class="header" href="#openai">OpenAI</a></h4>
+<ul>
+<li><a href="openai_chatgpt_atlas_release.html">openai_chatgpt_atlas_release</a>
+OpenAI ChatGPT Atlas official release notes (no official RSS)</li>
+<li><a href="openai_chatgpt_release.html">openai_chatgpt_release</a>
+OpenAI ChatGPT official release notes (no official RSS)</li>
+<li><a href="openai_news.html">openai_news</a>
+OpenAI news with full article content</li>
+<li><a href="openai_research.html">openai_research</a>
+OpenAI research articles (category=Research)</li>
 </ul>
 <h4 id="rail12306-中国铁路12306"><a class="header" href="#rail12306-中国铁路12306">Rail12306 (中国铁路12306)</a></h4>
 <ul>
@@ -397,6 +490,8 @@ VideoCardz - latest GPU &amp; hardware news (no official RSS)</li>
 </ul>
 <h4 id="zhihu"><a class="header" href="#zhihu">Zhihu</a></h4>
 <ul>
+<li><a href="zhihu_daily.html">zhihu_daily</a>
+知乎日报</li>
 <li><a href="zhihu_hot.html">zhihu_hot</a>
 知乎热榜</li>
 </ul>
@@ -414,6 +509,9 @@ timeout = 60
 [routes]
 disabled = []
 rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
+
+[cookie]
+origins = ["https://bilibili.com"]
 </code></pre>
 <h2 id="fields--字段说明"><a class="header" href="#fields--字段说明">Fields / 字段说明</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Field / 字段</th><th>Type / 类型</th><th>Default / 默认值</th><th>Description / 描述</th></tr></thead><tbody>
@@ -422,6 +520,7 @@ rate_limit = { "/scientificamerican_news" = 5, "/defenseone_news" = 1 }
 <tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
 <tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
 <tr><td><code>routes.rate_limit</code></td><td><code>table</code></td><td><code>{}</code></td><td>路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors.</td></tr>
+<tr><td><code>cookie.origins</code></td><td><code>string[]</code></td><td><code>["https://bilibili.com"]</code></td><td><code>rssust cookie &lt;browser&gt;</code> 导出 cookies 的网址列表。List of URLs whose cookies are exported by <code>rssust cookie &lt;browser&gt;</code>.</td></tr>
 </tbody></table>
 </div>
 <h2 id="examples--示例"><a class="header" href="#examples--示例">Examples / 示例</a></h2>
@@ -477,10 +576,13 @@ Because some routes require cookies, and cookies are hard to distribute, this tu
 <p>You can use the browser plugin Cookie-Editor to export it, or use the built-in CLI command:</p>
 <pre><code>rssust cookie &lt;browser&gt;
 </code></pre>
-<p>Supported browsers: <code>firefox</code>, <code>chrome</code>, <code>chromium</code>, <code>chromebeta</code> (macOS: <code>safari</code>, Windows: <code>edge</code>)</p>
+<p>Supported browsers: <code>firefox</code>, <code>chrome</code> (<code>chromium</code>/<code>chromebeta</code> 也映射到 chrome)（macOS: <code>safari</code>，Windows: <code>edge</code>）</p>
 <p>Example:</p>
 <pre><code>./env/rssust cookie chrome
 </code></pre>
+<p>导出哪些网址由 <code>config.toml</code> 的 <code>[cookie] origins = ["https://bilibili.com"]</code> 控制，可自行增删。
+已存在于 <code>cookies.json</code> 中的域名也会一并刷新。
+The URLs to export are controlled by <code>[cookie] origins = ["https://bilibili.com"]</code> in <code>config.toml</code>; existing domains in <code>cookies.json</code> are also refreshed.</p>
 <p>Tips: Linux 下 firefox 可能因为上游 crate 的问题需要链接文件夹修复</p>
 <h2 id="bilibili-1"><a class="header" href="#bilibili-1">Bilibili</a></h2>
 <p>bilibili.com<br />
@@ -1407,12 +1509,90 @@ root_rules(url, params)
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-apnews_topics"><a class="header" href="#router-name-apnews_topics">Router-name: apnews_topics</a></h1>
 <p><strong>Commit time:</strong> 2026.07.24<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@zoenglinghou<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@zoenglinghou<br />
 <strong>Introduction:</strong> AP News headlines by topic<br />
 <strong>Address:</strong> rssust://apnews_topics<br />
 <strong>Example:</strong> <a href="/apnews_topics">rssust://apnews_topics</a><br />
 <strong>Parameter:</strong><br />
 topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/science/health/sports/entertainment)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-baidu_top"><a class="header" href="#router-name-baidu_top">Router-name: baidu_top</a></h1>
+<p><strong>Commit time:</strong> 2026.08.30<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 百度热搜榜单（实时/科技/娱乐等分类），数据取自 top.baidu.com 页面内嵌 JSON，无官方 RSS<br />
+<strong>Address:</strong> rssust://baidu_top<br />
+<strong>Example:</strong> <a href="/baidu_top">rssust://baidu_top</a><br />
+<strong>robots.txt:</strong> top.baidu.com 无 robots.txt，视为允许<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>tab</strong><br />
+Type of parameter: string<br />
+Default value: realtime<br />
+Meaning: 热搜分类 tab，仅支持页面实际提供数据的以下值：realtime(实时热点)、game(游戏)、finance(财经)、sport(体育)、novel(小说)、car(汽车)。其它 tab 返回 400<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_audio_rank"><a class="header" href="#router-name-bilibili_audio_rank">Router-name: bilibili_audio_rank</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站音频榜单最新一期（热榜/原创榜）<br />
+<strong>Address:</strong> rssust://bilibili_audio_rank<br />
+<strong>Example:</strong> <a href="/bilibili_audio_rank">rssust://bilibili_audio_rank</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>list_type</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 榜单类型，1=热榜, 2=原创榜</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_bangumi_follow"><a class="header" href="#router-name-bilibili_bangumi_follow">Router-name: bilibili_bangumi_follow</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> yes (如目标用户设置隐私则需 cookies.json 的 bilibili.com Cookie)<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@wdssmq<br />
+<strong>Introduction:</strong> 用户追番（追剧）列表，含总集数、最新一话与更新时间<br />
+<strong>Address:</strong> rssust://bilibili_bangumi_follow<br />
+<strong>Example:</strong> <a href="/bilibili_bangumi_follow?vmid=14082">rssust://bilibili_bangumi_follow?vmid=14082</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>vmid</strong><br />
+Type of parameter: number<br />
+Default value: null<br />
+Meaning: 目标用户 mid (必填)</li>
+<li><strong>type</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 查询类型, 1=追番, 2=追剧</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>ps</strong><br />
+Type of parameter: number<br />
+Default value: 15<br />
+Meaning: 每页项数, 定义域 1-30</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_blackroom"><a class="header" href="#router-name-bilibili_blackroom">Router-name: bilibili_blackroom</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站小黑屋封禁公示列表<br />
+<strong>Address:</strong> rssust://bilibili_blackroom<br />
+<strong>Example:</strong> <a href="/bilibili_blackroom">rssust://bilibili_blackroom</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>btype</strong><br />
+Type of parameter: number<br />
+Default value: 空<br />
+Meaning: 来源筛选，空=全部, 0=系统封禁, 1=风纪仲裁</li>
+<li><strong>otype</strong><br />
+Type of parameter: number<br />
+Default value: 0<br />
+Meaning: 类型筛选，0=全部, 1=评论, 2=弹幕, 3=私信, 4=标签, 5=个人资料, 6=投稿, 8=专栏, 10=动态, 11=相簿</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码，每页最多10项</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_collection"><a class="header" href="#router-name-bilibili_collection">Router-name: bilibili_collection</a></h1>
 <p><strong>Commit time:</strong> 2026.07.14<br />
 <strong>Cookies?:</strong> no<br />
@@ -1511,7 +1691,7 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_fav"><a class="header" href="#router-name-bilibili_fav">Router-name: bilibili_fav</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> yes (bilibili.com)<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@Qixingchen<br />
 <strong>Introduction:</strong> bilibili UP主非默认收藏夹<br />
 <strong>Address:</strong> rssust://bilibili_fav<br />
 <strong>Example:</strong> <a href="/bilibili_fav?uid=756508&amp;fid=50948568">rssust://bilibili_fav?uid=756508&amp;fid=50948568</a><br />
@@ -1530,10 +1710,32 @@ Type of parameter: bool<br />
 Default value: true<br />
 Meaning: 内嵌视频</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_followers"><a class="header" href="#router-name-bilibili_followers">Router-name: bilibili_followers</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> yes (需 cookies.json 中的 bilibili.com Cookie 登录态)<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> 某 UP 主的粉丝列表<br />
+<strong>Address:</strong> rssust://bilibili_followers<br />
+<strong>Example:</strong> <a href="/bilibili_followers?vmid=2">rssust://bilibili_followers?vmid=2</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>vmid</strong><br />
+Type of parameter: number<br />
+Default value: 无<br />
+Meaning: 目标用户 mid (必填)</li>
+<li><strong>pn</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 每页条数, 最大 20</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_link_news"><a class="header" href="#router-name-bilibili_link_news">Router-name: bilibili_link_news</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@Qixingchen<br />
 <strong>Introduction:</strong> bilibili 直播/小视频/相簿公告<br />
 <strong>Address:</strong> rssust://bilibili_link_news<br />
 <strong>Example:</strong> <a href="/bilibili_link_news?product=live">rssust://bilibili_link_news?product=live</a><br />
@@ -1544,10 +1746,36 @@ Type of parameter: string<br />
 Default value: null<br />
 Meaning: 公告分类，live=直播, vc=小视频, wh=相簿</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_live_area"><a class="header" href="#router-name-bilibili_live_area">Router-name: bilibili_live_area</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@Qixingchen<br />
+<strong>Introduction:</strong> B站直播分区 (某分区下房间列表)<br />
+<strong>Address:</strong> rssust://bilibili_live_area<br />
+<strong>Example:</strong> <a href="/bilibili_live_area?area_id=1&amp;order=online">rssust://bilibili_live_area?area_id=1&amp;order=online</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>area_id</strong><br />
+Type of parameter: number<br />
+Default value: 无<br />
+Meaning: 直播分区ID (可通过 room/v1/Area/getList 查询)</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 排序方式, live_time=最新开播 / online=人气直播</li>
+<li><strong>page_size</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 每页条数, 最大 30</li>
+<li><strong>page_no</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 页码</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_partion"><a class="header" href="#router-name-bilibili_partion">Router-name: bilibili_partion</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@DIYgod<br />
 <strong>Introduction:</strong> bilibili 分区视频<br />
 <strong>Address:</strong> rssust://bilibili_partion<br />
 <strong>Example:</strong> <a href="/bilibili_partion?tid=1">rssust://bilibili_partion?tid=1</a><br />
@@ -1569,7 +1797,7 @@ Meaning: 内嵌视频</li>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_partion_ranking"><a class="header" href="#router-name-bilibili_partion_ranking">Router-name: bilibili_partion_ranking</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@lengthmin<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@lengthmin<br />
 <strong>Introduction:</strong> bilibili 分区视频排行榜<br />
 <strong>Address:</strong> rssust://bilibili_partion_ranking<br />
 <strong>Example:</strong> <a href="/bilibili_partion_ranking?tid=1&amp;days=7">rssust://bilibili_partion_ranking?tid=1&amp;days=7</a><br />
@@ -1632,6 +1860,15 @@ Default value: true<br />
 Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_search_hot"><a class="header" href="#router-name-bilibili_search_hot">Router-name: bilibili_search_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@CaoMeiYouRen<br />
+<strong>Introduction:</strong> B站热搜榜前10关键词<br />
+<strong>Address:</strong> rssust://bilibili_search_hot<br />
+<strong>Example:</strong> <a href="/bilibili_search_hot">rssust://bilibili_search_hot</a><br />
+<strong>Parameter:</strong><br />
+无参数</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_series"><a class="header" href="#router-name-bilibili_series">Router-name: bilibili_series</a></h1>
 <p><strong>Commit time:</strong> 2026.07.12<br />
 <strong>Cookies?:</strong> no<br />
@@ -1651,10 +1888,44 @@ Default value: true<br />
 Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文字描述<br />
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_splash"><a class="header" href="#router-name-bilibili_splash">Router-name: bilibili_splash</a></h1>
+<p><strong>Commit time:</strong> 2026.08.10<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> B站APP端开屏广告信息<br />
+<strong>Address:</strong> rssust://bilibili_splash<br />
+<strong>Example:</strong> <a href="/bilibili_splash">rssust://bilibili_splash</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>build</strong><br />
+Type of parameter: number<br />
+Default value: 999999999<br />
+Meaning: 客户端内部版本号</li>
+<li><strong>mobi_app</strong><br />
+Type of parameter: string<br />
+Default value: android<br />
+Meaning: android, iphone, ipad</li>
+<li><strong>platform</strong><br />
+Type of parameter: string<br />
+Default value: android<br />
+Meaning: android, ios</li>
+<li><strong>height</strong><br />
+Type of parameter: number<br />
+Default value: 1920<br />
+Meaning: 屏幕高度</li>
+<li><strong>width</strong><br />
+Type of parameter: number<br />
+Default value: 1080<br />
+Meaning: 屏幕宽度</li>
+<li><strong>birth</strong><br />
+Type of parameter: string<br />
+Default value: 0101<br />
+Meaning: 生日日期(四位数，例 0101)</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_article"><a class="header" href="#router-name-bilibili_user_article">Router-name: bilibili_user_article</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@lengthmin &amp; Qixingchen<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@lengthmin &amp; Qixingchen<br />
 <strong>Introduction:</strong> bilibili UP 主图文(专栏)<br />
 <strong>Address:</strong> rssust://bilibili_user_article<br />
 <strong>Example:</strong> <a href="/bilibili_user_article?uid=334958638">rssust://bilibili_user_article?uid=334958638</a><br />
@@ -1668,7 +1939,7 @@ Meaning: 用户 id，可在 UP 主主页中找到</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_coin"><a class="header" href="#router-name-bilibili_user_coin">Router-name: bilibili_user_coin</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@DIYgod<br />
 <strong>Introduction:</strong> bilibili UP 主投币视频<br />
 <strong>Address:</strong> rssust://bilibili_user_coin<br />
 <strong>Example:</strong> <a href="/bilibili_user_coin?uid=208259">rssust://bilibili_user_coin?uid=208259</a><br />
@@ -1686,7 +1957,7 @@ Meaning: 内嵌视频</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_fav"><a class="header" href="#router-name-bilibili_user_fav">Router-name: bilibili_user_fav</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> yes (bilibili.com)<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@DIYgod<br />
 <strong>Introduction:</strong> bilibili UP 主默认收藏夹<br />
 <strong>Address:</strong> rssust://bilibili_user_fav<br />
 <strong>Example:</strong> <a href="/bilibili_user_fav?uid=2267573">rssust://bilibili_user_fav?uid=2267573</a><br />
@@ -1704,7 +1975,7 @@ Meaning: 内嵌视频</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_user_like"><a class="header" href="#router-name-bilibili_user_like">Router-name: bilibili_user_like</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@ygguorun<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@ygguorun<br />
 <strong>Introduction:</strong> bilibili UP 主点赞视频<br />
 <strong>Address:</strong> rssust://bilibili_user_like<br />
 <strong>Example:</strong> <a href="/bilibili_user_like?uid=208259">rssust://bilibili_user_like?uid=208259</a><br />
@@ -1722,7 +1993,7 @@ Meaning: 内嵌视频</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_video_page"><a class="header" href="#router-name-bilibili_video_page">Router-name: bilibili_video_page</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@sxzz<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@sxzz<br />
 <strong>Introduction:</strong> bilibili 视频选集列表<br />
 <strong>Address:</strong> rssust://bilibili_video_page<br />
 <strong>Example:</strong> <a href="/bilibili_video_page?bvid=BV1i7411M7N9">rssust://bilibili_video_page?bvid=BV1i7411M7N9</a><br />
@@ -1744,7 +2015,7 @@ Meaning: 返回集数</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_video_reply"><a class="header" href="#router-name-bilibili_video_reply">Router-name: bilibili_video_reply</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> yes (bilibili.com 需包含 SESSDATA) / 未测试<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@Qixingchen<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@Qixingchen<br />
 <strong>Introduction:</strong> bilibili 视频评论<br />
 <strong>Address:</strong> rssust://bilibili_video_reply<br />
 <strong>Example:</strong> <a href="/bilibili_video_reply?bvid=BV1vA411b7ip">rssust://bilibili_video_reply?bvid=BV1vA411b7ip</a><br />
@@ -1758,7 +2029,7 @@ Meaning: 可在视频页 URL 中找到</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_vsearch"><a class="header" href="#router-name-bilibili_vsearch">Router-name: bilibili_vsearch</a></h1>
 <p><strong>Commit time:</strong> 2026.07.19<br />
 <strong>Cookies?:</strong> yes (bilibili.com)<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@pcrtool &amp; DIYgod<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@pcrtool &amp; DIYgod<br />
 <strong>Introduction:</strong> bilibili 视频搜索<br />
 <strong>Address:</strong> rssust://bilibili_vsearch<br />
 <strong>Example:</strong> <a href="/bilibili_vsearch?kw=linux">rssust://bilibili_vsearch?kw=linux</a><br />
@@ -1798,7 +2069,7 @@ Meaning: 内嵌视频</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bjnews_cat"><a class="header" href="#router-name-bjnews_cat">Router-name: bjnews_cat</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@dzx-dzx<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@dzx-dzx<br />
 <strong>Introduction:</strong> 新京报分类文章<br />
 <strong>Address:</strong> rssust://bjnews_cat<br />
 <strong>Example:</strong> <a href="/bjnews_cat">rssust://bjnews_cat</a><br />
@@ -1807,7 +2078,7 @@ cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-caixin_latest"><a class="header" href="#router-name-caixin_latest">Router-name: caixin_latest</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@tpnonthealps<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@tpnonthealps<br />
 <strong>Introduction:</strong> 财新网最新文章<br />
 <strong>Address:</strong> rssust://caixin_latest<br />
 <strong>Example:</strong> <a href="/caixin_latest">rssust://caixin_latest</a><br />
@@ -1816,7 +2087,7 @@ cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-carnegieendowment_news"><a class="header" href="#router-name-carnegieendowment_news">Router-name: carnegieendowment_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.01<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> Carnegie Endowment for International Peace - International affairs think tank publications, events &amp; videos (no official RSS)<br />
 <strong>Address:</strong> rssust://carnegieendowment_news<br />
 <strong>Example:</strong> <a href="/carnegieendowment_news">rssust://carnegieendowment_news</a><br />
@@ -1825,7 +2096,7 @@ cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cenc_earthquake"><a class="header" href="#router-name-cenc_earthquake">Router-name: cenc_earthquake</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> 中国地震台网中心 最新地震速报<br />
 <strong>Address:</strong> rssust://cenc_earthquake<br />
 <strong>Example:</strong> <a href="/cenc_earthquake">rssust://cenc_earthquake</a><br />
@@ -1834,7 +2105,7 @@ limit（可选，最大 50，默认 20）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-chinanews"><a class="header" href="#router-name-chinanews">Router-name: chinanews</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@yuxinliu-alex<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@yuxinliu-alex<br />
 <strong>Introduction:</strong> 中国新闻网滚动新闻<br />
 <strong>Address:</strong> rssust://chinanews<br />
 <strong>Example:</strong> <a href="/chinanews">rssust://chinanews</a><br />
@@ -1843,34 +2114,61 @@ limit（可选，最大 50，默认 20）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cls_hot"><a class="header" href="#router-name-cls_hot">Router-name: cls_hot</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@5upernova-heng, nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@5upernova-heng, nczitzk<br />
 <strong>Introduction:</strong> 财联社热门文章排行榜<br />
 <strong>Address:</strong> rssust://cls_hot<br />
 <strong>Example:</strong> <a href="/cls_hot">rssust://cls_hot</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defensenews_news"><a class="header" href="#router-name-defensenews_news">Router-name: defensenews_news</a></h1>
-<p><strong>Commit time:</strong> 2026.08.02<br />
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-crates_new"><a class="header" href="#router-name-crates_new">Router-name: crates_new</a></h1>
+<p><strong>Commit time:</strong> 2026.08.30<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
-<strong>Introduction:</strong> Defense News - Global Defense &amp; Military News (no official RSS)<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> crates.io 最新发布的 Rust crate 聚合（官方公开 API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://crates_new<br />
+<strong>Example:</strong> <a href="/crates_new">rssust://crates_new</a><br />
+<strong>robots.txt:</strong> crates.io 的 robots.txt 无通用禁止，允许抓取；请求须携带自定义 User-Agent<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>count</strong><br />
+Type of parameter: int<br />
+Default value: 10<br />
+Meaning: 返回的 crate 条目数，范围 1-100<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defensenews_news"><a class="header" href="#router-name-defensenews_news">Router-name: defensenews_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg<br />
+<strong>Introduction:</strong> Defense News - Global Defense &amp; Military News (no official RSS, scraped)<br />
 <strong>Address:</strong> rssust://defensenews_news<br />
 <strong>Example:</strong> <a href="/defensenews_news">rssust://defensenews_news</a><br />
 <strong>Parameter:</strong><br />
-(No parameters)</p>
+limit (optional, max 15, default 15)<br />
+<strong>Note:</strong><br />
+Fetches article dates in parallel (up to 10 concurrent) from detail pages.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-defenseone_news"><a class="header" href="#router-name-defenseone_news">Router-name: defenseone_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.02<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> Defense One - Defense &amp; National Security News (no official RSS)<br />
 <strong>Address:</strong> rssust://defenseone_news<br />
 <strong>Example:</strong> <a href="/defenseone_news">rssust://defenseone_news</a><br />
 <strong>Parameter:</strong><br />
 (No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-devto_guides"><a class="header" href="#router-name-devto_guides">Router-name: devto_guides</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> DEV.to Trending Guides (official RSS feed tag=guides)<br />
+<strong>Address:</strong> rssust://devto_guides<br />
+<strong>Example:</strong> <a href="/devto_guides">rssust://devto_guides</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-discovermagazine_news"><a class="header" href="#router-name-discovermagazine_news">Router-name: discovermagazine_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.02<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> Discover Magazine - Science News (no official RSS)<br />
 <strong>Address:</strong> rssust://discovermagazine_news<br />
 <strong>Example:</strong> <a href="/discovermagazine_news">rssust://discovermagazine_news</a><br />
@@ -1879,7 +2177,7 @@ limit（可选，最大 50，默认 20）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_latest"><a class="header" href="#router-name-douban_book_latest">Router-name: douban_book_latest</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@fengkx<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@fengkx<br />
 <strong>Introduction:</strong> 豆瓣新书速递<br />
 <strong>Address:</strong> rssust://douban_book_latest<br />
 <strong>Example:</strong> <a href="/douban_book_latest?type=fiction">rssust://douban_book_latest?type=fiction</a><br />
@@ -1893,7 +2191,7 @@ Meaning: 分类，可选 all / prose_poetry / fiction / history / biography / sc
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_rank"><a class="header" href="#router-name-douban_book_rank">Router-name: douban_book_rank</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@xyqfer<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@xyqfer<br />
 <strong>Introduction:</strong> 豆瓣热门图书排行<br />
 <strong>Address:</strong> rssust://douban_book_rank<br />
 <strong>Example:</strong> <a href="/douban_book_rank?type=fiction">rssust://douban_book_rank?type=fiction</a><br />
@@ -1907,7 +2205,7 @@ Meaning: 图书类型，fiction=虚构类, nonfiction=非虚构类，缺省合�
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_event_hot"><a class="header" href="#router-name-douban_event_hot">Router-name: douban_event_hot</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@xyqfer<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@xyqfer<br />
 <strong>Introduction:</strong> 豆瓣同城热门活动<br />
 <strong>Address:</strong> rssust://douban_event_hot<br />
 <strong>Example:</strong> <a href="/douban_event_hot?locationId=118172">rssust://douban_event_hot?locationId=118172</a><br />
@@ -1921,7 +2219,7 @@ Meaning: 位置 id，同城首页控制台执行 <code>window.__loc_id__</code> 
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_movie_classification"><a class="header" href="#router-name-douban_movie_classification">Router-name: douban_movie_classification</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@zzwab<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@zzwab<br />
 <strong>Introduction:</strong> 豆瓣电影分类<br />
 <strong>Address:</strong> rssust://douban_movie_classification<br />
 <strong>Example:</strong> <a href="/douban_movie_classification?sort=R&amp;score=7.5&amp;tags=Netflix">rssust://douban_movie_classification?sort=R&amp;score=7.5&amp;tags=Netflix</a><br />
@@ -1943,7 +2241,7 @@ Meaning: 分类标签，多个用逗号分隔</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eastday_24"><a class="header" href="#router-name-eastday_24">Router-name: eastday_24</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 东方资讯24小时热闻<br />
 <strong>Address:</strong> rssust://eastday_24<br />
 <strong>Example:</strong> <a href="/eastday_24">rssust://eastday_24</a><br />
@@ -1952,7 +2250,7 @@ category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽�
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eeo_kuaixun"><a class="header" href="#router-name-eeo_kuaixun">Router-name: eeo_kuaixun</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 经济观察报快讯<br />
 <strong>Address:</strong> rssust://eeo_kuaixun<br />
 <strong>Example:</strong> <a href="/eeo_kuaixun">rssust://eeo_kuaixun</a><br />
@@ -1961,16 +2259,440 @@ category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽�
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-gelonghui_home"><a class="header" href="#router-name-gelonghui_home">Router-name: gelonghui_home</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@TonyRL<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@TonyRL<br />
 <strong>Introduction:</strong> 格隆汇首页，支持分类（推荐/股票/基金/新股/研报）<br />
 <strong>Address:</strong> rssust://gelonghui_home<br />
 <strong>Example:</strong> <a href="/gelonghui_home">rssust://gelonghui_home</a><br />
 <strong>Parameter:</strong><br />
 tag: 分类 (默认 web_home_page)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_advisor"><a class="header" href="#router-name-github_advisor">Router-name: github_advisor</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub Advisory Database Security Advisories (REST API)<br />
+<strong>Address:</strong> rssust://github_advisor<br />
+<strong>Example:</strong> <a href="/github_advisor?type=reviewed&amp;ecosystem=npm">rssust://github_advisor?type=reviewed&amp;ecosystem=npm</a><br />
+<strong>Parameter:</strong><br />
+type (optional, reviewed=reviewed unreviewed=unreviewed, default reviewed)<br />
+ecosystem (optional, composer/go/maven/npm/nuget/pip/pub/rubygems/rust/erlang/actions/swift, default all)<br />
+limit (optional, max 50, default 20)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_branch"><a class="header" href="#router-name-github_branch">Router-name: github_branch</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@max-arnold<br />
+<strong>Introduction:</strong> GitHub 仓库分支列表<br />
+<strong>Address:</strong> rssust://github_branch<br />
+<strong>Example:</strong> <a href="/github_branch?owner=nodejs&amp;repo=node">rssust://github_branch?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_commits"><a class="header" href="#router-name-github_commits">Router-name: github_commits</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub repository recent commits on default branch via GraphQL API<br />
+<strong>Address:</strong> rssust://github_commits<br />
+<strong>Example:</strong> <a href="/github_commits?owner=rust-lang&amp;repo=rust">rssust://github_commits?owner=rust-lang&amp;repo=rust</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+limit (optional, max 50, default 10)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_contributors"><a class="header" href="#router-name-github_contributors">Router-name: github_contributors</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@zoenglinghou<br />
+<strong>Introduction:</strong> GitHub 仓库贡献者列表<br />
+<strong>Address:</strong> rssust://github_contributors<br />
+<strong>Example:</strong> <a href="/github_contributors?owner=rust-lang&amp;repo=rust">rssust://github_contributors?owner=rust-lang&amp;repo=rust</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: desc<br />
+Meaning: 排序, desc=贡献数降序 / asc=升序</li>
+<li><strong>anon</strong><br />
+Type of parameter: boolean<br />
+Default value: false<br />
+Meaning: 是否包含匿名贡献者</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_discussions"><a class="header" href="#router-name-github_discussions">Router-name: github_discussions</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@waynzh<br />
+<strong>Introduction:</strong> GitHub 仓库 Discussion 讨论列表 (GraphQL)<br />
+<strong>Address:</strong> rssust://github_discussions<br />
+<strong>Example:</strong> <a href="/github_discussions?owner=vercel&amp;repo=next.js">rssust://github_discussions?owner=vercel&amp;repo=next.js</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: 状态, open/closed/answered/unanswered/locked/unlocked/all</li>
+<li><strong>category</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 讨论分类名 (可选)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_followers"><a class="header" href="#router-name-github_followers">Router-name: github_followers</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub user followers query via GraphQL API<br />
+<strong>Address:</strong> rssust://github_followers<br />
+<strong>Example:</strong> <a href="/github_followers?username=torvalds">rssust://github_followers?username=torvalds</a><br />
+<strong>Parameter:</strong><br />
+username (required, GitHub login)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_gist"><a class="header" href="#router-name-github_gist">Router-name: github_gist</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@TonyRL<br />
+<strong>Introduction:</strong> 用户公开/私密 Gist 列表<br />
+<strong>Address:</strong> rssust://github_gist<br />
+<strong>Example:</strong> <a href="/github_gist?username=octocat">rssust://github_gist?username=octocat</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名 (必填)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_issue"><a class="header" href="#router-name-github_issue">Router-name: github_issue</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@HenryQW、AndreyMZ<br />
+<strong>Introduction:</strong> GitHub 仓库 Issue 列表<br />
+<strong>Address:</strong> rssust://github_issue<br />
+<strong>Example:</strong> <a href="/github_issue?owner=nodejs&amp;repo=node">rssust://github_issue?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: issue 状态，open/closed/all</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_issue_comments"><a class="header" href="#router-name-github_issue_comments">Router-name: github_issue_comments</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub repository recent Issue / Pull Request comments via GraphQL API<br />
+<strong>Address:</strong> rssust://github_issue_comments<br />
+<strong>Example:</strong> <a href="/github_issue_comments?owner=facebook&amp;repo=react">rssust://github_issue_comments?owner=facebook&amp;repo=react</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+limit (optional, max 50, default 20, split between issues &amp; PRs, 2 latest comments each)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_pull"><a class="header" href="#router-name-github_pull">Router-name: github_pull</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@hashman、TonyRL<br />
+<strong>Introduction:</strong> GitHub 仓库 Pull Request 列表<br />
+<strong>Address:</strong> rssust://github_pull<br />
+<strong>Example:</strong> <a href="/github_pull?owner=nodejs&amp;repo=node">rssust://github_pull?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>state</strong><br />
+Type of parameter: string<br />
+Default value: open<br />
+Meaning: PR 状态，open/closed/all</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_release"><a class="header" href="#router-name-github_release">Router-name: github_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库 Release 列表<br />
+<strong>Address:</strong> rssust://github_release<br />
+<strong>Example:</strong> <a href="/github_release?owner=nodejs&amp;repo=node">rssust://github_release?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_repo_events"><a class="header" href="#router-name-github_repo_events">Router-name: github_repo_events</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@mslxl<br />
+<strong>Introduction:</strong> GitHub 仓库事件流 (push/issue/PR/release/star 等)<br />
+<strong>Address:</strong> rssust://github_repo_events<br />
+<strong>Example:</strong> <a href="/github_repo_events?owner=octocat&amp;repo=Hello-World">rssust://github_repo_events?owner=octocat&amp;repo=Hello-World</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>types</strong><br />
+Type of parameter: string<br />
+Default value: all<br />
+Meaning: 事件类型过滤, 逗号分隔 (create/delete/fork/issue/issuecomm/member/pr/prcomm/prrev/public/push/release/star/wiki/cmcomm/discussion)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_repo_stargazers"><a class="header" href="#router-name-github_repo_stargazers">Router-name: github_repo_stargazers</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库加星用户时间线（含 Star 时间）<br />
+<strong>Address:</strong> rssust://github_repo_stargazers<br />
+<strong>Example:</strong> <a href="/github_repo_stargazers?owner=rust-lang&amp;repo=rust">rssust://github_repo_stargazers?owner=rust-lang&amp;repo=rust</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者 (必填)</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名 (必填)</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数, 最大 100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_search"><a class="header" href="#router-name-github_search">Router-name: github_search</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@LogicJake<br />
+<strong>Introduction:</strong> GitHub 仓库搜索<br />
+<strong>Address:</strong> rssust://github_search<br />
+<strong>Example:</strong> <a href="/github_search?q=rust">rssust://github_search?q=rust</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>q</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 搜索关键词（必填）</li>
+<li><strong>sort</strong><br />
+Type of parameter: string<br />
+Default value: stars<br />
+Meaning: 排序方式，stars/forks/updated/help-wanted-issues/best-match</li>
+<li><strong>order</strong><br />
+Type of parameter: string<br />
+Default value: desc<br />
+Meaning: 排序方向，asc/desc</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大50</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_starred"><a class="header" href="#router-name-github_starred">Router-name: github_starred</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@LanceZhu<br />
+<strong>Introduction:</strong> GitHub 用户收藏的仓库列表<br />
+<strong>Address:</strong> rssust://github_starred<br />
+<strong>Example:</strong> <a href="/github_starred?username=torvalds">rssust://github_starred?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_stars"><a class="header" href="#router-name-github_stars">Router-name: github_stars</a></h1>
+<p><strong>Commit time:</strong> 2026.08.04<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> huiinyg-rusting<br />
+<strong>Introduction:</strong> GitHub single repository star count via GraphQL API<br />
+<strong>Address:</strong> rssust://github_stars<br />
+<strong>Example:</strong> <a href="/github_stars?owner=torvalds&amp;repo=linux">rssust://github_stars?owner=torvalds&amp;repo=linux</a><br />
+<strong>Parameter:</strong><br />
+owner (required, repository owner)<br />
+repo (required, repository name)<br />
+<strong>Token:</strong><br />
+Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_tag"><a class="header" href="#router-name-github_tag">Router-name: github_tag</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
+<strong>Introduction:</strong> GitHub 仓库 Tag 列表<br />
+<strong>Address:</strong> rssust://github_tag<br />
+<strong>Example:</strong> <a href="/github_tag?owner=nodejs&amp;repo=node">rssust://github_tag?owner=nodejs&amp;repo=node</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>owner</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库所有者</li>
+<li><strong>repo</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 仓库名称</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_topic"><a class="header" href="#router-name-github_topic">Router-name: github_topic</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@queensferryme<br />
+<strong>Introduction:</strong> GitHub Topics 话题下的仓库列表（抓取网页）<br />
+<strong>Address:</strong> rssust://github_topic<br />
+<strong>Example:</strong> <a href="/github_topic?name=framework">rssust://github_topic?name=framework</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>name</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: 话题名（必填），如 framework</li>
+<li><strong>qs</strong><br />
+Type of parameter: string<br />
+Default value: 空<br />
+Meaning: 查询串，如 <code>l=php&amp;o=desc&amp;s=stars</code></li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 25<br />
+Meaning: 条数，最大25</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_trending"><a class="header" href="#router-name-github_trending">Router-name: github_trending</a></h1>
+<p><strong>Commit time:</strong> 2026.08.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> GitHub Trending repositories (no official RSS, scraped)<br />
+<strong>Address:</strong> rssust://github_trending<br />
+<strong>Example:</strong> <a href="/github_trending?since=daily">rssust://github_trending</a><br />
+<strong>Parameter:</strong><br />
+since (optional, daily/weekly/monthly, default daily)<br />
+limit (optional, max 25, default 25)<br />
+<strong>Note:</strong><br />
+robots.txt allows /trending. Returns repo name, description, language and stars-today.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_user_events"><a class="header" href="#router-name-github_user_events">Router-name: github_user_events</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@mslxl<br />
+<strong>Introduction:</strong> GitHub 用户最近公开动态（events）<br />
+<strong>Address:</strong> rssust://github_user_events<br />
+<strong>Example:</strong> <a href="/github_user_events?username=torvalds">rssust://github_user_events?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 条数，最大100</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_user_repos"><a class="header" href="#router-name-github_user_repos">Router-name: github_user_repos</a></h1>
+<p><strong>Commit time:</strong> 2026.08.11<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> GitHub 用户的仓库列表<br />
+<strong>Address:</strong> rssust://github_user_repos<br />
+<strong>Example:</strong> <a href="/github_user_repos?username=torvalds">rssust://github_user_repos?username=torvalds</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>username</strong><br />
+Type of parameter: string<br />
+Default value: 无<br />
+Meaning: GitHub 用户名</li>
+<li><strong>type</strong><br />
+Type of parameter: string<br />
+Default value: owner<br />
+Meaning: 仓库类型，all/owner/member</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 条数，最大100</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guancha_headline"><a class="header" href="#router-name-guancha_headline">Router-name: guancha_headline</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 观察者网头条<br />
 <strong>Address:</strong> rssust://guancha_headline<br />
 <strong>Example:</strong> <a href="/guancha_headline">rssust://guancha_headline</a><br />
@@ -1979,7 +2701,7 @@ tag: 分类 (默认 web_home_page)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guanhai"><a class="header" href="#router-name-guanhai">Router-name: guanhai</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@TonyRL<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@TonyRL<br />
 <strong>Introduction:</strong> 观海新闻首页推荐<br />
 <strong>Address:</strong> rssust://guanhai<br />
 <strong>Example:</strong> <a href="/guanhai">rssust://guanhai</a><br />
@@ -1988,16 +2710,30 @@ tag: 分类 (默认 web_home_page)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-guokr_scientific"><a class="header" href="#router-name-guokr_scientific">Router-name: guokr_scientific</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> 果壳网 科学人 文章<br />
 <strong>Address:</strong> rssust://guokr_scientific<br />
 <strong>Example:</strong> <a href="/guokr_scientific">rssust://guokr_scientific</a><br />
 <strong>Parameter:</strong><br />
 limit（可选，最大 50，默认 20）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-hackernews"><a class="header" href="#router-name-hackernews">Router-name: hackernews</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> Hacker News Stories (official Algolia API)<br />
+<strong>Address:</strong> rssust://hackernews<br />
+<strong>Example:</strong> <a href="/hackernews">rssust://hackernews</a><br />
+<strong>Parameter:</strong><br />
+section (optional, index/newest/ask/show/jobs/best/over, default index)<br />
+type (optional, sources=story links comments=with comment summary, default sources)<br />
+value (optional, section=over for min points threshold default 100; others can append author=xxx)<br />
+limit (optional, max 50, default 30)<br />
+<strong>Rate limit:</strong><br />
+Recommend config “/hackernews” = 30 in config.toml routes.rate_limit (respect robots Crawl-delay: 30)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-ifeng_news"><a class="header" href="#router-name-ifeng_news">Router-name: ifeng_news</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 凤凰网资讯<br />
 <strong>Address:</strong> rssust://ifeng_news<br />
 <strong>Example:</strong> <a href="/ifeng_news">rssust://ifeng_news</a><br />
@@ -2006,7 +2742,7 @@ limit（可选，最大 50，默认 20）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-ithome_ranking"><a class="header" href="#router-name-ithome_ranking">Router-name: ithome_ranking</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@immmortal, luyuhuang<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@immmortal, luyuhuang<br />
 <strong>Introduction:</strong> IT之家热榜<br />
 <strong>Address:</strong> rssust://ithome_ranking<br />
 <strong>Example:</strong> <a href="/ithome_ranking?type=24h">rssust://ithome_ranking?type=24h</a><br />
@@ -2020,7 +2756,7 @@ Meaning: 24h(24小时最热), 7days(7天最热), monthly(月榜)</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-jianshu_home"><a class="header" href="#router-name-jianshu_home">Router-name: jianshu_home</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@DIYgod, HenryQW, JimenezLi<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@DIYgod, HenryQW, JimenezLi<br />
 <strong>Introduction:</strong> 简书首页<br />
 <strong>Address:</strong> rssust://jianshu_home<br />
 <strong>Example:</strong> <a href="/jianshu_home">rssust://jianshu_home</a><br />
@@ -2029,7 +2765,7 @@ Meaning: 24h(24小时最热), 7days(7天最热), monthly(月榜)</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-juejin_pins"><a class="header" href="#router-name-juejin_pins">Router-name: juejin_pins</a></h1>
 <p><strong>Commit time:</strong> 2026.07.29<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核<br />
+<strong>Author:</strong> AI转写 / huiinyg审核<br />
 <strong>Introduction:</strong> 掘金沸点<br />
 <strong>Address:</strong> rssust://juejin_pins<br />
 <strong>Example:</strong> <a href="/juejin_pins?type=hot">rssust://juejin_pins?type=hot</a><br />
@@ -2043,7 +2779,7 @@ Meaning: 沸点分类：recommend(推荐), hot(热门)，或话题ID（如 68247
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-juejin_trending"><a class="header" href="#router-name-juejin_trending">Router-name: juejin_trending</a></h1>
 <p><strong>Commit time:</strong> 2026.07.29<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核<br />
+<strong>Author:</strong> AI转写 / huiinyg审核<br />
 <strong>Introduction:</strong> 掘金热门文章<br />
 <strong>Address:</strong> rssust://juejin_trending<br />
 <strong>Example:</strong> <a href="/juejin_trending">rssust://juejin_trending</a><br />
@@ -2058,29 +2794,85 @@ Type of parameter: string<br />
 Default value: weekly<br />
 Meaning: 时间范围：weekly(本周), monthly(本月), historical(历史)</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-kali_blog"><a class="header" href="#router-name-kali_blog">Router-name: kali_blog</a></h1>
+<p><strong>Commit time:</strong> 2026.08.18<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核<br />
+<strong>Introduction:</strong> Kali Linux 官方博客（blog.kali.org 的更新，含发布日志与工具介绍）<br />
+<strong>Address:</strong> rssust://kali_blog<br />
+<strong>Example:</strong> <a href="/kali_blog">rssust://kali_blog</a><br />
+<strong>robots.txt:</strong> 允许抓取（<code>Disallow:</code> 仅限个别归档页面）<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 抓取条数，最大50</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-leiphone_newsflash"><a class="header" href="#router-name-leiphone_newsflash">Router-name: leiphone_newsflash</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> 雷锋网业界资讯<br />
 <strong>Address:</strong> rssust://leiphone_newsflash<br />
 <strong>Example:</strong> <a href="/leiphone_newsflash">rssust://leiphone_newsflash</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-lwn"><a class="header" href="#router-name-lwn">Router-name: lwn</a></h1>
+<p><strong>Commit time:</strong> 2026.08.18<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核<br />
+<strong>Introduction:</strong> LWN.net（Linux 内核与技术新闻）官方 RSS 转接<br />
+<strong>Address:</strong> rssust://lwn<br />
+<strong>Example:</strong> <a href="/lwn">rssust://lwn</a><br />
+<strong>robots.txt:</strong> 允许抓取（<code>User-agent: *</code>，仅禁止 /Search 与 /ml）<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>feed</strong><br />
+Type of parameter: string<br />
+Default value: rss<br />
+Meaning: LWN 官方 feed 名，如 rss(主站), rss2, c(每周社论), rss/weekly 等</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-mittrchina"><a class="header" href="#router-name-mittrchina">Router-name: mittrchina</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> MIT Technology Review 麻省理工科技评论中文站<br />
 <strong>Address:</strong> rssust://mittrchina<br />
 <strong>Example:</strong> <a href="/mittrchina">rssust://mittrchina</a><br />
 <strong>Parameter:</strong><br />
 type（可选，index=首页资讯 hot=本周热榜 breaking=快讯 video=视频，默认 index）<br />
 limit（可选，最大 30，默认 10）</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-moe_news"><a class="header" href="#router-name-moe_news">Router-name: moe_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.31<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 教育部司局要闻列表（服务端渲染 HTML，无官方 RSS）<br />
+<strong>Address:</strong> rssust://moe_news<br />
+<strong>Example:</strong> <a href="/moe_news">rssust://moe_news</a><br />
+<strong>robots.txt:</strong> www.moe.gov.cn 无 robots.txt，视为允许<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nasa_apod"><a class="header" href="#router-name-nasa_apod">Router-name: nasa_apod</a></h1>
+<p><strong>Commit time:</strong> 2026.08.30<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> NASA 每日天文一图（APOD），官方公开 API，无官方 RSS<br />
+<strong>Address:</strong> rssust://nasa_apod<br />
+<strong>Example:</strong> <a href="/nasa_apod">rssust://nasa_apod</a><br />
+<strong>robots.txt:</strong> api.nasa.gov 无 robots.txt，允许抓取；DEMO_KEY 限流约 30 次/小时
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>count</strong><br />
+Type of parameter: int<br />
+Default value: 5<br />
+Meaning: 返回的图片条目数（最近若干天），范围 1-30<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-netease_today"><a class="header" href="#router-name-netease_today">Router-name: netease_today</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 网易新闻今日关注<br />
 <strong>Address:</strong> rssust://netease_today<br />
 <strong>Example:</strong> <a href="/netease_today">rssust://netease_today</a><br />
@@ -2089,7 +2881,7 @@ limit（可选，最大 30，默认 10）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nmc_alarm"><a class="header" href="#router-name-nmc_alarm">Router-name: nmc_alarm</a></h1>
 <p><strong>Commit time:</strong> 2026.07.31<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 自行开发<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 自行开发<br />
 <strong>Introduction:</strong> 中央气象台预警信号<br />
 <strong>Address:</strong> rssust://nmc_alarm<br />
 <strong>Example:</strong> <a href="/nmc_alarm?type=%E6%9A%B4%E9%9B%A8&amp;level=%E9%BB%84%E8%89%B2&amp;province=%E6%B2%B3%E5%8C%97">rssust://nmc_alarm?type=暴雨&amp;level=黄色&amp;province=河北</a><br />
@@ -2116,10 +2908,61 @@ Type of parameter: number<br />
 Default value: 50<br />
 Meaning: 条目数量上限，最大 200</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_atlas_release"><a class="header" href="#router-name-openai_chatgpt_atlas_release">Router-name: openai_chatgpt_atlas_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 抓取 help.openai.com 需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译 curl-impersonate 或使用 WSL；否则本路由 500（无降级）。参考 <code>openai_common.rs::fetch_release_notes</code><br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> ChatGPT Atlas Release Notes (help.openai.com single page scrape)<br />
+<strong>Address:</strong> rssust://openai_chatgpt_atlas_release<br />
+<strong>Example:</strong> <a href="/openai_chatgpt_atlas_release">rssust://openai_chatgpt_atlas_release</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_chatgpt_release"><a class="header" href="#router-name-openai_chatgpt_release">Router-name: openai_chatgpt_release</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 抓取 help.openai.com 需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译 curl-impersonate 或使用 WSL；否则本路由 500（无降级）。参考 <code>openai_common.rs::fetch_release_notes</code><br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> ChatGPT Release Notes (help.openai.com single page scrape)<br />
+<strong>Address:</strong> rssust://openai_chatgpt_release<br />
+<strong>Example:</strong> <a href="/openai_chatgpt_release">rssust://openai_chatgpt_release</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_news"><a class="header" href="#router-name-openai_news">Router-name: openai_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 文章详情抓取需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译或使用 WSL；此路由失败时降级为 RSS 摘要（不 500）。参考 <code>openai_common.rs::fetch_article_details</code><br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> OpenAI Official News (rss.xml + full article content)<br />
+<strong>Address:</strong> rssust://openai_news<br />
+<strong>Example:</strong> <a href="/openai_news">rssust://openai_news</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-openai_research"><a class="header" href="#router-name-openai_research">Router-name: openai_research</a></h1>
+<p><strong>Commit time:</strong> 2026.08.06<br />
+<strong>Cookies?:</strong> no<br />
+<strong>平台限制:</strong> 文章详情抓取需 <code>curl-impersonate</code>（chrome110 TLS 指纹）。Windows x86_64 无预编译二进制 → 需从源码编译或使用 WSL；此路由失败时降级为 RSS 摘要（不 500）。参考 <code>openai_common.rs::fetch_article_details</code><br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> OpenAI Research Articles (filtered from official RSS by category=Research)<br />
+<strong>Address:</strong> rssust://openai_research<br />
+<strong>Example:</strong> <a href="/openai_research">rssust://openai_research</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 30, default 10)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-pingwest_news"><a class="header" href="#router-name-pingwest_news">Router-name: pingwest_news</a></h1>
+<p><strong>Commit time:</strong> 2026.08.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI-converted / huiinyg-reviewed - based on RSSHub<br />
+<strong>Introduction:</strong> 品玩 PingWest 首页精选资讯（无官方 RSS，抓取首页静态区块）<br />
+<strong>Address:</strong> rssust://pingwest_news<br />
+<strong>Example:</strong> <a href="/pingwest_news">rssust://pingwest_news</a><br />
+<strong>Parameter:</strong><br />
+limit (optional, max 20, default 14)<br />
+<strong>Note:</strong><br />
+robots.txt 允许抓取（仅禁 /search、/api-error-file、/mpview 等路径）。首页 headline / hot-recommend / 精选区块为服务端渲染，可抓取标题、作者与日期。</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_news"><a class="header" href="#router-name-rail12306_news">Router-name: rail12306_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> 12306 最新动态公告<br />
 <strong>Address:</strong> rssust://rail12306_news<br />
 <strong>Example:</strong> <a href="/rail12306_news">rssust://rail12306_news</a><br />
@@ -2128,7 +2971,7 @@ limit（可选，最大 50，默认 20）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-rail12306_ticket"><a class="header" href="#router-name-rail12306_ticket">Router-name: rail12306_ticket</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
 <strong>Introduction:</strong> 12306 火车票余票查询<br />
 <strong>Address:</strong> rssust://rail12306_ticket<br />
 <strong>Example:</strong> <a href="/rail12306_ticket?date=2026-08-05&amp;from=%E5%8C%97%E4%BA%AC&amp;to=%E4%B8%8A%E6%B5%B7">rssust://rail12306_ticket</a><br />
@@ -2139,16 +2982,32 @@ to（必填，到达站名，如“上海“）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-scientificamerican_news"><a class="header" href="#router-name-scientificamerican_news">Router-name: scientificamerican_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.02<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> Scientific American - Science &amp; Technology News (no official RSS)<br />
 <strong>Address:</strong> rssust://scientificamerican_news<br />
 <strong>Example:</strong> <a href="/scientificamerican_news">rssust://scientificamerican_news</a><br />
 <strong>Parameter:</strong><br />
 (No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-sina_finance"><a class="header" href="#router-name-sina_finance">Router-name: sina_finance</a></h1>
+<p><strong>Commit time:</strong> 2026.08.31<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 新浪财经 7×24 直播快讯（公开 JSON API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://sina_finance<br />
+<strong>Example:</strong> <a href="/sina_finance">rssust://sina_finance</a><br />
+<strong>robots.txt:</strong> 明确允许（sina.com.cn 的 robots 为 <code>User-agent: * / Allow: /</code>；zhibo.sina.com.cn 无 robots.txt）<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>count</strong><br />
+Type of parameter: int<br />
+Default value: 20<br />
+Meaning: 返回快讯条数，范围 1-50<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-smithsonianmag_news"><a class="header" href="#router-name-smithsonianmag_news">Router-name: smithsonianmag_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.01<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> Smithsonian Magazine - Science, History &amp; Culture (official RSS returns 403)<br />
 <strong>Address:</strong> rssust://smithsonianmag_news<br />
 <strong>Example:</strong> <a href="/smithsonianmag_news">rssust://smithsonianmag_news</a><br />
@@ -2157,7 +3016,7 @@ to（必填，到达站名，如“上海“）</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-solidot"><a class="header" href="#router-name-solidot">Router-name: solidot</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL<br />
 <strong>Introduction:</strong> 奇客的资讯，重要的东西<br />
 <strong>Address:</strong> rssust://solidot<br />
 <strong>Example:</strong> <a href="/solidot">rssust://solidot</a><br />
@@ -2171,7 +3030,7 @@ Meaning: 分类名，如 www(主站), science(科学), mobile(移动), linux, bs
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_article_list"><a class="header" href="#router-name-stcn_article_list">Router-name: stcn_article_list</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 证券时报网文章列表，按分类（要闻/股市/公司/基金/金融/评论/产经/科创板/新三板/ESG/滚动）<br />
 <strong>Address:</strong> rssust://stcn_article_list<br />
 <strong>Example:</strong> <a href="/stcn_article_list">rssust://stcn_article_list</a><br />
@@ -2180,7 +3039,7 @@ id: 分类 (默认 yw)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_kx"><a class="header" href="#router-name-stcn_kx">Router-name: stcn_kx</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 证券时报网快讯<br />
 <strong>Address:</strong> rssust://stcn_kx<br />
 <strong>Example:</strong> <a href="/stcn_kx">rssust://stcn_kx</a><br />
@@ -2189,7 +3048,7 @@ id: 分类 (默认 yw)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-stcn_rank"><a class="header" href="#router-name-stcn_rank">Router-name: stcn_rank</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 证券时报网热榜（按分类）<br />
 <strong>Address:</strong> rssust://stcn_rank<br />
 <strong>Example:</strong> <a href="/stcn_rank">rssust://stcn_rank</a><br />
@@ -2198,7 +3057,7 @@ id: 分类 (默认 yw)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-thepaper_featured"><a class="header" href="#router-name-thepaper_featured">Router-name: thepaper_featured</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 澎湃新闻首页头条推荐<br />
 <strong>Address:</strong> rssust://thepaper_featured<br />
 <strong>Example:</strong> <a href="/thepaper_featured">rssust://thepaper_featured</a><br />
@@ -2207,16 +3066,32 @@ id: 分类 (默认 yw)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-tmtpost_new"><a class="header" href="#router-name-tmtpost_new">Router-name: tmtpost_new</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 钛媒体最新文章<br />
 <strong>Address:</strong> rssust://tmtpost_new<br />
 <strong>Example:</strong> <a href="/tmtpost_new">rssust://tmtpost_new</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-toutiao_hot"><a class="header" href="#router-name-toutiao_hot">Router-name: toutiao_hot</a></h1>
+<p><strong>Commit time:</strong> 2026.08.31<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 今日头条热榜（公开 JSON API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://toutiao_hot<br />
+<strong>Example:</strong> <a href="/toutiao_hot">rssust://toutiao_hot</a><br />
+<strong>robots.txt:</strong> 允许抓取；toutiao.com 的 robots 仅 Disallow /search、/item、/group、/m1-m8、/trending/ 等路径，本路由只请求 <code>/hot-event/</code><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>count</strong><br />
+Type of parameter: int<br />
+Default value: 50<br />
+Meaning: 返回热搜条目数，范围 1-50<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-videocardz_news"><a class="header" href="#router-name-videocardz_news">Router-name: videocardz_news</a></h1>
 <p><strong>Commit time:</strong> 2026.08.01<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> huinyg<br />
+<strong>Author:</strong> huiinyg<br />
 <strong>Introduction:</strong> VideoCardz.com - Latest GPU &amp; Hardware News (English tech site, no official RSS)<br />
 <strong>Address:</strong> rssust://videocardz_news<br />
 <strong>Example:</strong> <a href="/videocardz_news">rssust://videocardz_news</a><br />
@@ -2225,7 +3100,7 @@ id: 分类 (默认 yw)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-wallstreetcn_hot"><a class="header" href="#router-name-wallstreetcn_hot">Router-name: wallstreetcn_hot</a></h1>
 <p><strong>Commit time:</strong> 2026.07.21<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 华尔街见闻最热文章<br />
 <strong>Address:</strong> rssust://wallstreetcn_hot<br />
 <strong>Example:</strong> <a href="/wallstreetcn_hot?period=day">rssust://wallstreetcn_hot?period=day</a><br />
@@ -2239,7 +3114,7 @@ Meaning: 时间范围，day(当日) 或 week(当周)</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-yicai_headline"><a class="header" href="#router-name-yicai_headline">Router-name: yicai_headline</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 第一财经头条<br />
 <strong>Address:</strong> rssust://yicai_headline<br />
 <strong>Example:</strong> <a href="/yicai_headline">rssust://yicai_headline</a><br />
@@ -2248,12 +3123,28 @@ Meaning: 时间范围，day(当日) 或 week(当周)</li>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-yicai_latest"><a class="header" href="#router-name-yicai_latest">Router-name: yicai_latest</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huinyg审核 - 来源于RSShub@nczitzk<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@nczitzk<br />
 <strong>Introduction:</strong> 第一财经最新文章<br />
 <strong>Address:</strong> rssust://yicai_latest<br />
 <strong>Example:</strong> <a href="/yicai_latest">rssust://yicai_latest</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-zhihu_daily"><a class="header" href="#router-name-zhihu_daily">Router-name: zhihu_daily</a></h1>
+<p><strong>Commit time:</strong> 2026.08.30<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 知乎日报（官方公开 API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://zhihu_daily<br />
+<strong>Example:</strong> <a href="/zhihu_daily">rssust://zhihu_daily</a><br />
+<strong>robots.txt:</strong> zhihu.com 的 robots.txt 无通用禁止，允许抓取<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>date</strong><br />
+Type of parameter: string<br />
+Default value: 无（返回最新一期）<br />
+Meaning: 日期 YYYYMMDD，返回该日期之前一期的内容<br />
+<strong>Environment Variables:</strong> no</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-zhihu_hot"><a class="header" href="#router-name-zhihu_hot">Router-name: zhihu_hot</a></h1>
 <p><strong>Commit time:</strong> 2026.07.16<br />
 <strong>Cookies?:</strong> no<br />
