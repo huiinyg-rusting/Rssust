@@ -1,7 +1,7 @@
 # Router-name: bilibili_partion  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@DIYgod  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@DIYgod  
 **Introduction:** bilibili 分区视频  
 **Address:** rssust://bilibili_partion  
 **Example:** [rssust://bilibili_partion?tid=1](/bilibili_partion?tid=1)  

@@ -6,7 +6,7 @@ use scraper::{Html, Selector};
 use std::collections::HashMap;
 
 const MAINTAINER: &str =
-    "huinyg / Carnegie Endowment (international affairs think tank, no official RSS)";
+    "huiinyg / Carnegie Endowment (international affairs think tank, no official RSS)";
 
 fn parse_carnegie_date(date_str: &str) -> Option<String> {
     let s = date_str.trim();

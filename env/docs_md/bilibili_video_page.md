@@ -1,7 +1,7 @@
 # Router-name: bilibili_video_page  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@sxzz  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@sxzz  
 **Introduction:** bilibili 视频选集列表  
 **Address:** rssust://bilibili_video_page  
 **Example:** [rssust://bilibili_video_page?bvid=BV1i7411M7N9](/bilibili_video_page?bvid=BV1i7411M7N9)  

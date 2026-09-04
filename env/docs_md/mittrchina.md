@@ -1,7 +1,7 @@
 # Router-name: mittrchina  
 **Commit time:** 2026.08.04  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub  
 **Introduction:** MIT Technology Review 麻省理工科技评论中文站  
 **Address:** rssust://mittrchina  
 **Example:** [rssust://mittrchina](/mittrchina)  

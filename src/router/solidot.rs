@@ -5,7 +5,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI转写 / huinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL";
+const MAINTAINER: &str = "AI转写 / huiinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL";
 
 fn parse_article_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);

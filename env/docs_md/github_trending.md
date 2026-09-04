@@ -1,7 +1,7 @@
 # Router-name: github_trending  
 **Commit time:** 2026.08.08  
 **Cookies?:** no  
-**Author:** AI-converted / huinyg-reviewed - based on RSSHub  
+**Author:** AI-converted / huiinyg-reviewed - based on RSSHub  
 **Introduction:** GitHub Trending repositories (no official RSS, scraped)  
 **Address:** rssust://github_trending  
 **Example:** [rssust://github_trending](/github_trending?since=daily)  

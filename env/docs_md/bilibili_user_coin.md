@@ -1,7 +1,7 @@
 # Router-name: bilibili_user_coin  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@DIYgod  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@DIYgod  
 **Introduction:** bilibili UP 主投币视频  
 **Address:** rssust://bilibili_user_coin  
 **Example:** [rssust://bilibili_user_coin?uid=208259](/bilibili_user_coin?uid=208259)  

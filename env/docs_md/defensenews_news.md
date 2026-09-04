@@ -1,7 +1,7 @@
 # Router-name: defensenews_news  
 **Commit time:** 2026.08.06  
 **Cookies?:** no  
-**Author:** huinyg  
+**Author:** huiinyg  
 **Introduction:** Defense News - Global Defense & Military News (no official RSS, scraped)  
 **Address:** rssust://defensenews_news  
 **Example:** [rssust://defensenews_news](/defensenews_news)  

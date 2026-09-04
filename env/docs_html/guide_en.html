@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Guide En - Rssust 文档</title>
+<style>
+:root { --bg:#fafafa; --fg:#222; --accent:#0366d6; --border:#ddd; --code-bg:#f6f8fa; --nav-bg:#f0f0f0; }
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a2e;--fg:#e0e0e0;--accent:#58a6ff;--border:#333;--code-bg:#16213e;--nav-bg:#0f0f23;}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;max-width:960px;margin:0 auto;padding:20px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:1.6em;border-bottom:2px solid var(--border);padding-bottom:8px;margin:30px 0 16px}
+h2{font-size:1.3em;margin:24px 0 10px}h3{font-size:1.1em;margin:18px 0 8px}
+code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:0.9em}
+pre{background:var(--code-bg);padding:14px;border-radius:6px;overflow-x:auto;margin:12px 0}
+pre code{padding:0;background:none}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--nav-bg);font-weight:600}
+.nav{background:var(--nav-bg);padding:12px 16px;border-radius:6px;margin:20px 0;font-size:0.9em}
+.nav a{margin-right:12px;display:inline-block}
+.nav b{margin-right:12px;color:var(--fg)}
+hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+p{margin:8px 0}ul,ol{margin:8px 0 8px 24px}
+.badge{display:inline-block;font-size:0.75em;padding:2px 8px;border-radius:10px;margin-left:6px}
+.badge-y{background:#d4edda;color:#155724}.badge-n{background:#f8d7da;color:#721c24}
+</style>
+</head><body>
+<div class="nav"><b>Rssust</b> <a href="index.html">目录</a> <a href="api.html">API</a> <a href="guide_cn.html">指南</a></div>
+<h3><a href="guide_cn.md">中文</a></h3>
+<h1>What is Rssust?</h1>
+<p>Rssust is an <strong>information aggregation and conversion software</strong> built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, <strong><em>but currently still in development</em></strong>.</p>
+<h2>We Hope for Your Help</h2>
+<p>Tired of <strong>massive memory consumption and slow running speed</strong>, or <strong>dependent on someone else's</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
+<hr />
+<p>Plug a USB drive into someone else's computer, then <strong><em>double-click</em></strong> to open the binary program and a lightweight RSS client to use RSS on their computer without having to find someone else's server. Let everyone handle their own computing power while actually gaining more stability.</p>
+<hr />
+<h5>So is this project meant to run locally? Not necessarily. <em>It's more about hoping for local operation</em>, but if you have a NAS at home or have the financial means to build a server, never mind what I said. <strong>But it's still worth trying Rssust</strong>.</h5>
+<hr />
+<p>Although Rssust's routers are not on the same scale as Rsshub's in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust's router count can grow, but this may seem somewhat like plagiarism, so it's better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
+<p>If you want to create your own router, click here: <a href="new_router_en.md">Router Development Guide — English</a><br />
+Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="api.md">API DOCS</a></p>
+<h2>For General Users:</h2>
+<h3>Installation:</h3>
+<p>It's worth noting that when running, the binary directory structure should be as follows:</p>
+<pre><code class="language-sh">├── cookies.json
+├── docs_md
+│   ├── .......md
+│   └── official
+│       └── ......md
+├── index
+│   ├── 404.html
+│   └── index.html
+└── rssust
+</code></pre>
+<p>It's quite strict.</p>
+<h3>cookies:</h3>
+<p>Some routes depend on cookies, so take a look <a href="cookie.md">guide of cookies</a></p>
+<h3>Binary:</h3>
+<p>Early versions may not include binaries; only versions with an "S" suffix will generate binaries.<br />
+Running the binary is very simple: extract and then start the binary file in the env folder.</p>
+<h3>Building from Source:</h3>
+<p>Linux users:</p>
+<pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+cp -r ./target/debug/rssust ./env
+./env/rssust cookie firefox
+./env/rssust docs
+./env/rssust
+</code></pre>
+<p>Then when there's no version update, you can enter:</p>
+<pre><code class="language-sh">cd Rssust
+./env/rssust
+</code></pre>
+<p>to start it.</p>
+<p>Windows users: CMD (unverified)</p>
+<pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
+cd Rssust
+cargo build
+robocopy .\target\debug .\env rssust /IF /S
+.\env\rssust.exe cookie firefox
+.\env\rssust.exe docs
+.\env\rssust.exe
+</code></pre>
+</body></html>

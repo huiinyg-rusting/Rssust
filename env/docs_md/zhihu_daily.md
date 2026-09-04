@@ -1,7 +1,7 @@
 # Router-name: zhihu_daily  
 **Commit time:** 2026.08.30  
 **Cookies?:** no  
-**Author:** AI制作 / huinyg-rusting审核  
+**Author:** AI制作 / huiinyg-rusting审核  
 **Introduction:** 知乎日报（官方公开 API，无官方 RSS）  
 **Address:** rssust://zhihu_daily  
 **Example:** [rssust://zhihu_daily](/zhihu_daily)  

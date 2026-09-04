@@ -1,7 +1,7 @@
 # Router-name: apnews_topics  
 **Commit time:** 2026.07.24  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@zoenglinghou  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@zoenglinghou  
 **Introduction:** AP News headlines by topic  
 **Address:** rssust://apnews_topics  
 **Example:** [rssust://apnews_topics](/apnews_topics)  

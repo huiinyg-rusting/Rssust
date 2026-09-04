@@ -1,7 +1,7 @@
 # Router-name: bilibili_fav  
 **Commit time:** 2026.07.19  
 **Cookies?:** yes (bilibili.com)  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@Qixingchen  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@Qixingchen  
 **Introduction:** bilibili UP主非默认收藏夹  
 **Address:** rssust://bilibili_fav  
 **Example:** [rssust://bilibili_fav?uid=756508&fid=50948568](/bilibili_fav?uid=756508&fid=50948568)  

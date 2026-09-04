@@ -1,7 +1,7 @@
 # Router-name: douban_movie_classification  
 **Commit time:** 2026.07.20  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@zzwab  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@zzwab  
 **Introduction:** 豆瓣电影分类  
 **Address:** rssust://douban_movie_classification  
 **Example:** [rssust://douban_movie_classification?sort=R&score=7.5&tags=Netflix](/douban_movie_classification?sort=R&score=7.5&tags=Netflix)  

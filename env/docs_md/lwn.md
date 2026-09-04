@@ -1,7 +1,7 @@
 # Router-name: lwn  
 **Commit time:** 2026.08.18  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核  
+**Author:** AI转写 / huiinyg审核  
 **Introduction:** LWN.net（Linux 内核与技术新闻）官方 RSS 转接  
 **Address:** rssust://lwn  
 **Example:** [rssust://lwn](/lwn)  

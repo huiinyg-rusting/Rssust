@@ -1,7 +1,7 @@
 # Router-name: wallstreetcn_hot
 **Commit time:** 2026.07.21  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@nczitzk  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@nczitzk  
 **Introduction:** 华尔街见闻最热文章  
 **Address:** rssust://wallstreetcn_hot  
 **Example:** [rssust://wallstreetcn_hot?period=day](/wallstreetcn_hot?period=day)  

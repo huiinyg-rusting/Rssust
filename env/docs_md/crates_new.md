@@ -1,7 +1,7 @@
 # Router-name: crates_new  
 **Commit time:** 2026.08.30  
 **Cookies?:** no  
-**Author:** AI制作 / huinyg-rusting审核  
+**Author:** AI制作 / huiinyg-rusting审核  
 **Introduction:** crates.io 最新发布的 Rust crate 聚合（官方公开 API，无官方 RSS）  
 **Address:** rssust://crates_new  
 **Example:** [rssust://crates_new](/crates_new)  

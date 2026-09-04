@@ -1,7 +1,7 @@
 # Router-name: baidu_top  
 **Commit time:** 2026.08.30  
 **Cookies?:** no  
-**Author:** AI制作 / huinyg-rusting审核  
+**Author:** AI制作 / huiinyg-rusting审核  
 **Introduction:** 百度热搜榜单（实时/科技/娱乐等分类），数据取自 top.baidu.com 页面内嵌 JSON，无官方 RSS  
 **Address:** rssust://baidu_top  
 **Example:** [rssust://baidu_top](/baidu_top)  

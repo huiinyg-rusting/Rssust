@@ -1,7 +1,7 @@
 # Router-name: douban_book_rank  
 **Commit time:** 2026.07.20  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@xyqfer  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@xyqfer  
 **Introduction:** 豆瓣热门图书排行  
 **Address:** rssust://douban_book_rank  
 **Example:** [rssust://douban_book_rank?type=fiction](/douban_book_rank?type=fiction)  

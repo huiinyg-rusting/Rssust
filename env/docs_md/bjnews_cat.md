@@ -1,7 +1,7 @@
 # Router-name: bjnews_cat  
 **Commit time:** 2026.07.25  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@dzx-dzx  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@dzx-dzx  
 **Introduction:** 新京报分类文章  
 **Address:** rssust://bjnews_cat  
 **Example:** [rssust://bjnews_cat](/bjnews_cat)  

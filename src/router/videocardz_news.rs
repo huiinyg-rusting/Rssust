@@ -5,7 +5,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huinyg / VideoCardz.com";
+const MAINTAINER: &str = "huiinyg / VideoCardz.com";
 const BASE_URL: &str = "https://videocardz.com";
 
 fn parse_time(time1: &str, time2: &str) -> Option<String> {

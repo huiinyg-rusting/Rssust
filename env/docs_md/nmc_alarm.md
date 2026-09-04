@@ -1,7 +1,7 @@
 # Router-name: nmc_alarm  
 **Commit time:** 2026.07.31  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 自行开发  
+**Author:** AI转写 / huiinyg审核 - 自行开发  
 **Introduction:** 中央气象台预警信号  
 **Address:** rssust://nmc_alarm  
 **Example:** [rssust://nmc_alarm?type=暴雨&level=黄色&province=河北](/nmc_alarm?type=%E6%9A%B4%E9%9B%A8&level=%E9%BB%84%E8%89%B2&province=%E6%B2%B3%E5%8C%97)  

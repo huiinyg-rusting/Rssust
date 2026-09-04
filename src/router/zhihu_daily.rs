@@ -5,7 +5,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huinyg-rusting审核";
+const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 
 fn daily_pubdate(date_str: &str) -> Option<String> {
     let d = NaiveDate::parse_from_str(date_str, "%Y%m%d").ok()?;

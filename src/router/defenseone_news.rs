@@ -5,7 +5,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huinyg / Defense One (defense & national security, no official RSS)";
+const MAINTAINER: &str = "huiinyg / Defense One (defense & national security, no official RSS)";
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(

@@ -203,6 +203,10 @@
 - [mittrchina](../mittrchina.md)
     MIT Technology Review 麻省理工科技评论中文站
 
+#### MOE (教育部)
+- [moe_news](../moe_news.md)
+    教育部司局要闻列表（服务端 HTML，无官方 RSS）
+
 #### NASA
 - [nasa_apod](../nasa_apod.md)
     NASA 每日天文一图（APOD，官方 API，无官方 RSS）
@@ -231,6 +235,10 @@
 - [scientificamerican_news](../scientificamerican_news.md)
     Scientific American - science & technology news (no official RSS)
 
+#### Sina (新浪)
+- [sina_finance](../sina_finance.md)
+    新浪财经 7×24 直播快讯（公开 API，无官方 RSS）
+
 #### Smithsonian Magazine
 - [smithsonianmag_news](../smithsonianmag_news.md)
     Smithsonian Magazine - science, history & culture (official RSS returns 403)
@@ -254,6 +262,10 @@
 #### TMTpost (钛媒体)
 - [tmtpost_new](../tmtpost_new.md)
     钛媒体最新文章
+
+#### Toutiao (今日头条)
+- [toutiao_hot](../toutiao_hot.md)
+    今日头条热榜（公开 API，无官方 RSS）
 
 #### VideoCardz
 - [videocardz_news](../videocardz_news.md)

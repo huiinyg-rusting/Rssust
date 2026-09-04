@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Easyuser Cn - Rssust 文档</title>
+<style>
+:root { --bg:#fafafa; --fg:#222; --accent:#0366d6; --border:#ddd; --code-bg:#f6f8fa; --nav-bg:#f0f0f0; }
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a2e;--fg:#e0e0e0;--accent:#58a6ff;--border:#333;--code-bg:#16213e;--nav-bg:#0f0f23;}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;max-width:960px;margin:0 auto;padding:20px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:1.6em;border-bottom:2px solid var(--border);padding-bottom:8px;margin:30px 0 16px}
+h2{font-size:1.3em;margin:24px 0 10px}h3{font-size:1.1em;margin:18px 0 8px}
+code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:0.9em}
+pre{background:var(--code-bg);padding:14px;border-radius:6px;overflow-x:auto;margin:12px 0}
+pre code{padding:0;background:none}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--nav-bg);font-weight:600}
+.nav{background:var(--nav-bg);padding:12px 16px;border-radius:6px;margin:20px 0;font-size:0.9em}
+.nav a{margin-right:12px;display:inline-block}
+.nav b{margin-right:12px;color:var(--fg)}
+hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+p{margin:8px 0}ul,ol{margin:8px 0 8px 24px}
+.badge{display:inline-block;font-size:0.75em;padding:2px 8px;border-radius:10px;margin-left:6px}
+.badge-y{background:#d4edda;color:#155724}.badge-n{background:#f8d7da;color:#721c24}
+</style>
+</head><body>
+<div class="nav"><b>Rssust</b> <a href="index.html">目录</a> <a href="api.html">API</a> <a href="guide_cn.html">指南</a></div>
+<h1>给用户使用的函数——简便</h1>
+<h2>位置</h2>
+<p><code>src/easyuser.rs</code></p>
+<h2>概述</h2>
+<p>封装了一系列辅助函数，供路由开发者（router）方便地调用。所有函数通过 <code>use crate::easyuser::*;</code> 导入。</p>
+<hr />
+<h2>爬虫类</h2>
+<blockquote>
+<p><strong>异步</strong>：项目已迁移到 <code>tokio</code> 异步运行时，以下 fetch 函数均为 <code>async fn</code>，调用时必须加 <code>.await</code>，例如 <code>fetch_reqwest_get(&amp;url).await?</code>。所有 fetch 函数共享一个全局 <code>reqwest::Client</code>（<code>OnceLock</code> 懒加载），复用连接池，不会每次新建。</p>
+</blockquote>
+<h3>fetch_reqwest_get()</h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP GET 请求，返回响应文本。不携带 Cookie，不执行 JavaScript。</p>
+<h3>fetch_reqwest_get_with_headers()</h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_get_with_headers(url: &amp;str, headers: &amp;[(&amp;str, &amp;str)]) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送带自定义 Header 的 HTTP GET 请求。</p>
+<p>示例：</p>
+<pre><code class="language-rust">let headers = &amp;[(&quot;Referer&quot;, &quot;https://example.com&quot;), (&quot;Cookie&quot;, &quot;session=abc&quot;)];
+fetch_reqwest_get_with_headers(&quot;https://api.example.com/data&quot;, headers).await?;
+</code></pre>
+<h3>fetch_reqwest_post()</h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
+<h3>fetch_reqwest_post_json()</h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post_json(url: &amp;str, json_body: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 Content-Type 为 <code>application/json</code> 的 HTTP POST 请求。</p>
+<h3>HttpError</h3>
+<p><strong>签名</strong>: <code>pub struct HttpError { pub status: u16, pub message: String }</code></p>
+<p>自定义错误类型，可携带 HTTP 状态码。路由中可用 <code>HttpError::bad_request(msg)</code>、<code>HttpError::not_found(msg)</code>、<code>HttpError::bad_gateway(msg)</code> 构造。渲染层会优先使用 <code>HttpError</code> 的 <code>status</code> 作为响应状态码、<code>message</code> 作为正文（否则默认 500）。</p>
+<hr />
+<h2>序列化类</h2>
+<h3>params_to_hashmap()</h3>
+<p><strong>签名</strong>: <code>pub fn params_to_hashmap(query: &amp;str) -&gt; HashMap&lt;String, String&gt;</code></p>
+<p>将 <code>key1=value1&amp;key2=value2</code> 格式参数字符串解析为 <code>HashMap</code>。</p>
+<p><strong>用在</strong>: <code>connect::handle_connection()</code> 中解析 URL 查询参数。</p>
+<h3>hashmap_to_params()</h3>
+<p><strong>签名</strong>: <code>pub fn hashmap_to_params(hashmap: HashMap&lt;String, String&gt;) -&gt; String</code></p>
+<p>将 <code>HashMap</code> 序列化为 <code>key1=value1&amp;key2=value2</code> 格式字符串。</p>
+<hr />
+<h2>时间类</h2>
+<h3>now()</h3>
+<p><strong>签名</strong>: <code>pub fn now() -&gt; String</code></p>
+<p>返回当前时间的 RSS 标准格式：<code>Sat, 11 Jul 2026 12:00:00 +0800</code></p>
+<p><strong>用在</strong>: 路由中设置 RSS Item 的 <code>pub_date</code> 字段。</p>
+<h3>chinese_date_to_parse()</h3>
+<p><strong>签名</strong>: <code>pub fn chinese_date_to_parse(input: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将中文日期格式 <code>x月y日</code> 解析为 RSS 标准时间格式。年份取当前年份。</p>
+<p>示例：<code>"7月11日"</code> → <code>"Sat, 11 Jul 2026 00:00:00 +0800"</code></p>
+<h3>timestamp_to_rss()</h3>
+<p><strong>签名</strong>: <code>pub fn timestamp_to_rss(ts: i64) -&gt; String</code></p>
+<p>将 Unix 时间戳（i64）转换为 RSS 标准时间格式。</p>
+<h3>datetime_str_to_rss()</h3>
+<p><strong>签名</strong>: <code>pub fn datetime_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为东八区本地时间</strong>（不做偏移，直接附加 +0800）。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 12:00:00 +0800"</code></p>
+<p>注意：若来源时间是 UTC，请改用 <code>utc_str_to_rss</code>。</p>
+<h3>utc_str_to_rss()</h3>
+<p><strong>签名</strong>: <code>pub fn utc_str_to_rss(datetime_str: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为 UTC 时间</strong>，自动换算为东八区（+0800）后再输出。</p>
+<p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 20:00:00 +0800"</code></p>
+<p>适用于带 <code>Z</code> 后缀的 ISO 时间（如 <code>datePublished</code>），调用前先 <code>s.replace('T', " ").replace('Z', "")</code> 归一化，参见 <code>apnews_topics</code> 的用法。</p>
+<hr />
+<h2>字符类</h2>
+<h3>no_double_quotes()</h3>
+<p><strong>签名</strong>: <code>pub fn no_double_quotes(s: String) -&gt; String</code></p>
+<p>去除字符串首尾的双引号。</p>
+<p><strong>用在</strong>: 路由中清理从 JSON 提取的字符串值，因为 <code>serde_json::Value::to_string()</code> 会给字符串加双引号。</p>
+<h3>env_search()</h3>
+<p><strong>签名</strong>: <code>pub fn env_search(s: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>查找环境变量值，找到返回 <code>Some(val)</code>，找不到返回 <code>None</code>。</p>
+<h3>extract_js_var()</h3>
+<p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
+<p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
+<hr />
+<h2>工具类</h2>
+<h3>parse_bool()</h3>
+<p><strong>签名</strong>: <code>pub fn parse_bool(value: Option&lt;&amp;String&gt;, default: bool) -&gt; bool</code></p>
+<p>将字符串值解析为布尔值。支持 <code>"1"</code> / <code>"true"</code> / <code>"True"</code> → <code>true</code>，<code>"0"</code> / <code>"false"</code> / <code>"False"</code> → <code>false</code>，其他值尝试 <code>parse()</code>，<code>None</code> 返回 <code>default</code>。</p>
+<h3>load_cookie_header()</h3>
+<p><strong>签名</strong>: <code>pub fn load_cookie_header(domain_filter: Option&lt;&amp;str&gt;) -&gt; Result&lt;Option&lt;String&gt;&gt;</code></p>
+<p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie，返回 <code>name=value; name=value...</code> 格式的字符串。可传入 <code>domain_filter</code> 只返回指定域名的 Cookie（如 <code>Some("bilibili.com")</code>）。</p>
+<hr />
+<h2>开发者提示</h2>
+<ul>
+<li>路由中必须导入 <code>use crate::easyuser::*;</code></li>
+<li>从 JSON 提取字符串后记得用 <code>no_double_quotes()</code> 清理</li>
+<li>需要携带 Cookie 时，用 <code>fetch_reqwest_get_with_headers()</code> 配合 <code>load_cookie_header()</code></li>
+<li><strong>所有 fetch 调用都要加 <code>.await</code></strong>（<code>async fn</code>），且不要在持有 scraper 的 <code>Html</code>/<code>Selector</code>/<code>ElementRef</code> 时跨 <code>.await</code>（它们不是 <code>Send</code>），详见 <code>new_router_cn.md</code> 的同步转异步章节</li>
+</ul>
+</body></html>

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 
-const MAINTAINER: &str = "huinyg / Discover Magazine (science news, no official RSS)";
+const MAINTAINER: &str = "huiinyg / Discover Magazine (science news, no official RSS)";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {

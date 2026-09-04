@@ -1,7 +1,7 @@
 # Router-name: hackernews  
 **Commit time:** 2026.08.06  
 **Cookies?:** no  
-**Author:** AI-converted / huinyg-reviewed - based on RSSHub  
+**Author:** AI-converted / huiinyg-reviewed - based on RSSHub  
 **Introduction:** Hacker News Stories (official Algolia API)  
 **Address:** rssust://hackernews  
 **Example:** [rssust://hackernews](/hackernews)  

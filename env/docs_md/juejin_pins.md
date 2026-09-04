@@ -1,7 +1,7 @@
 # Router-name: juejin_pins  
 **Commit time:** 2026.07.29  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核  
+**Author:** AI转写 / huiinyg审核  
 **Introduction:** 掘金沸点  
 **Address:** rssust://juejin_pins  
 **Example:** [rssust://juejin_pins?type=hot](/juejin_pins?type=hot)  

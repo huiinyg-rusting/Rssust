@@ -1,7 +1,7 @@
 # Router-name: bilibili_user_like  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@ygguorun  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@ygguorun  
 **Introduction:** bilibili UP 主点赞视频  
 **Address:** rssust://bilibili_user_like  
 **Example:** [rssust://bilibili_user_like?uid=208259](/bilibili_user_like?uid=208259)  

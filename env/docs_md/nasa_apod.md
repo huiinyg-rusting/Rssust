@@ -1,7 +1,7 @@
 # Router-name: nasa_apod  
 **Commit time:** 2026.08.30  
 **Cookies?:** no  
-**Author:** AI制作 / huinyg-rusting审核  
+**Author:** AI制作 / huiinyg-rusting审核  
 **Introduction:** NASA 每日天文一图（APOD），官方公开 API，无官方 RSS  
 **Address:** rssust://nasa_apod  
 **Example:** [rssust://nasa_apod](/nasa_apod)  

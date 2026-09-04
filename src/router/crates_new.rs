@@ -5,8 +5,8 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huinyg-rusting审核";
-const UA: &str = "rssust/1.0 (Cargo registry aggregator; +https://github.com/huinyg/Rssust)";
+const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
+const UA: &str = "rssust/1.0 (Cargo registry aggregator; +https://github.com/huiinyg/Rssust)";
 
 fn version(c: &Value) -> String {
     c["max_stable_version"]

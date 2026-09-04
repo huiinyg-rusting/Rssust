@@ -1,7 +1,7 @@
 # Router-name: bilibili_partion_ranking  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@lengthmin  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@lengthmin  
 **Introduction:** bilibili 分区视频排行榜  
 **Address:** rssust://bilibili_partion_ranking  
 **Example:** [rssust://bilibili_partion_ranking?tid=1&days=7](/bilibili_partion_ranking?tid=1&days=7)  

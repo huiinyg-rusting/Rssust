@@ -5,7 +5,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huinyg / Smithsonian Magazine (official RSS returns 403)";
+const MAINTAINER: &str = "huiinyg / Smithsonian Magazine (official RSS returns 403)";
 
 fn parse_smithsonian_date(date_str: &str) -> Option<String> {
     let s = date_str.trim().replace("p.m.", "PM").replace("a.m.", "AM");

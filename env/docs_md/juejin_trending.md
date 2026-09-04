@@ -1,7 +1,7 @@
 # Router-name: juejin_trending  
 **Commit time:** 2026.07.29  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核  
+**Author:** AI转写 / huiinyg审核  
 **Introduction:** 掘金热门文章  
 **Address:** rssust://juejin_trending  
 **Example:** [rssust://juejin_trending](/juejin_trending)  

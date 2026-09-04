@@ -1,7 +1,7 @@
 # Router-name: bilibili_link_news  
 **Commit time:** 2026.07.19  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@Qixingchen  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@Qixingchen  
 **Introduction:** bilibili 直播/小视频/相簿公告  
 **Address:** rssust://bilibili_link_news  
 **Example:** [rssust://bilibili_link_news?product=live](/bilibili_link_news?product=live)  

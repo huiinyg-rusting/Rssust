@@ -1,7 +1,7 @@
 # Router-name: bilibili_vsearch  
 **Commit time:** 2026.07.19  
 **Cookies?:** yes (bilibili.com)  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@pcrtool & DIYgod  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@pcrtool & DIYgod  
 **Introduction:** bilibili 视频搜索  
 **Address:** rssust://bilibili_vsearch  
 **Example:** [rssust://bilibili_vsearch?kw=linux](/bilibili_vsearch?kw=linux)  

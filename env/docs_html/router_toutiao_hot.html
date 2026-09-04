@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>toutiao_hot - Rssust 文档</title>
+<style>
+:root { --bg:#fafafa; --fg:#222; --accent:#0366d6; --border:#ddd; --code-bg:#f6f8fa; --nav-bg:#f0f0f0; }
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a2e;--fg:#e0e0e0;--accent:#58a6ff;--border:#333;--code-bg:#16213e;--nav-bg:#0f0f23;}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;max-width:960px;margin:0 auto;padding:20px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:1.6em;border-bottom:2px solid var(--border);padding-bottom:8px;margin:30px 0 16px}
+h2{font-size:1.3em;margin:24px 0 10px}h3{font-size:1.1em;margin:18px 0 8px}
+code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:0.9em}
+pre{background:var(--code-bg);padding:14px;border-radius:6px;overflow-x:auto;margin:12px 0}
+pre code{padding:0;background:none}
+table{border-collapse:collapse;width:100%;margin:12px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--nav-bg);font-weight:600}
+.nav{background:var(--nav-bg);padding:12px 16px;border-radius:6px;margin:20px 0;font-size:0.9em}
+.nav a{margin-right:12px;display:inline-block}
+.nav b{margin-right:12px;color:var(--fg)}
+hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+p{margin:8px 0}ul,ol{margin:8px 0 8px 24px}
+.badge{display:inline-block;font-size:0.75em;padding:2px 8px;border-radius:10px;margin-left:6px}
+.badge-y{background:#d4edda;color:#155724}.badge-n{background:#f8d7da;color:#721c24}
+</style>
+</head><body>
+<div class="nav"><b>Rssust</b> <a href="index.html">目录</a> <a href="api.html">API</a> <a href="guide_cn.html">指南</a></div>
+<h1>Router-name: toutiao_hot</h1>
+<p><strong>Commit time:</strong> 2026.08.31<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 今日头条热榜（公开 JSON API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://toutiao_hot<br />
+<strong>Example:</strong> <a href="/toutiao_hot">rssust://toutiao_hot</a><br />
+<strong>robots.txt:</strong> 允许抓取；toutiao.com 的 robots 仅 Disallow /search、/item、/group、/m1-m8、/trending/ 等路径，本路由只请求 <code>/hot-event/</code><br />
+<strong>Parameter:</strong><br />
+1. <strong>count</strong><br />
+   Type of parameter: int<br />
+   Default value: 50<br />
+   Meaning: 返回热搜条目数，范围 1-50<br />
+<strong>Environment Variables:</strong> no</p>
+</body></html>

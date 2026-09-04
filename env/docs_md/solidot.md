@@ -1,7 +1,7 @@
 # Router-name: solidot
 **Commit time:** 2026.07.21  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL  
 **Introduction:** 奇客的资讯，重要的东西  
 **Address:** rssust://solidot  
 **Example:** [rssust://solidot](/solidot)  

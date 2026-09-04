@@ -1,7 +1,7 @@
 # Router-name: ithome_ranking  
 **Commit time:** 2026.07.21  
 **Cookies?:** no  
-**Author:** AI转写 / huinyg审核 - 来源于RSShub@immmortal, luyuhuang  
+**Author:** AI转写 / huiinyg审核 - 来源于RSShub@immmortal, luyuhuang  
 **Introduction:** IT之家热榜  
 **Address:** rssust://ithome_ranking  
 **Example:** [rssust://ithome_ranking?type=24h](/ithome_ranking?type=24h)  

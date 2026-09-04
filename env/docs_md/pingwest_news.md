@@ -1,7 +1,7 @@
 # Router-name: pingwest_news  
 **Commit time:** 2026.08.08  
 **Cookies?:** no  
-**Author:** AI-converted / huinyg-reviewed - based on RSSHub  
+**Author:** AI-converted / huiinyg-reviewed - based on RSSHub  
 **Introduction:** 品玩 PingWest 首页精选资讯（无官方 RSS，抓取首页静态区块）  
 **Address:** rssust://pingwest_news  
 **Example:** [rssust://pingwest_news](/pingwest_news)  
