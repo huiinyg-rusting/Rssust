@@ -44,6 +44,9 @@ impl HttpError {
     }
 }
 
+///通用 Chrome UA，多数路由可直接引用，避免重复定义。
+pub const UA_CHROME: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
 fn client() -> &'static reqwest::Client {
     static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
     CLIENT.get_or_init(|| {
@@ -451,4 +454,45 @@ pub async fn fetch_browser_get_with_headers_profile(
         warn!("GET (browser/{}) {} returned empty body", profile, url);
     }
     Ok(text)
+}
+
+///按字符数截断字符串，超长时末尾追加省略号（…）
+pub fn truncate(s: &str, n: usize) -> String {
+    let mut cs = s.chars();
+    let mut out: String = cs.by_ref().take(n).collect();
+    if cs.next().is_some() {
+        out.push('…');
+    }
+    out
+}
+
+///将相对路径/绝对路径 href 解析为完整的 URL（基于 base 推断 scheme/host/path）。
+///非相对路径（http(s):、mailto:、javascript: 等）原样返回。
+pub fn resolve_url(href: &str, base: &str) -> String {
+    if href.starts_with("http") {
+        return href.to_string();
+    }
+    if let Some(i) = href.find(':') {
+        let (before, _) = href.split_at(i);
+        if !before.contains('/') {
+            return href.to_string();
+        }
+    }
+    let (scheme, rest) = base.split_once("://").unwrap_or(("http", base));
+    let (host, path) = match rest.split_once('/') {
+        Some((h, p)) => (h, p),
+        None => (rest, ""),
+    };
+    let mut segs: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
+    for part in href.split('/') {
+        if part.is_empty() || part == "." {
+            continue;
+        }
+        if part == ".." {
+            segs.pop();
+        } else {
+            segs.push(part);
+        }
+    }
+    format!("{}://{}/{}", scheme, host, segs.join("/"))
 }

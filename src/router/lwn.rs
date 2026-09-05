@@ -3,7 +3,7 @@ use anyhow::{Error, Result, anyhow};
 use rss::*;
 use std::collections::HashMap;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 const MAINTAINER: &str = "AI转写 / huiinyg审核";
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {

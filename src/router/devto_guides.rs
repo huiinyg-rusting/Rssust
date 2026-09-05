@@ -3,7 +3,7 @@ use rss::{Channel, ChannelBuilder, ItemBuilder};
 use std::collections::HashMap;
 
 const RSS_URL: &str = "https://dev.to/feed/tag/guides";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = crate::easyuser::UA_CHROME;
 
 ///DEV.to Trending Guides
 ///来源：dev.to 官方 RSS（tag=guides）

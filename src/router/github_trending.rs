@@ -4,7 +4,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 ///GitHub Trending repositories (no official RSS, robots.txt allows /trending).
 ///Params: since (daily/weekly/monthly, default daily), limit (optional, max 25, default 25)

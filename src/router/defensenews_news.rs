@@ -8,7 +8,7 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 
 const MAINTAINER: &str = "huiinyg / Defense News (defense & military news, no official RSS)";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers("https://www.defensenews.com", &[("User-Agent", UA)])

@@ -404,7 +404,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let cookie_header = build_cookie_header().ok().flatten();
     let referer = format!("https://space.bilibili.com/{}/", uid);
-    let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let ua = UA_CHROME;
     let mut headers: Vec<(&str, &str)> = vec![("Referer", &referer), ("User-Agent", ua)];
     if let Some(cookie) = &cookie_header {
         headers.push(("Cookie", cookie));

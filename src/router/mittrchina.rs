@@ -4,7 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 ///麻省理工科技评论 (MIT Technology Review 中文站)
 ///type: index=首页资讯 hot=本周热榜 breaking=快讯 video=视频，默认 index

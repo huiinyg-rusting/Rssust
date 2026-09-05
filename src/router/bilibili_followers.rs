@@ -30,7 +30,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     }
 
     let referer = format!("https://space.bilibili.com/{}/", vmid);
-    let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let ua = UA_CHROME;
     let cookie = cookie_header.unwrap_or_default();
     let headers: Vec<(&str, &str)> = vec![
         ("Referer", referer.as_str()),

@@ -18,7 +18,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .as_array()
         .ok_or_else(|| anyhow!("找不到 result 字段"))?;
 
-    let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let ua = UA_CHROME;
 
     let mut item_vec = Vec::new();
     for entry in result {

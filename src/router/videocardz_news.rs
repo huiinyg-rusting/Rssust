@@ -77,7 +77,7 @@ fn parse_entry(entry_html: &str) -> Result<(String, String, String)> {
 }
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let ua = UA_CHROME;
 
     let html = fetch_reqwest_get_with_headers(BASE_URL, &[("User-Agent", ua)]).await?;
 

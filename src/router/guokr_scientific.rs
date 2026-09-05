@@ -5,7 +5,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 ///果壳网科学人：抓取 science_api 列表，抓详情页补全正文。
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {

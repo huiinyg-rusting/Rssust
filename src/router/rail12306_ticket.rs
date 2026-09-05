@@ -4,7 +4,7 @@ use rss::*;
 use std::collections::HashMap;
 use tracing::debug;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 ///12306 售票信息：查询两站之间的车次余票。
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {

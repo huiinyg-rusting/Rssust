@@ -6,7 +6,7 @@ use scraper::{Html, Selector};
 use std::collections::HashMap;
 
 const HOME: &str = "https://www.pingwest.com/";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 
 ///PingWest (品玩) homepage articles (no official RSS, robots.txt allows). Server-side rendered headline / hot-recommend / featured sections.
 ///Params: limit (optional, max 20, default 14)

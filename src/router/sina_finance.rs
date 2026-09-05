@@ -5,16 +5,6 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
-
-fn truncate(s: &str, n: usize) -> String {
-    let mut cs = s.chars();
-    let mut out: String = cs.by_ref().take(n).collect();
-    if cs.next().is_some() {
-        out.push('…');
-    }
-    out
-}
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let count = para
@@ -28,7 +18,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = serde_json::from_str(
-        fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA)])
+        fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA_CHROME)])
             .await?
             .as_str(),
     )?;

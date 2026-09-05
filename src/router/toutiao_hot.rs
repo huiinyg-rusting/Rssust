@@ -5,7 +5,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 const URL: &str = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {

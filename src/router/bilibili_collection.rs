@@ -28,7 +28,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         uid, sid, sort_reverse_str, page_num, page_size
     );
     let referer = format!("https://space.bilibili.com/{}/", uid);
-    let ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    let ua = UA_CHROME;
     let headers: Vec<(&str, &str)> = vec![("Referer", referer.as_str()), ("User-Agent", ua)];
     let json: Value = serde_json::from_str(
         fetch_reqwest_get_with_headers(url.as_str(), &headers)

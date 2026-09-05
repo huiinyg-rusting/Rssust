@@ -4,7 +4,7 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+const UA: &str = UA_CHROME;
 const BASE: &str = "https://www.cenc.ac.cn/";
 
 ///中国地震台网中心 最新地震：抓取官网首页"最新地震"区块（服务端渲染）。

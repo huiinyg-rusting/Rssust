@@ -10,7 +10,7 @@ const MAINTAINER: &str = "huiinyg / Scientific American (science & technology, n
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
         "https://www.scientificamerican.com",
-        &[("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")],
+        &[("User-Agent", UA_CHROME)],
     ).await?;
 
     let doc = Html::parse_document(&html);

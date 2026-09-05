@@ -5,34 +5,10 @@ use rss::*;
 use std::collections::HashMap;
 
 const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
-const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 const PAGE_URL: &str = "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/";
 
-fn resolve_url(href: &str, base: &str) -> String {
-    if href.starts_with("http") {
-        return href.to_string();
-    }
-    let (scheme, rest) = base.split_once("://").unwrap_or(("http", base));
-    let (host, path) = match rest.split_once('/') {
-        Some((h, p)) => (h, p),
-        None => (rest, ""),
-    };
-    let mut segs: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
-    for part in href.split('/') {
-        if part.is_empty() || part == "." {
-            continue;
-        }
-        if part == ".." {
-            segs.pop();
-        } else {
-            segs.push(part);
-        }
-    }
-    format!("{}://{}/{}", scheme, host, segs.join("/"))
-}
-
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let body = fetch_reqwest_get_with_headers(PAGE_URL, &[("User-Agent", UA)]).await?;
+    let body = fetch_reqwest_get_with_headers(PAGE_URL, &[("User-Agent", UA_CHROME)]).await?;
     let re = Regex::new(
         r#"<a href="([^"]+)"[^>]*>([^<]+)</a>\s*<span>([0-9]{4}-[0-9]{2}-[0-9]{2})</span>"#,
     )
