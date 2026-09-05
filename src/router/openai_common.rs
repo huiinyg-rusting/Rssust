@@ -11,12 +11,6 @@ pub const RSS_URL: &str = "https://openai.com/news/rss.xml";
 const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 const PROFILE: &str = "chrome110";
 
-pub fn parse_pub_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc2822(s)
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(|_| now())
-}
-
 /// 抓取文章详情页，返回 (内容HTML, 分类列表, 作者, 图片)
 pub async fn fetch_article_details(
     url: &str,
@@ -141,7 +135,7 @@ pub async fn fetch_articles(limit: usize, category: Option<&str>) -> Result<Vec<
             .title(Some(title))
             .link(link.clone())
             .description(Some(desc))
-            .pub_date(parse_pub_date(&pub_date))
+            .pub_date(rfc2822_to_rss(&pub_date))
             .guid(if guid.is_empty() {
                 rss::Guid {
                     value: link.clone(),

@@ -4,25 +4,11 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
+use crate::router::github_common::{API, owner_repo, rest_get};
 ///GitHub 仓库贡献者列表，经 REST `GET /repos/{owner}/{repo}/contributors` 获取。
 ///Params: owner, repo, order (desc/asc, 默认desc), anon (1=包含匿名贡献者), limit (默认30, 最大100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let order = para
         .get("order")
         .cloned()
@@ -34,7 +20,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(30)
         .min(100);
 
-    let token = token()?;
     let mut url = format!(
         "{}/repos/{}/{}/contributors?per_page={}",
         API, owner, repo, limit
@@ -43,17 +28,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         url.push_str("&anon=1");
     }
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let mut contributors = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?

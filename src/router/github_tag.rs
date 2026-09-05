@@ -4,45 +4,20 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
+use crate::router::github_common::{API, owner_repo, rest_get};
 ///GitHub repository Tags via REST API `GET /repos/{owner}/{repo}/tags`.
 ///Params: owner, repo, limit (default 30, max 100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())
         .unwrap_or(30)
         .min(100);
 
-    let token = token()?;
     let url = format!("{}/repos/{}/{}/tags?per_page={}", API, owner, repo, limit);
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let tags = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;

@@ -1,6 +1,5 @@
 use crate::easyuser::*;
 use anyhow::{Error, Result, anyhow};
-use chrono::DateTime;
 use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -15,13 +14,6 @@ fn version(c: &Value) -> String {
         .or_else(|| c["default_version"].as_str())
         .unwrap_or("")
         .to_string()
-}
-
-fn crates_pubdate(created: &str) -> String {
-    DateTime::parse_from_rfc3339(created)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
 }
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
@@ -79,7 +71,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                         .build(),
                 ))
                 .description(Some(desc))
-                .pub_date(crates_pubdate(c["created_at"].as_str().unwrap_or("")))
+                .pub_date(rfc3339_to_rss(c["created_at"].as_str().unwrap_or("")))
                 .build(),
         );
     }

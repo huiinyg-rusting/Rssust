@@ -6,13 +6,6 @@ use std::collections::HashMap;
 
 const UA: &str = UA_CHROME;
 
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
 ///GitHub Topics page (scraped HTML, no official RSS).
 ///Params: name (topic name, e.g. framework), qs (optional query string like `l=php&o=desc&s=stars`), limit (default 25)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
@@ -95,7 +88,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .select(&time_sel)
             .next()
             .and_then(|t| t.value().attr("datetime"))
-            .map(parse_github_date)
+            .map(rfc3339_to_rss)
             .unwrap_or_else(now);
 
         item_vec.push(

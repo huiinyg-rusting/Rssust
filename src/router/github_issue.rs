@@ -4,32 +4,11 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{API, owner_repo, rest_get};
 ///GitHub repository open Issues via REST API `GET /repos/{owner}/{repo}/issues`.
 ///Params: owner, repo, state (open/closed/all, default open), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let state = para.get("state").cloned().unwrap_or_else(|| "open".to_string());
     let limit = para
         .get("limit")
@@ -37,23 +16,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(50);
 
-    let token = token()?;
     let url = format!(
         "{}/repos/{}/{}/issues?state={}&per_page={}",
         API, owner, repo, state, limit
     );
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let issues = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
@@ -99,7 +67,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .title(Some(format!("#{} {}", number, title)))
             .link(html_url.to_string())
             .description(Some(desc))
-            .pub_date(parse_github_date(created_at))
+            .pub_date(rfc3339_to_rss(created_at))
             .author(Some(user.to_string()))
             .build();
         item_vec.push(item);

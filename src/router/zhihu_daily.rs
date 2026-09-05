@@ -1,6 +1,5 @@
 use crate::easyuser::*;
 use anyhow::{Error, Result, anyhow};
-use chrono::NaiveDate;
 use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -8,8 +7,7 @@ use std::collections::HashMap;
 const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 
 fn daily_pubdate(date_str: &str) -> Option<String> {
-    let d = NaiveDate::parse_from_str(date_str, "%Y%m%d").ok()?;
-    Some(d.format("%a, %d %b %Y 00:00:00 +0800").to_string())
+    date_str_to_rss(date_str, "%Y%m%d", "+0800")
 }
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {

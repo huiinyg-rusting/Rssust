@@ -4,32 +4,11 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const GRAPHQL: &str = "https://api.github.com/graphql";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{gql_post, owner_repo};
 ///GitHub 仓库 Discussion 列表（GraphQL，需 token）。
 ///Params: owner, repo, state (open/closed/answered/unanswered/locked/unlocked/all), category(分类名), limit (默认20, 最大100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let state = para
         .get("state")
         .cloned()
@@ -41,13 +20,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(100);
 
-    let token = token()?;
-    let auth = format!("Bearer {}", token);
-    let headers: [(&str, &str); 3] = [
-        ("Authorization", auth.as_str()),
-        ("User-Agent", "rssust-github-router/1.0"),
-        ("Accept", "application/vnd.github+json"),
-    ];
 
     let owner_q = serde_json::to_string(&owner).unwrap_or_else(|_| format!("\"{}\"", owner));
     let repo_q = serde_json::to_string(&repo).unwrap_or_else(|_| format!("\"{}\"", repo));
@@ -75,8 +47,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             owner_q, repo_q
         );
         let cat_body = serde_json::json!({ "query": cat_query }).to_string();
-        let cat_resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &cat_body, &headers).await?;
-        let cat_json: Value = serde_json::from_str(&cat_resp)?;
+        let cat_json: Value = gql_post(&cat_body).await?;
         let mut cat_id: Option<String> = None;
         if let Some(nodes) = cat_json
             .pointer("/data/repository/discussionCategories/nodes")
@@ -101,8 +72,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     // GitHub GraphQL 要求 body 为 JSON: {"query": "..."}，不能直接发送原始查询字符串
     let query_body = serde_json::json!({ "query": query }).to_string();
-    let resp = fetch_reqwest_post_json_with_headers(GRAPHQL, &query_body, &headers).await?;
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = gql_post(&query_body).await?;
 
     let nodes = json
         .pointer("/data/repository/discussions/nodes")
@@ -139,7 +109,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             } else {
                 Some(desc)
             })
-            .pub_date(parse_github_date(created))
+            .pub_date(rfc3339_to_rss(created))
             .author(Some(author.to_string()))
             .guid(rss::Guid {
                 value: url.to_string(),

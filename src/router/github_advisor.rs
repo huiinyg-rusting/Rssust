@@ -6,12 +6,7 @@ use std::collections::HashMap;
 
 const API: &str = "https://api.github.com/advisories";
 
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
+use crate::router::github_common::rest_get;
 fn render_markdown(s: &str) -> String {
     let mut html = String::new();
     let mut in_list = false;
@@ -71,23 +66,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(50);
 
-    let token = token()?;
     let mut url = format!("{}?type={}&per_page={}", API, route_type, limit);
     if !ecosystem.is_empty() {
         url.push_str(&format!("&ecosystem={}", ecosystem));
     }
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let advisories = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
@@ -144,9 +128,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             format!("[{}] {}", severity.to_uppercase(), summary)
         };
 
-        let pub_date = chrono::DateTime::parse_from_rfc3339(published)
-            .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-            .unwrap_or_else(|_| now());
+        let pub_date = rfc3339_to_rss(published);
 
         item_vec.push(
             ItemBuilder::default()

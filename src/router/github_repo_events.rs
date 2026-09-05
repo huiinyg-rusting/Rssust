@@ -4,21 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{API, owner_repo, rest_get};
 ///事件类型 → 过滤 token（与 RSSHub /github/repo_event 的 types 参数一致）
 fn event_token(typ: &str) -> &'static str {
     match typ {
@@ -231,14 +217,7 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
 ///GitHub 仓库事件流，经 REST `GET /repos/{owner}/{repo}/events` 获取。
 ///Params: owner, repo, types (可过滤, 逗号分隔, 默认 all), limit (默认30, 最大100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let types = para
         .get("types")
         .cloned()
@@ -250,23 +229,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(30)
         .min(100);
 
-    let token = token()?;
     let url = format!(
         "{}/repos/{}/{}/events?per_page={}",
         API, owner, repo, limit
     );
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let events = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
@@ -302,7 +270,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .unwrap_or_else(|| format!("https://github.com/{}/{}", owner, repo)),
             )
             .description(if desc.is_empty() { None } else { Some(desc) })
-            .pub_date(parse_github_date(created))
+            .pub_date(rfc3339_to_rss(created))
             .author(e["actor"]["login"].as_str().map(String::from))
             .guid(rss::Guid {
                 value: format!(

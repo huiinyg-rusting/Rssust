@@ -383,6 +383,40 @@ pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String> {
     )
 }
 
+/// 解析 RFC3339（ISO8601）时间字符串 → RSS pubDate，无效返回当前时间
+pub fn rfc3339_to_rss(s: &str) -> String {
+    chrono::DateTime::parse_from_rfc3339(s)
+        .ok()
+        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
+        .unwrap_or_else(now)
+}
+
+/// 解析 RFC3339 时间字符串并统一转为 UTC → RSS pubDate，无效返回当前时间
+pub fn rfc3339_to_rss_utc(s: &str) -> String {
+    chrono::DateTime::parse_from_rfc3339(s)
+        .ok()
+        .map(|dt| {
+            dt.with_timezone(&chrono::Utc)
+                .format("%a, %d %b %Y %H:%M:%S %z")
+                .to_string()
+        })
+        .unwrap_or_else(now)
+}
+
+/// 解析 RFC2822 时间字符串 → RSS pubDate，无效返回当前时间
+pub fn rfc2822_to_rss(s: &str) -> String {
+    chrono::DateTime::parse_from_rfc2822(s)
+        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
+        .unwrap_or_else(|_| now())
+}
+
+/// 按指定格式解析日期字符串（无时间）→ RSS pubDate（固定 00:00:00 + 时区偏移）
+pub fn date_str_to_rss(date_str: &str, fmt: &str, offset: &str) -> Option<String> {
+    chrono::NaiveDate::parse_from_str(date_str, fmt)
+        .ok()
+        .map(|d| d.format(&format!("%a, %d %b %Y 00:00:00 {}", offset)).to_string())
+}
+
 /// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（输入视为 UTC 时间，自动换算为东八区）
 pub fn utc_str_to_rss(datetime_str: &str) -> Option<String> {
     let naive = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S").ok()?;
@@ -467,7 +501,7 @@ pub fn truncate(s: &str, n: usize) -> String {
 }
 
 ///将相对路径/绝对路径 href 解析为完整的 URL（基于 base 推断 scheme/host/path）。
-///非相对路径（http(s):、mailto:、javascript: 等）原样返回。
+///根相对路径（以 / 开头）从 host 根开始解析；非相对路径（http(s):、mailto: 等）原样返回。
 pub fn resolve_url(href: &str, base: &str) -> String {
     if href.starts_with("http") {
         return href.to_string();
@@ -483,7 +517,11 @@ pub fn resolve_url(href: &str, base: &str) -> String {
         Some((h, p)) => (h, p),
         None => (rest, ""),
     };
-    let mut segs: Vec<&str> = path.split('/').filter(|s| !s.is_empty()).collect();
+    let mut segs: Vec<&str> = if href.starts_with('/') {
+        Vec::new()
+    } else {
+        path.split('/').filter(|s| !s.is_empty()).collect()
+    };
     for part in href.split('/') {
         if part.is_empty() || part == "." {
             continue;
@@ -495,4 +533,27 @@ pub fn resolve_url(href: &str, base: &str) -> String {
         }
     }
     format!("{}://{}/{}", scheme, host, segs.join("/"))
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn resolve_url_relative() {
+        let base = "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/";
+        assert_eq!(super::resolve_url("202609/t20260902_1448704.html", base),
+                   "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/202609/t20260902_1448704.html");
+    }
+    #[test]
+    fn resolve_url_root_relative() {
+        let base = "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/";
+        assert_eq!(super::resolve_url("/jyb_rs/bumen_sijuzhineng/202609/t20260901_1448703.html", base),
+                   "http://www.moe.gov.cn/jyb_rs/bumen_sijuzhineng/202609/t20260901_1448703.html");
+    }
+    #[test]
+    fn resolve_url_abs() {
+        let base = "http://a.com/x/y/";
+        assert_eq!(super::resolve_url("https://other.com/f", base), "https://other.com/f");
+        assert_eq!(super::resolve_url("../z.html", base), "http://a.com/x/z.html");
+        assert_eq!(super::resolve_url("http://a.com/t", base), "http://a.com/t");
+    }
 }

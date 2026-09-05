@@ -4,21 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{API, rest_get};
 ///GitHub user recent public events via REST API `GET /users/{username}/events`.
 ///Params: username, limit (default 30, max 100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
@@ -32,20 +18,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(30)
         .min(100);
 
-    let token = token()?;
     let url = format!("{}/users/{}/events?per_page={}", API, username, limit);
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     let events = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
@@ -245,7 +220,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 .title(Some(title))
                 .link(link)
                 .description(Some(desc))
-                .pub_date(parse_github_date(created_at))
+                .pub_date(rfc3339_to_rss(created_at))
                 .guid(rss::Guid {
                     value: id.to_string(),
                     permalink: false,

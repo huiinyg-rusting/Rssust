@@ -4,21 +4,7 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{API, rest_get};
 ///GitHub repository search via REST API `GET /search/repositories`.
 ///Params: q (query, required), sort (stars/forks/updated/help-wanted-issues/best-match, default stars), order (asc/desc, default desc), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
@@ -35,7 +21,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(50);
 
-    let token = token()?;
     let url = format!(
         "{}/search/repositories?q={}&sort={}&order={}&per_page={}",
         API,
@@ -45,17 +30,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         limit
     );
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get(&url).await?;
     if json["message"].as_str().is_some() {
         return Err(anyhow!(
             "GitHub API error: {}",
@@ -111,7 +86,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .title(Some(full_name.to_string()))
             .link(html_url.to_string())
             .description(if desc.is_empty() { None } else { Some(desc) })
-            .pub_date(parse_github_date(updated_at))
+            .pub_date(rfc3339_to_rss(updated_at))
             .author(Some(owner.to_string()))
             .build();
         item_vec.push(item);

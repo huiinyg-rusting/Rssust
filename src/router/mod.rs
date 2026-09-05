@@ -45,6 +45,7 @@ pub mod gelonghui_home;
 pub mod github_advisor;
 pub mod github_branch;
 pub mod github_commits;
+pub mod github_common;
 pub mod github_contributors;
 pub mod github_discussions;
 pub mod github_followers;

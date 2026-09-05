@@ -4,56 +4,24 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const API: &str = "https://api.github.com";
-
-fn token() -> Result<String> {
-    env_search("GITHUB_TOKEN").ok_or_else(|| {
-        anyhow!("Environment variable GITHUB_TOKEN is required (GitHub PAT). See docs.")
-    })
-}
-
-fn parse_github_date(s: &str) -> String {
-    chrono::DateTime::parse_from_rfc3339(s)
-        .ok()
-        .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
-        .unwrap_or_else(now)
-}
-
+use crate::router::github_common::{API, owner_repo, rest_get_with_accept};
 ///GitHub 仓库加星用户时间线，经 REST `GET /repos/{owner}/{repo}/stargazers` 获取
 ///（`application/vnd.github.star+json` 媒体类型以携带 starred_at 时间）。
 ///Params: owner, repo, limit (默认30, 最大100)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let owner = para
-        .get("owner")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing owner parameter (repository owner)"))?;
-    let repo = para
-        .get("repo")
-        .cloned()
-        .ok_or_else(|| anyhow!("Missing repo parameter (repository name)"))?;
+    let (owner, repo) = owner_repo(&para)?;
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())
         .unwrap_or(30)
         .min(100);
 
-    let token = token()?;
     let url = format!(
         "{}/repos/{}/{}/stargazers?per_page={}",
         API, owner, repo, limit
     );
 
-    let resp = fetch_reqwest_get_with_headers(
-        &url,
-        &[
-            ("Authorization", &format!("Bearer {}", token)),
-            ("User-Agent", "rssust-github-router/1.0"),
-            ("Accept", "application/vnd.github.star+json"),
-        ],
-    )
-    .await?;
-
-    let json: Value = serde_json::from_str(&resp)?;
+    let json: Value = rest_get_with_accept(&url, "application/vnd.github.star+json").await?;
     if let Some(msg) = json["message"].as_str() {
         return Err(anyhow!("GitHub API error: {}", msg));
     }
@@ -86,7 +54,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .title(Some(title))
             .link(html_url.to_string())
             .description(Some(desc))
-            .pub_date(parse_github_date(starred))
+            .pub_date(rfc3339_to_rss(starred))
             .author(Some(login.to_string()))
             .guid(rss::Guid {
                 value: format!(

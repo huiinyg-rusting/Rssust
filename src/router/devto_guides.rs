@@ -43,7 +43,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .title(Some(title))
             .link(link)
             .description(Some(desc))
-            .pub_date(crate::router::openai_common::parse_pub_date(&pub_date))
+            .pub_date(crate::easyuser::rfc2822_to_rss(&pub_date))
             .guid(if guid.is_empty() {
                 rss::Guid {
                     value: link_for_guid,

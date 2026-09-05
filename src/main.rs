@@ -66,15 +66,24 @@ async fn main() {
     info!("Starting server, listening on {}", addr);
     rssust::rate_limit::spawn_cleaner();
     loop {
-        let (stream, _) = match listener.accept().await {
-            Ok(s) => s,
-            Err(e) => {
-                warn!("Failed to accept connection: {}", e);
-                continue;
+        tokio::select! {
+            result = listener.accept() => {
+                match result {
+                    Ok((stream, _)) => {
+                        tokio::spawn(handle_connection(stream));
+                    }
+                    Err(e) => {
+                        warn!("Failed to accept connection: {}", e);
+                    }
+                }
             }
-        };
-        tokio::spawn(handle_connection(stream));
+            _ = tokio::signal::ctrl_c() => {
+                info!("Received Ctrl-C, shutdown requested");
+                break;
+            }
+        }
     }
+    info!("Server stopped.");
 }
 
 fn print_usage() {

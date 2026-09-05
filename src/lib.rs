@@ -332,6 +332,24 @@ pub mod connect {
         stream.flush().await
     }
 
+    ///将请求的相对路径安全地拼到 exe 目录下，拒绝 `..`/`.` 段等目录穿越。
+    fn safe_join(exe_dir: &Path, rel: &str) -> Option<std::path::PathBuf> {
+        let rel = rel.trim_matches('/');
+        if rel.is_empty() {
+            return None;
+        }
+        if rel.split('/').any(|seg| seg == ".." || seg == ".") {
+            return None;
+        }
+        let joined = exe_dir.join(rel);
+        let base = exe_dir.canonicalize().unwrap_or_else(|_| exe_dir.to_path_buf());
+        let norm = joined.canonicalize().unwrap_or_else(|_| joined.clone());
+        if !norm.starts_with(&base) {
+            return None;
+        }
+        Some(joined)
+    }
+
     ///This function sends the content of index.html to the caller; otherwise, it sends an error with an anyhow text error type.‌
     /// The response returned to the caller is in HTML format.
     pub async fn show_index_doc() -> Result<String, Error> {
@@ -354,7 +372,15 @@ pub mod connect {
             .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
 
-        let mut raw = exe_dir.join(path.trim_matches('/'));
+        let raw = match safe_join(exe_dir, path) {
+            Some(p) => p,
+            None => {
+                return Ok(fs::read_to_string(exe_dir.join("docs/404.html"))
+                    .await
+                    .context("404 html Operation failed")?);
+            }
+        };
+        let mut raw = raw;
         if raw.is_dir() {
             raw = raw.join("index.html");
         }
@@ -373,7 +399,8 @@ pub mod connect {
             .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
 
-        fs::read(exe_dir.join(path.trim_matches('/')))
+        let raw = safe_join(exe_dir, path).ok_or_else(|| anyhow!("404NotFound"))?;
+        fs::read(raw)
             .await
             .map_err(|e| anyhow!(format!("{}:{}", path, e.kind())))
     }
