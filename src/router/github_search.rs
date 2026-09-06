@@ -31,12 +31,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = rest_get(&url).await?;
-    if json["message"].as_str().is_some() {
-        return Err(anyhow!(
-            "GitHub API error: {}",
-            json["message"].as_str().unwrap_or("")
-        ));
-    }
 
     let items = json["items"]
         .as_array()

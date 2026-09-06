@@ -36,13 +36,30 @@ fn refs_from<'a>(headers: &'a [(&'a str, String)]) -> Vec<(&'a str, &'a str)> {
     headers.iter().map(|(k, v)| (*k, v.as_str())).collect()
 }
 
+///统一解析 GitHub REST 错误对象（`{message, ...}`），无错误返回 Ok
+fn rest_error(json: &Value) -> Result<(), Error> {
+    if let Some(msg) = json["message"].as_str() {
+        let hint = if json["status"].as_str() == Some("403")
+            && (msg.contains("not accessible") || msg.contains("token"))
+        {
+            " (可能因 PAT 权限不足，请检查 token 的仓库权限)"
+        } else {
+            ""
+        };
+        return Err(anyhow!("GitHub API error: {}{}", msg, hint));
+    }
+    Ok(())
+}
+
 ///GET 请求 GitHub REST API（自动附带鉴权），返回解析后的 JSON
 pub async fn rest_get(url: &str) -> Result<Value, Error> {
     let token = token()?;
     let headers = rest_headers(&token);
     let refs = refs_from(&headers);
     let resp = fetch_reqwest_get_with_headers(url, &refs).await?;
-    Ok(serde_json::from_str(&resp)?)
+    let json: Value = serde_json::from_str(&resp)?;
+    rest_error(&json)?;
+    Ok(json)
 }
 
 ///GET 请求 GitHub REST API，可自定义 Accept 头（如 `application/vnd.github.star+json`）
@@ -53,7 +70,9 @@ pub async fn rest_get_with_accept(url: &str, accept: &str) -> Result<Value, Erro
     headers.push(("Accept", accept.to_string()));
     let refs = refs_from(&headers);
     let resp = fetch_reqwest_get_with_headers(url, &refs).await?;
-    Ok(serde_json::from_str(&resp)?)
+    let json: Value = serde_json::from_str(&resp)?;
+    rest_error(&json)?;
+    Ok(json)
 }
 
 ///POST 请求 GitHub GraphQL API（自动附带鉴权），统一检查 errors 后返回 JSON

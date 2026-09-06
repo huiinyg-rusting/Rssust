@@ -115,4 +115,3 @@
 - [yicai_latest](yicai_latest.md)
 - [zhihu_daily](zhihu_daily.md)
 - [zhihu_hot](zhihu_hot.md)
-- [zhihu_daily](zhihu_daily.md)

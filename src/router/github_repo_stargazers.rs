@@ -22,9 +22,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     );
 
     let json: Value = rest_get_with_accept(&url, "application/vnd.github.star+json").await?;
-    if let Some(msg) = json["message"].as_str() {
-        return Err(anyhow!("GitHub API error: {}", msg));
-    }
     let stargazers = json
         .as_array()
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
