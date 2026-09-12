@@ -20,7 +20,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(100);
 
-
     let owner_q = serde_json::to_string(&owner).unwrap_or_else(|_| format!("\"{}\"", owner));
     let repo_q = serde_json::to_string(&repo).unwrap_or_else(|_| format!("\"{}\"", repo));
 
@@ -35,7 +34,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         "locked" => Some("LOCKED"),
         "unlocked" => Some("UNLOCKED"),
         "all" => None,
-        _ => return Err(anyhow!("state 参数仅支持 open/closed/answered/unanswered/locked/unlocked/all")),
+        _ => {
+            return Err(anyhow!(
+                "state 参数仅支持 open/closed/answered/unanswered/locked/unlocked/all"
+            ));
+        }
     };
     if let Some(s) = state_enum {
         filters.push_str(&format!(", states: [{}]", s));
@@ -104,11 +107,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let item = ItemBuilder::default()
             .title(Some(no_double_quotes(title.to_string())))
             .link(url.to_string())
-            .description(if desc.is_empty() {
-                None
-            } else {
-                Some(desc)
-            })
+            .description(if desc.is_empty() { None } else { Some(desc) })
             .pub_date(rfc3339_to_rss(created))
             .author(Some(author.to_string()))
             .guid(rss::Guid {

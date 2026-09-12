@@ -18,17 +18,140 @@ pub enum ShowToUser {
     },
 }
 
-///展开为 `mod::get(params).await` 的表达式。
-///路由均为 `pub async fn get(HashMap<String,String>) -> Result<String>`，
-///所以这里必须产出一个表达式，不能产出 match 分支。
 macro_rules! run {
     ($route:ident, $params:expr) => {
         $route::get($params.clone()).await
     };
 }
 
-///这个函数相当于模块的注册表
-/// 给调用者的是html格式
+macro_rules! routes {
+    ($(($route:literal, $module:ident)),* $(,)?) => {
+        pub const ROUTES: &[&str] = &[$($route),*];
+        pub const ROUTE_COUNT: usize = ROUTES.len();
+
+        pub async fn route_dispatch(
+            url: &str,
+            parameters: HashMap<String, String>,
+        ) -> Result<String, anyhow::Error> {
+            match url {
+                $($route => run!($module, parameters),)*
+                _ => {
+                    warn!("Unregistered route: {}", url);
+                    Err(anyhow!("404NotFound"))
+                }
+            }
+        }
+    };
+}
+
+routes! {
+    ("/apnews_topics", apnews_topics),
+    ("/baidu_top", baidu_top),
+    ("/bilibili_audio_rank", bilibili_audio_rank),
+    ("/bilibili_bangumi_follow", bilibili_bangumi_follow),
+    ("/bilibili_blackroom", bilibili_blackroom),
+    ("/bilibili_collection", bilibili_collection),
+    ("/bilibili_dynamic", bilibili_dynamic),
+    ("/bilibili_fav", bilibili_fav),
+    ("/bilibili_followers", bilibili_followers),
+    ("/bilibili_link_news", bilibili_link_news),
+    ("/bilibili_live_area", bilibili_live_area),
+    ("/bilibili_partion", bilibili_partion),
+    ("/bilibili_partion_ranking", bilibili_partion_ranking),
+    ("/bilibili_popular", bilibili_popular),
+    ("/bilibili_precious", bilibili_precious),
+    ("/bilibili_search_hot", bilibili_search_hot),
+    ("/bilibili_series", bilibili_series),
+    ("/bilibili_splash", bilibili_splash),
+    ("/bilibili_user_article", bilibili_user_article),
+    ("/bilibili_user_coin", bilibili_user_coin),
+    ("/bilibili_user_fav", bilibili_user_fav),
+    ("/bilibili_user_like", bilibili_user_like),
+    ("/bilibili_video_page", bilibili_video_page),
+    ("/bilibili_video_reply", bilibili_video_reply),
+    ("/bilibili_vsearch", bilibili_vsearch),
+    ("/bilibili_weekly", bilibili_weekly),
+    ("/bjnews_cat", bjnews_cat),
+    ("/caixin_latest", caixin_latest),
+    ("/carnegieendowment_news", carnegieendowment_news),
+    ("/cenc_earthquake", cenc_earthquake),
+    ("/chinanews", chinanews),
+    ("/cls_hot", cls_hot),
+    ("/crates_new", crates_new),
+    ("/defensenews_news", defensenews_news),
+    ("/defenseone_news", defenseone_news),
+    ("/devto_guides", devto_guides),
+    ("/discovermagazine_news", discovermagazine_news),
+    ("/douban_book_latest", douban_book_latest),
+    ("/douban_book_rank", douban_book_rank),
+    ("/douban_event_hot", douban_event_hot),
+    ("/douban_movie_classification", douban_movie_classification),
+    ("/eastday_24", eastday_24),
+    ("/eeo_kuaixun", eeo_kuaixun),
+    ("/gelonghui_home", gelonghui_home),
+    ("/github_advisor", github_advisor),
+    ("/github_branch", github_branch),
+    ("/github_commits", github_commits),
+    ("/github_contributors", github_contributors),
+    ("/github_discussions", github_discussions),
+    ("/github_followers", github_followers),
+    ("/github_gist", github_gist),
+    ("/github_issue", github_issue),
+    ("/github_issue_comments", github_issue_comments),
+    ("/github_pull", github_pull),
+    ("/github_release", github_release),
+    ("/github_repo_events", github_repo_events),
+    ("/github_repo_stargazers", github_repo_stargazers),
+    ("/github_search", github_search),
+    ("/github_starred", github_starred),
+    ("/github_stars", github_stars),
+    ("/github_tag", github_tag),
+    ("/github_topic", github_topic),
+    ("/github_trending", github_trending),
+    ("/github_user_events", github_user_events),
+    ("/github_user_repos", github_user_repos),
+    ("/guancha_headline", guancha_headline),
+    ("/guanhai", guanhai),
+    ("/guokr_scientific", guokr_scientific),
+    ("/hackernews", hackernews),
+    ("/ifeng_news", ifeng_news),
+    ("/ithome_ranking", ithome_ranking),
+    ("/jianshu_home", jianshu_home),
+    ("/juejin_pins", juejin_pins),
+    ("/juejin_trending", juejin_trending),
+    ("/kali_blog", kali_blog),
+    ("/leiphone_newsflash", leiphone_newsflash),
+    ("/lwn", lwn),
+    ("/mittrchina", mittrchina),
+    ("/moe_news", moe_news),
+    ("/nasa_apod", nasa_apod),
+    ("/netease_today", netease_today),
+    ("/nmc_alarm", nmc_alarm),
+    ("/openai_chatgpt_atlas_release", openai_chatgpt_atlas_release),
+    ("/openai_chatgpt_release", openai_chatgpt_release),
+    ("/openai_news", openai_news),
+    ("/openai_research", openai_research),
+    ("/pingwest_news", pingwest_news),
+    ("/rail12306_news", rail12306_news),
+    ("/rail12306_ticket", rail12306_ticket),
+    ("/scientificamerican_news", scientificamerican_news),
+    ("/sina_finance", sina_finance),
+    ("/smithsonianmag_news", smithsonianmag_news),
+    ("/solidot", solidot),
+    ("/stcn_article_list", stcn_article_list),
+    ("/stcn_kx", stcn_kx),
+    ("/stcn_rank", stcn_rank),
+    ("/thepaper_featured", thepaper_featured),
+    ("/tmtpost_new", tmtpost_new),
+    ("/toutiao_hot", toutiao_hot),
+    ("/videocardz_news", videocardz_news),
+    ("/wallstreetcn_hot", wallstreetcn_hot),
+    ("/yicai_headline", yicai_headline),
+    ("/yicai_latest", yicai_latest),
+    ("/zhihu_daily", zhihu_daily),
+    ("/zhihu_hot", zhihu_hot),
+}
+
 pub async fn request_rules(
     url: &str,
     parameters: HashMap<String, String>,
@@ -40,117 +163,7 @@ pub async fn request_rules(
     debug!("Route {} matched, fetching", url);
     let ttl = rate_limit_secs(url).map(Duration::from_secs);
     crate::rate_limit::with_cache_scope(ttl, async {
-        let result: Result<String, anyhow::Error> = match url {
-    "/apnews_topics" => run!(apnews_topics, parameters),
-    "/baidu_top" => run!(baidu_top, parameters),
-    "/bilibili_audio_rank" => run!(bilibili_audio_rank, parameters),
-    "/bilibili_bangumi_follow" => run!(bilibili_bangumi_follow, parameters),
-    "/bilibili_blackroom" => run!(bilibili_blackroom, parameters),
-    "/bilibili_collection" => run!(bilibili_collection, parameters),
-    "/bilibili_dynamic" => run!(bilibili_dynamic, parameters),
-    "/bilibili_fav" => run!(bilibili_fav, parameters),
-    "/bilibili_followers" => run!(bilibili_followers, parameters),
-    "/bilibili_link_news" => run!(bilibili_link_news, parameters),
-    "/bilibili_live_area" => run!(bilibili_live_area, parameters),
-    "/bilibili_partion" => run!(bilibili_partion, parameters),
-    "/bilibili_partion_ranking" => run!(bilibili_partion_ranking, parameters),
-    "/bilibili_popular" => run!(bilibili_popular, parameters),
-    "/bilibili_precious" => run!(bilibili_precious, parameters),
-    "/bilibili_search_hot" => run!(bilibili_search_hot, parameters),
-    "/bilibili_series" => run!(bilibili_series, parameters),
-    "/bilibili_splash" => run!(bilibili_splash, parameters),
-    "/bilibili_user_article" => run!(bilibili_user_article, parameters),
-    "/bilibili_user_coin" => run!(bilibili_user_coin, parameters),
-    "/bilibili_user_fav" => run!(bilibili_user_fav, parameters),
-    "/bilibili_user_like" => run!(bilibili_user_like, parameters),
-    "/bilibili_video_page" => run!(bilibili_video_page, parameters),
-    "/bilibili_video_reply" => run!(bilibili_video_reply, parameters),
-    "/bilibili_vsearch" => run!(bilibili_vsearch, parameters),
-    "/bilibili_weekly" => run!(bilibili_weekly, parameters),
-    "/bjnews_cat" => run!(bjnews_cat, parameters),
-    "/caixin_latest" => run!(caixin_latest, parameters),
-    "/carnegieendowment_news" => run!(carnegieendowment_news, parameters),
-    "/cenc_earthquake" => run!(cenc_earthquake, parameters),
-    "/chinanews" => run!(chinanews, parameters),
-    "/cls_hot" => run!(cls_hot, parameters),
-    "/crates_new" => run!(crates_new, parameters),
-    "/defensenews_news" => run!(defensenews_news, parameters),
-    "/defenseone_news" => run!(defenseone_news, parameters),
-    "/devto_guides" => run!(devto_guides, parameters),
-    "/discovermagazine_news" => run!(discovermagazine_news, parameters),
-    "/douban_book_latest" => run!(douban_book_latest, parameters),
-    "/douban_book_rank" => run!(douban_book_rank, parameters),
-    "/douban_event_hot" => run!(douban_event_hot, parameters),
-    "/douban_movie_classification" => run!(douban_movie_classification, parameters),
-    "/eastday_24" => run!(eastday_24, parameters),
-    "/eeo_kuaixun" => run!(eeo_kuaixun, parameters),
-    "/gelonghui_home" => run!(gelonghui_home, parameters),
-    "/github_advisor" => run!(github_advisor, parameters),
-    "/github_branch" => run!(github_branch, parameters),
-    "/github_commits" => run!(github_commits, parameters),
-    "/github_contributors" => run!(github_contributors, parameters),
-    "/github_discussions" => run!(github_discussions, parameters),
-    "/github_followers" => run!(github_followers, parameters),
-    "/github_gist" => run!(github_gist, parameters),
-    "/github_issue" => run!(github_issue, parameters),
-    "/github_issue_comments" => run!(github_issue_comments, parameters),
-    "/github_pull" => run!(github_pull, parameters),
-    "/github_release" => run!(github_release, parameters),
-    "/github_repo_events" => run!(github_repo_events, parameters),
-    "/github_repo_stargazers" => run!(github_repo_stargazers, parameters),
-    "/github_search" => run!(github_search, parameters),
-    "/github_starred" => run!(github_starred, parameters),
-    "/github_stars" => run!(github_stars, parameters),
-    "/github_tag" => run!(github_tag, parameters),
-    "/github_topic" => run!(github_topic, parameters),
-    "/github_trending" => run!(github_trending, parameters),
-    "/github_user_events" => run!(github_user_events, parameters),
-    "/github_user_repos" => run!(github_user_repos, parameters),
-    "/guancha_headline" => run!(guancha_headline, parameters),
-    "/guanhai" => run!(guanhai, parameters),
-    "/guokr_scientific" => run!(guokr_scientific, parameters),
-    "/hackernews" => run!(hackernews, parameters),
-    "/ifeng_news" => run!(ifeng_news, parameters),
-    "/ithome_ranking" => run!(ithome_ranking, parameters),
-    "/jianshu_home" => run!(jianshu_home, parameters),
-    "/juejin_pins" => run!(juejin_pins, parameters),
-    "/juejin_trending" => run!(juejin_trending, parameters),
-    "/kali_blog" => run!(kali_blog, parameters),
-    "/leiphone_newsflash" => run!(leiphone_newsflash, parameters),
-    "/lwn" => run!(lwn, parameters),
-    "/mittrchina" => run!(mittrchina, parameters),
-    "/moe_news" => run!(moe_news, parameters),
-    "/nasa_apod" => run!(nasa_apod, parameters),
-    "/netease_today" => run!(netease_today, parameters),
-    "/nmc_alarm" => run!(nmc_alarm, parameters),
-    "/openai_chatgpt_atlas_release" => run!(openai_chatgpt_atlas_release, parameters),
-    "/openai_chatgpt_release" => run!(openai_chatgpt_release, parameters),
-    "/openai_news" => run!(openai_news, parameters),
-    "/openai_research" => run!(openai_research, parameters),
-    "/pingwest_news" => run!(pingwest_news, parameters),
-    "/rail12306_news" => run!(rail12306_news, parameters),
-    "/rail12306_ticket" => run!(rail12306_ticket, parameters),
-    "/scientificamerican_news" => run!(scientificamerican_news, parameters),
-    "/sina_finance" => run!(sina_finance, parameters),
-    "/smithsonianmag_news" => run!(smithsonianmag_news, parameters),
-    "/solidot" => run!(solidot, parameters),
-    "/stcn_article_list" => run!(stcn_article_list, parameters),
-    "/stcn_kx" => run!(stcn_kx, parameters),
-    "/stcn_rank" => run!(stcn_rank, parameters),
-    "/thepaper_featured" => run!(thepaper_featured, parameters),
-    "/tmtpost_new" => run!(tmtpost_new, parameters),
-    "/toutiao_hot" => run!(toutiao_hot, parameters),
-    "/videocardz_news" => run!(videocardz_news, parameters),
-    "/wallstreetcn_hot" => run!(wallstreetcn_hot, parameters),
-    "/yicai_headline" => run!(yicai_headline, parameters),
-    "/yicai_latest" => run!(yicai_latest, parameters),
-    "/zhihu_daily" => run!(zhihu_daily, parameters),
-    "/zhihu_hot" => run!(zhihu_hot, parameters),
-            _ => {
-                warn!("Unregistered route: {}", url);
-                return Err(anyhow!("404NotFound"));
-            }
-        };
+        let result: Result<String, anyhow::Error> = route_dispatch(url, parameters).await;
         match &result {
             std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
             std::result::Result::Err(e) => {
@@ -172,6 +185,18 @@ pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) 
         crate::connect::serve_static("/index/favicon.ico").await
     } else if first_part.starts_with("/docs/") || first_part.starts_with("/index/") {
         crate::connect::serve_static(first_part).await
+    } else if first_part == "/status" {
+        let body = format!(
+            "{{\"status\":\"ok\",\"uptime_secs\":{},\"routes\":{},\"cache_entries\":{},\"requests\":{},\"failures\":{}}}",
+            crate::stats::up_secs(),
+            ROUTE_COUNT,
+            crate::rate_limit::len(),
+            crate::stats::requests(),
+            crate::stats::failures(),
+        );
+        ShowToUser::Html {
+            res: std::result::Result::Ok(body),
+        }
     } else {
         match request_rules(first_part, second_part).await {
             std::result::Result::Ok(i) => ShowToUser::Rss { res: Ok(i) },

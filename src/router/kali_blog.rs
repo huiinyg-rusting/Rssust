@@ -15,7 +15,8 @@ fn parse_detail(html: &str, link: &str) -> Result<(String, String, String)> {
     let doc = Html::parse_document(html);
     let sel_h1 = Selector::parse("article h1").map_err(|e| anyhow!("selector: {}", e))?;
     let sel_time = Selector::parse("article time").map_err(|e| anyhow!("selector: {}", e))?;
-    let sel_content = Selector::parse("article div#content").map_err(|e| anyhow!("selector: {}", e))?;
+    let sel_content =
+        Selector::parse("article div#content").map_err(|e| anyhow!("selector: {}", e))?;
 
     let title = doc
         .select(&sel_h1)

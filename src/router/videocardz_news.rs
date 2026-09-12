@@ -95,7 +95,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         };
 
         let pub_date = parse_time(
-            &time_str.split_whitespace().next().unwrap_or("00:00"),
+            time_str.split_whitespace().next().unwrap_or("00:00"),
             &time_str
                 .split_whitespace()
                 .skip(1)

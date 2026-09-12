@@ -15,7 +15,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(30)
         .min(100);
 
-    let url = format!("{}/repos/{}/{}/branches?per_page={}", API, owner, repo, limit);
+    let url = format!(
+        "{}/repos/{}/{}/branches?per_page={}",
+        API, owner, repo, limit
+    );
 
     let json: Value = rest_get(&url).await?;
     let branches = json
@@ -44,7 +47,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let item = ItemBuilder::default()
             .title(Some(name.to_string()))
-            .link(format!("https://github.com/{}/{}/tree/{}", owner, repo, name))
+            .link(format!(
+                "https://github.com/{}/{}/tree/{}",
+                owner, repo, name
+            ))
             .description(Some(description))
             .pub_date(now())
             .guid(rss::Guid {

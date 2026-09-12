@@ -18,28 +18,26 @@ fn get_title(data: &Value) -> String {
     if let Some(tips) = major.pointer("/none/tips").and_then(Value::as_str) {
         return tips.to_string();
     }
-    if let Some(courses) = major.pointer("/courses") {
-        if !courses.is_null() {
-            let title = courses
-                .pointer("/title")
-                .and_then(Value::as_str)
-                .unwrap_or("");
-            let sub_title = courses
-                .pointer("/sub_title")
-                .and_then(Value::as_str)
-                .unwrap_or("");
-            return format!("{} - {}", title, sub_title).trim().to_string();
-        }
+    if let Some(courses) = major.pointer("/courses")
+        && !courses.is_null()
+    {
+        let title = courses
+            .pointer("/title")
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        let sub_title = courses
+            .pointer("/sub_title")
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        return format!("{} - {}", title, sub_title).trim().to_string();
     }
-    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str) {
-        if let Ok(card) = serde_json::from_str::<Value>(content) {
-            if let Some(title) = card
-                .pointer("/live_play_info/title")
-                .and_then(Value::as_str)
-            {
-                return title.to_string();
-            }
-        }
+    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str)
+        && let Ok(card) = serde_json::from_str::<Value>(content)
+        && let Some(title) = card
+            .pointer("/live_play_info/title")
+            .and_then(Value::as_str)
+    {
+        return title.to_string();
     }
     let typ = major
         .pointer("/type")
@@ -92,19 +90,19 @@ fn get_description(data: &Value) -> String {
         return format!("{}<br>{}", first, second);
     }
 
-    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str) {
-        if let Ok(card) = serde_json::from_str::<Value>(content) {
-            let live_play_info = card.pointer("/live_play_info");
-            let area_name = live_play_info
-                .and_then(|v| v.pointer("/area_name"))
-                .and_then(Value::as_str)
-                .unwrap_or("");
-            let watched = live_play_info
-                .and_then(|v| v.pointer("/watched_show/text_large"))
-                .and_then(Value::as_str)
-                .unwrap_or("");
-            return format!("{}·{}", area_name, watched);
-        }
+    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str)
+        && let Ok(card) = serde_json::from_str::<Value>(content)
+    {
+        let live_play_info = card.pointer("/live_play_info");
+        let area_name = live_play_info
+            .and_then(|v| v.pointer("/area_name"))
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        let watched = live_play_info
+            .and_then(|v| v.pointer("/watched_show/text_large"))
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        return format!("{}·{}", area_name, watched);
     }
 
     if let Some(summary) = major.pointer("/opus/summary/text").and_then(Value::as_str) {
@@ -117,13 +115,12 @@ fn get_description(data: &Value) -> String {
         .unwrap_or("")
         .replace("MAJOR_TYPE_", "")
         .to_lowercase();
-    if !typ.is_empty() {
-        if let Some(t) = major
+    if !typ.is_empty()
+        && let Some(t) = major
             .pointer(format!("/{}/desc", typ).as_str())
             .and_then(Value::as_str)
-        {
-            return t.to_string();
-        }
+    {
+        return t.to_string();
     }
 
     desc
@@ -179,15 +176,13 @@ fn get_imgs(data: &Value) -> String {
             }
         }
     }
-    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str) {
-        if let Ok(card) = serde_json::from_str::<Value>(content) {
-            if let Some(url) = card
-                .pointer("/live_play_info/cover")
-                .and_then(Value::as_str)
-            {
-                img_urls.push(format!("<img src=\"{}\">", url));
-            }
-        }
+    if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str)
+        && let Ok(card) = serde_json::from_str::<Value>(content)
+        && let Some(url) = card
+            .pointer("/live_play_info/cover")
+            .and_then(Value::as_str)
+    {
+        img_urls.push(format!("<img src=\"{}\">", url));
     }
     let typ = major
         .pointer("/type")
@@ -352,10 +347,10 @@ fn get_url(item: &Value, use_avid: bool) -> Option<UrlResult> {
         }
         "MAJOR_TYPE_LIVE_RCMD" => {
             let mut live_play_info = None;
-            if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str) {
-                if let Ok(card) = serde_json::from_str::<Value>(content) {
-                    live_play_info = card.pointer("/live_play_info").cloned();
-                }
+            if let Some(content) = major.pointer("/live_rcmd/content").and_then(Value::as_str)
+                && let Ok(card) = serde_json::from_str::<Value>(content)
+            {
+                live_play_info = card.pointer("/live_play_info").cloned();
             }
             let room_id = live_play_info
                 .and_then(|v: Value| v.pointer("/room_id").cloned())
@@ -422,7 +417,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             return Err(anyhow!(
                 "JSON解析失败: {} — 响应片段: {}",
                 e,
-                &response.chars().take(200).collect::<String>()
+                response.chars().take(200).collect::<String>()
             ));
         }
     };
@@ -458,46 +453,44 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if let Some(name) = modules
             .pointer("/module_author/name")
             .and_then(Value::as_str)
+            && author.is_empty()
         {
-            if author.is_empty() {
-                author = name.to_string();
-            }
+            author = name.to_string();
         }
 
         let mut description = get_description(modules);
         let original_title = get_title(modules);
 
-        if show_emoji {
-            if let Some(nodes) = modules
+        if show_emoji
+            && let Some(nodes) = modules
                 .pointer("/module_dynamic/desc/rich_text_nodes")
                 .and_then(Value::as_array)
-            {
-                for node in nodes {
-                    if let Some(emoji) = node.pointer("/emoji") {
-                        if let (Some(text), Some(icon_url)) = (
-                            node.pointer("/text").and_then(Value::as_str),
-                            emoji.pointer("/icon_url").and_then(Value::as_str),
-                        ) {
-                            description = description.replace(
+        {
+            for node in nodes {
+                if let Some(emoji) = node.pointer("/emoji")
+                    && let (Some(text), Some(icon_url)) = (
+                        node.pointer("/text").and_then(Value::as_str),
+                        emoji.pointer("/icon_url").and_then(Value::as_str),
+                    )
+                {
+                    description = description.replace(
                                 text,
                                 &format!(
                                     r#"<img alt="{}" src="{}" style="margin: -1px 1px 0px; display: inline-block; width: 20px; height: 20px; vertical-align: text-bottom;" referrerpolicy="no-referrer">"#,
                                     text, icon_url
                                 ),
                             );
-                        }
-                    }
-                    if let Some(pics) = node.pointer("/pics").and_then(Value::as_array) {
-                        if let Some(text) = node.pointer("/text").and_then(Value::as_str) {
-                            let replacements: Vec<String> = pics
+                }
+                if let Some(pics) = node.pointer("/pics").and_then(Value::as_array)
+                    && let Some(text) = node.pointer("/text").and_then(Value::as_str)
+                {
+                    let replacements: Vec<String> = pics
                                 .iter()
                                 .filter_map(|pic| pic.pointer("/src").and_then(Value::as_str))
                                 .map(|src| format!(r#"<img alt="{}" src="{}" style="display:inline-block; max-width:100%;" referrerpolicy="no-referrer">"#, text, src))
                                 .collect();
-                            if !replacements.is_empty() {
-                                description = description.replace(text, &replacements.join("<br>"));
-                            }
-                        }
+                    if !replacements.is_empty() {
+                        description = description.replace(text, &replacements.join("<br>"));
                     }
                 }
             }
@@ -520,10 +513,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let origin = item.pointer("/orig/modules");
         let origin_url_result = origin.and_then(|origin| get_url(origin, use_avid));
-        if let Some(origin_url_result) = &origin_url_result {
-            if direct_link {
-                link = origin_url_result.url.clone();
-            }
+        if let Some(origin_url_result) = &origin_url_result
+            && direct_link
+        {
+            link = origin_url_result.url.clone();
         }
 
         let title = if original_title.is_empty() {

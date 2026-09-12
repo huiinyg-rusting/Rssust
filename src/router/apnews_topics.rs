@@ -59,56 +59,55 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             Ok(detail_html) => {
                 let doc = Html::parse_document(&detail_html);
 
-                let (title, pub_date, author, description) = if let Some(ld) =
-                    extract_ldjson(&detail_html)
-                {
-                    let t = ld["headline"].as_str().unwrap_or("").to_string();
-                    let pd = ld["datePublished"]
-                        .as_str()
-                        .and_then(|s| {
-                            let dt = s.replace('T', " ").replace('Z', "");
-                            utc_str_to_rss(&dt)
-                        })
-                        .unwrap_or_else(now);
+                let (title, pub_date, author, description) =
+                    if let Some(ld) = extract_ldjson(&detail_html) {
+                        let t = ld["headline"].as_str().unwrap_or("").to_string();
+                        let pd = ld["datePublished"]
+                            .as_str()
+                            .and_then(|s| {
+                                let dt = s.replace('T', " ").replace('Z', "");
+                                utc_str_to_rss(&dt)
+                            })
+                            .unwrap_or_else(now);
 
-                    let au = ld["author"]
-                        .as_array()
-                        .and_then(|arr| {
-                            arr.iter()
-                                .filter_map(|a| a["name"].as_str())
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                                .into()
-                        })
-                        .unwrap_or_default();
+                        let au = ld["author"]
+                            .as_array()
+                            .and_then(|arr| {
+                                arr.iter()
+                                    .filter_map(|a| a["name"].as_str())
+                                    .collect::<Vec<_>>()
+                                    .join(", ")
+                                    .into()
+                            })
+                            .unwrap_or_default();
 
-                    let mut desc = String::new();
-                    if let Some(img) = ld["image"].as_array().and_then(|arr| arr.first()) {
-                        if let Some(img_url) = img["url"].as_str() {
+                        let mut desc = String::new();
+                        if let Some(img) = ld["image"].as_array().and_then(|arr| arr.first())
+                            && let Some(img_url) = img["url"].as_str()
+                        {
                             desc.push_str(&format!("<figure><img src=\"{}\"></figure>", img_url));
                         }
-                    }
-                    if let Some(d) = ld["description"].as_str() {
-                        if !d.is_empty() {
+                        if let Some(d) = ld["description"].as_str()
+                            && !d.is_empty()
+                        {
                             desc.push_str(&format!("<p>{}</p>", d));
                         }
-                    }
-                    if let Some(body) = doc
-                        .select(&Selector::parse(".RichTextStoryBody.RichTextBody").unwrap())
-                        .next()
-                    {
-                        desc.push_str(&body.inner_html());
-                    }
+                        if let Some(body) = doc
+                            .select(&Selector::parse(".RichTextStoryBody.RichTextBody").unwrap())
+                            .next()
+                        {
+                            desc.push_str(&body.inner_html());
+                        }
 
-                    (t, pd, au, desc)
-                } else {
-                    let t = doc
-                        .select(&Selector::parse("title").unwrap())
-                        .next()
-                        .map(|e| e.text().collect::<String>().trim().to_string())
-                        .unwrap_or_default();
-                    (t, now(), String::new(), String::new())
-                };
+                        (t, pd, au, desc)
+                    } else {
+                        let t = doc
+                            .select(&Selector::parse("title").unwrap())
+                            .next()
+                            .map(|e| e.text().collect::<String>().trim().to_string())
+                            .unwrap_or_default();
+                        (t, now(), String::new(), String::new())
+                    };
 
                 if title.is_empty() {
                     continue;

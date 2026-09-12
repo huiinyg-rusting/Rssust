@@ -23,7 +23,6 @@ fn cache() -> &'static Mutex<HashMap<String, CacheEntry>> {
     })
 }
 
-///构造缓存 key：方法 + URL + 排序后的 headers 指纹，保证同一上游请求 key 确定性。
 pub fn make_key(method: &str, url: &str, headers: &[(&str, &str)]) -> String {
     if headers.is_empty() {
         return format!("{}|{}", method, url);
@@ -41,7 +40,6 @@ pub fn make_key(method: &str, url: &str, headers: &[(&str, &str)]) -> String {
     format!("{}|{}|{}", method, url, h)
 }
 
-///当前请求是否处于限流缓存作用域，返回其 TTL。
 pub fn current_ttl() -> Option<Duration> {
     CACHE_CTX.try_with(|c| c.ttl).ok().flatten()
 }
@@ -54,7 +52,6 @@ fn record_touched(key: &str) {
     });
 }
 
-///命中且未过期则返回缓存内容并记录；过期条目惰性删除。
 pub fn get_cached(key: &str, ttl: Duration) -> Option<String> {
     let mut map = cache().lock().unwrap();
     match map.get(key) {
@@ -71,7 +68,6 @@ pub fn get_cached(key: &str, ttl: Duration) -> Option<String> {
     }
 }
 
-///写入缓存并记录本次使用。
 pub fn store(key: &str, body: &str) {
     cache()
         .lock()
@@ -80,7 +76,6 @@ pub fn store(key: &str, body: &str) {
     record_touched(key);
 }
 
-///路由处理报错时调用：清理本次请求用到的所有缓存条目。
 pub fn cleanup_on_error() {
     let keys = match CACHE_CTX.try_with(|c| std::mem::take(&mut *c.touched.lock().unwrap())) {
         Ok(keys) => keys,
@@ -99,7 +94,10 @@ pub fn cleanup_on_error() {
     );
 }
 
-///后台定时清扫过期条目，防止缓存无限增长。
+pub fn len() -> usize {
+    cache().lock().map(|m| m.len()).unwrap_or(0)
+}
+
 pub fn spawn_cleaner() {
     tokio::spawn(async {
         let mut interval = tokio::time::interval(Duration::from_secs(60));
@@ -120,7 +118,6 @@ pub fn spawn_cleaner() {
     });
 }
 
-///以给定 TTL 包裹异步执行，路由处理期间 fetch 层可读取限流上下文。
 pub async fn with_cache_scope<T>(
     ttl: Option<Duration>,
     f: impl std::future::Future<Output = T>,

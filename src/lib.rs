@@ -8,10 +8,8 @@ pub mod logger;
 pub mod rate_limit;
 pub mod request_rules;
 pub mod router;
+pub mod stats;
 
-///这个函数提供缓冲区的处理
-/// 并把数据交给request_rules函数处理
-/// 最终在这个函数体内发送http数据
 pub mod connect {
     use crate::easyuser::HttpError;
     use crate::request_rules::*;
@@ -39,7 +37,6 @@ pub mod connect {
         })
     }
 
-    ///每个 TCP 连接的入口。读取请求、调度路由、写回响应，并在 keep-alive 下循环复用连接。
     pub async fn handle_connection(mut stream: TcpStream) {
         let mut buf: Vec<u8> = Vec::with_capacity(1024);
         loop {
@@ -121,6 +118,8 @@ pub mod connect {
                 (target.to_string(), HashMap::new())
             };
             info!("Received request: {} params: {:?}", path, params);
+            crate::stats::inc_request();
+            let start = std::time::Instant::now();
 
             //保持连接（keep-alive）仅对文档/静态资源生效，其它动态路由一律关闭
             let is_doc_route = path == "/"
@@ -129,7 +128,6 @@ pub mod connect {
                 || path == "/favicon.ico";
             let keep_alive = is_doc_route && parse_keep_alive(head_str, &version);
 
-            //并发上限：请求处理前获取许可
             let _permit = match semaphore().acquire().await {
                 Ok(p) => p,
                 Err(_) => {
@@ -163,6 +161,16 @@ pub mod connect {
                 warn!("Failed to write response: {}", e);
                 return;
             }
+            if status >= 400 {
+                crate::stats::inc_failure();
+            }
+            info!(
+                "Request {} done: status={} took={:.1}ms body={}B",
+                path,
+                status,
+                start.elapsed().as_secs_f64() * 1000.0,
+                body.len()
+            );
 
             //消耗已读请求头，剩余字节留给 keep-alive 的下一个请求
             buf.drain(..head_len);
@@ -172,7 +180,6 @@ pub mod connect {
         }
     }
 
-    ///解析请求行 "METHOD TARGET VERSION"
     fn parse_request_line(head: &str) -> Option<(&str, &str, &str)> {
         let mut parts = head.lines().next()?.split_whitespace();
         let method = parts.next()?;
@@ -342,7 +349,9 @@ pub mod connect {
             return None;
         }
         let joined = exe_dir.join(rel);
-        let base = exe_dir.canonicalize().unwrap_or_else(|_| exe_dir.to_path_buf());
+        let base = exe_dir
+            .canonicalize()
+            .unwrap_or_else(|_| exe_dir.to_path_buf());
         let norm = joined.canonicalize().unwrap_or_else(|_| joined.clone());
         if !norm.starts_with(&base) {
             return None;
@@ -350,8 +359,6 @@ pub mod connect {
         Some(joined)
     }
 
-    ///This function sends the content of index.html to the caller; otherwise, it sends an error with an anyhow text error type.‌
-    /// The response returned to the caller is in HTML format.
     pub async fn show_index_doc() -> Result<String, Error> {
         let exe_path = env::current_exe()?;
         let exe_dir = exe_path
@@ -364,7 +371,6 @@ pub mod connect {
             Err(i) => Err(anyhow!(format!("{}:{}", "index.html", i.kind()))),
         }
     }
-    //传入的像是/doc/new.html
     pub async fn show_doc(path: &str) -> Result<String, Error> {
         let exe_path = env::current_exe()?;
 
@@ -375,9 +381,9 @@ pub mod connect {
         let raw = match safe_join(exe_dir, path) {
             Some(p) => p,
             None => {
-                return Ok(fs::read_to_string(exe_dir.join("docs/404.html"))
+                return fs::read_to_string(exe_dir.join("docs/404.html"))
                     .await
-                    .context("404 html Operation failed")?);
+                    .context("404 html Operation failed");
             }
         };
         let mut raw = raw;

@@ -37,6 +37,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     };
 
     let mut item_vec = Vec::new();
+    let re_orig_before_src =
+        Regex::new(r#"(<img[^>]*?)data-original="([^"]+)"([^>]*?)src="[^"]*"([^>]*>)"#)?;
+    let re_src_before_orig =
+        Regex::new(r#"(<img[^>]*?)src="[^"]*"([^>]*?)data-original="([^"]+)"([^>]*>)"#)?;
     for (title, link) in entries {
         if let Ok(detail_html) = fetch_reqwest_get(&link).await {
             let detail_doc = Html::parse_document(&detail_html);
@@ -47,11 +51,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 .next()
                 .map(|e| e.inner_html())
                 .unwrap_or_default();
-
-            let re_orig_before_src =
-                Regex::new(r#"(<img[^>]*?)data-original="([^"]+)"([^>]*?)src="[^"]*"([^>]*>)"#)?;
-            let re_src_before_orig =
-                Regex::new(r#"(<img[^>]*?)src="[^"]*"([^>]*?)data-original="([^"]+)"([^>]*>)"#)?;
 
             let description = re_orig_before_src
                 .replace_all(&description, |caps: &regex::Captures| {

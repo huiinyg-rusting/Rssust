@@ -39,7 +39,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let (title, mut desc, link) = match etype {
             "PushEvent" => {
-                let branch = payload["ref"].as_str().unwrap_or("").trim_start_matches("refs/heads/");
+                let branch = payload["ref"]
+                    .as_str()
+                    .unwrap_or("")
+                    .trim_start_matches("refs/heads/");
                 let size = payload["size"].as_i64().unwrap_or(0);
                 let mut cmsgs: Vec<String> = Vec::new();
                 if let Some(commits) = payload["commits"].as_array() {
@@ -93,7 +96,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 let forkee = payload["forkee"]["full_name"].as_str().unwrap_or("");
                 (
                     format!("Forked {} to {}", repo_name, forkee),
-                    format!("新仓库: <a href=\"https://github.com/{}\">{}</a>", forkee, forkee),
+                    format!(
+                        "新仓库: <a href=\"https://github.com/{}\">{}</a>",
+                        forkee, forkee
+                    ),
                     format!("https://github.com/{}", repo_name),
                 )
             }
@@ -105,7 +111,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     format!("{} issue #{} in {}", action, number, repo_name),
                     format!(
                         "<a href=\"https://github.com/{}/issues/{}\">#{} {}</a>",
-                        repo_name, number, number, escape_html(ititle)
+                        repo_name,
+                        number,
+                        number,
+                        escape_html(ititle)
                     ),
                     format!("https://github.com/{}/issues/{}", repo_name, number),
                 )
@@ -126,7 +135,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     payload["comment"]["html_url"]
                         .as_str()
                         .map(|s| s.to_string())
-                        .unwrap_or_else(|| format!("https://github.com/{}/issues/{}", repo_name, number)),
+                        .unwrap_or_else(|| {
+                            format!("https://github.com/{}/issues/{}", repo_name, number)
+                        }),
                 )
             }
             "PullRequestEvent" => {
@@ -149,7 +160,13 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 let number = payload["pull_request"]["number"].as_i64().unwrap_or(0);
                 (
                     format!("Reviewed PR #{} in {}", number, repo_name),
-                    format!("PR: <a href=\"https://github.com/{}/pull/{}\">#{} {}</a>", repo_name, number, number, escape_html(payload["pull_request"]["title"].as_str().unwrap_or(""))),
+                    format!(
+                        "PR: <a href=\"https://github.com/{}/pull/{}\">#{} {}</a>",
+                        repo_name,
+                        number,
+                        number,
+                        escape_html(payload["pull_request"]["title"].as_str().unwrap_or(""))
+                    ),
                     format!("https://github.com/{}/pull/{}", repo_name, number),
                 )
             }
@@ -157,11 +174,19 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 let number = payload["pull_request"]["number"].as_i64().unwrap_or(0);
                 (
                     format!("Commented on PR #{} in {}", number, repo_name),
-                    format!("PR: <a href=\"https://github.com/{}/pull/{}\">#{} {}</a>", repo_name, number, number, escape_html(payload["pull_request"]["title"].as_str().unwrap_or(""))),
+                    format!(
+                        "PR: <a href=\"https://github.com/{}/pull/{}\">#{} {}</a>",
+                        repo_name,
+                        number,
+                        number,
+                        escape_html(payload["pull_request"]["title"].as_str().unwrap_or(""))
+                    ),
                     payload["comment"]["html_url"]
                         .as_str()
                         .map(|s| s.to_string())
-                        .unwrap_or_else(|| format!("https://github.com/{}/pull/{}", repo_name, number)),
+                        .unwrap_or_else(|| {
+                            format!("https://github.com/{}/pull/{}", repo_name, number)
+                        }),
                 )
             }
             "ReleaseEvent" => {
@@ -170,7 +195,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     format!("Released {} in {}", tag, repo_name),
                     format!(
                         "发布: <a href=\"https://github.com/{}/releases/tag/{}\">{}</a>",
-                        repo_name, tag, escape_html(tag)
+                        repo_name,
+                        tag,
+                        escape_html(tag)
                     ),
                     format!("https://github.com/{}/releases/tag/{}", repo_name, tag),
                 )

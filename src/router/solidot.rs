@@ -62,7 +62,7 @@ fn parse_article(html: &str, url: &str) -> Result<rss::Item> {
     if let Some(block) = doc.select(&sel_block).next() {
         let inner = block.inner_html();
         let inner = inner
-            .replace("href=\"/", &format!("href=\"https://www.solidot.org/"))
+            .replace("href=\"/", "href=\"https://www.solidot.org/")
             .replace("<u>", "")
             .replace("</u>", "");
         description = inner;
@@ -82,13 +82,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let type_ = para.get("type").map(|s| s.as_str()).unwrap_or("www");
     let base_url = format!("https://{}.solidot.org", type_);
 
-    let html = fetch_reqwest_get_with_headers(
-        &base_url,
-        &[(
-            "User-Agent",
-            UA_CHROME,
-        )],
-    ).await?;
+    let html = fetch_reqwest_get_with_headers(&base_url, &[("User-Agent", UA_CHROME)]).await?;
     let urls: Vec<String> = {
         let doc = Html::parse_document(&html);
 
@@ -108,13 +102,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let mut item_vec = Vec::new();
     for url in urls {
-        match fetch_reqwest_get_with_headers(
-            &url,
-            &[(
-                "User-Agent",
-                UA_CHROME,
-            )],
-        ).await {
+        match fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA_CHROME)]).await {
             Ok(article_html) => {
                 if let Ok(item) = parse_article(&article_html, &url) {
                     item_vec.push(item);

@@ -58,17 +58,14 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
             description.push_str(&format!("<p>{}</p>", notes));
         }
 
-        match fetch_reqwest_get(&link).await {
-            Ok(detail_html) => {
-                let doc = Html::parse_document(&detail_html);
-                for selector in &[".multiText", "#multi-text", ".txt", ".m-txt"] {
-                    if let Some(content) = doc.select(&Selector::parse(selector).unwrap()).next() {
-                        description.push_str(&content.inner_html());
-                        break;
-                    }
+        if let Ok(detail_html) = fetch_reqwest_get(&link).await {
+            let doc = Html::parse_document(&detail_html);
+            for selector in &[".multiText", "#multi-text", ".txt", ".m-txt"] {
+                if let Some(content) = doc.select(&Selector::parse(selector).unwrap()).next() {
+                    description.push_str(&content.inner_html());
+                    break;
                 }
             }
-            Err(_) => {}
         }
 
         let rss_item = ItemBuilder::default()

@@ -15,7 +15,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(20)
         .min(50);
 
-    let url = format!("{}/repos/{}/{}/releases?per_page={}", API, owner, repo, limit);
+    let url = format!(
+        "{}/repos/{}/{}/releases?per_page={}",
+        API, owner, repo, limit
+    );
 
     let json: Value = rest_get(&url).await?;
     let releases = json

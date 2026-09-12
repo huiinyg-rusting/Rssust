@@ -33,7 +33,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
         "https://carnegieendowment.org",
         &[("User-Agent", UA_CHROME)],
-    ).await?;
+    )
+    .await?;
 
     let doc = Html::parse_document(&html);
     let article_sel = Selector::parse("article.flex.min-w-0.flex-1.flex-col.gap-\\[0\\.8rem\\]")

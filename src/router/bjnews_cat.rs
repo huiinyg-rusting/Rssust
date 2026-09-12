@@ -8,13 +8,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let cat = para.get("cat").map(|s| s.as_str()).unwrap_or("depth");
     let url = format!("https://www.bjnews.com.cn/{}", cat);
 
-    let html = fetch_reqwest_get_with_headers(
-        &url,
-        &[(
-            "User-Agent",
-            UA_CHROME,
-        )],
-    ).await?;
+    let html = fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA_CHROME)]).await?;
 
     let links: Vec<String> = {
         let doc = Html::parse_document(&html);
@@ -76,10 +70,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .next()
                 {
                     let date_str = date_el.text().collect::<String>().trim().to_string();
-                    if !date_str.is_empty() {
-                        if let Some(d) = datetime_str_to_rss(&date_str) {
-                            pub_date = d;
-                        }
+                    if !date_str.is_empty()
+                        && let Some(d) = datetime_str_to_rss(&date_str)
+                    {
+                        pub_date = d;
                     }
                 }
 

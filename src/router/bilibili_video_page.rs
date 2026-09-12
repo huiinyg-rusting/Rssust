@@ -26,7 +26,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let name = data["title"].as_str().unwrap_or_default();
     let pic = data["pic"].as_str().unwrap_or_default();
     let aid = data["aid"].as_i64().unwrap_or(0);
-    let bvid_from_api = data["bvid"].as_str().unwrap_or(&bvid);
+    let bvid_from_api = data["bvid"].as_str().unwrap_or(bvid);
 
     let pages = data
         .pointer("/pages")

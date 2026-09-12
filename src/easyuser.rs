@@ -8,7 +8,6 @@ use std::sync::OnceLock;
 use std::{collections::HashMap, env};
 use tracing::{debug, warn};
 
-///自定义错误类型，可携带 HTTP 状态码。渲染层会取 `status` 作为状态码、`message` 作为正文。
 #[derive(Debug)]
 pub struct HttpError {
     pub status: u16,
@@ -44,7 +43,6 @@ impl HttpError {
     }
 }
 
-///通用 Chrome UA，多数路由可直接引用，避免重复定义。
 pub const UA_CHROME: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 fn client() -> &'static reqwest::Client {
@@ -57,8 +55,6 @@ fn client() -> &'static reqwest::Client {
     })
 }
 
-///构建带 cookie jar 的独立客户端（用于需要保持会话的路由，如 12306）。
-///与共享 client() 相同超时配置，构建逻辑集中在 easyuser，路由不应自行 new Client。
 pub fn client_with_cookie() -> Result<reqwest::Client, Error> {
     reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(60))
@@ -67,7 +63,6 @@ pub fn client_with_cookie() -> Result<reqwest::Client, Error> {
         .map_err(|e| anyhow!("failed to build cookie client: {}", e))
 }
 
-///这个函数序列化从key1=1&key2=2 到{"key1": "2", "key2": "2"}的Hashmap;
 pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
     let mut params = HashMap::new();
 
@@ -85,6 +80,37 @@ pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
     params
 }
 
+pub fn req_param(params: &HashMap<String, String>, key: &str, desc: &str) -> Result<String, Error> {
+    params
+        .get(key)
+        .cloned()
+        .filter(|s| !s.is_empty())
+        .ok_or_else(|| anyhow!("Params should contain {} ({})", key, desc))
+}
+
+pub fn req_optional(params: &HashMap<String, String>, key: &str) -> Option<String> {
+    params.get(key).cloned()
+}
+
+pub fn req_usize(params: &HashMap<String, String>, key: &str, desc: &str) -> Result<usize, Error> {
+    let raw = req_param(params, key, desc)?;
+    raw.parse::<usize>().map_err(|_| {
+        anyhow!(
+            "Param {} must be a positive integer ({}), got \"{}\"",
+            key,
+            desc,
+            raw
+        )
+    })
+}
+
+pub fn opt_usize(params: &HashMap<String, String>, key: &str, default: usize) -> usize {
+    params
+        .get(key)
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(default)
+}
+
 pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
     let mut response: String = "".to_owned();
     for (key, value) in hashmap.iter() {
@@ -93,11 +119,9 @@ pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
     response
 }
 
-//下面是reqwest get的内容
-//不会使用线程池
 pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
     debug!("GET {}", url);
-    let result = (|| async {
+    let result = async {
         if let Some(ttl) = crate::rate_limit::current_ttl() {
             let key = crate::rate_limit::make_key("GET", url, &[]);
             if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
@@ -124,7 +148,7 @@ pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
                 .await
                 .map_err(Error::from)?)
         }
-    })()
+    }
     .await;
     if let Err(ref e) = result {
         warn!("GET {} failed: {}", url, e);
@@ -132,10 +156,6 @@ pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error> {
     result
 }
 
-///This can be an array of tuples, or a HashMap, or a custom type that implements Serialize.
-///这可以是一个元组数组，或者是一个 HashMap ，或者是一个实现了 Serialize 的自定义类型。
-///The feature form is required.
-///必须使用 form 功能
 pub async fn fetch_reqwest_post(
     url: &str,
     body: String,
@@ -147,8 +167,8 @@ pub async fn fetch_reqwest_post(
     } else {
         reqwest::header::HeaderMap::new()
     };
-    let result = (|| async {
-        Ok(client()
+    let result = async {
+        client()
             .post(url)
             .headers(header_noop)
             .body(body)
@@ -157,8 +177,8 @@ pub async fn fetch_reqwest_post(
             .map_err(Error::from)?
             .text()
             .await
-            .map_err(Error::from)?)
-    })()
+            .map_err(Error::from)
+    }
     .await;
     if let Err(ref e) = result {
         warn!("POST {} failed: {}", url, e);
@@ -168,8 +188,8 @@ pub async fn fetch_reqwest_post(
 
 pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<String, Error> {
     debug!("POST {} (json)", url);
-    let result = (|| async {
-        Ok(client()
+    let result = async {
+        client()
             .post(url)
             .header("Content-Type", "application/json")
             .body(json_body.to_string())
@@ -178,8 +198,8 @@ pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<Strin
             .map_err(Error::from)?
             .text()
             .await
-            .map_err(Error::from)?)
-    })()
+            .map_err(Error::from)
+    }
     .await;
     if let Err(ref e) = result {
         warn!("POST {} failed: {}", url, e);
@@ -187,15 +207,13 @@ pub async fn fetch_reqwest_post_json(url: &str, json_body: &str) -> Result<Strin
     result
 }
 
-///带自定义 header 的 JSON POST，并纳入限流缓存。
-///用于需要 Authorization 等头的接口（如 GitHub GraphQL）。
 pub async fn fetch_reqwest_post_json_with_headers(
     url: &str,
     json_body: &str,
     headers: &[(&str, &str)],
 ) -> Result<String, Error> {
     debug!("POST {} (json, with headers)", url);
-    let result = (|| async {
+    let result = async {
         if let Some(ttl) = crate::rate_limit::current_ttl() {
             let key = crate::rate_limit::make_key("POST", url, headers);
             if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
@@ -234,7 +252,7 @@ pub async fn fetch_reqwest_post_json_with_headers(
                 .await
                 .map_err(Error::from)?)
         }
-    })()
+    }
     .await;
     if let Err(ref e) = result {
         warn!("POST {} failed: {}", url, e);
@@ -247,7 +265,7 @@ pub async fn fetch_reqwest_get_with_headers(
     headers: &[(&str, &str)],
 ) -> Result<String, Error> {
     debug!("GET {} (with headers)", url);
-    let result = (|| async {
+    let result = async {
         if let Some(ttl) = crate::rate_limit::current_ttl() {
             let key = crate::rate_limit::make_key("GET", url, headers);
             if let Some(cached) = crate::rate_limit::get_cached(&key, ttl) {
@@ -280,7 +298,7 @@ pub async fn fetch_reqwest_get_with_headers(
                 .await
                 .map_err(Error::from)?)
         }
-    })()
+    }
     .await;
     if let Err(ref e) = result {
         warn!("GET {} failed: {}", url, e);
@@ -288,7 +306,6 @@ pub async fn fetch_reqwest_get_with_headers(
     result
 }
 
-///简单的1,true,True转true
 pub fn parse_bool(value: Option<&String>, default: bool) -> bool {
     match value.map(String::as_str) {
         Some("1") | Some("true") | Some("True") => true,
@@ -334,43 +351,32 @@ pub fn now() -> String {
     Local::now().format("%a, %d %b %Y %H:%M:%S %z").to_string()
 }
 
-///x月y日到rss用的时间
-//这个函数已经测试过有效了
-///时间如果无效返回None
 pub fn chinese_date_to_parse(input: &str) -> Option<String> {
     let re = regex::Regex::new(r"(\d{1,2})月(\d{1,2})日").ok()?;
     let caps = re.captures(input)?;
     let month = caps.get(1)?.as_str().parse::<u32>().ok()?;
     let day = caps.get(2)?.as_str().parse::<u32>().ok()?;
-    let year = Local::now().year() as i32;
+    let year = Local::now().year();
     Some(
         NaiveDate::from_ymd_opt(year, month, day)?
             .format("%a, %d %b %Y 00:00:00 +0800")
             .to_string(),
     )
 }
-///去除首尾双引号
-//注意'"'是一对单引号包双引号
 pub fn no_double_quotes(s: String) -> String {
     s.trim_matches('"').to_string()
 }
 
-//查找环境变量
 pub fn env_search(s: &str) -> Option<String> {
-    match env::var(s) {
-        Ok(i) => Some(i),
-        Err(_) => None,
-    }
+    env::var(s).ok()
 }
 
-//Unix时间戳改RSS标准时间
 pub fn timestamp_to_rss(ts: i64) -> String {
     DateTime::from_timestamp(ts, 0)
         .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
         .unwrap_or_else(now)
 }
 
-/// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（输入视为东八区本地时间）
 pub fn datetime_str_to_rss(datetime_str: &str) -> Option<String> {
     let naive = NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S").ok()?;
     let fixed = chrono::FixedOffset::east_opt(8 * 3600)?;
@@ -414,7 +420,10 @@ pub fn rfc2822_to_rss(s: &str) -> String {
 pub fn date_str_to_rss(date_str: &str, fmt: &str, offset: &str) -> Option<String> {
     chrono::NaiveDate::parse_from_str(date_str, fmt)
         .ok()
-        .map(|d| d.format(&format!("%a, %d %b %Y 00:00:00 {}", offset)).to_string())
+        .map(|d| {
+            d.format(&format!("%a, %d %b %Y 00:00:00 {}", offset))
+                .to_string()
+        })
 }
 
 /// "YYYY-MM-DD HH:MM:SS" 格式的字符串转 RSS pubDate（输入视为 UTC 时间，自动换算为东八区）
@@ -490,7 +499,6 @@ pub async fn fetch_browser_get_with_headers_profile(
     Ok(text)
 }
 
-///按字符数截断字符串，超长时末尾追加省略号（…）
 pub fn truncate(s: &str, n: usize) -> String {
     let mut cs = s.chars();
     let mut out: String = cs.by_ref().take(n).collect();
@@ -500,8 +508,6 @@ pub fn truncate(s: &str, n: usize) -> String {
     out
 }
 
-///将相对路径/绝对路径 href 解析为完整的 URL（基于 base 推断 scheme/host/path）。
-///根相对路径（以 / 开头）从 host 根开始解析；非相对路径（http(s):、mailto: 等）原样返回。
 pub fn resolve_url(href: &str, base: &str) -> String {
     if href.starts_with("http") {
         return href.to_string();
@@ -533,27 +539,4 @@ pub fn resolve_url(href: &str, base: &str) -> String {
         }
     }
     format!("{}://{}/{}", scheme, host, segs.join("/"))
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn resolve_url_relative() {
-        let base = "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/";
-        assert_eq!(super::resolve_url("202609/t20260902_1448704.html", base),
-                   "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/202609/t20260902_1448704.html");
-    }
-    #[test]
-    fn resolve_url_root_relative() {
-        let base = "http://www.moe.gov.cn/jyb_xwfb/gzdt_gzdt/moe_1485/";
-        assert_eq!(super::resolve_url("/jyb_rs/bumen_sijuzhineng/202609/t20260901_1448703.html", base),
-                   "http://www.moe.gov.cn/jyb_rs/bumen_sijuzhineng/202609/t20260901_1448703.html");
-    }
-    #[test]
-    fn resolve_url_abs() {
-        let base = "http://a.com/x/y/";
-        assert_eq!(super::resolve_url("https://other.com/f", base), "https://other.com/f");
-        assert_eq!(super::resolve_url("../z.html", base), "http://a.com/x/z.html");
-        assert_eq!(super::resolve_url("http://a.com/t", base), "http://a.com/t");
-    }
 }

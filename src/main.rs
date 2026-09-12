@@ -11,9 +11,6 @@ use rssust::cookies::extract_cookies_to_json;
 #[cfg(feature = "docs")]
 use rssust::doc::doc_generate;
 
-///main函数
-/// 加载服务器
-/// 启动tokio多线程
 #[tokio::main]
 async fn main() {
     rssust::logger::init();

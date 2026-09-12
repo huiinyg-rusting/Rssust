@@ -11,7 +11,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .get("vmid")
         .cloned()
         .filter(|s| !s.is_empty())
-        .ok_or_else(|| anyhow!("缺少 vmid 参数，请在 /bilibili_followers?vmid=xxx 中传入目标用户 mid"))?;
+        .ok_or_else(|| {
+            anyhow!("缺少 vmid 参数，请在 /bilibili_followers?vmid=xxx 中传入目标用户 mid")
+        })?;
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())
@@ -65,7 +67,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             return Err(anyhow!(
                 "JSON解析失败: {} — 响应片段: {}",
                 e,
-                &resp.chars().take(200).collect::<String>()
+                resp.chars().take(200).collect::<String>()
             ));
         }
     };
@@ -119,7 +121,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title(format!("UID {} 的 bilibili 粉丝", vmid))
         .link(format!("https://space.bilibili.com/{}/fans/fans", vmid))
-        .description(format!("UID {} 的 bilibili 粉丝，当前粉丝总数 {}", vmid, follower_count))
+        .description(format!(
+            "UID {} 的 bilibili 粉丝，当前粉丝总数 {}",
+            vmid, follower_count
+        ))
         .items(item_vec)
         .build();
     Ok(channel.to_string())

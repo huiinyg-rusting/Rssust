@@ -128,7 +128,7 @@ pub fn is_route_disabled(route: &str) -> bool {
         .routes
         .as_ref()
         .and_then(|r: &RoutesConfig| r.disabled.as_ref())
-        .map_or(false, |v| v.iter().any(|d| d == route))
+        .is_some_and(|v| v.iter().any(|d| d == route))
 }
 
 /// 该路由的上游响应缓存间隔（秒）；未配置则返回 None（不缓存）。

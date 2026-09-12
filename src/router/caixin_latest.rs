@@ -48,16 +48,16 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                 {
                     desc.push_str(&main.inner_html());
                 } else {
-                    if let Some(summary) = article["summary"].as_str() {
-                        if !summary.is_empty() {
-                            desc.push_str(&format!("<blockquote>{}</blockquote><br>", summary));
-                        }
+                    if let Some(summary) = article["summary"].as_str()
+                        && !summary.is_empty()
+                    {
+                        desc.push_str(&format!("<blockquote>{}</blockquote><br>", summary));
                     }
-                    if let Some(pics) = article["pics"].as_str() {
-                        if !pics.is_empty() {
-                            for pic in pics.split('#') {
-                                desc.push_str(&format!("<img src=\"{}\"><br>", pic));
-                            }
+                    if let Some(pics) = article["pics"].as_str()
+                        && !pics.is_empty()
+                    {
+                        for pic in pics.split('#') {
+                            desc.push_str(&format!("<img src=\"{}\"><br>", pic));
                         }
                     }
                 }

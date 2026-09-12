@@ -14,7 +14,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         eprintln!("router.rs出现错误{}", recommend);
         anyhow!("router.rs出现错误{}", recommend)
     })?;
-    let json: Value = serde_json::from_str(fetch_reqwest_get(format!("https://app.bilibili.com/x/v2/show/popular/selected?type=weekly_selected&number={}",recommend.to_string()).as_str()).await?.as_str())?;
+    let json: Value = serde_json::from_str(fetch_reqwest_get(format!("https://app.bilibili.com/x/v2/show/popular/selected?type=weekly_selected&number={}",recommend).as_str()).await?.as_str())?;
     let mut item_vec = Vec::new();
     let list = json
         .pointer("/data/list")

@@ -44,7 +44,6 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 "https://api.bilibili.com/x/web-interface/view?aid={}",
                 json.pointer("/data/aids/0")
                     .ok_or_else(|| anyhow!("bilibili_collection.rs在解析author时爬取信息出错"))?
-                    .to_string()
             ),
             &headers,
         )

@@ -56,7 +56,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .guid(rss::Guid {
                 value: format!(
                     "{}@{}",
-                    user["id"].as_i64().map(|n| n.to_string()).unwrap_or_default(),
+                    user["id"]
+                        .as_i64()
+                        .map(|n| n.to_string())
+                        .unwrap_or_default(),
                     starred
                 ),
                 permalink: false,

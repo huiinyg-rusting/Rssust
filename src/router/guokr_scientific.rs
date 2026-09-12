@@ -50,14 +50,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             id
         ))
         .await
+            && let Ok(detail_json) = serde_json::from_str::<Value>(&detail)
+            && let Some(content) = detail_json["result"]["content"].as_str()
+            && !content.is_empty()
         {
-            if let Ok(detail_json) = serde_json::from_str::<Value>(&detail) {
-                if let Some(content) = detail_json["result"]["content"].as_str() {
-                    if !content.is_empty() {
-                        description = content.to_string();
-                    }
-                }
-            }
+            description = content.to_string();
         }
 
         let rss_item = ItemBuilder::default()

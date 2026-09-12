@@ -49,7 +49,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 if language.is_empty() {
                     files_desc.push(format!("{} ({:.1} KB)", name, size as f64 / 1024.0));
                 } else {
-                    files_desc.push(format!("{} [{}] ({:.1} KB)", name, language, size as f64 / 1024.0));
+                    files_desc.push(format!(
+                        "{} [{}] ({:.1} KB)",
+                        name,
+                        language,
+                        size as f64 / 1024.0
+                    ));
                 }
                 files_desc.push(format!("原始: <a href=\"{}\">{}</a>", raw, name));
             }
@@ -73,7 +78,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .title(Some(format!(
                 "{} - gist {}",
                 username,
-                if first_file.is_empty() { id } else { &first_file }
+                if first_file.is_empty() {
+                    id
+                } else {
+                    &first_file
+                }
             )))
             .link(html_url.to_string())
             .description(Some(desc))

@@ -8,18 +8,10 @@ use crate::router::github_common::{API, rest_get};
 ///GitHub repository search via REST API `GET /search/repositories`.
 ///Params: q (query, required), sort (stars/forks/updated/help-wanted-issues/best-match, default stars), order (asc/desc, default desc), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let q = para
-        .get("q")
-        .cloned()
-        .filter(|s| !s.is_empty())
-        .ok_or_else(|| anyhow!("Missing q parameter (search query)"))?;
-    let sort = para.get("sort").cloned().unwrap_or_else(|| "stars".to_string());
-    let order = para.get("order").cloned().unwrap_or_else(|| "desc".to_string());
-    let limit = para
-        .get("limit")
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(20)
-        .min(50);
+    let q = crate::easyuser::req_param(&para, "q", "search query")?;
+    let sort = crate::easyuser::req_optional(&para, "sort").unwrap_or_else(|| "stars".to_string());
+    let order = crate::easyuser::req_optional(&para, "order").unwrap_or_else(|| "desc".to_string());
+    let limit = crate::easyuser::opt_usize(&para, "limit", 20).min(50);
 
     let url = format!(
         "{}/search/repositories?q={}&sort={}&order={}&per_page={}",
@@ -69,7 +61,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if !language.is_empty() {
             meta.push(format!("Language: {}", escape_html(language)));
         }
-        meta.push(format!("Stars: {}<br>Forks: {}<br>Issues: {}", stars, forks, issues));
+        meta.push(format!(
+            "Stars: {}<br>Forks: {}<br>Issues: {}",
+            stars, forks, issues
+        ));
         if !topics.is_empty() {
             meta.push(format!("Topics: {}", topics.join(", ")));
         }
@@ -89,7 +84,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title(format!("GitHub Search - {}", q))
         .link("https://github.com/search?type=repositories".to_string())
-        .description(format!("GitHub repository search: {} ({}, {})", q, sort, order))
+        .description(format!(
+            "GitHub repository search: {} ({}, {})",
+            q, sort, order
+        ))
         .items(item_vec)
         .build();
     Ok(channel.to_string())

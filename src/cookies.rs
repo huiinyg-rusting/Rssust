@@ -1,4 +1,4 @@
-use cookie_scoop::{get_cookies, BrowserName, CookieSameSite, GetCookiesOptions};
+use cookie_scoop::{BrowserName, CookieSameSite, GetCookiesOptions, get_cookies};
 use std::fs;
 use std::io;
 use std::path::PathBuf;
@@ -78,9 +78,12 @@ pub async fn extract_cookies_to_json(target_browser: BrowserName) -> Result<(), 
         });
 
         let replace_idx = merged.iter().position(|c| {
-            c.get("name").and_then(|v| v.as_str()) == Some(json_cookie["name"].as_str().unwrap_or_default())
-                && c.get("domain").and_then(|v| v.as_str()) == Some(json_cookie["domain"].as_str().unwrap_or_default())
-                && c.get("path").and_then(|v| v.as_str()) == Some(json_cookie["path"].as_str().unwrap_or_default())
+            c.get("name").and_then(|v| v.as_str())
+                == Some(json_cookie["name"].as_str().unwrap_or_default())
+                && c.get("domain").and_then(|v| v.as_str())
+                    == Some(json_cookie["domain"].as_str().unwrap_or_default())
+                && c.get("path").and_then(|v| v.as_str())
+                    == Some(json_cookie["path"].as_str().unwrap_or_default())
         });
 
         match replace_idx {
@@ -89,8 +92,7 @@ pub async fn extract_cookies_to_json(target_browser: BrowserName) -> Result<(), 
         }
     }
 
-    let final_json = serde_json::to_string_pretty(&merged)
-        .map_err(io::Error::other)?;
+    let final_json = serde_json::to_string_pretty(&merged).map_err(io::Error::other)?;
 
     fs::write(&output_path, final_json)?;
     println!("Download cookies from {:?} done", target_browser);

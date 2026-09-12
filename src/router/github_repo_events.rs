@@ -79,7 +79,11 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
             )
         }
         "CreateEvent" | "DeleteEvent" => {
-            let verb = if typ == "CreateEvent" { "创建" } else { "删除" };
+            let verb = if typ == "CreateEvent" {
+                "创建"
+            } else {
+                "删除"
+            };
             let ref_type = e["payload"]["ref_type"].as_str().unwrap_or("");
             let reference = e["payload"]["ref"].as_str().unwrap_or("");
             (
@@ -122,7 +126,10 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
         }
         "IssuesEvent" => {
             let number = e["payload"]["issue"]["number"].as_i64().unwrap_or(0);
-            let title = e["payload"]["issue"]["title"].as_str().unwrap_or("").to_string();
+            let title = e["payload"]["issue"]["title"]
+                .as_str()
+                .unwrap_or("")
+                .to_string();
             let html = e["payload"]["issue"]["html_url"].as_str().unwrap_or("");
             (
                 format!(
@@ -130,7 +137,7 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
                     actor,
                     if action.is_empty() { "更新" } else { &action },
                     number,
-                    &title
+                    title
                 ),
                 format!(
                     "<a href=\"{}\">查看 Issue</a><br>状态动作: {}",
@@ -149,15 +156,20 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
         }
         "PullRequestEvent" => {
             let number = e["payload"]["pull_request"]["number"].as_i64().unwrap_or(0);
-            let pr_title = e["payload"]["pull_request"]["title"].as_str().unwrap_or("").to_string();
-            let html = e["payload"]["pull_request"]["html_url"].as_str().unwrap_or("");
+            let pr_title = e["payload"]["pull_request"]["title"]
+                .as_str()
+                .unwrap_or("")
+                .to_string();
+            let html = e["payload"]["pull_request"]["html_url"]
+                .as_str()
+                .unwrap_or("");
             (
                 format!(
                     "{} {}了 PR #{} {}",
                     actor,
                     if action.is_empty() { "更新" } else { &action },
                     number,
-                    &pr_title
+                    pr_title
                 ),
                 format!(
                     "<a href=\"{}\">查看 PR</a><br>状态动作: {}",
@@ -199,10 +211,15 @@ fn event_item(e: &Value, repo_name: &str) -> (String, String) {
         }
         "DiscussionEvent" => {
             let number = e["payload"]["discussion"]["number"].as_i64().unwrap_or(0);
-            let dtitle = e["payload"]["discussion"]["title"].as_str().unwrap_or("").to_string();
-            let url = e["payload"]["discussion"]["html_url"].as_str().unwrap_or("");
+            let dtitle = e["payload"]["discussion"]["title"]
+                .as_str()
+                .unwrap_or("")
+                .to_string();
+            let url = e["payload"]["discussion"]["html_url"]
+                .as_str()
+                .unwrap_or("");
             (
-                format!("{} 创建了 Discussion #{} {}", actor, number, &dtitle),
+                format!("{} 创建了 Discussion #{} {}", actor, number, dtitle),
                 format!("<a href=\"{}\">查看讨论</a>", url),
             )
         }
@@ -229,10 +246,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .unwrap_or(30)
         .min(100);
 
-    let url = format!(
-        "{}/repos/{}/{}/events?per_page={}",
-        API, owner, repo, limit
-    );
+    let url = format!("{}/repos/{}/{}/events?per_page={}", API, owner, repo, limit);
 
     let json: Value = rest_get(&url).await?;
     let events = json

@@ -77,10 +77,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             if let Some(meta) = detail_doc
                 .select(&Selector::parse("meta[name='keywords']").unwrap())
                 .next()
+                && let Some(content) = meta.value().attr("content")
             {
-                if let Some(content) = meta.value().attr("content") {
-                    categories = content.split(',').map(|s| s.trim().to_string()).collect();
-                }
+                categories = content.split(',').map(|s| s.trim().to_string()).collect();
             }
         }
 

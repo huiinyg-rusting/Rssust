@@ -63,7 +63,10 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         );
 
         let description = if icon.is_empty() {
-            format!("热搜词: {}<br>类型: {}<br>热词id: {}", show_name, type_name, hot_id)
+            format!(
+                "热搜词: {}<br>类型: {}<br>热词id: {}",
+                show_name, type_name, hot_id
+            )
         } else {
             format!(
                 "<img src=\"{}\" referrerpolicy=\"no-referrer\"><br>热搜词: {}<br>类型: {}<br>热词id: {}",

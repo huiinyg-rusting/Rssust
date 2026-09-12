@@ -11,7 +11,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
         "https://www.scientificamerican.com",
         &[("User-Agent", UA_CHROME)],
-    ).await?;
+    )
+    .await?;
 
     let doc = Html::parse_document(&html);
     let card_sel = Selector::parse("article[data-click-position^='feed-card']")

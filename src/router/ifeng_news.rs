@@ -22,6 +22,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         .ok_or_else(|| anyhow!("newsstream 不是数组"))?;
 
     let mut item_vec = Vec::new();
+    let content_list_re =
+        Regex::new(r#""contentList":(\[.*?\]),"#).map_err(|_| anyhow!("正则无效"))?;
     for item in items {
         let title = item["title"].as_str().unwrap_or("");
         let link = item["url"].as_str().unwrap_or("");
@@ -45,19 +47,15 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                     desc.push_str(&format!(r#"<figure><img src="{}"></figure>"#, thumbnail));
                 }
 
-                let content_list_re =
-                    Regex::new(r#""contentList":(\[.*?\]),"#).map_err(|_| anyhow!("正则无效"))?;
-                if let Some(caps) = content_list_re.captures(&detail_html) {
-                    if let Ok(content_list) =
+                if let Some(caps) = content_list_re.captures(&detail_html)
+                    && let Ok(content_list) =
                         serde_json::from_str::<Value>(caps.get(1).unwrap().as_str())
-                    {
-                        if let Some(arr) = content_list.as_array() {
-                            for entry in arr {
-                                let data = entry["data"].as_str().unwrap_or("");
-                                if !data.is_empty() {
-                                    desc.push_str(data);
-                                }
-                            }
+                    && let Some(arr) = content_list.as_array()
+                {
+                    for entry in arr {
+                        let data = entry["data"].as_str().unwrap_or("");
+                        if !data.is_empty() {
+                            desc.push_str(data);
                         }
                     }
                 }

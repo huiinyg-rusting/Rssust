@@ -65,7 +65,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let replies = json
         .pointer("/data/replies")
         .and_then(|v| v.as_array())
-        .map(|v| v.clone())
+        .cloned()
         .unwrap_or_default();
 
     let mut item_vec = Vec::new();

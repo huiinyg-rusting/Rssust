@@ -12,7 +12,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .get("username")
         .cloned()
         .ok_or_else(|| anyhow!("Missing username parameter (GitHub login)"))?;
-    let repo_type = para.get("type").cloned().unwrap_or_else(|| "owner".to_string());
+    let repo_type = para
+        .get("type")
+        .cloned()
+        .unwrap_or_else(|| "owner".to_string());
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())

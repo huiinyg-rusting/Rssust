@@ -28,7 +28,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .parent()
                     .and_then(|p| p.next_sibling())
                     .and_then(|s| s.next_sibling())
-                    .and_then(|d| scraper::element_ref::ElementRef::wrap(d))
+                    .and_then(scraper::element_ref::ElementRef::wrap)
                     .and_then(|d| d.select(&Selector::parse("ul").ok()?).next())
                 {
                     block = Some(ul);

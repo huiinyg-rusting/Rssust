@@ -29,7 +29,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
 
     if repos.is_empty() {
-        return Err(anyhow!("No starred repositories found. Check username parameter"));
+        return Err(anyhow!(
+            "No starred repositories found. Check username parameter"
+        ));
     }
 
     let mut item_vec = Vec::new();

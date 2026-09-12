@@ -6,9 +6,11 @@ use std::collections::HashMap;
 
 ///HackerNews via the official Algolia API (news.ycombinator.com 站点对部分服务器不可达，改用官方 API)。
 ///Params: section (index/newest/ask/show/jobs/best/over 及任意 tags)，type (sources/comments)，value
+///
 ///  - section=over: 按 points 过滤（value 为最小 points，默认 100）
 ///  - type=comments: 抓取每篇的评论摘要（前 20 条顶层评论）
 ///  - value: 追加搜索参数（如 author=xxx）
+///
 ///限流：请在上游配置 routes.rate_limit["/hackernews"]（建议 30s，遵守 robots Crawl-delay）
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let section = para
@@ -99,26 +101,25 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 &[("User-Agent", "rssust-hn-router/1.0")],
             )
             .await
+                && let Ok(iv) = serde_json::from_str::<Value>(&item_json)
             {
-                if let Ok(iv) = serde_json::from_str::<Value>(&item_json) {
-                    let mut comment_html = String::from("<br><br><b>Top comments:</b>");
-                    if let Some(kids) = iv["children"].as_array() {
-                        let mut count = 0;
-                        for k in kids.iter().take(20) {
-                            let ca = k["author"].as_str().unwrap_or("");
-                            let text = k["text"].as_str().unwrap_or("");
-                            comment_html.push_str(&format!(
-                                "<div style=\"margin-top:6px\"><b>{}</b>: {}</div>",
-                                ca, text
-                            ));
-                            count += 1;
-                        }
-                        if count == 0 {
-                            comment_html.push_str("<div>No comments yet.</div>");
-                        }
+                let mut comment_html = String::from("<br><br><b>Top comments:</b>");
+                if let Some(kids) = iv["children"].as_array() {
+                    let mut count = 0;
+                    for k in kids.iter().take(20) {
+                        let ca = k["author"].as_str().unwrap_or("");
+                        let text = k["text"].as_str().unwrap_or("");
+                        comment_html.push_str(&format!(
+                            "<div style=\"margin-top:6px\"><b>{}</b>: {}</div>",
+                            ca, text
+                        ));
+                        count += 1;
                     }
-                    desc.push_str(&comment_html);
+                    if count == 0 {
+                        comment_html.push_str("<div>No comments yet.</div>");
+                    }
                 }
+                desc.push_str(&comment_html);
             }
         }
 

@@ -33,7 +33,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
         "https://www.smithsonianmag.com",
         &[("User-Agent", UA_CHROME)],
-    ).await?;
+    )
+    .await?;
 
     let doc = Html::parse_document(&html);
     let item_sel =

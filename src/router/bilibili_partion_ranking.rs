@@ -41,6 +41,7 @@ fn tid_to_name(tid: &str) -> &str {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn build_item(
     title: &str,
     bvid: &str,
@@ -100,7 +101,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let hot_result = hot_json
         .pointer("/result")
         .and_then(|v| v.as_array())
-        .map(|v| v.clone())
+        .cloned()
         .unwrap_or_default();
 
     let mut item_vec = Vec::new();
@@ -119,7 +120,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let archives = newlist_json
             .pointer("/data/archives")
             .and_then(|v| v.as_array())
-            .map(|v| v.clone())
+            .cloned()
             .unwrap_or_default();
 
         for video in &archives {

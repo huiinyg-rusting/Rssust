@@ -8,10 +8,9 @@ use std::collections::HashMap;
 const MAINTAINER: &str = "huiinyg / Defense One (defense & national security, no official RSS)";
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let html = fetch_reqwest_get_with_headers(
-        "https://www.defenseone.com",
-        &[("User-Agent", UA_CHROME)],
-    ).await?;
+    let html =
+        fetch_reqwest_get_with_headers("https://www.defenseone.com", &[("User-Agent", UA_CHROME)])
+            .await?;
 
     let doc = Html::parse_document(&html);
     let item_sel = Selector::parse("div.river-item").map_err(|_| anyhow!("item selector"))?;

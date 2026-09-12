@@ -35,24 +35,20 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
         let mut description = String::new();
 
-        if let Some(summary) = item["summary"].as_str() {
-            if !summary.is_empty() {
-                description.push_str(&format!("<p><strong>{}</strong></p>", summary));
-            }
+        if let Some(summary) = item["summary"].as_str()
+            && !summary.is_empty()
+        {
+            description.push_str(&format!("<p><strong>{}</strong></p>", summary));
         }
 
         if let Ok(detail_json) =
             fetch_reqwest_get_with_headers(&detail_url, &[("app-version", "web1.0")]).await
+            && let Ok(detail) = serde_json::from_str::<Value>(&detail_json)
+            && let Some(data) = detail["data"].as_object()
+            && let Some(main_html) = data["main"].as_str()
+            && !main_html.is_empty()
         {
-            if let Ok(detail) = serde_json::from_str::<Value>(&detail_json) {
-                if let Some(data) = detail["data"].as_object() {
-                    if let Some(main_html) = data["main"].as_str() {
-                        if !main_html.is_empty() {
-                            description = main_html.to_string();
-                        }
-                    }
-                }
-            }
+            description = main_html.to_string();
         }
 
         let rss_item = ItemBuilder::default()

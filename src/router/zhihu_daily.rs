@@ -30,10 +30,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if title.is_empty() {
             continue;
         }
-        let link = s["url"]
-            .as_str()
-            .map(|u| u.to_string())
-            .unwrap_or_default();
+        let link = s["url"].as_str().map(|u| u.to_string()).unwrap_or_default();
         let img = s["images"]
             .as_array()
             .and_then(|a| a.first())

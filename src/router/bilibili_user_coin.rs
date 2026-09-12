@@ -37,10 +37,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let desc = item["desc"].as_str().unwrap_or_default();
         let time = item["time"].as_i64().unwrap_or(0);
 
-        if let Some(name) = item.pointer("/owner/name").and_then(Value::as_str) {
-            if author == "UP主" {
-                author = name.to_string();
-            }
+        if let Some(name) = item.pointer("/owner/name").and_then(Value::as_str)
+            && author == "UP主"
+        {
+            author = name.to_string();
         }
 
         let description = match para.get("disableembed") {

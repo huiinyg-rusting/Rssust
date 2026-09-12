@@ -51,6 +51,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let root_url = "https://mini.eastday.com";
 
     let mut item_vec = Vec::new();
+    let re_page_num = regex::Regex::new(r"var page_num = '(\d+)'").unwrap();
     for entry in list {
         let title = entry["topic"].as_str().unwrap_or("");
         let url_path = entry["url"].as_str().unwrap_or("");
@@ -86,14 +87,13 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 if let Some(meta) = detail_doc
                     .select(&Selector::parse("meta[property='og:release_date']").unwrap())
                     .next()
+                    && let Some(date_str) = meta.value().attr("content")
                 {
-                    if let Some(date_str) = meta.value().attr("content") {
-                        let dt = date_str.replace('T', " ").replace('Z', "");
-                        if date_str.ends_with('Z') {
-                            pub_date = utc_str_to_rss(&dt).unwrap_or_else(now);
-                        } else if let Some(d) = datetime_str_to_rss(&dt) {
-                            pub_date = d;
-                        }
+                    let dt = date_str.replace('T', " ").replace('Z', "");
+                    if date_str.ends_with('Z') {
+                        pub_date = utc_str_to_rss(&dt).unwrap_or_else(now);
+                    } else if let Some(d) = datetime_str_to_rss(&dt) {
+                        pub_date = d;
                     }
                 }
             }
@@ -109,35 +109,31 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             .await
             .unwrap_or_default();
 
-            if let Some(caps) = regex::Regex::new(r"var page_num = '(\d+)'")
-                .unwrap()
-                .captures(&detail_text)
+            if let Some(caps) = re_page_num.captures(&detail_text)
+                && let Ok(page_num) = caps[1].parse::<i32>()
+                && page_num > 1
             {
-                if let Ok(page_num) = caps[1].parse::<i32>() {
-                    if page_num > 1 {
-                        for i in 2..=page_num {
-                            let page_link = if link.ends_with(".html") {
-                                format!("{}-{}.html", &link[..link.len() - 5], i)
-                            } else {
-                                link.clone()
-                            };
-                            if let Ok(page_html) = fetch_reqwest_get_with_headers(
-                                &page_link,
-                                &[(
-                                    "User-Agent",
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                                )],
-                            )
-                            .await
-                            {
-                                let page_doc = Html::parse_document(&page_html);
-                                if let Some(page_content) = page_doc
-                                    .select(&Selector::parse("#J-contain_detail_cnt").unwrap())
-                                    .next()
-                                {
-                                    description.push_str(&page_content.inner_html());
-                                }
-                            }
+                for i in 2..=page_num {
+                    let page_link = if link.ends_with(".html") {
+                        format!("{}-{}.html", &link[..link.len() - 5], i)
+                    } else {
+                        link.clone()
+                    };
+                    if let Ok(page_html) = fetch_reqwest_get_with_headers(
+                        &page_link,
+                        &[(
+                            "User-Agent",
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                        )],
+                    )
+                    .await
+                    {
+                        let page_doc = Html::parse_document(&page_html);
+                        if let Some(page_content) = page_doc
+                            .select(&Selector::parse("#J-contain_detail_cnt").unwrap())
+                            .next()
+                        {
+                            description.push_str(&page_content.inner_html());
                         }
                     }
                 }

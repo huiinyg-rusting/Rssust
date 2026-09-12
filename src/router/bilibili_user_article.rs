@@ -38,21 +38,18 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             format!("https:{}", jump_url)
         };
 
-        if let Some(name) = item.pointer("/author/name").and_then(Value::as_str) {
-            if author == "UP主" {
-                author = name.to_string();
-            }
+        if let Some(name) = item.pointer("/author/name").and_then(Value::as_str)
+            && author == "UP主"
+        {
+            author = name.to_string();
         }
 
         // 获取详情页解析描述
         let detail_html = fetch_reqwest_get_with_headers(
             &link,
-            &[
-                ("Referer", referer.as_str()),
-                ("User-Agent",
-                 UA_CHROME),
-            ],
-        ).await
+            &[("Referer", referer.as_str()), ("User-Agent", UA_CHROME)],
+        )
+        .await
         .unwrap_or_default();
 
         let description = if !detail_html.is_empty() {

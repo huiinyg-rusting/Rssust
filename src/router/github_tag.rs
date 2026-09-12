@@ -39,7 +39,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let item = ItemBuilder::default()
             .title(Some(name.to_string()))
-            .link(format!("https://github.com/{}/{}/releases/tag/{}", owner, repo, name))
+            .link(format!(
+                "https://github.com/{}/{}/releases/tag/{}",
+                owner, repo, name
+            ))
             .description(Some(description))
             .pub_date(now())
             .guid(rss::Guid {

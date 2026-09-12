@@ -9,7 +9,10 @@ use crate::router::github_common::{API, owner_repo, rest_get};
 ///Params: owner, repo, state (open/closed/all, default open), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let (owner, repo) = owner_repo(&para)?;
-    let state = para.get("state").cloned().unwrap_or_else(|| "open".to_string());
+    let state = para
+        .get("state")
+        .cloned()
+        .unwrap_or_else(|| "open".to_string());
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())

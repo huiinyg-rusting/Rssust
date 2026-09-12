@@ -123,10 +123,10 @@ fn extract_cards(html: &str) -> Vec<(String, String, String)> {
 }
 
 async fn fetch_article_date(link: &str, ua: &str) -> String {
-    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await {
-        if let Some(date) = extract_date_from_json(&html) {
-            return date;
-        }
+    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await
+        && let Some(date) = extract_date_from_json(&html)
+    {
+        return date;
     }
     now()
 }

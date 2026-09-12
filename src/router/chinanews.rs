@@ -37,6 +37,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     };
 
     let mut item_vec = Vec::new();
+    let re_date = Regex::new(r"(\d{4}年\d{2}月\d{2}日\s*\d{2}:\d{2})").unwrap();
+    let re_source = Regex::new(r"来源[：:]([^<]{2,20})").unwrap();
     for (title, link) in items.iter() {
         let mut description = String::new();
         let mut pub_date = now();
@@ -57,13 +59,11 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                 description = div.inner_html();
             }
 
-            let re_date = Regex::new(r"(\d{4}年\d{2}月\d{2}日\s*\d{2}:\d{2})").unwrap();
             if let Some(cap) = re_date.captures(&detail_html) {
                 let date_str = cap.get(1).unwrap().as_str();
                 pub_date = chinese_date_to_parse(date_str).unwrap_or_else(now);
             }
 
-            let re_source = Regex::new(r"来源[：:]([^<]{2,20})").unwrap();
             if let Some(cap) = re_source.captures(&detail_html) {
                 author = cap.get(1).unwrap().as_str().trim().to_string();
             }

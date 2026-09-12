@@ -9,7 +9,10 @@ use crate::router::github_common::{API, owner_repo, rest_get};
 ///Params: owner, repo, state (open/closed/all, default open), limit (default 20, max 50)
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let (owner, repo) = owner_repo(&para)?;
-    let state = para.get("state").cloned().unwrap_or_else(|| "open".to_string());
+    let state = para
+        .get("state")
+        .cloned()
+        .unwrap_or_else(|| "open".to_string());
     let limit = para
         .get("limit")
         .and_then(|s| s.parse::<usize>().ok())
@@ -27,7 +30,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .ok_or_else(|| anyhow!("GitHub API returned unexpected response"))?;
 
     if pulls.is_empty() {
-        return Err(anyhow!("No pull requests found. Check owner/repo parameters"));
+        return Err(anyhow!(
+            "No pull requests found. Check owner/repo parameters"
+        ));
     }
 
     let mut item_vec = Vec::new();
@@ -65,7 +70,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title(format!("GitHub Pull Requests - {}/{}", owner, repo))
         .link(format!("https://github.com/{}/{}/pulls", owner, repo))
-        .description(format!("GitHub repository {}/{} pull requests", owner, repo))
+        .description(format!(
+            "GitHub repository {}/{} pull requests",
+            owner, repo
+        ))
         .items(item_vec)
         .build();
     Ok(channel.to_string())

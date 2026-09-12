@@ -17,12 +17,11 @@ fn version(c: &Value) -> String {
 }
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
-    let count = para
-        .get("count")
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(10)
-        .clamp(1, 100);
-    let url = format!("https://crates.io/api/v1/crates?sort=new&per_page={}", count);
+    let count = crate::easyuser::opt_usize(&para, "count", 10).clamp(1, 100);
+    let url = format!(
+        "https://crates.io/api/v1/crates?sort=new&per_page={}",
+        count
+    );
 
     let body = fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA)]).await?;
     let json: Value = serde_json::from_str(body.as_str())?;

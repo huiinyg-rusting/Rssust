@@ -44,11 +44,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         if repo.is_empty() || !repo.contains('/') {
             continue;
         }
-        let title = a
-            .text()
-            .collect::<String>()
-            .replace('\n', "")
-            .replace(' ', "");
+        let title = a.text().collect::<String>().replace(['\n', ' '], "");
         let desc = art
             .select(&desc_sel)
             .next()

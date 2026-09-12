@@ -45,7 +45,9 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     }
 
     if contributors.is_empty() {
-        return Err(anyhow!("No contributors found. Check owner/repo parameters"));
+        return Err(anyhow!(
+            "No contributors found. Check owner/repo parameters"
+        ));
     }
 
     let mut item_vec = Vec::new();
@@ -98,7 +100,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let channel = ChannelBuilder::default()
         .title(format!("GitHub Contributors - {}/{}", owner, repo))
-        .link(format!("https://github.com/{}/{}/graphs/contributors", owner, repo))
+        .link(format!(
+            "https://github.com/{}/{}/graphs/contributors",
+            owner, repo
+        ))
         .description(format!("New contributors for {}/{}", owner, repo))
         .items(item_vec)
         .build();

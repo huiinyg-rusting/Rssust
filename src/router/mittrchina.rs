@@ -101,8 +101,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         };
 
         // 非 breaking/video 类型抓详情页补全正文
-        if !is_video && route_type != "breaking" && !description.is_empty() {
-            if let Ok(detail) = fetch_reqwest_get_with_headers(
+        if !is_video
+            && route_type != "breaking"
+            && !description.is_empty()
+            && let Ok(detail) = fetch_reqwest_get_with_headers(
                 &format!(
                     "https://apii.web.mittrchina.com/information/details?id={}",
                     id
@@ -110,15 +112,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                 &[("User-Agent", UA)],
             )
             .await
-            {
-                if let Ok(detail_json) = serde_json::from_str::<Value>(&detail) {
-                    if let Some(content) = detail_json["data"]["content"].as_str() {
-                        if !content.is_empty() {
-                            description = content.to_string();
-                        }
-                    }
-                }
-            }
+            && let Ok(detail_json) = serde_json::from_str::<Value>(&detail)
+            && let Some(content) = detail_json["data"]["content"].as_str()
+            && !content.is_empty()
+        {
+            description = content.to_string();
         }
 
         let item = if !author.is_empty() {

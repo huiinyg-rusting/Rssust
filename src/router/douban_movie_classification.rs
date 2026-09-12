@@ -40,12 +40,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let mut item_vec = Vec::new();
     for item in movies {
         let rate_str = item["rate"].as_str().unwrap_or("");
-        if !rate_str.is_empty() {
-            if let Ok(score_val) = rate_str.parse::<f64>() {
-                if score_val < score {
-                    continue;
-                }
-            }
+        if !rate_str.is_empty()
+            && let Ok(score_val) = rate_str.parse::<f64>()
+            && score_val < score
+        {
+            continue;
         }
 
         let title = item["title"].as_str().unwrap_or("");

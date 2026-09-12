@@ -38,16 +38,16 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let mut latest_year: i32 = -1;
 
     for (year, periods) in list_obj {
-        if let Ok(y) = year.parse::<i32>() {
-            if let Some(arr) = periods.as_array() {
-                for p in arr {
-                    let t = p["publish_time"].as_i64().unwrap_or(0);
-                    if y > latest_year || t > latest_time {
-                        latest_year = y;
-                        latest_time = t;
-                        latest_id = p["ID"].as_i64().unwrap_or(0);
-                        latest_priod = p["priod"].as_i64().unwrap_or(0);
-                    }
+        if let Ok(y) = year.parse::<i32>()
+            && let Some(arr) = periods.as_array()
+        {
+            for p in arr {
+                let t = p["publish_time"].as_i64().unwrap_or(0);
+                if y > latest_year || t > latest_time {
+                    latest_year = y;
+                    latest_time = t;
+                    latest_id = p["ID"].as_i64().unwrap_or(0);
+                    latest_priod = p["priod"].as_i64().unwrap_or(0);
                 }
             }
         }
@@ -57,7 +57,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         return Err(anyhow!("找不到音频榜单期数"));
     }
 
-    let rank_name = if list_type == "2" { "原创榜" } else { "热榜" };
+    let rank_name = if list_type == "2" {
+        "原创榜"
+    } else {
+        "热榜"
+    };
 
     let url = format!(
         "https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list?list_id={}",

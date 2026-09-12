@@ -5,13 +5,9 @@ use scraper::{Html, Selector};
 use std::collections::HashMap;
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
-    let html = fetch_reqwest_get_with_headers(
-        "https://www.guanhai.com.cn",
-        &[(
-            "User-Agent",
-            UA_CHROME,
-        )],
-    ).await?;
+    let html =
+        fetch_reqwest_get_with_headers("https://www.guanhai.com.cn", &[("User-Agent", UA_CHROME)])
+            .await?;
 
     let links: Vec<String> = {
         let doc = Html::parse_document(&html);

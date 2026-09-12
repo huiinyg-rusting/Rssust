@@ -52,10 +52,10 @@ pub async fn fetch_article_details(
 
     let mut image = String::new();
     let img_sel = Selector::parse("meta[property=\"og:image\"]").map_err(|e| anyhow!("{}", e))?;
-    if let Some(m) = doc.select(&img_sel).next() {
-        if let Some(v) = m.value().attr("content") {
-            image = v.to_string();
-        }
+    if let Some(m) = doc.select(&img_sel).next()
+        && let Some(v) = m.value().attr("content")
+    {
+        image = v.to_string();
     }
 
     Ok((content, categories, authors.join(", "), image))
@@ -220,11 +220,11 @@ pub async fn fetch_release_notes(
     }
 
     let mut items = Vec::new();
+    let re_release_date =
+        regex::Regex::new(r"(\w+\s+\d+[stndrh]*,\s+\d{4})").map_err(|e| anyhow!("{}", e))?;
     for (text, desc) in section {
         let clean = text.replace("**", "").trim().to_string();
-        let date_match = regex::Regex::new(r"(\w+\s+\d+[stndrh]*,\s+\d{4})")
-            .map_err(|e| anyhow!("{}", e))?
-            .captures(&clean);
+        let date_match = re_release_date.captures(&clean);
         let pub_date = date_match
             .and_then(|c| c.get(1).map(|m| m.as_str().to_string()))
             .and_then(|d| parse_release_date(&d));
@@ -268,10 +268,10 @@ pub async fn fetch_release_notes(
 fn extract_first_h2_text(html: &str) -> String {
     let frag = Html::parse_fragment(html);
     let h2_sel = Selector::parse("h2").ok();
-    if let Some(sel) = h2_sel {
-        if let Some(el) = frag.select(&sel).next() {
-            return el.text().collect::<String>().trim().to_string();
-        }
+    if let Some(sel) = h2_sel
+        && let Some(el) = frag.select(&sel).next()
+    {
+        return el.text().collect::<String>().trim().to_string();
     }
     String::new()
 }
