@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 
 fn apod_pubdate(date_str: &str) -> Option<String> {
     date_str_to_rss(date_str, "%Y-%m-%d", "+0000")
@@ -78,7 +77,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("NASA Astronomy Picture of the Day")
         .link("https://apod.nasa.gov/apod/astropix.html")
-        .description(format!("NASA 每日天文一图 | {}", MAINTAINER))
+        .description("NASA 每日天文一图")
         .pub_date(now())
         .items(item_vec)
         .build();

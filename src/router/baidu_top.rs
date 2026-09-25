@@ -5,7 +5,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 const UA: &str = UA_CHROME;
 const VALID_TABS: &[&str] = &["realtime", "game", "finance", "sport", "novel", "car"];
 
@@ -82,7 +81,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title(tab_title(tab))
         .link(url)
-        .description(format!("百度热搜榜单 | {}", MAINTAINER))
+        .description("百度热搜榜单")
         .pub_date(now())
         .items(item_vec)
         .build();

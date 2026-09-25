@@ -112,9 +112,14 @@ pub fn opt_usize(params: &HashMap<String, String>, key: &str, default: usize) ->
 }
 
 pub fn hashmap_to_params(hashmap: HashMap<String, String>) -> String {
-    let mut response: String = "".to_owned();
+    let mut response: String = String::new();
     for (key, value) in hashmap.iter() {
-        response.push_str(format!("{}={}", key, value).as_str());
+        if !response.is_empty() {
+            response.push('&');
+        }
+        response.push_str(key);
+        response.push('=');
+        response.push_str(value);
     }
     response
 }

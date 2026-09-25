@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huiinyg / Defense One (defense & national security, no official RSS)";
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html =
@@ -103,10 +102,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Defense One - Defense & National Security News")
         .link("https://www.defenseone.com")
-        .description(format!(
-            "Defense One latest articles - military, technology and national security (no official RSS) | {}",
-            MAINTAINER
-        ))
+        .description("Defense One latest articles - military, technology and national security (no official RSS)")
         .items(item_vec)
         .build();
 

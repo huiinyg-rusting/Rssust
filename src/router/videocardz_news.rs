@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huiinyg / VideoCardz.com";
 const BASE_URL: &str = "https://videocardz.com";
 
 fn parse_time(time1: &str, time2: &str) -> Option<String> {
@@ -116,7 +115,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("VideoCardz - Latest GPU & Hardware News")
         .link(BASE_URL)
-        .description(format!("VideoCardz.com latest news | {}", MAINTAINER))
+        .description("VideoCardz.com latest news")
         .items(item_vec)
         .build();
 

@@ -5,7 +5,6 @@ use scraper::{Html, Selector};
 use std::collections::HashMap;
 
 const UA: &str = UA_CHROME;
-const MAINTAINER: &str = "AI转写 / huiinyg审核";
 
 fn parse_list_date(datetime: &str) -> Option<String> {
     datetime_str_to_rss(&datetime[..19])
@@ -153,10 +152,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Kali Linux Blog")
         .link("https://www.kali.org/blog/".to_string())
-        .description(format!(
-            "Kali Linux 官方博客更新 | {} (遵守 robots.txt)",
-            MAINTAINER
-        ))
+        .description("Kali Linux 官方博客更新 (遵守 robots.txt)")
         .items(item_vec)
         .build();
     Ok(channel.to_string())

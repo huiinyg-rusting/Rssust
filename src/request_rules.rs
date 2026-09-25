@@ -1,4 +1,5 @@
 use crate::config::{is_route_disabled, rate_limit_secs};
+use crate::easyuser::HttpError;
 use crate::router::*;
 use anyhow::*;
 use std::collections::HashMap;
@@ -37,7 +38,7 @@ macro_rules! routes {
                 $($route => run!($module, parameters),)*
                 _ => {
                     warn!("Unregistered route: {}", url);
-                    Err(anyhow!("404NotFound"))
+                    Err(HttpError::not_found("404NotFound").into())
                 }
             }
         }
@@ -74,6 +75,7 @@ routes! {
     ("/bjnews_cat", bjnews_cat),
     ("/caixin_latest", caixin_latest),
     ("/carnegieendowment_news", carnegieendowment_news),
+    ("/cas_research", cas_research),
     ("/cenc_earthquake", cenc_earthquake),
     ("/chinanews", chinanews),
     ("/cls_hot", cls_hot),
@@ -112,11 +114,13 @@ routes! {
     ("/github_user_repos", github_user_repos),
     ("/guancha_headline", guancha_headline),
     ("/guanhai", guanhai),
+    ("/gamersky_news", gamersky_news),
     ("/guokr_scientific", guokr_scientific),
     ("/hackernews", hackernews),
     ("/ifeng_news", ifeng_news),
     ("/ithome_ranking", ithome_ranking),
     ("/jianshu_home", jianshu_home),
+    ("/jiemian_news", jiemian_news),
     ("/juejin_pins", juejin_pins),
     ("/juejin_trending", juejin_trending),
     ("/kali_blog", kali_blog),
@@ -124,7 +128,9 @@ routes! {
     ("/lwn", lwn),
     ("/mittrchina", mittrchina),
     ("/moe_news", moe_news),
+    ("/mydrivers_news", mydrivers_news),
     ("/nasa_apod", nasa_apod),
+    ("/nbd_news", nbd_news),
     ("/netease_today", netease_today),
     ("/nmc_alarm", nmc_alarm),
     ("/openai_chatgpt_atlas_release", openai_chatgpt_atlas_release),
@@ -158,7 +164,7 @@ pub async fn request_rules(
 ) -> Result<String, anyhow::Error> {
     if is_route_disabled(url) {
         warn!("Route {} is disabled", url);
-        return Err(anyhow!("404NotFound"));
+        return Err(HttpError::not_found("404NotFound").into());
     }
     debug!("Route {} matched, fetching", url);
     let ttl = rate_limit_secs(url).map(Duration::from_secs);

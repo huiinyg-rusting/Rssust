@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI转写 / huiinyg审核 - 来源于RSShub@sgqy, hang333, TonyRL";
 
 fn parse_article_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);
@@ -115,7 +114,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("奇客的资讯，重要的东西")
         .link(base_url)
-        .description(format!("Solidot {} 最新消息 | {}", type_, MAINTAINER))
+        .description(format!("Solidot {} 最新消息", type_))
         .items(item_vec)
         .build();
     Ok(channel.to_string())

@@ -449,6 +449,19 @@ OpenAI Official News (rss.xml + full article content)</li>
 <li><a href="openai_research.html">openai_research</a>
 OpenAI Research Articles (filtered from official RSS by category=Research)</li>
 </ul>
+<h4 id="other"><a class="header" href="#other">Other</a></h4>
+<ul>
+<li><a href="cas_research.html">cas_research</a>
+中国科学院科研进展列表（服务端渲染 HTML，无官方 RSS，robots.txt 不存在视为允许；pubDate 取链接文件名 tYYYYMMDD 中的发布日期）</li>
+<li><a href="gamersky_news.html">gamersky_news</a>
+游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）</li>
+<li><a href="jiemian_news.html">jiemian_news</a>
+界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
+<li><a href="mydrivers_news.html">mydrivers_news</a>
+快科技（mydrivers）今日资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
+<li><a href="nbd_news.html">nbd_news</a>
+每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
+</ul>
 <h4 id="pingwest-品玩"><a class="header" href="#pingwest-品玩">PingWest (品玩)</a></h4>
 <ul>
 <li><a href="pingwest_news.html">pingwest_news</a>
@@ -2137,6 +2150,16 @@ cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)</p>
 <strong>Example:</strong> <a href="/carnegieendowment_news">rssust://carnegieendowment_news</a><br />
 <strong>Parameter:</strong><br />
 (No parameters)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cas_research"><a class="header" href="#router-name-cas_research">Router-name: cas_research</a></h1>
+<p><strong>Commit time:</strong> 2026.09.12<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 中国科学院科研进展列表（服务端渲染 HTML，无官方 RSS，robots.txt 不存在视为允许；pubDate 取链接文件名 tYYYYMMDD 中的发布日期）<br />
+<strong>Address:</strong> rssust://cas_research<br />
+<strong>Example:</strong> <a href="/cas_research">rssust://cas_research</a><br />
+<strong>robots.txt:</strong> www.cas.cn 无 robots.txt，视为允许<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cenc_earthquake"><a class="header" href="#router-name-cenc_earthquake">Router-name: cenc_earthquake</a></h1>
 <p><strong>Commit time:</strong> 2026.08.04<br />
 <strong>Cookies?:</strong> no<br />
@@ -2300,6 +2323,16 @@ category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽�
 <strong>Example:</strong> <a href="/eeo_kuaixun">rssust://eeo_kuaixun</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-gamersky_news"><a class="header" href="#router-name-gamersky_news">Router-name: gamersky_news</a></h1>
+<p><strong>Commit time:</strong> 2026.09.13<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）<br />
+<strong>Address:</strong> rssust://gamersky_news<br />
+<strong>Example:</strong> <a href="/gamersky_news">rssust://gamersky_news</a><br />
+<strong>robots.txt:</strong> www.gamersky.com robots.txt 仅禁止 /indexbeta/，资讯路径允许<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-gelonghui_home"><a class="header" href="#router-name-gelonghui_home">Router-name: gelonghui_home</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
@@ -2806,6 +2839,16 @@ Meaning: 24h(24小时最热), 7days(7天最热), monthly(月榜)</li>
 <strong>Example:</strong> <a href="/jianshu_home">rssust://jianshu_home</a><br />
 <strong>Parameter:</strong><br />
 无参数</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-jiemian_news"><a class="header" href="#router-name-jiemian_news">Router-name: jiemian_news</a></h1>
+<p><strong>Commit time:</strong> 2026.09.13<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）<br />
+<strong>Address:</strong> rssust://jiemian_news<br />
+<strong>Example:</strong> <a href="/jiemian_news">rssust://jiemian_news</a><br />
+<strong>robots.txt:</strong> www.jiemian.com robots.txt 仅禁止 /Con*/，首页允许<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-juejin_pins"><a class="header" href="#router-name-juejin_pins">Router-name: juejin_pins</a></h1>
 <p><strong>Commit time:</strong> 2026.07.29<br />
 <strong>Cookies?:</strong> no<br />
@@ -2897,6 +2940,16 @@ limit（可选，最大 30，默认 10）</p>
 <strong>robots.txt:</strong> www.moe.gov.cn 无 robots.txt，视为允许<br />
 <strong>Parameter:</strong> no<br />
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-mydrivers_news"><a class="header" href="#router-name-mydrivers_news">Router-name: mydrivers_news</a></h1>
+<p><strong>Commit time:</strong> 2026.09.13<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 快科技（mydrivers）今日资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）<br />
+<strong>Address:</strong> rssust://mydrivers_news<br />
+<strong>Example:</strong> <a href="/mydrivers_news">rssust://mydrivers_news</a><br />
+<strong>robots.txt:</strong> www.mydrivers.com robots.txt 不禁止抓取<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nasa_apod"><a class="header" href="#router-name-nasa_apod">Router-name: nasa_apod</a></h1>
 <p><strong>Commit time:</strong> 2026.08.30<br />
 <strong>Cookies?:</strong> no<br />
@@ -2913,6 +2966,16 @@ Default value: 5<br />
 Meaning: 返回的图片条目数（最近若干天），范围 1-30<br />
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nbd_news"><a class="header" href="#router-name-nbd_news">Router-name: nbd_news</a></h1>
+<p><strong>Commit time:</strong> 2026.09.13<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
+<strong>Introduction:</strong> 每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）<br />
+<strong>Address:</strong> rssust://nbd_news<br />
+<strong>Example:</strong> <a href="/nbd_news">rssust://nbd_news</a><br />
+<strong>robots.txt:</strong> www.nbd.com.cn robots.txt 不禁止抓取<br />
+<strong>Parameter:</strong> no<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-netease_today"><a class="header" href="#router-name-netease_today">Router-name: netease_today</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />

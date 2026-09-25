@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 const UA: &str = "rssust/1.0 (Cargo registry aggregator; +https://github.com/huiinyg/Rssust)";
 
 fn version(c: &Value) -> String {
@@ -78,7 +77,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("crates.io 最新发布的 crate")
         .link("https://crates.io/crates?sort=new")
-        .description(format!("crates.io 官方 API 聚合 | {}", MAINTAINER))
+        .description("crates.io 官方 API 聚合")
         .pub_date(now())
         .items(item_vec)
         .build();

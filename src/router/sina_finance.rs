@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let count = para
@@ -73,7 +72,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("新浪财经 7×24 快讯")
         .link("https://zhibo.sina.com.cn/finance/live/152")
-        .description(format!("新浪财经直播快讯聚合 | {}", MAINTAINER))
+        .description("新浪财经直播快讯聚合")
         .pub_date(now())
         .items(item_vec)
         .build();

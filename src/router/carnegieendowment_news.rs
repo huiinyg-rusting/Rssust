@@ -5,8 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str =
-    "huiinyg / Carnegie Endowment (international affairs think tank, no official RSS)";
 
 fn parse_carnegie_date(date_str: &str) -> Option<String> {
     let s = date_str.trim();
@@ -108,7 +106,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Carnegie Endowment - International Peace & Policy")
         .link("https://carnegieendowment.org")
-        .description(format!("Carnegie Endowment for International Peace - latest publications, events & videos (no official RSS) | {}", MAINTAINER))
+        .description("Carnegie Endowment for International Peace - latest publications, events & videos (no official RSS)")
         .items(item_vec)
         .build();
 

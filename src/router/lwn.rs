@@ -4,7 +4,6 @@ use rss::*;
 use std::collections::HashMap;
 
 const UA: &str = UA_CHROME;
-const MAINTAINER: &str = "AI转写 / huiinyg审核";
 
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let feed = para.get("feed").map(|s| s.as_str()).unwrap_or("rss");
@@ -35,7 +34,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let out = ChannelBuilder::default()
         .title(channel.title().to_string())
         .link(channel.link().to_string())
-        .description(format!("{} | {}", channel.description(), MAINTAINER))
+        .description(channel.description().to_string())
         .items(item_vec)
         .build();
     Ok(out.to_string())

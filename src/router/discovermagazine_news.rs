@@ -7,7 +7,6 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 
-const MAINTAINER: &str = "huiinyg / Discover Magazine (science news, no official RSS)";
 const UA: &str = UA_CHROME;
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
@@ -68,10 +67,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Discover Magazine - Science News")
         .link("https://www.discovermagazine.com")
-        .description(format!(
-            "Discover Magazine latest science news (no official RSS) | {}",
-            MAINTAINER
-        ))
+        .description("Discover Magazine latest science news (no official RSS)")
         .items(items)
         .build();
 

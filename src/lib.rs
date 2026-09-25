@@ -291,13 +291,6 @@ pub mod connect {
                 he.message.clone().into_bytes(),
             );
         }
-        if e.to_string() == "404NotFound" {
-            return (
-                404,
-                "text/plain; charset=utf-8".to_string(),
-                "404NotFound".as_bytes().to_vec(),
-            );
-        }
         (
             500,
             "text/plain; charset=utf-8".to_string(),
@@ -368,7 +361,7 @@ pub mod connect {
         match fs::read_to_string(&Path::new(&exe_dir.join("index/index.html"))).await {
             std::result::Result::Ok(i) => Ok(i),
 
-            Err(i) => Err(anyhow!(format!("{}:{}", "index.html", i.kind()))),
+            Err(i) => Err(anyhow!("{}:{}", "index.html", i.kind())),
         }
     }
     pub async fn show_doc(path: &str) -> Result<String, Error> {
@@ -378,24 +371,21 @@ pub mod connect {
             .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
 
-        let raw = match safe_join(exe_dir, path) {
-            Some(p) => p,
-            None => {
-                return fs::read_to_string(exe_dir.join("docs/404.html"))
-                    .await
-                    .context("404 html Operation failed");
-            }
-        };
-        let mut raw = raw;
-        if raw.is_dir() {
-            raw = raw.join("index.html");
-        }
-        match fs::read_to_string(&raw).await {
-            std::result::Result::Ok(i) => Ok(i),
-
-            Err(_) => Ok(fs::read_to_string(exe_dir.join("docs/404.html"))
+        let Some(raw) = safe_join(exe_dir, path) else {
+            return fs::read_to_string(exe_dir.join("docs/404.html"))
                 .await
-                .context("404 html Operation failed")?),
+                .context("404 html Operation failed");
+        };
+        let raw = if raw.is_dir() {
+            raw.join("index.html")
+        } else {
+            raw
+        };
+        match fs::read_to_string(&raw).await {
+            Ok(i) => Ok(i),
+            Err(_) => fs::read_to_string(exe_dir.join("docs/404.html"))
+                .await
+                .context("404 html Operation failed"),
         }
     }
 
@@ -405,10 +395,11 @@ pub mod connect {
             .parent()
             .ok_or_else(|| anyhow!("Could not get executable directory"))?;
 
-        let raw = safe_join(exe_dir, path).ok_or_else(|| anyhow!("404NotFound"))?;
+        let raw = safe_join(exe_dir, path)
+            .ok_or_else(|| Error::from(HttpError::not_found("404NotFound")))?;
         fs::read(raw)
             .await
-            .map_err(|e| anyhow!(format!("{}:{}", path, e.kind())))
+            .map_err(|e| anyhow!("{}:{}", path, e.kind()))
     }
 
     pub fn mime_type(path: &str) -> &'static str {
@@ -459,7 +450,7 @@ pub mod connect {
             std::result::Result::Err(e) => {
                 warn!("Failed to read static file {}: {}", path, e);
                 crate::request_rules::ShowToUser::Html {
-                    res: Err(anyhow!(format!("404 html Operation failed: {}", e))),
+                    res: Err(anyhow!("404 html Operation failed: {}", e)),
                 }
             }
         }

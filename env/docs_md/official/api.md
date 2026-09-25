@@ -237,6 +237,18 @@
 - [openai_research](../openai_research.md)
     OpenAI Research Articles (filtered from official RSS by category=Research)
 
+#### Other
+- [cas_research](../cas_research.md)
+    中国科学院科研进展列表（服务端渲染 HTML，无官方 RSS，robots.txt 不存在视为允许；pubDate 取链接文件名 tYYYYMMDD 中的发布日期）
+- [gamersky_news](../gamersky_news.md)
+    游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）
+- [jiemian_news](../jiemian_news.md)
+    界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+- [mydrivers_news](../mydrivers_news.md)
+    快科技（mydrivers）今日资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+- [nbd_news](../nbd_news.md)
+    每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+
 #### PingWest (品玩)
 - [pingwest_news](../pingwest_news.md)
     品玩 PingWest 首页精选资讯（无官方 RSS，抓取首页静态区块）

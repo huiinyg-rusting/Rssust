@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 const UA: &str = UA_CHROME;
 const URL: &str = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
 
@@ -68,7 +67,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("今日头条热榜")
         .link(URL.to_string())
-        .description(format!("今日头条热搜榜单 | {}", MAINTAINER))
+        .description("今日头条热搜榜单")
         .pub_date(now())
         .items(item_vec)
         .build();

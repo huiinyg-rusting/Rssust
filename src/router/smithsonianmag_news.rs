@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huiinyg / Smithsonian Magazine (official RSS returns 403)";
 
 fn parse_smithsonian_date(date_str: &str) -> Option<String> {
     let s = date_str.trim().replace("p.m.", "PM").replace("a.m.", "AM");
@@ -107,10 +106,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Smithsonian Magazine - Latest Science, History & Culture")
         .link("https://www.smithsonianmag.com")
-        .description(format!(
-            "Smithsonian Magazine latest articles (official RSS returns 403) | {}",
-            MAINTAINER
-        ))
+        .description("Smithsonian Magazine latest articles (official RSS returns 403)")
         .items(item_vec)
         .build();
 

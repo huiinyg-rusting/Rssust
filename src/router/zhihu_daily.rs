@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "AI制作 / huiinyg-rusting审核";
 
 fn daily_pubdate(date_str: &str) -> Option<String> {
     date_str_to_rss(date_str, "%Y%m%d", "+0800")
@@ -80,7 +79,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             }
         ))
         .link("https://daily.zhihu.com")
-        .description(format!("知乎日报官方 API 聚合 | {}", MAINTAINER))
+        .description("知乎日报官方 API 聚合")
         .pub_date(now())
         .items(item_vec)
         .build();

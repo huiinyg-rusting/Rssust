@@ -26,23 +26,31 @@ pub fn init() {
             Err(e) => warn!("Failed to create default config {}: {}", path.display(), e),
         }
     }
-    let _ = load_config();
 }
 
-fn load_config() -> Config {
-    let path = exe_config_path().expect("Can't find Config.toml");
-    let content = fs::read_to_string(&path).expect("Can't read Config.toml");
-    let config: Config = toml::from_str(&content).expect("Can't Toml the config string");
-    let _ = CONFIG.set(config.clone());
-    config
+fn read_config() -> Config {
+    let path = match exe_config_path() {
+        Some(p) => p,
+        None => return Config::default(),
+    };
+    let content = match fs::read_to_string(&path) {
+        Ok(c) => c,
+        Err(e) => {
+            warn!("Can't read {}: {}; using defaults", path.display(), e);
+            return Config::default();
+        }
+    };
+    match toml::from_str(&content) {
+        Ok(c) => c,
+        Err(e) => {
+            warn!("Invalid config {}: {}; using defaults", path.display(), e);
+            Config::default()
+        }
+    }
 }
 
 fn cached() -> &'static Config {
-    CONFIG.get_or_init(|| {
-        let path = exe_config_path().expect("Can't find Config.toml");
-        let content = fs::read_to_string(&path).expect("Can't read Config.toml");
-        toml::from_str(&content).expect("Can't Toml the config string")
-    })
+    CONFIG.get_or_init(read_config)
 }
 
 fn exe_config_path() -> Option<std::path::PathBuf> {
@@ -67,7 +75,7 @@ fn realcorenum() -> u8 {
     }
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Deserialize, Clone, Default)]
 struct Config {
     server: Option<ServerConfig>,
     routes: Option<RoutesConfig>,

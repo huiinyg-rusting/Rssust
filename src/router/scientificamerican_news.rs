@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-const MAINTAINER: &str = "huiinyg / Scientific American (science & technology, no official RSS)";
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers(
@@ -95,10 +94,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Scientific American - Science & Technology News")
         .link("https://www.scientificamerican.com")
-        .description(format!(
-            "Scientific American latest articles - the essential guide to the most awe-inspiring advances in science & technology (no official RSS) | {}",
-            MAINTAINER
-        ))
+        .description("Scientific American latest articles - the essential guide to the most awe-inspiring advances in science & technology (no official RSS)")
         .items(item_vec)
         .build();
 
