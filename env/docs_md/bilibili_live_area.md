@@ -7,9 +7,9 @@
 **Example:** [rssust://bilibili_live_area?area_id=1&order=online](/bilibili_live_area?area_id=1&order=online)  
 **Parameter:**  
 1. **area_id**  
-   Type of parameter: number  
+   Type of parameter: string / number  
    Default value: 无  
-   Meaning: 直播分区ID (可通过 room/v1/Area/getList 查询)  
+   Meaning: 直播分区ID。支持父分区 id（如 1=娱乐，自动展开其下全部子分区合并房间）或子分区 id（如 86=英雄联盟）。可通过 room/v1/Area/getList 查询，新版接口只接受子分区 id 查房间。父分区子分区超过 20 个时报错，请改用子分区 id  
 2. **order**  
    Type of parameter: string  
    Default value: 无  

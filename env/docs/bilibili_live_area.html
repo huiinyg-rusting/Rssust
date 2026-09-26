@@ -185,9 +185,9 @@
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>area_id</strong><br />
-Type of parameter: number<br />
+Type of parameter: string / number<br />
 Default value: 无<br />
-Meaning: 直播分区ID (可通过 room/v1/Area/getList 查询)</li>
+Meaning: 直播分区ID。支持父分区 id（如 1=娱乐，自动展开其下全部子分区合并房间）或子分区 id（如 86=英雄联盟）。可通过 room/v1/Area/getList 查询，新版接口只接受子分区 id 查房间。父分区子分区超过 20 个时报错，请改用子分区 id</li>
 <li><strong>order</strong><br />
 Type of parameter: string<br />
 Default value: 无<br />
