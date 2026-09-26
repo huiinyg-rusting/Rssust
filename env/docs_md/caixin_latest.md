@@ -7,3 +7,4 @@
 **Example:** [rssust://caixin_latest](/caixin_latest)  
 **Parameter:**  
    无参数  
+**Environment Variables:** no

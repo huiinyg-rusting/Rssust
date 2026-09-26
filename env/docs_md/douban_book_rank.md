@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: null  
    Meaning: 图书类型，fiction=虚构类, nonfiction=非虚构类，缺省合并两者  
+**Environment Variables:** no

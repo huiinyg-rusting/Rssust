@@ -7,3 +7,4 @@
 **Example:** [rssust://stcn_rank](/stcn_rank)  
 **Parameter:**  
     id: 分类 (默认 yw)  
+**Environment Variables:** no

@@ -1,5 +1,5 @@
-### The API provided by this server
-### 本服务器所提供的API
+### Routes provided by this server
+### 本服务器所提供的路由清单
 ---
 #### AP News
 - [apnews_topics](../apnews_topics.md)

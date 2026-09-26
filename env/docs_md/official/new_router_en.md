@@ -16,10 +16,11 @@ You can create your own .rs file under `/src/router`, but there are some require
 1. Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!
 2. Router naming convention is: `platform_lowercase_english_name_function_lowercase_english_name`
 3. The filename part (excluding the .rs extension) becomes your router name
-4. Each router must have a corresponding documentation file named `router_name.md` under `/docs`; more details later
+4. Each router must have a corresponding documentation file named `router_name.md` under `env/docs_md`; more details later
 5. Each router can only correspond to one function
 
 Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.
+Build scripts `build_dev.sh` and `build.bat` are provided.
 
 ### Import Libraries
 ```rust
@@ -167,12 +168,15 @@ The specific program logic is up to you to write.
 ### How to register it after writing?
 In `/src/router/mod.rs`, add a new line at the end: `pub mod your_router_name;`
 
-Then in `src/request_rules.rs`, add a match arm to the `match url` dispatcher, following the pattern of other entries:
+Then in `src/request_rules.rs`, add one line (in alphabetical order) to the `routes! { ... }` block, following the pattern of other entries:
 ```rust
-"/your_router_name" => run!(your_router_name, parameters),
+("/your_router_name", your_router_name),
 ```
-The `run!` macro expands to `your_router_name::get(parameters.clone()).await`, so don't change its shape.
-> **Note**: `parameters` in the `run!` macro is the argument name of `request_rules`. Due to macro hygiene it can't refer to the outer variable, so it must be passed explicitly.
+The `routes!` macro generates:
+- `pub const ROUTES: &[&str]` (path array) and `ROUTE_COUNT` (total count)
+- `pub async fn route_dispatch()` — internally uses `match url` to dispatch each path to `your_router_name::get(...)`
+
+So **don't** hand-write a `match url` arm or change the macro shape. After registering, run `./env/rssust docs` and the new route is automatically written into `SUMMARY.md` and `official/routes.md`.
 
 ### How to run after registration?
 I'm very strict about the necessary environment directories for the binary file. Files like `cookies.json`, the `index` folder, etc., must be in the same directory as the binary file. Therefore, I created an `env` folder where all necessary environments are located. It should look like this:
@@ -206,12 +210,12 @@ Example format:
   "expirationDate": 1893456000
 }
 ```
-All cookies are in the same JSON file, which will be imported when the program starts.
+All cookies are in the same JSON file, which is read on demand at runtime (`easyuser::load_cookie_header()` builds the `Cookie` header filtered by domain); no import at startup.
 
 Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.
 
 ### Documentation Writing!
-Create a file named `your_router_name.md` under `/docs`, copy and paste the template below and fill it in:
+Create a file named `your_router_name.md` under `env/docs_md`, copy and paste the template below and fill it in:
 ```markdown
 # Router-name: 
 **Commit time:** 

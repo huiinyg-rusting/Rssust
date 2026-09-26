@@ -7,3 +7,4 @@
 **Example:** [rssust://yicai_headline](/yicai_headline)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

@@ -14,3 +14,4 @@
    Type of parameter: number  
    Default value: 20  
    Meaning: 条数, 最大 100
+**Environment Variables:** GITHUB_TOKEN

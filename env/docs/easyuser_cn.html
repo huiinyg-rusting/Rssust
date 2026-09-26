@@ -184,6 +184,8 @@
 <h2 id="爬虫类"><a class="header" href="#爬虫类">爬虫类</a></h2>
 <blockquote>
 <p><strong>异步</strong>：项目已迁移到 <code>tokio</code> 异步运行时，以下 fetch 函数均为 <code>async fn</code>，调用时必须加 <code>.await</code>，例如 <code>fetch_reqwest_get(&amp;url).await?</code>。所有 fetch 函数共享一个全局 <code>reqwest::Client</code>（<code>OnceLock</code> 懒加载），复用连接池，不会每次新建。</p>
+<p><strong>缓存</strong>：对在 <code>config.toml</code> 的 <code>routes.rate_limit</code> 中配置了间隔的路由，GET/POST 各变体会自动走 <code>rate_limit</code> 模块缓存——间隔内重复请求直接复用缓存、不再请求上游；解析报错时自动清理缓存。</p>
+<p><strong>浏览器指纹</strong>：另有 <code>fetch_browser_get*</code> 系列（基于 curl-impersonate-cli）用于绕过 Cloudflare 等按 TLS 指纹反爬的站点，见下文。</p>
 </blockquote>
 <h3 id="fetch_reqwest_get"><a class="header" href="#fetch_reqwest_get">fetch_reqwest_get()</a></h3>
 <p><strong>签名</strong>: <code>pub async fn fetch_reqwest_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
@@ -198,16 +200,49 @@
 fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 <span class="boring">}</span></code></pre></pre>
 <h3 id="fetch_reqwest_post"><a class="header" href="#fetch_reqwest_post">fetch_reqwest_post()</a></h3>
-<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post(url: &amp;str, body: String) -&gt; Result&lt;String, Error&gt;</code></p>
-<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。</p>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post(url: &amp;str, body: String, header: Option&lt;reqwest::header::HeaderMap&gt;) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>使用 <code>reqwest</code> 库发送 HTTP POST 请求，返回响应文本。第三个参数 <code>header</code> 用于自定义请求头，不需要时传 <code>None</code>。</p>
 <h3 id="fetch_reqwest_post_json"><a class="header" href="#fetch_reqwest_post_json">fetch_reqwest_post_json()</a></h3>
 <p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post_json(url: &amp;str, json_body: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
 <p>使用 <code>reqwest</code> 库发送 Content-Type 为 <code>application/json</code> 的 HTTP POST 请求。</p>
+<h3 id="fetch_reqwest_post_json_with_headers"><a class="header" href="#fetch_reqwest_post_json_with_headers">fetch_reqwest_post_json_with_headers()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_reqwest_post_json_with_headers(url: &amp;str, json_body: &amp;str, headers: &amp;[(&amp;str, &amp;str)]) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>发送 Content-Type 为 <code>application/json</code> 的 POST 请求，并携带自定义 Headers。</p>
+<h3 id="client_with_cookie"><a class="header" href="#client_with_cookie">client_with_cookie()</a></h3>
+<p><strong>签名</strong>: <code>pub fn client_with_cookie() -&gt; Result&lt;reqwest::Client, Error&gt;</code></p>
+<p>构建一个启用了 <code>cookie_store(true)</code> 的 <code>reqwest::Client</code> 实例（独立于全局共享 Client），用于需要带 Cookie 维持会话的场景。</p>
+<h3 id="fetch_browser_get"><a class="header" href="#fetch_browser_get">fetch_browser_get()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_browser_get(url: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>带浏览器 TLS 指纹伪装的 GET 请求（绕过 Cloudflare 等反爬），默认使用 <code>chrome124</code> profile。</p>
+<h3 id="fetch_browser_get_with_profile"><a class="header" href="#fetch_browser_get_with_profile">fetch_browser_get_with_profile()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_browser_get_with_profile(url: &amp;str, profile: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>同上，但可指定 curl-impersonate 的 profile（如 <code>chrome110</code> / <code>edge99</code>，某些站点仅对特定旧指纹放行）。</p>
+<h3 id="fetch_browser_get_with_headers"><a class="header" href="#fetch_browser_get_with_headers">fetch_browser_get_with_headers()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_browser_get_with_headers(url: &amp;str, headers: &amp;[(&amp;str, &amp;str)]) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>带浏览器指纹伪装，并携带自定义 Headers 的 GET 请求（默认 <code>chrome124</code>）。</p>
+<h3 id="fetch_browser_get_with_headers_profile"><a class="header" href="#fetch_browser_get_with_headers_profile">fetch_browser_get_with_headers_profile()</a></h3>
+<p><strong>签名</strong>: <code>pub async fn fetch_browser_get_with_headers_profile(url: &amp;str, headers: &amp;[(&amp;str, &amp;str)], profile: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>带浏览器指纹伪装 + 自定义 Headers + 指定 profile 的 GET 请求。</p>
+<blockquote>
+<p><strong>注意</strong>：<code>fetch_browser_get*</code> 依赖 <code>curl-impersonate-cli</code>（已启用其 <code>download</code> feature），首次调用会自动下载预编译的 curl-impersonate 二进制，之后复用。</p>
+</blockquote>
 <h3 id="httperror"><a class="header" href="#httperror">HttpError</a></h3>
 <p><strong>签名</strong>: <code>pub struct HttpError { pub status: u16, pub message: String }</code></p>
 <p>自定义错误类型，可携带 HTTP 状态码。路由中可用 <code>HttpError::bad_request(msg)</code>、<code>HttpError::not_found(msg)</code>、<code>HttpError::bad_gateway(msg)</code> 构造。渲染层会优先使用 <code>HttpError</code> 的 <code>status</code> 作为响应状态码、<code>message</code> 作为正文（否则默认 500）。</p>
 <hr />
 <h2 id="序列化类"><a class="header" href="#序列化类">序列化类</a></h2>
+<h3 id="req_param"><a class="header" href="#req_param">req_param()</a></h3>
+<p><strong>签名</strong>: <code>pub fn req_param(params: &amp;HashMap&lt;String, String&gt;, key: &amp;str, desc: &amp;str) -&gt; Result&lt;String, Error&gt;</code></p>
+<p>取必填参数：存在且非空时返回其值，否则返回错误 <code>Params should contain key (desc)</code>。</p>
+<h3 id="req_optional"><a class="header" href="#req_optional">req_optional()</a></h3>
+<p><strong>签名</strong>: <code>pub fn req_optional(params: &amp;HashMap&lt;String, String&gt;, key: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>取可选参数，缺失返回 <code>None</code>。</p>
+<h3 id="req_usize"><a class="header" href="#req_usize">req_usize()</a></h3>
+<p><strong>签名</strong>: <code>pub fn req_usize(params: &amp;HashMap&lt;String, String&gt;, key: &amp;str, desc: &amp;str) -&gt; Result&lt;usize, Error&gt;</code></p>
+<p>取必填参数并要求解析为 <code>usize</code>，失败返回错误说明。</p>
+<h3 id="opt_usize"><a class="header" href="#opt_usize">opt_usize()</a></h3>
+<p><strong>签名</strong>: <code>pub fn opt_usize(params: &amp;HashMap&lt;String, String&gt;, key: &amp;str, default: usize) -&gt; usize</code></p>
+<p>取可选整数参数，缺失或解析失败返回 <code>default</code>。</p>
 <h3 id="params_to_hashmap"><a class="header" href="#params_to_hashmap">params_to_hashmap()</a></h3>
 <p><strong>签名</strong>: <code>pub fn params_to_hashmap(query: &amp;str) -&gt; HashMap&lt;String, String&gt;</code></p>
 <p>将 <code>key1=value1&amp;key2=value2</code> 格式参数字符串解析为 <code>HashMap</code>。</p>
@@ -238,6 +273,18 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 <p>将 <code>"YYYY-MM-DD HH:MM:SS"</code> 格式的字符串转换为 RSS 标准时间格式。<strong>输入视为 UTC 时间</strong>，自动换算为东八区（+0800）后再输出。</p>
 <p>示例：<code>"2026-07-11 12:00:00"</code> → <code>"Sat, 11 Jul 2026 20:00:00 +0800"</code></p>
 <p>适用于带 <code>Z</code> 后缀的 ISO 时间（如 <code>datePublished</code>），调用前先 <code>s.replace('T', " ").replace('Z', "")</code> 归一化，参见 <code>apnews_topics</code> 的用法。</p>
+<h3 id="rfc3339_to_rss"><a class="header" href="#rfc3339_to_rss">rfc3339_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn rfc3339_to_rss(s: &amp;str) -&gt; String</code></p>
+<p>将 RFC 3339 格式字符串（如 <code>2026-07-11T12:00:00+08:00</code>）转换为 RSS 标准时间格式。</p>
+<h3 id="rfc3339_to_rss_utc"><a class="header" href="#rfc3339_to_rss_utc">rfc3339_to_rss_utc()</a></h3>
+<p><strong>签名</strong>: <code>pub fn rfc3339_to_rss_utc(s: &amp;str) -&gt; String</code></p>
+<p>同上，但输入视为 UTC 时间，输出换算为东八区（+0800）。</p>
+<h3 id="rfc2822_to_rss"><a class="header" href="#rfc2822_to_rss">rfc2822_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn rfc2822_to_rss(s: &amp;str) -&gt; String</code></p>
+<p>将 RFC 2822 格式（如 <code>Sat, 11 Jul 2026 12:00:00 +0800</code>）转换为 RSS 标准时间格式。</p>
+<h3 id="date_str_to_rss"><a class="header" href="#date_str_to_rss">date_str_to_rss()</a></h3>
+<p><strong>签名</strong>: <code>pub fn date_str_to_rss(date_str: &amp;str, fmt: &amp;str, offset: &amp;str) -&gt; Option&lt;String&gt;</code></p>
+<p>按自定义 <code>fmt</code> 解析日期字符串，并按 <code>offset</code>（如 <code>+0800</code>）校正时区后输出 RSS 标准时间格式。</p>
 <hr />
 <h2 id="字符类"><a class="header" href="#字符类">字符类</a></h2>
 <h3 id="no_double_quotes"><a class="header" href="#no_double_quotes">no_double_quotes()</a></h3>
@@ -247,9 +294,6 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 <h3 id="env_search"><a class="header" href="#env_search">env_search()</a></h3>
 <p><strong>签名</strong>: <code>pub fn env_search(s: &amp;str) -&gt; Option&lt;String&gt;</code></p>
 <p>查找环境变量值，找到返回 <code>Some(val)</code>，找不到返回 <code>None</code>。</p>
-<h3 id="extract_js_var"><a class="header" href="#extract_js_var">extract_js_var()</a></h3>
-<p><strong>签名</strong>: <code>pub fn extract_js_var(html: &amp;str, var_name: &amp;str) -&gt; Result&lt;Value, Error&gt;</code></p>
-<p>从 HTML 页面中提取 <code>window.xxx = {...};</code> 格式的 JavaScript 变量，解析为 JSON <code>Value</code>。</p>
 <hr />
 <h2 id="工具类"><a class="header" href="#工具类">工具类</a></h2>
 <h3 id="parse_bool"><a class="header" href="#parse_bool">parse_bool()</a></h3>
@@ -258,6 +302,12 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 <h3 id="load_cookie_header"><a class="header" href="#load_cookie_header">load_cookie_header()</a></h3>
 <p><strong>签名</strong>: <code>pub fn load_cookie_header(domain_filter: Option&lt;&amp;str&gt;) -&gt; Result&lt;Option&lt;String&gt;&gt;</code></p>
 <p>从二进制同目录的 <code>cookies.json</code> 加载 Cookie，返回 <code>name=value; name=value...</code> 格式的字符串。可传入 <code>domain_filter</code> 只返回指定域名的 Cookie（如 <code>Some("bilibili.com")</code>）。</p>
+<h3 id="resolve_url"><a class="header" href="#resolve_url">resolve_url()</a></h3>
+<p><strong>签名</strong>: <code>pub fn resolve_url(href: &amp;str, base: &amp;str) -&gt; String</code></p>
+<p>将相对链接解析为绝对 URL（<code>base</code> 为页面地址）。支持 <code>//</code> 协议相对、<code>/</code> 根相对、<code>../</code> 等形式的解析。</p>
+<h3 id="truncate"><a class="header" href="#truncate">truncate()</a></h3>
+<p><strong>签名</strong>: <code>pub fn truncate(s: &amp;str, n: usize) -&gt; String</code></p>
+<p>将字符串截断到最多 <code>n</code> 个字符（按 <code>char</code> 计数，避免截断多字节 UTF-8），超出部分以单个省略号 <code>…</code> 结尾。</p>
 <hr />
 <h2 id="开发者提示"><a class="header" href="#开发者提示">开发者提示</a></h2>
 <ul>
@@ -275,7 +325,7 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="guide_cn.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="env_token.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -289,7 +339,7 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="guide_cn.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="env_token.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

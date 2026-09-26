@@ -7,3 +7,4 @@
 **Example:** [rssust://videocardz_news](/videocardz_news)  
 **Parameter:**  
 (No parameters)
+**Environment Variables:** no

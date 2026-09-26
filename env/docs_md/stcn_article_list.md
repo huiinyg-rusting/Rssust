@@ -7,3 +7,4 @@
 **Example:** [rssust://stcn_article_list](/stcn_article_list)  
 **Parameter:**  
     id: 分类 (默认 yw)  
+**Environment Variables:** no

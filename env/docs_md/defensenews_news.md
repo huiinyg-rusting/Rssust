@@ -9,3 +9,4 @@
     limit (optional, max 15, default 15)  
 **Note:**  
     Fetches article dates in parallel (up to 10 concurrent) from detail pages.
+**Environment Variables:** no

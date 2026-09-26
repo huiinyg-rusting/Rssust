@@ -61,7 +61,7 @@ fn collect_route_names(source_root: &Path) -> BTreeSet<String> {
 }
 
 fn generate_api_file(source_root: &Path) -> Result<(), Error> {
-    let api_path = source_root.join("official/api.md");
+    let api_path = source_root.join("official/routes.md");
     let (_, group_map) = parse_api_groups(&api_path);
 
     let mut grouped: BTreeMap<String, Vec<(String, String)>> = BTreeMap::new();
@@ -75,8 +75,8 @@ fn generate_api_file(source_root: &Path) -> Result<(), Error> {
     }
 
     let mut out = String::new();
-    out.push_str("### The API provided by this server\n");
-    out.push_str("### 本服务器所提供的API\n");
+    out.push_str("### Routes provided by this server\n");
+    out.push_str("### 本服务器所提供的路由清单\n");
     out.push_str("---\n");
     for (group, routes) in &grouped {
         out.push_str(&format!("#### {}\n", group));
@@ -219,7 +219,7 @@ pub fn doc_generate() -> Result<(), Error> {
 
     std::fs::write(source_root.join("SUMMARY.md"), summary)?;
 
-    // 自动生成 official/api.md（路由清单 + Introduction 描述）
+    // 自动生成 official/routes.md（路由清单 + Introduction 描述）
     generate_api_file(&source_root)?;
 
     // 三方对账：mod.rs / request_rules.rs / docs_md

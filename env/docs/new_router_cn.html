@@ -197,7 +197,8 @@
 <li>每一个路由在/docs下都必须有一个对应为 路由名.md的文档，待会再讲;</li>
 <li>每一个路由只能对应一种功能;</li>
 </ol>
-<p>开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事</p>
+<p>开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事
+提供了build_dev.sh以及build.bat脚本</p>
 <h3 id="导入库"><a class="header" href="#导入库">导入库</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -327,15 +328,17 @@ pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Err
 具体的程序逻辑就由你自己编写吧。</p>
 <h3 id="写完怎么注册呢"><a class="header" href="#写完怎么注册呢">写完怎么注册呢？</a></h3>
 <p>在 <code>/src/router/mod.rs</code> 中，在最后新建一行，写上 <code>pub mod 你的路由名;</code>
-然后再在 <code>src/request_rules.rs</code> 的 <code>match url</code> 分发中，仿照其他条目添加一个分支：</p>
+然后再在 <code>src/request_rules.rs</code> 的 <code>routes! { ... }</code> 块中（按字母序）仿照其他条目添加一行：</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>"/你的路由名" =&gt; run!(你的路由名, parameters),
+</span>("/你的路由名", 你的路由名),
 <span class="boring">}</span></code></pre></pre>
-<p><code>run!</code> 宏会展开为 <code>你的路由名::get(parameters.clone()).await</code>，因此不要改动它的写法。</p>
-<blockquote>
-<p><strong>注意</strong>：<code>run!</code> 宏参数中的 <code>parameters</code> 是 <code>request_rules</code> 的入参名，宏内由于卫生性无法直接引用外层变量，所以必须显式传入。</p>
-</blockquote>
+<p><code>routes!</code> 宏会根据这些条目自动生成：</p>
+<ul>
+<li><code>pub const ROUTES: &amp;[&amp;str]</code>（路由路径数组）与 <code>ROUTE_COUNT</code>（路由总数）</li>
+<li><code>pub async fn route_dispatch()</code>——内部用 <code>match url</code> 把路径分发到对应的 <code>你的路由名::get(...)</code> 函数</li>
+</ul>
+<p>所以<strong>不要</strong>手写 <code>match url</code> 分支，也不要改动宏里的写法。注册完运行 <code>./env/rssust docs</code> 会自动把新路由写进 <code>SUMMARY.md</code> 导航和 <code>official/routes.md</code> 路由清单。</p>
 <h3 id="注册完怎么运行呢"><a class="header" href="#注册完怎么运行呢">注册完怎么运行呢？</a></h3>
 <p>我对二进制文件设置的一些<strong>必要环境目录十分严苛</strong>，<code>cookies.json</code>,<code>index</code>文件夹等，都必须在二进制文件同目录下，因此我创建了一个<code>env</code>文件夹，需要的环境都在里面。他应该是长这样的</p>
 <pre><code class="language-sh">├── cookies.json
@@ -362,10 +365,10 @@ pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Err
 “sameSite”: “Lax”,
 “expirationDate”: 1893456000
 }
-所有的cookies挤在同一个json文件，程序启动时就会导入。
+所有的cookies挤在同一个json文件，程序运行时按需读取（<code>easyuser::load_cookie_header()</code> 会按域名过滤拼装成 <code>Cookie</code> 头），无需启动时导入。
 Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。</p>
 <h3 id="文档的编写"><a class="header" href="#文档的编写">文档的编写！</a></h3>
-<p>在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：</p>
+<p>在<code>env/docs_md/</code>下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：</p>
 <pre><code class="language-markdown"># Router-name: 
 **Commit time:** 
 **Cookies?:** 

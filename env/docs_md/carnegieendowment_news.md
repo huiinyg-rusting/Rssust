@@ -7,3 +7,4 @@
 **Example:** [rssust://carnegieendowment_news](/carnegieendowment_news)  
 **Parameter:**  
 (No parameters)
+**Environment Variables:** no

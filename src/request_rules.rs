@@ -6,6 +6,10 @@ use std::collections::HashMap;
 use std::time::Duration;
 use tracing::{debug, warn};
 
+/* ShowToUser：路由处理完的“响应载体”，由 connect::render 按类型决定 Content-Type
+   - Html: 文本（首页/文档页/错误正文/status JSON）
+   - Rss:  路由生成的 RSS XML
+   - File: 二进制静态文件（css/js/图片/字体等），需附带 content_type */
 pub enum ShowToUser {
     Html {
         res: Result<String, Error>,
@@ -19,12 +23,17 @@ pub enum ShowToUser {
     },
 }
 
+/* run!：把 ("/xxx", xxx) 条目展开为 路由模块::get(参数).await 的调用动作 */
 macro_rules! run {
     ($route:ident, $params:expr) => {
         $route::get($params.clone()).await
     };
 }
 
+/* routes!：路由注册表宏。列出 ("/路径", 模块名) 后自动生成：
+   - ROUTES（路径数组）/ ROUTE_COUNT（总数）
+   - route_dispatch()：match url 分发到对应路由模块
+   新增路由只需在下方 routes!{...} 块按字母序加一行，无需手写 match */
 macro_rules! routes {
     ($(($route:literal, $module:ident)),* $(,)?) => {
         pub const ROUTES: &[&str] = &[$($route),*];
@@ -158,6 +167,10 @@ routes! {
     ("/zhihu_hot", zhihu_hot),
 }
 
+/* 二级分发：路由前置检查 + 限速缓存。
+   1. routes.disabled 命中 → 404
+   2. routes.rate_limit 配置了间隔 → 该请求进入缓存作用域（间隔内复用缓存，失败自动清理）
+   3. 交给 route_dispatch 匹配具体路由模块 */
 pub async fn request_rules(
     url: &str,
     parameters: HashMap<String, String>,
@@ -182,6 +195,9 @@ pub async fn request_rules(
     .await
 }
 
+/* root_rules / request_rules 名字相近，职责区分：
+   - root_rules：一级分发（HTTP 请求进来最先调用的入口）
+   - request_rules：二级分发（路由前置检查 + 限速缓存 + 交给 route_dispatch） */
 pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) -> ShowToUser {
     if first_part == "/" {
         ShowToUser::Html {
@@ -192,6 +208,12 @@ pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) 
     } else if first_part.starts_with("/docs/") || first_part.starts_with("/index/") {
         crate::connect::serve_static(first_part).await
     } else if first_part == "/status" {
+        /* /status 默认关闭，需在 config.toml 的 [server] 显式设置 status_route = true */
+        if !crate::config::status_route_enabled() {
+            return ShowToUser::Html {
+                res: Err(HttpError::not_found("404NotFound").into()),
+            };
+        }
         let body = format!(
             "{{\"status\":\"ok\",\"uptime_secs\":{},\"routes\":{},\"cache_entries\":{},\"requests\":{},\"failures\":{}}}",
             crate::stats::up_secs(),

@@ -7,3 +7,4 @@
 **Example:** [rssust://netease_today](/netease_today)  
 **Parameter:**  
   无参数  
+**Environment Variables:** no

@@ -7,3 +7,4 @@
 **Example:** [rssust://bjnews_cat](/bjnews_cat)  
 **Parameter:**  
     cat: 分类 (默认 depth, 如 depth/opinion/views/column 等)  
+**Environment Variables:** no

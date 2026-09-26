@@ -7,3 +7,4 @@
 **Example:** [rssust://leiphone_newsflash](/leiphone_newsflash)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

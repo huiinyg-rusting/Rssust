@@ -22,3 +22,4 @@
    Type of parameter: number  
    Default value: 0  
    Meaning: 分区 id  
+**Environment Variables:** no

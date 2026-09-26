@@ -7,5 +7,4 @@
 **Example:** [rssust://github_followers?username=torvalds](/github_followers?username=torvalds)  
 **Parameter:**  
     username (required, GitHub login)  
-**Token:**  
-    Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.
+**Environment Variables:** GITHUB_TOKEN

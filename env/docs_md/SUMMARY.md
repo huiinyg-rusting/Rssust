@@ -1,13 +1,14 @@
 # 官方文档
-- [api](official/api.md)
 - [config](official/config.md)
 - [cookie](official/cookie.md)
 - [easyuser_cn](official/easyuser_cn.md)
+- [env_token](official/env_token.md)
 - [guide_cn](official/guide_cn.md)
 - [guide_en](official/guide_en.md)
 - [new_router_cn](official/new_router_cn.md)
 - [new_router_en](official/new_router_en.md)
 - [pogram_explanation_cn](official/pogram_explanation_cn.md)
+- [routes](official/routes.md)
 
 # 路由
 - [apnews_topics](apnews_topics.md)

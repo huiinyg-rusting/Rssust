@@ -7,3 +7,4 @@
 **Example:** [rssust://chinanews](/chinanews)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

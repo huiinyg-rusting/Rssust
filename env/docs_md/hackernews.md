@@ -12,3 +12,4 @@
     limit (optional, max 50, default 30)  
 **Rate limit:**  
     Recommend config "/hackernews" = 30 in config.toml routes.rate_limit (respect robots Crawl-delay: 30)
+**Environment Variables:** no

@@ -7,3 +7,4 @@
 **Example:** [rssust://eastday_24](/eastday_24)  
 **Parameter:**  
     category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽车/体育/财经/游戏/科技/国内/宠物/情感/人文/教育)  
+**Environment Variables:** no

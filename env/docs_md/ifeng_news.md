@@ -7,3 +7,4 @@
 **Example:** [rssust://ifeng_news](/ifeng_news)  
 **Parameter:**  
    无参数  
+**Environment Variables:** no

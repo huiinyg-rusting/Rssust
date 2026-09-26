@@ -7,3 +7,4 @@
 **Example:** [rssust://cls_hot](/cls_hot)  
 **Parameter:**  
    无参数  
+**Environment Variables:** no

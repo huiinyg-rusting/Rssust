@@ -7,3 +7,4 @@
 **Example:** [rssust://apnews_topics](/apnews_topics)  
 **Parameter:**  
     topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/science/health/sports/entertainment)  
+**Environment Variables:** no

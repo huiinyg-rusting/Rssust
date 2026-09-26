@@ -43,6 +43,7 @@ impl HttpError {
     }
 }
 
+/* 默认浏览器 UA 常量：很多上游站点会拦截空/默认 UA，路由构造请求头时用它 */
 pub const UA_CHROME: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 fn client() -> &'static reqwest::Client {
@@ -80,6 +81,8 @@ pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
     params
 }
 
+/* 参数读取助手系列：req_xxx 中的 req 指“请求参数（request param）”，不是“必需（require）”
+   用于从 ?a=b&c=d 解析出的 HashMap 里安全取值，避免每个路由手写 Option 处理 */
 pub fn req_param(params: &HashMap<String, String>, key: &str, desc: &str) -> Result<String, Error> {
     params
         .get(key)
@@ -353,9 +356,11 @@ pub fn load_cookie_header(domain_filter: Option<&str>) -> Result<Option<String>>
 }
 
 pub fn now() -> String {
+    /* 当前时间的 RSS 标准格式（RFC 2822，含东八区偏移） */
     Local::now().format("%a, %d %b %Y %H:%M:%S %z").to_string()
 }
 
+/* 解析“x月y日”中文日期（年份取当前年），返回 RSS 标准时间 */
 pub fn chinese_date_to_parse(input: &str) -> Option<String> {
     let re = regex::Regex::new(r"(\d{1,2})月(\d{1,2})日").ok()?;
     let caps = re.captures(input)?;
@@ -368,10 +373,12 @@ pub fn chinese_date_to_parse(input: &str) -> Option<String> {
             .to_string(),
     )
 }
+/* 去掉字符串两端双引号：serde_json 的 Value::to_string() 会给字符串加引号，常用此清理 */
 pub fn no_double_quotes(s: String) -> String {
     s.trim_matches('"').to_string()
 }
 
+/* 按名读环境变量（如 GITHUB_TOKEN），找不到返回 None */
 pub fn env_search(s: &str) -> Option<String> {
     env::var(s).ok()
 }

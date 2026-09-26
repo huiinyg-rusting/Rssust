@@ -7,3 +7,4 @@
 **Example:** [rssust://gelonghui_home](/gelonghui_home)  
 **Parameter:**  
     tag: 分类 (默认 web_home_page)  
+**Environment Variables:** no

@@ -8,3 +8,4 @@
 **Parameter:**  
     type（可选，index=首页资讯 hot=本周热榜 breaking=快讯 video=视频，默认 index）  
     limit（可选，最大 30，默认 10）
+**Environment Variables:** no

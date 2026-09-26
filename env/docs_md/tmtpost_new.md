@@ -7,3 +7,4 @@
 **Example:** [rssust://tmtpost_new](/tmtpost_new)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

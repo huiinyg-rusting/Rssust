@@ -7,3 +7,4 @@
 **Example:** [rssust://thepaper_featured](/thepaper_featured)  
 **Parameter:**  
    无参数  
+**Environment Variables:** no
