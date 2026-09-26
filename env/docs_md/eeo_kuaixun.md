@@ -7,3 +7,4 @@
 **Example:** [rssust://eeo_kuaixun](/eeo_kuaixun)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

@@ -30,3 +30,4 @@
    Type of parameter: string  
    Default value: 0101  
    Meaning: 生日日期(四位数，例 0101)
+**Environment Variables:** no

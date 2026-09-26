@@ -7,3 +7,4 @@
 **Example:** [rssust://devto_guides](/devto_guides)  
 **Parameter:**  
     limit (optional, max 30, default 10)
+**Environment Variables:** no

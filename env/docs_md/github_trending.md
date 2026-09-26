@@ -10,3 +10,4 @@
     limit (optional, max 25, default 25)  
 **Note:**  
     robots.txt allows /trending. Returns repo name, description, language and stars-today.
+**Environment Variables:** GITHUB_TOKEN

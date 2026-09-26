@@ -14,11 +14,12 @@ pub fn init() {
         None => return,
     };
     if !path.exists() {
-        let default = format!(
-            "[server]\nport = 7878\nmax_concurrent = {}\ntimeout = 60\n\n[routes]\ndisabled = []\n\n[cookie]\norigins = [\"https://bilibili.com\"]",
-            realcorenum()
+        // config.toml 不存在时生成默认配置；max_concurrent 填入实际 CPU 核心数作为基数
+        let default_config = format!(
+            "[server]\nport = 7878\nmax_concurrent = {}\ntimeout = 60\nstatus_route = false\n\n[routes]\ndisabled = []\nrate_limit = {{}}\n\n[cookie]\norigins = [\"https://bilibili.com\"]",
+            detect_cpu_cores()
         );
-        match fs::write(&path, default) {
+        match fs::write(&path, default_config) {
             Ok(()) => info!(
                 "Config file not found, created default config: {}",
                 path.display()
@@ -58,7 +59,8 @@ fn exe_config_path() -> Option<std::path::PathBuf> {
     Some(exe.parent()?.join("config.toml"))
 }
 
-fn realcorenum() -> u8 {
+/* 检测物理/逻辑 CPU 核心数，作为默认并发基数和默认配置模板的占位值 */
+fn detect_cpu_cores() -> u8 {
     match thread::available_parallelism() {
         Ok(threads) => {
             let n = threads.get().try_into().unwrap_or(u8::MAX);
@@ -87,6 +89,8 @@ struct ServerConfig {
     port: Option<u16>,
     max_concurrent: Option<u32>,
     timeout: Option<u64>,
+    /* 是否开放 /status 状态页（默认 false 关闭） */
+    status_route: Option<bool>,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -116,7 +120,7 @@ pub fn max_concurrent() -> u32 {
         .server
         .as_ref()
         .and_then(|s: &ServerConfig| s.max_concurrent)
-        .unwrap_or_else(|| realcorenum() as u32);
+        .unwrap_or_else(|| detect_cpu_cores() as u32);
     base.saturating_mul(2).max(1)
 }
 
@@ -156,4 +160,13 @@ pub fn cookie_origins() -> Vec<String> {
         .and_then(|c: &CookieConfig| c.origins.as_ref())
         .cloned()
         .unwrap_or_default()
+}
+
+/// 是否开放 `/status` 状态页（`[server] status_route`，默认 false=关闭）
+pub fn status_route_enabled() -> bool {
+    cached()
+        .server
+        .as_ref()
+        .and_then(|s: &ServerConfig| s.status_route)
+        .unwrap_or(false)
 }

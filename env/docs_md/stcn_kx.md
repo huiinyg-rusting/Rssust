@@ -7,3 +7,4 @@
 **Example:** [rssust://stcn_kx](/stcn_kx)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

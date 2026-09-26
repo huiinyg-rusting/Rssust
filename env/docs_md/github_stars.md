@@ -8,5 +8,4 @@
 **Parameter:**  
     owner (required, repository owner)  
     repo (required, repository name)  
-**Token:**  
-    Required. Set the environment variable GITHUB_TOKEN (GitHub Personal Access Token). GitHub recently upgraded anti-crawling; without a token the API is not accessible.
+**Environment Variables:** GITHUB_TOKEN

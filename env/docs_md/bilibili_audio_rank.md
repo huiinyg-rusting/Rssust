@@ -10,3 +10,4 @@
    Type of parameter: number  
    Default value: 1  
    Meaning: 榜单类型，1=热榜, 2=原创榜
+**Environment Variables:** no

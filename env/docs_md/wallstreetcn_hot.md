@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: day  
    Meaning: 时间范围，day(当日) 或 week(当周)  
+**Environment Variables:** no

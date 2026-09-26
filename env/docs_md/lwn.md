@@ -11,3 +11,4 @@
    Type of parameter: string  
    Default value: rss  
    Meaning: LWN 官方 feed 名，如 rss(主站), rss2, c(每周社论), rss/weekly 等
+**Environment Variables:** no

@@ -7,3 +7,4 @@
 **Example:** [rssust://scientificamerican_news](/scientificamerican_news)  
 **Parameter:**  
 (No parameters)
+**Environment Variables:** no

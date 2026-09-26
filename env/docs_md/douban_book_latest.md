@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: all  
    Meaning: 分类，可选 all / prose_poetry / fiction / history / biography / science / art / business / comics  
+**Environment Variables:** no

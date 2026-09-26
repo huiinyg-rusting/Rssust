@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: null  
    Meaning: 公告分类，live=直播, vc=小视频, wh=相簿  
+**Environment Variables:** no

@@ -14,3 +14,4 @@
    Type of parameter: string  
    Default value: weekly  
    Meaning: 时间范围：weekly(本周), monthly(本月), historical(历史)  
+**Environment Variables:** no

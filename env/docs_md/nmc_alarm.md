@@ -26,3 +26,4 @@
    Type of parameter: number  
    Default value: 50  
    Meaning: 条目数量上限，最大 200  
+**Environment Variables:** no

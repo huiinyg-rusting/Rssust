@@ -28,6 +28,8 @@ pub mod connect {
     const MAX_HEAD_SIZE: usize = 16 * 1024;
     const IDLE_TIMEOUT: Duration = Duration::from_secs(30);
 
+    /* 并发信号量：许可数 = config.max_concurrent（默认 CPU 核数 ×2），
+       每个请求 acquire 一个许可排队执行（FIFO，不拒绝） */
     fn semaphore() -> &'static Semaphore {
         static SEM: OnceLock<Semaphore> = OnceLock::new();
         SEM.get_or_init(|| {
@@ -37,6 +39,8 @@ pub mod connect {
         })
     }
 
+    /* 每个 TCP 连接的处理循环：读请求头 → 解析 URL/参数 → 限流 → 分发(root_rules) → 渲染 → 写回。
+       keep-alive 时循环处理同一连接上的下一个请求 */
     pub async fn handle_connection(mut stream: TcpStream) {
         let mut buf: Vec<u8> = Vec::with_capacity(1024);
         loop {
@@ -432,6 +436,8 @@ pub mod connect {
         }
     }
 
+    /* 静态文件服务：/favicon.ico、/docs/ 文档页、/index/ 首页资源。
+       HTML 走 show_doc，其余按 mime_type 返回二进制 */
     pub async fn serve_static(path: &str) -> crate::request_rules::ShowToUser {
         let mime = mime_type(path);
 

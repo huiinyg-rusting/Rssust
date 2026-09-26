@@ -7,3 +7,4 @@
 **Example:** [rssust://jianshu_home](/jianshu_home)  
 **Parameter:**  
    无参数  
+**Environment Variables:** no

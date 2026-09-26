@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: 24h  
    Meaning: 24h(24小时最热), 7days(7天最热), monthly(月榜)  
+**Environment Variables:** no

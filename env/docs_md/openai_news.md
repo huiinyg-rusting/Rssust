@@ -8,3 +8,4 @@
 **Example:** [rssust://openai_news](/openai_news)  
 **Parameter:**  
     limit (optional, max 30, default 10)
+**Environment Variables:** no

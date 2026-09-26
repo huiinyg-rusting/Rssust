@@ -8,3 +8,4 @@
 **Example:** [rssust://openai_research](/openai_research)  
 **Parameter:**  
     limit (optional, max 30, default 10)
+**Environment Variables:** no

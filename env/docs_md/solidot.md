@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: www  
    Meaning: 分类名，如 www(主站), science(科学), mobile(移动), linux, bsd 等  
+**Environment Variables:** no

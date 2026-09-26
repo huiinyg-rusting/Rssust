@@ -7,3 +7,4 @@
 **Example:** [rssust://bilibili_search_hot](/bilibili_search_hot)  
 **Parameter:**  
 无参数
+**Environment Variables:** no

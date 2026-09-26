@@ -7,3 +7,4 @@
 **Example:** [rssust://guanhai](/guanhai)  
 **Parameter:**  
     无参数  
+**Environment Variables:** no

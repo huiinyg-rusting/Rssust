@@ -7,3 +7,4 @@
 **Example:** [rssust://cenc_earthquake](/cenc_earthquake)  
 **Parameter:**  
     limit（可选，最大 50，默认 20）  
+**Environment Variables:** no

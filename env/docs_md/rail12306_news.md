@@ -7,3 +7,4 @@
 **Example:** [rssust://rail12306_news](/rail12306_news)  
 **Parameter:**  
     limit（可选，最大 50，默认 20）
+**Environment Variables:** no

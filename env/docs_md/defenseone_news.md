@@ -7,3 +7,4 @@
 **Example:** [rssust://defenseone_news](/defenseone_news)  
 **Parameter:**  
 (No parameters)
+**Environment Variables:** no

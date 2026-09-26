@@ -7,3 +7,4 @@
 **Example:** [rssust://guokr_scientific](/guokr_scientific)  
 **Parameter:**  
     limit（可选，最大 50，默认 20）
+**Environment Variables:** no

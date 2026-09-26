@@ -10,3 +10,4 @@
    Type of parameter: string  
    Default value: 0  
    Meaning: 位置 id，同城首页控制台执行 `window.__loc_id__` 获取  
+**Environment Variables:** no

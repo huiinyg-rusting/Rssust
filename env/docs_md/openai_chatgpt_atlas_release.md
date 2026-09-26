@@ -8,3 +8,4 @@
 **Example:** [rssust://openai_chatgpt_atlas_release](/openai_chatgpt_atlas_release)  
 **Parameter:**  
     limit (optional, max 30, default 10)
+**Environment Variables:** no

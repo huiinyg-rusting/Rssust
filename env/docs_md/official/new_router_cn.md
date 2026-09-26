@@ -19,6 +19,7 @@
 5. 每一个路由只能对应一种功能;
 
 开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事
+提供了build_dev.sh以及build.bat脚本
 ### 导入库
 ```rust
 use std::collections::HashMap;
@@ -161,12 +162,15 @@ pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
 具体的程序逻辑就由你自己编写吧。
 ### 写完怎么注册呢？
 在 `/src/router/mod.rs` 中，在最后新建一行，写上 `pub mod 你的路由名;`
-然后再在 `src/request_rules.rs` 的 `match url` 分发中，仿照其他条目添加一个分支：
+然后再在 `src/request_rules.rs` 的 `routes! { ... }` 块中（按字母序）仿照其他条目添加一行：
 ```rust
-"/你的路由名" => run!(你的路由名, parameters),
+("/你的路由名", 你的路由名),
 ```
-`run!` 宏会展开为 `你的路由名::get(parameters.clone()).await`，因此不要改动它的写法。
-> **注意**：`run!` 宏参数中的 `parameters` 是 `request_rules` 的入参名，宏内由于卫生性无法直接引用外层变量，所以必须显式传入。
+`routes!` 宏会根据这些条目自动生成：
+- `pub const ROUTES: &[&str]`（路由路径数组）与 `ROUTE_COUNT`（路由总数）
+- `pub async fn route_dispatch()`——内部用 `match url` 把路径分发到对应的 `你的路由名::get(...)` 函数
+
+所以**不要**手写 `match url` 分支，也不要改动宏里的写法。注册完运行 `./env/rssust docs` 会自动把新路由写进 `SUMMARY.md` 导航和 `official/routes.md` 路由清单。
 ### 注册完怎么运行呢？
 我对二进制文件设置的一些**必要环境目录十分严苛**，`cookies.json`,`index`文件夹等，都必须在二进制文件同目录下，因此我创建了一个`env`文件夹，需要的环境都在里面。他应该是长这样的
 ```sh
@@ -194,10 +198,10 @@ pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
    "sameSite": "Lax",
    "expirationDate": 1893456000
  }
- 所有的cookies挤在同一个json文件，程序启动时就会导入。
+ 所有的cookies挤在同一个json文件，程序运行时按需读取（`easyuser::load_cookie_header()` 会按域名过滤拼装成 `Cookie` 头），无需启动时导入。
 Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 ### 文档的编写！
-在/docs下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：
+在`env/docs_md/`下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：
 ```markdown
 # Router-name: 
 **Commit time:** 
