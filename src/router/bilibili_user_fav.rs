@@ -36,6 +36,15 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     for item in archives {
         let aid = item["aid"].as_i64().unwrap_or(0);
         let bvid = item["bvid"].as_str().unwrap_or_default();
+        // 此接口返回精简字段，通常没有 bvid；从短链 short_link_v2 提取 BV 号
+        let bvid = if bvid.is_empty() {
+            item["short_link_v2"]
+                .as_str()
+                .and_then(|s| s.rsplit('/').next().filter(|seg| seg.starts_with("BV")))
+                .unwrap_or_default()
+        } else {
+            bvid
+        };
         let pic = item["pic"].as_str().unwrap_or_default();
         let desc = item["desc"].as_str().unwrap_or_default();
         let fav_at = item["fav_at"].as_i64().unwrap_or(0);
@@ -60,7 +69,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
         let rss_item = ItemBuilder::default()
             .title(Some(no_double_quotes(item["title"].to_string())))
-            .link(Some(format!("https://www.bilibili.com/video/{}", bvid)))
+            .link(Some(if bvid.starts_with("BV") {
+                format!("https://www.bilibili.com/video/{}", bvid)
+            } else {
+                // 提取不到 BV 号时用 av 号兜底，保证链接可访问
+                format!("https://www.bilibili.com/video/av{}", aid)
+            }))
             .description(description)
             .pub_date(pub_date)
             .author(author.clone())

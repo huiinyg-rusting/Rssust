@@ -378,6 +378,15 @@ pub fn no_double_quotes(s: String) -> String {
     s.trim_matches('"').to_string()
 }
 
+/* 剥离富文本里的 <script>/<style> 块：抓取的正文 HTML 常混入广告脚本，RSS 里应去掉 */
+pub fn strip_script_style(html: &str) -> String {
+    let re_script = regex::Regex::new(r"(?is)<script.*?</script>").unwrap();
+    let re_style = regex::Regex::new(r"(?is)<style.*?</style>").unwrap();
+    re_style
+        .replace_all(&re_script.replace_all(html, ""), "")
+        .into_owned()
+}
+
 /* 按名读环境变量（如 GITHUB_TOKEN），找不到返回 None */
 pub fn env_search(s: &str) -> Option<String> {
     env::var(s).ok()

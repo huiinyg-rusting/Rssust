@@ -120,7 +120,11 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             ItemBuilder::default()
                 .title(Some(title))
                 .link(link.clone())
-                .description(if desc.is_empty() { None } else { Some(desc) })
+                .description(if desc.is_empty() {
+                    Some("品玩精选资讯".to_string())
+                } else {
+                    Some(desc)
+                })
                 .pub_date(pub_date)
                 .guid(rss::Guid {
                     value: format!("{}#pingwest", link),

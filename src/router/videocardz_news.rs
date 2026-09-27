@@ -37,7 +37,7 @@ fn parse_time(time1: &str, time2: &str) -> Option<String> {
     Some(dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
 }
 
-fn parse_entry(entry_html: &str) -> Result<(String, String, String)> {
+fn parse_entry(entry_html: &str) -> Result<(String, String, String, String)> {
     let doc = Html::parse_fragment(entry_html);
 
     let title_sel =
@@ -72,7 +72,22 @@ fn parse_entry(entry_html: &str) -> Result<(String, String, String)> {
         .map(|h| h.to_string())
         .ok_or_else(|| anyhow!("no link"))?;
 
-    Ok((title, link, format!("{} {}", time1, time2)))
+    // 缩略图为 CSS 背景图：style="background-image:url(...)"，提取 URL 作为描述图片
+    let image_sel =
+        Selector::parse("div.techbuzz-entry-pic-inner").map_err(|_| anyhow!("pic selector"))?;
+    let image = doc
+        .select(&image_sel)
+        .next()
+        .and_then(|e| e.value().attr("style"))
+        .and_then(|s| {
+            let re = regex::Regex::new(r"url\(([^)]*)\)").ok()?;
+            re.captures(s)
+                .and_then(|c| c.get(1))
+                .map(|m| m.as_str().trim().to_string())
+        })
+        .unwrap_or_default();
+
+    Ok((title, link, format!("{} {}", time1, time2), image))
 }
 
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
@@ -88,7 +103,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
 
     for entry in doc.select(&entry_sel) {
         let entry_html = entry.html();
-        let (title, link, time_str) = match parse_entry(&entry_html) {
+        let (title, link, time_str, image) = match parse_entry(&entry_html) {
             Ok(t) => t,
             Err(_) => continue,
         };
@@ -103,10 +118,18 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         )
         .unwrap_or_else(now);
 
+        // 描述：缩略图 + 兜底文字，保证每个 item 都有 description
+        let description = if image.is_empty() {
+            "VideoCardz 最新硬件与显卡新闻".to_string()
+        } else {
+            format!("<img src=\"{}\">", image)
+        };
+
         let item = ItemBuilder::default()
             .title(Some(title))
             .link(link)
             .pub_date(pub_date)
+            .description(Some(description))
             .build();
 
         item_vec.push(item);

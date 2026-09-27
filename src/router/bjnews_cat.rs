@@ -58,11 +58,14 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
                     .next()
                     .map(|e| e.text().collect::<String>().trim().to_string())
                     .unwrap_or_default();
+                // 正文 HTML 里图片多为相对协议 //xxx，补全 https 避免部分阅读器图裂；并剥广告脚本
                 let description = detail_doc
                     .select(&Selector::parse("#contentStr").unwrap())
                     .next()
-                    .map(|e| e.inner_html())
-                    .unwrap_or_default();
+                    .map(|e| strip_script_style(&e.inner_html()))
+                    .unwrap_or_default()
+                    .replace("src=\"//", "src=\"https://")
+                    .replace("srcset=\"//", "srcset=\"https://");
 
                 let mut pub_date = now();
                 if let Some(date_el) = detail_doc
