@@ -46,7 +46,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                     .select(&Selector::parse("div#Main_Content_Val.text").unwrap())
                     .next()
                 {
-                    desc.push_str(&main.inner_html());
+                    desc.push_str(&strip_script_style(&main.inner_html()));
                 } else {
                     if let Some(summary) = article["summary"].as_str()
                         && !summary.is_empty()

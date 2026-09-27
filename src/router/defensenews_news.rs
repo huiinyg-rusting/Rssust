@@ -20,7 +20,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let semaphore = Arc::new(Semaphore::new(10));
     let mut handles = Vec::new();
 
-    for (title, link, author) in cards {
+    for (title, link, author, image) in cards {
         let semaphore = semaphore.clone();
         let ua = UA.to_string();
         let link_clone = link.clone();
@@ -30,24 +30,29 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         handles.push(tokio::spawn(async move {
             let _permit = semaphore.acquire().await.unwrap();
             let pub_date = fetch_article_date(&link_clone, &ua).await;
-            (title_clone, link_clone, author_clone, pub_date)
+            (title_clone, link_clone, author_clone, image, pub_date)
         }));
     }
 
     let mut items = Vec::new();
     for handle in handles {
         match handle.await {
-            Ok((title, link, author, pub_date)) => {
+            Ok((title, link, author, image, pub_date)) => {
+                // 描述：图片 + 署名，保证每个 item 都有 description
+                let mut desc = if author.is_empty() {
+                    "Defense News 最新军事新闻".to_string()
+                } else {
+                    format!("By {}", author)
+                };
+                if !image.is_empty() {
+                    desc = format!("<img src=\"{}\"><br>{}", image, desc);
+                }
                 items.push(
                     ItemBuilder::default()
                         .title(Some(title))
                         .link(link)
                         .pub_date(pub_date)
-                        .description(if author.is_empty() {
-                            None
-                        } else {
-                            Some(format!("By {}", author))
-                        })
+                        .description(Some(desc))
                         .build(),
                 );
             }
@@ -68,7 +73,7 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     Ok(channel.to_string())
 }
 
-fn extract_cards(html: &str) -> Vec<(String, String, String)> {
+fn extract_cards(html: &str) -> Vec<(String, String, String, String)> {
     let doc = Html::parse_document(html);
     // Article cards have data-story-url and itemType="http://schema.org/Article"
     let card_sel = Selector::parse(r#"article[data-story-url]"#).unwrap();
@@ -76,6 +81,8 @@ fn extract_cards(html: &str) -> Vec<(String, String, String)> {
     let title_sel = Selector::parse(r#"[itemProp="headline"], .o-storyCard__headline"#).unwrap();
     // Author byline
     let author_sel = Selector::parse(r#"span[class*="Byline__Author"]"#).unwrap();
+    // 缩略图
+    let img_sel = Selector::parse("img.c-image").unwrap();
 
     let mut cards = Vec::new();
     for card in doc.select(&card_sel) {
@@ -108,7 +115,14 @@ fn extract_cards(html: &str) -> Vec<(String, String, String)> {
             .map(|e| e.text().collect::<String>().trim().to_string())
             .unwrap_or_default();
 
-        cards.push((title, link, author));
+        let image = card
+            .select(&img_sel)
+            .next()
+            .and_then(|e| e.value().attr("src"))
+            .map(|s| s.to_string())
+            .unwrap_or_default();
+
+        cards.push((title, link, author, image));
 
         if cards.len() >= 15 {
             break;

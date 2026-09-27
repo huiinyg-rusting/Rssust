@@ -4,7 +4,7 @@
 **Author:** huiinyg-rusting / AI辅助撰写文档  
 **Introduction:** B站合集（合集，不是系列）视频列表，通过 season_id 获取合集内的视频  
 **Address:** rssust://bilibili_collection  
-**Example:** [rssust://bilibili_collection?uid=245645656&sid=529166](../bilibili_collection?uid=245645656&sid=529166)  
+**Example:** [rssust://bilibili_collection?uid=245645656&sid=529166](/bilibili_collection?uid=245645656&sid=529166)  
 **Parameter:**  
 1. **uid**  
    Type of parameter: num  

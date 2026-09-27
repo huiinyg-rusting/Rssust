@@ -39,13 +39,13 @@
 - [bilibili_popular](../bilibili_popular.md)
     B站热门视频
 - [bilibili_precious](../bilibili_precious.md)
-    B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取
+    B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取。注意：此为 B 站官方精选的全站历史经典视频（非实时热门榜，内容偏老属正常）；实时热门请用 bilibili_popular
 - [bilibili_search_hot](../bilibili_search_hot.md)
     B站热搜榜前10关键词
 - [bilibili_series](../bilibili_series.md)
     B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频
 - [bilibili_splash](../bilibili_splash.md)
-    B站APP端开屏广告信息
+    B站APP端开屏广告信息（自动携带设备标识 buvid，无需登录）
 - [bilibili_user_article](../bilibili_user_article.md)
     bilibili UP 主图文(专栏)
 - [bilibili_user_coin](../bilibili_user_coin.md)

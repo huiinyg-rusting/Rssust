@@ -58,7 +58,11 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                     .title(Some(title))
                     .link(link)
                     .pub_date(pub_date)
-                    .description(if desc.is_empty() { None } else { Some(desc) })
+                    .description(if desc.is_empty() {
+                        Some("Discover Magazine 最新科学新闻".to_string())
+                    } else {
+                        Some(desc)
+                    })
                     .build(),
             );
         }

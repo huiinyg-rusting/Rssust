@@ -34,7 +34,7 @@ fn parse_detail(html: &str, link: &str) -> Result<(String, String, String)> {
         .select(&sel_content)
         .next()
         .map(|e| {
-            let mut inner = e.inner_html();
+            let mut inner = strip_script_style(&e.inner_html());
             inner = inner
                 .replace("href=#", &format!("href={}#", link))
                 .replace("href=/", "href=https://www.kali.org/");

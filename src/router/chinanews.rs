@@ -72,6 +72,10 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         if description.is_empty() {
             continue;
         }
+        // 补全图片相对协议：//xxx → https://xxx，避免部分阅读器图裂；并剥广告脚本/样式
+        description = strip_script_style(&description)
+            .replace("src=\"//", "src=\"https://")
+            .replace("srcset=\"//", "srcset=\"https://");
 
         let rss_item = ItemBuilder::default()
             .title(Some(title.clone()))

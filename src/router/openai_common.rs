@@ -63,7 +63,8 @@ pub async fn fetch_article_details(
 
 /// 拉取官方 RSS，按 category 过滤（None 不过滤），抓取前 limit 条的详情
 pub async fn fetch_articles(limit: usize, category: Option<&str>) -> Result<Vec<rss::Item>, Error> {
-    let xml = fetch_reqwest_get_with_headers(RSS_URL, &[("User-Agent", UA)]).await?;
+    // Cloudflare 偶发按 UA 返回 br/gzip 压缩，reqwest 无解码能力，用 curl-impersonate 拉取
+    let xml = fetch_browser_get_with_headers(RSS_URL, &[("User-Agent", UA)]).await?;
     let channel =
         Channel::read_from(xml.as_bytes()).map_err(|e| anyhow!("解析 RSS 失败: {}", e))?;
 
@@ -182,8 +183,26 @@ pub async fn fetch_release_notes(
 ) -> Result<(String, Vec<rss::Item>), Error> {
     const PROFILE: &str = "chrome110";
     const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
-    let html =
-        fetch_browser_get_with_headers_profile(article_url, &[("User-Agent", UA)], PROFILE).await?;
+    // help.openai.com 在 Cloudflare 后，curl-impersonate 偶发 30s 超时，重试 3 次
+    let mut html = String::new();
+    for attempt in 0..3 {
+        match fetch_browser_get_with_headers_profile(article_url, &[("User-Agent", UA)], PROFILE)
+            .await
+        {
+            Ok(h) if !h.trim().is_empty() => {
+                html = h;
+                break;
+            }
+            Ok(_) => {}
+            Err(_) => {}
+        }
+        if attempt < 2 {
+            tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
+        }
+    }
+    if html.is_empty() {
+        return Err(anyhow!("抓取 {} 失败", article_url));
+    }
     let doc = Html::parse_document(&html);
 
     let h1_sel = Selector::parse("h1").map_err(|e| anyhow!("{}", e))?;

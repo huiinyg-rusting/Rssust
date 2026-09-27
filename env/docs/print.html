@@ -1325,13 +1325,13 @@ bilibili 分区视频排行榜</li>
 <li><a href="bilibili_popular.html">bilibili_popular</a>
 B站热门视频</li>
 <li><a href="bilibili_precious.html">bilibili_precious</a>
-B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取</li>
+B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取。注意：此为 B 站官方精选的全站历史经典视频（非实时热门榜，内容偏老属正常）；实时热门请用 bilibili_popular</li>
 <li><a href="bilibili_search_hot.html">bilibili_search_hot</a>
 B站热搜榜前10关键词</li>
 <li><a href="bilibili_series.html">bilibili_series</a>
 B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频</li>
 <li><a href="bilibili_splash.html">bilibili_splash</a>
-B站APP端开屏广告信息</li>
+B站APP端开屏广告信息（自动携带设备标识 buvid，无需登录）</li>
 <li><a href="bilibili_user_article.html">bilibili_user_article</a>
 bilibili UP 主图文(专栏)</li>
 <li><a href="bilibili_user_coin.html">bilibili_user_coin</a>
@@ -1753,7 +1753,7 @@ Meaning: 页码，每页最多10项
 <strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
 <strong>Introduction:</strong> B站合集（合集，不是系列）视频列表，通过 season_id 获取合集内的视频<br />
 <strong>Address:</strong> rssust://bilibili_collection<br />
-<strong>Example:</strong> <a href="../bilibili_collection?uid=245645656&amp;sid=529166">rssust://bilibili_collection?uid=245645656&amp;sid=529166</a><br />
+<strong>Example:</strong> <a href="/bilibili_collection?uid=245645656&amp;sid=529166">rssust://bilibili_collection?uid=245645656&amp;sid=529166</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>uid</strong><br />
@@ -1788,7 +1788,7 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <strong>Author:</strong> AI大部分转写自RSShub/huiinyg-rusting收拾烂摊子和审核-AGPL-3.0协议（已被传染）<br />
 <strong>Introduction:</strong> 获取指定 Bilibili 用户的动态（综合、视频、图文、直播、转发等），生成 RSS 源。入口函数 <code>pub async fn get(para: HashMap&lt;String, String&gt;) -&gt; Result&lt;String, Error&gt;</code>，位于 <code>src/router/bilibili_dynamic.rs</code>。内部调用 Bilibili 官方 API <code>/x/polymer/web-dynamic/v1/feed/space</code>。</p>
 <p><strong>Address:</strong> <code>rssust://bilibili_dynamic</code><br />
-<strong>Example:</strong> <a href="../bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a><br />
+<strong>Example:</strong> <a href="/bilibili_dynamic?uid=538142100&amp;hideGoods=true">/bilibili_dynamic?uid=538142100&amp;hideGoods=true</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>uid</strong>
@@ -1988,7 +1988,7 @@ Meaning: 内嵌视频
 <strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
 <strong>Introduction:</strong> B站热门视频<br />
 <strong>Address:</strong> rssust://bilibili_popular<br />
-<strong>Example:</strong> <a href="../bilibili_popular">rssust://bilibili_popular</a><br />
+<strong>Example:</strong> <a href="/bilibili_popular">rssust://bilibili_popular</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>pn</strong><br />
@@ -2009,9 +2009,9 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <p><strong>Commit time:</strong> 2026.07.12<br />
 <strong>Cookies?:</strong> no<br />
 <strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
-<strong>Introduction:</strong> B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取<br />
+<strong>Introduction:</strong> B站入站必刷宝藏视频，从 api.bilibili.com/x/web-interface/popular/precious 获取。注意：此为 B 站官方精选的全站历史经典视频（非实时热门榜，内容偏老属正常）；实时热门请用 bilibili_popular<br />
 <strong>Address:</strong> rssust://bilibili_precious<br />
-<strong>Example:</strong> <a href="../bilibili_precious">rssust://bilibili_precious</a><br />
+<strong>Example:</strong> <a href="/bilibili_precious">rssust://bilibili_precious</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>disableembed</strong><br />
@@ -2036,7 +2036,7 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <strong>Author:</strong> huiinyg-rusting / AI辅助撰写文档<br />
 <strong>Introduction:</strong> B站系列（！！！只能系列，不能合集）视频列表，通过 series_id 获取系列中的视频<br />
 <strong>Address:</strong> rssust://bilibili_series<br />
-<strong>Example:</strong> <a href="../bilibili_series?series_id=534502">rssust://bilibili_series?series_id=534502</a><br />
+<strong>Example:</strong> <a href="/bilibili_series?series_id=534502">rssust://bilibili_series?series_id=534502</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>series_id</strong><br />
@@ -2053,15 +2053,15 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <p><strong>Commit time:</strong> 2026.08.10<br />
 <strong>Cookies?:</strong> no<br />
 <strong>Author:</strong> AI转写 / huiinyg-rusting审核 - 原创设计（参照官方API/文档）<br />
-<strong>Introduction:</strong> B站APP端开屏广告信息<br />
+<strong>Introduction:</strong> B站APP端开屏广告信息（自动携带设备标识 buvid，无需登录）<br />
 <strong>Address:</strong> rssust://bilibili_splash<br />
 <strong>Example:</strong> <a href="/bilibili_splash">rssust://bilibili_splash</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>build</strong><br />
 Type of parameter: number<br />
-Default value: 999999999<br />
-Meaning: 客户端内部版本号</li>
+Default value: 7660100<br />
+Meaning: 客户端内部版本号（必须是真实存在的版本号，999999999 等假版本号不下发广告）</li>
 <li><strong>mobi_app</strong><br />
 Type of parameter: string<br />
 Default value: android<br />
@@ -2227,7 +2227,7 @@ Meaning: 分区 id<br />
 <strong>Author:</strong> huiinyg-rusting<br />
 <strong>Introduction:</strong> Bilibili最新一期的每周精选<br />
 <strong>Address:</strong> rssust://bilibili_weekly<br />
-<strong>Example:</strong> <a href="../bilibili_weekly?disableembed=true">rssust://bilibili_weekly?disableembed=true</a><br />
+<strong>Example:</strong> <a href="/bilibili_weekly?disableembed=true">rssust://bilibili_weekly?disableembed=true</a><br />
 <strong>Parameter:</strong></p>
 <ol>
 <li><strong>disableembed</strong><br />
@@ -3433,7 +3433,7 @@ Meaning: 日期 YYYYMMDD，返回该日期之前一期的内容<br />
 <strong>Author:</strong> huiinyg-rusting<br />
 <strong>Introduction:</strong> 知乎热榜<br />
 <strong>Address:</strong> rssust://zhihu_hot<br />
-<strong>Example:</strong> <a href="../zhihu_hot">rssust://zhihu_hot</a><br />
+<strong>Example:</strong> <a href="/zhihu_hot">rssust://zhihu_hot</a><br />
 <strong>Parameter:</strong> no<br />
 <strong>Environment Variables:</strong> no</p>
 

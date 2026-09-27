@@ -4,12 +4,28 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
+/* 生成 B 站设备标识 buvid。开屏广告接口只对携带 buvid 的请求下发广告数据，
+   裸请求无论 build 是什么都只回占位符（list 为空）。格式：XY + MD5(随机种子) 大写 */
+fn random_buvid() -> String {
+    use md5::{Digest, Md5};
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let ts = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    let mut hasher = Md5::new();
+    hasher.update(ts.to_le_bytes());
+    let digest = hex::encode(hasher.finalize());
+    format!("XY{}", digest.to_uppercase())
+}
+
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let build = para
         .get("build")
         .cloned()
         .filter(|s| !s.is_empty())
-        .unwrap_or_else(|| "999999999".to_string());
+        // 必须是真实存在的客户端版本号，999999999 这类不存在版本不下发广告
+        .unwrap_or_else(|| "7660100".to_string());
     let mobi_app = para
         .get("mobi_app")
         .cloned()
@@ -41,7 +57,12 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         build, mobi_app, platform, height, width, birth
     );
 
-    let json: Value = serde_json::from_str(fetch_reqwest_get(&url).await?.as_str())?;
+    let buvid = random_buvid();
+    let json: Value = serde_json::from_str(
+        fetch_reqwest_get_with_headers(&url, &[("Buvid", &buvid)])
+            .await?
+            .as_str(),
+    )?;
 
     if json.pointer("/code").and_then(Value::as_i64) != Some(0) {
         return Err(anyhow!(
