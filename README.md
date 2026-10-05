@@ -17,12 +17,14 @@ Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每
 ```sh
 ├── cookies.json
 ├── docs_md
-│   ├── .......md
-│   └── official
-│       └── ......md
+│   ├── .......md
+│   └── official
+│       └── ......md
 ├── index
-│   ├── 404.html
-│   └── index.html
+│   ├── 404.html
+│   └── index.html
+├── scripts            # 可选，需要编译时开启 scripts feature
+│   └── .......rhai
 └── rssust
 ```
 比较严苛
@@ -35,6 +37,14 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 ./build.sh
 ```
+
+想用 rhai 脚本写路由（不写 Rust），编译时额外加 `--features scripts`：
+
+```sh
+cargo build --release --features scripts
+```
+脚本放进 exe 同目录的 `scripts/`，文件名即路由名，写法见[脚本路由说明](env/docs_md/official/script_route_cn.md)。
+
 然后没有版本更新的时候，你可以输入如下命令来更新html文档以及从firefox抓取cookies（注意这会抓取所有cookies,注意保护隐私）：
 ```sh
 cd Rssust
@@ -47,7 +57,7 @@ Windows用户：CMD（未经验证）
 ```shell
 git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --features scripts
 robocopy .\target\debug .\env rssust /IF /S
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs

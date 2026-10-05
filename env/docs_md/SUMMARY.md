@@ -9,6 +9,7 @@
 - [new_router_en](official/new_router_en.md)
 - [pogram_explanation_cn](official/pogram_explanation_cn.md)
 - [routes](official/routes.md)
+- [script_route_cn](official/script_route_cn.md)
 
 # 路由
 - [apnews_topics](apnews_topics.md)
