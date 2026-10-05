@@ -31,7 +31,7 @@ origins = ["https://bilibili.com"]
 | `server.max_concurrent` | `int` | 自动检测的 CPU 核心数 | 并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2. |
 | `server.timeout` | `int` | `60` | 上游请求超时（秒）。Timeout for upstream requests, in seconds. |
 | `server.status_route` | `bool` | `false` | 是否开放 `/status` 状态页（服务运行信息 JSON）。默认关闭；`true` 时访问 `/status` 返回 `{"status":"ok",...}`。Whether to enable the `/status` page (runtime info JSON). Disabled by default; when `true`, `/status` returns `{"status":"ok",...}`. |
-| `routes.disabled` | `string[]` | `[]` | 需要禁用的路由名列表。List of route names to disable. |
+| `routes.disabled` | `string[]` | `[]` | 需要禁用的路由列表，**带前导斜杠**（如 `"/zhihu_hot"`），漏掉斜杠不生效。List of routes to disable, with the leading slash (e.g. `"/zhihu_hot"`); entries without it have no effect. |
 | `routes.rate_limit` | `table` | `{}` | 路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors. |
 | `cookie.origins` | `string[]` | `["https://bilibili.com"]` | `rssust cookie <browser>` 导出 cookies 的网址列表。List of URLs whose cookies are exported by `rssust cookie <browser>`. |
 
@@ -46,7 +46,7 @@ max_concurrent = 4
 timeout = 30
 
 [routes]
-disabled = ["zhihu_hot", "bilibili_weekly"]
+disabled = ["/zhihu_hot", "/bilibili_weekly"]
 ```
 
 不指定 `max_concurrent` 时，程序自动使用检测到的 CPU 核心数；不指定 `timeout` 时默认 60 秒；不指定 `port` 时默认 `7878`：

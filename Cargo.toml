@@ -24,12 +24,14 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "io-uti
 
 mdbook = { version = "0.4", optional = true }
 cookie-scoop = { version = "0.1", optional = true }
+rhai = { version = "1.20", optional = true, features = ["sync", "serde"] }
 curl-impersonate-cli = { version = "0.3.1", features = ["download"] }
 
 [features]
 default = ["docs", "cookie"]
 docs = ["dep:mdbook"]
 cookie = ["dep:cookie-scoop"]
+scripts = ["dep:rhai"]
 
 [profile.release]
 lto = "thin"
