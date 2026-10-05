@@ -201,7 +201,7 @@ origins = ["https://bilibili.com"]
 <tr><td><code>server.max_concurrent</code></td><td><code>int</code></td><td>自动检测的 CPU 核心数</td><td>并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2.</td></tr>
 <tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
 <tr><td><code>server.status_route</code></td><td><code>bool</code></td><td><code>false</code></td><td>是否开放 <code>/status</code> 状态页（服务运行信息 JSON）。默认关闭；<code>true</code> 时访问 <code>/status</code> 返回 <code>{"status":"ok",...}</code>。Whether to enable the <code>/status</code> page (runtime info JSON). Disabled by default; when <code>true</code>, <code>/status</code> returns <code>{"status":"ok",...}</code>.</td></tr>
-<tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
+<tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由列表，<strong>带前导斜杠</strong>（如 <code>"/zhihu_hot"</code>），漏掉斜杠不生效。List of routes to disable, with the leading slash (e.g. <code>"/zhihu_hot"</code>); entries without it have no effect.</td></tr>
 <tr><td><code>routes.rate_limit</code></td><td><code>table</code></td><td><code>{}</code></td><td>路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors.</td></tr>
 <tr><td><code>cookie.origins</code></td><td><code>string[]</code></td><td><code>["https://bilibili.com"]</code></td><td><code>rssust cookie &lt;browser&gt;</code> 导出 cookies 的网址列表。List of URLs whose cookies are exported by <code>rssust cookie &lt;browser&gt;</code>.</td></tr>
 </tbody></table>
@@ -214,7 +214,7 @@ max_concurrent = 4
 timeout = 30
 
 [routes]
-disabled = ["zhihu_hot", "bilibili_weekly"]
+disabled = ["/zhihu_hot", "/bilibili_weekly"]
 </code></pre>
 <p>不指定 <code>max_concurrent</code> 时，程序自动使用检测到的 CPU 核心数；不指定 <code>timeout</code> 时默认 60 秒；不指定 <code>port</code> 时默认 <code>7878</code>：</p>
 <pre><code class="language-toml">[routes]
@@ -442,18 +442,21 @@ The variables are read by the process that starts the server; set them first, th
 <p>厌倦了<strong>庞大的内存占用，缓慢的运行速度与自建门槛极高</strong>以及<strong>依赖于别人</strong>建的Rsshub服务器但是有一天居然停服了，或者你干脆就是个<strong>Rust迷</strong>？</p>
 <p>虽然现在Rssust的路由和RSShub的路由在数量上不是一个量级，但是这样提供了一个先例，也许借助AI技术，可以使Rssust的路由数量得到增长，但这可能有点抄袭的嫌疑，所以还是要求AI自己生成好了。所以如果这<strong>侵犯了你的权利</strong>，请邮件并且找所有可能的方式联系我，我会尽快处理。</p>
 <p>如果你想自己做一个路由可以点这里：<a href="new_router_cn.html">路由制作指南——中文</a>
+不想写 Rust 的话，可以用 rhai 脚本写路由：<a href="script_route_cn.html">脚本路由说明</a>
 这里是目前服务器支持的ROUTERS,你的左侧Router一栏都是，但这里有一些分类<a href="routes.html">ROUTERS</a></p>
 <h2 id="对于一般用户使用"><a class="header" href="#对于一般用户使用">对于一般用户使用：</a></h2>
 <h3 id="安装"><a class="header" href="#安装">安装：</a></h3>
 <p>值得一提的是，运行时，二进制的目录结构如下所示：</p>
 <pre><code class="language-sh">├── cookies.json
 ├── docs_md
-│   ├── .......md
-│   └── official
-│       └── ......md
+│   ├── .......md
+│   └── official
+│       └── ......md
 ├── index
-│   ├── 404.html
-│   └── index.html
+│   ├── 404.html
+│   └── index.html
+├── scripts            # 可选，需要编译时开启 scripts feature
+│   └── .......rhai
 └── rssust
 </code></pre>
 <p>比较严苛</p>
@@ -465,6 +468,10 @@ The variables are read by the process that starts the server; set them first, th
 cd Rssust
 ./build.sh
 </code></pre>
+<p>想用 rhai 脚本写路由（不写 Rust），编译时额外加 <code>--features scripts</code>：</p>
+<pre><code class="language-sh">cargo build --release --features scripts
+</code></pre>
+<p>脚本放进 exe 同目录的 <code>scripts/</code>，文件名即路由名，写法见<a href="script_route_cn.html">脚本路由说明</a>。</p>
 <p>然后没有版本更新的时候，你可以输入如下命令来更新html文档以及从firefox抓取cookies（注意这会抓取所有cookies,注意保护隐私）：</p>
 <pre><code class="language-sh">cd Rssust
 ./env/rssust cookie firefox
@@ -475,7 +482,7 @@ cd Rssust
 Windows用户：CMD（未经验证）</p>
 <pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --features scripts
 robocopy .\target\debug .\env rssust /IF /S
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
@@ -489,6 +496,7 @@ robocopy .\target\debug .\env rssust /IF /S
 <p>Tired of <strong>massive memory consumption, slow running speed, and the extremely high barrier to self-hosting</strong>, or <strong>dependent on someone else’s</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
 <p>Although Rssust’s routers are not on the same scale as Rsshub’s in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust’s router count can grow, but this may seem somewhat like plagiarism, so it’s better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
 <p>If you want to create your own router, click here: <a href="new_router_en.html">Router Development Guide — English</a>
+Prefer scripting over Rust? Write the route in rhai: <a href="script_route_cn.html">Script Route Guide</a>
 Here are the ROUTERS currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="routes.html">ROUTERS</a></p>
 <h2 id="for-general-users"><a class="header" href="#for-general-users">For General Users:</a></h2>
 <h3 id="installation"><a class="header" href="#installation">Installation:</a></h3>
@@ -501,6 +509,8 @@ Here are the ROUTERS currently supported by the server. All the routers in your 
 ├── index
 │   ├── 404.html
 │   └── index.html
+├── scripts            # optional, requires the scripts feature at compile time
+│   └── .......rhai
 └── rssust
 </code></pre>
 <p>It’s quite strict.</p>
@@ -512,6 +522,11 @@ Here are the ROUTERS currently supported by the server. All the routers in your 
 cd Rssust
 ./build.sh
 </code></pre>
+<p>To enable rhai script routes (no Rust needed), add the feature at compile time:</p>
+<pre><code class="language-sh">cargo build --release --features scripts
+</code></pre>
+<p>Drop <code>.rhai</code> files into <code>scripts/</code> next to the executable; the filename is the route name.
+See the <a href="script_route_cn.html">Script Route Guide</a> for the syntax.</p>
 <p>Then when there’s no version update, you can run the commands below to refresh the HTML docs and grab cookies from Firefox (note that this grabs ALL cookies — mind your privacy):</p>
 <pre><code class="language-sh">cd Rssust
 ./env/rssust cookie firefox
@@ -522,7 +537,7 @@ cd Rssust
 <p>Windows users: CMD (unverified)</p>
 <pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --features scripts
 robocopy .\target\debug .\env rssust /IF /S
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
@@ -1592,6 +1607,13 @@ OpenAI Research Articles (filtered from official RSS by category=Research)</li>
 <li><a href="scientificamerican_news.html">scientificamerican_news</a>
 Scientific American - Science &amp; Technology News (no official RSS)</li>
 </ul>
+<h4 id="scripts-脚本路由"><a class="header" href="#scripts-脚本路由">Scripts (脚本路由)</a></h4>
+<ul>
+<li><a href="bilibili_partion_ranking_script.html">bilibili_partion_ranking_script</a>
+内置 bilibili_partion_ranking 的脚本版，换用官方 ranking/v2 接口，{rid} 传分区。</li>
+<li><a href="bilibili_search_hot_script.html">bilibili_search_hot_script</a>
+内置 bilibili_search_hot 的脚本版：Rust 侧抓取后注入 raw，脚本只做 JSON 解析。</li>
+</ul>
 <h4 id="sina-新浪"><a class="header" href="#sina-新浪">Sina (新浪)</a></h4>
 <ul>
 <li><a href="sina_finance.html">sina_finance</a>
@@ -1655,6 +1677,154 @@ crates.io 最新发布的 Rust crate 聚合（官方公开 API，无官方 RSS�
 <ul>
 <li><a href="ifeng_news.html">ifeng_news</a>
 凤凰网资讯</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rhai-脚本路由scripts-feature"><a class="header" href="#rhai-脚本路由scripts-feature">rhai 脚本路由（scripts feature）</a></h1>
+<p>Dynamic RSS routes written in <a href="https://rhai.rs/">rhai</a> scripts. Compile with <code>--features scripts</code>,
+drop a <code>.rhai</code> file into the <code>scripts/</code> directory next to the executable, and the route goes live
+without touching Rust code.</p>
+<p>用 rhai 脚本写动态 RSS 路由。编译时加 <code>--features scripts</code>，把 <code>.rhai</code> 文件丢进 exe 同目录的 <code>scripts/</code>
+文件夹，路由即刻生效，不用改 Rust 代码。</p>
+<h2 id="启用--enable"><a class="header" href="#启用--enable">启用 / Enable</a></h2>
+<pre><code class="language-bash"># 带脚本路由编译
+cargo build --release --features scripts
+
+# 或者跟其他 feature 一起
+cargo build --release --all-features
+</code></pre>
+<p><code>scripts</code> 不在 <code>default</code> 里（<code>default = ["docs", "cookie"]</code>），所以不显式开启就没有这个能力。</p>
+<h2 id="脚本放哪--where-scripts-live"><a class="header" href="#脚本放哪--where-scripts-live">脚本放哪 / Where scripts live</a></h2>
+<pre><code>env/
+├── rssust          # 可执行文件
+└── scripts/        # 脚本目录，平铺，不分子文件夹
+    ├── bilibili_partion_ranking_script.rhai  → /bilibili_partion_ranking_script
+    └── bilibili_search_hot_script.rhai       → /bilibili_search_hot_script
+</code></pre>
+<p>路由名 = 文件名去掉 <code>.rhai</code>，命名跟静态路由一个风格（全小写下划线）；跟内置路由重名的加 <code>_script</code> 后缀，
+<code>bilibili_search_hot_script</code> 就是内置 <code>bilibili_search_hot</code> 的脚本版。
+<code>scripts/</code> 下不递归子目录，子文件夹里的脚本会被忽略。</p>
+<h2 id="什么时候生效--when-it-runs"><a class="header" href="#什么时候生效--when-it-runs">什么时候生效 / When it runs</a></h2>
+<p>静态路由（<code>src/request_rules.rs</code> 里的 <code>routes!</code> 宏）先匹配，<strong>没命中才回退到脚本路由</strong>：</p>
+<ul>
+<li>静态路由存在 → 走静态路由，脚本不会被执行（脚本不要跟静态路由重名，否则等于失效）</li>
+<li>静态路由不存在，且 <code>scripts/</code> 里有同名文件 → 走脚本</li>
+<li>两边都没有 → 404</li>
+</ul>
+<p><code>config.toml</code> 的 <code>routes.disabled</code> 与 <code>routes.rate_limit</code> 对脚本路由同样生效，键名要带前导斜杠：</p>
+<pre><code class="language-toml">[routes]
+disabled = ["/bilibili_search_hot_script"]
+rate_limit = { "/bilibili_partion_ranking_script" = 60 }
+</code></pre>
+<h2 id="脚本怎么写--script-anatomy"><a class="header" href="#脚本怎么写--script-anatomy">脚本怎么写 / Script anatomy</a></h2>
+<p>脚本是纯数据处理：<strong>不发网络请求</strong>。Rust 侧按 <code>//@source</code> 抓取上游，把响应文本注入 <code>raw</code>，脚本解析后 <code>return</code> 一个数组。</p>
+<p>顶部元数据注释：</p>
+<div class="table-wrapper"><table><thead><tr><th>注释</th><th>必填</th><th>作用</th></tr></thead><tbody>
+<tr><td><code>//@name 标题</code></td><td>否</td><td>RSS 频道标题；不写则用 <code>脚本 /路由名</code></td></tr>
+<tr><td><code>//@source URL</code></td><td><strong>是</strong></td><td>上游抓取地址，支持 <code>{参数名}</code> 占位；缺失时请求返回 500</td></tr>
+<tr><td><code>//@item 选择器</code></td><td>否</td><td>预留字段，目前不生效</td></tr>
+</tbody></table>
+</div>
+<p>频道简介（<code>&lt;description&gt;</code>）取 <code>let doc</code> 里的首个非标题行；没有 <code>let doc</code> 时用 <code>rhai 脚本路由 /路由名</code>。</p>
+<p><code>//@source</code> 里的 <code>{参数名}</code> 会被 URL 查询参数替换，例如 <code>/bilibili_partion_ranking_script?rid=36</code> 把 <code>{rid}</code> 换成 <code>36</code>。
+没传的参数会原样留在 URL 里（<code>rid={rid}</code>），上游多半返回错误结构，表现为脚本执行失败：</p>
+<pre><code>脚本 /bilibili_partion_ranking_script 执行失败: Indexer unavailable: () [string] (line 15, position 25)
+</code></pre>
+<p>脚本里还可以写一段 markdown 文档（RSSHub 风格）：</p>
+<pre><code class="language-rhai">let doc = `# 标题
+
+第一行非标题内容会作为 RSS 频道简介。
+
+- 补充说明写在这里
+`;
+</code></pre>
+<p><code>rssust docs</code> 会从 <code>scripts/</code> 里提取这段 markdown 渲染成 HTML 文档页（不往仓库里写 <code>.md</code> 文件），
+同时出现在文档站侧栏和路由清单的 <code>Scripts (脚本路由)</code> 分组里。</p>
+<h2 id="注入的变量--injected-scope"><a class="header" href="#注入的变量--injected-scope">注入的变量 / Injected scope</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>变量</th><th>类型</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>raw</code></td><td>字符串</td><td><code>//@source</code> 抓回来的原始响应体</td></tr>
+<tr><td><code>params</code></td><td>map</td><td>URL 查询参数，如 <code>params["rid"]</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="返回值--return-value"><a class="header" href="#返回值--return-value">返回值 / Return value</a></h2>
+<p>必须 <code>return</code> 一个数组，每个元素是对象，字段按名字取，缺哪个都不报错：</p>
+<div class="table-wrapper"><table><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>title</code></td><td>是</td><td>条目标题</td></tr>
+<tr><td><code>link</code></td><td>是</td><td>条目链接</td></tr>
+<tr><td><code>description</code></td><td>否</td><td>条目描述（HTML 片段，会放进 CDATA）</td></tr>
+<tr><td><code>pub_date</code></td><td>否</td><td>发布时间字符串，原样写进 <code>&lt;pubDate&gt;</code></td></tr>
+<tr><td><code>author</code></td><td>否</td><td>作者</td></tr>
+</tbody></table>
+</div>
+<p><code>title</code> 和 <code>link</code> 同时为空的条目会被丢弃；<code>description</code> 不给会输出空的 <code>&lt;description&gt;&lt;![CDATA[]]&gt;&lt;/description&gt;</code>。</p>
+<h2 id="完整示例--full-example"><a class="header" href="#完整示例--full-example">完整示例 / Full example</a></h2>
+<p><code>scripts/bilibili_partion_ranking_script.rhai</code>：</p>
+<pre><code class="language-rhai">//@name B站分区排行榜(脚本示例)
+//@source https://api.bilibili.com/x/web-interface/ranking/v2?rid={rid}&amp;type=all
+
+let doc = `# B站分区排行榜(脚本示例)
+
+内置 bilibili_partion_ranking 的脚本版，换用官方 ranking/v2 接口，{rid} 传分区。
+
+- 路由: /bilibili_partion_ranking_script?rid=36
+- rid 取值: 0 全部 / 3 音乐 / 4 游戏 / 36 知识 / 188 科技 / 160 生活
+`;
+
+let data = parse_json(raw);
+let result = [];
+for item in data["data"]["list"] {
+    let up = item["owner"]["name"];
+    result.push(#{
+        "title": item["title"],
+        "link": "https://www.bilibili.com/video/" + item["bvid"],
+        "description": "UP: " + up + " · 播放: " + item["stat"]["view"].to_string(),
+        "pub_date": "",
+        "author": up
+    });
+}
+return result;
+</code></pre>
+<p>上游返回：</p>
+<pre><code class="language-json">{ "code": 0, "data": { "list": [ { "title": "...", "bvid": "BV...", "owner": { "name": "..." }, "stat": { "view": 123 } } ] } }
+</code></pre>
+<p>对应产出：</p>
+<pre><code class="language-xml">&lt;channel&gt;
+  &lt;title&gt;B站分区排行榜(脚本示例)&lt;/title&gt;
+  &lt;link&gt;https://api.bilibili.com/x/web-interface/ranking/v2?rid=36&amp;amp;type=all&lt;/link&gt;
+  &lt;description&gt;内置 bilibili_partion_ranking 的脚本版，换用官方 ranking/v2 接口，{rid} 传分区。&lt;/description&gt;
+  &lt;item&gt;
+    &lt;title&gt;前8天：穿越罗布泊无人区  第9天：主角突然换人&lt;/title&gt;
+    &lt;link&gt;https://www.bilibili.com/video/BV1soZJYUEKd&lt;/link&gt;
+    &lt;description&gt;&lt;![CDATA[UP: 央视新闻 · 播放: 5159432]]&gt;&lt;/description&gt;
+    &lt;author&gt;央视新闻&lt;/author&gt;
+  &lt;/item&gt;
+&lt;/channel&gt;
+</code></pre>
+<h2 id="热重载与报错--hot-reload--errors"><a class="header" href="#热重载与报错--hot-reload--errors">热重载与报错 / Hot reload &amp; errors</a></h2>
+<ul>
+<li>服务器每 2 秒重扫一次 <code>scripts/</code>，文件 mtime 变了就重新编译，改脚本不用重启</li>
+<li>新增 / 删除 <code>.rhai</code> 文件同样 2 秒内生效（删掉后路由回到 404）</li>
+<li>语法错误不影响启动，其他路由照常工作，只有访问该路由时返回 500，错误信息带行号：</li>
+</ul>
+<pre><code>脚本 /bilibili_search_hot_script 编译错误: Unexpected ';' (line 3, position 9)
+</code></pre>
+<ul>
+<li>运行期报错（类型不对、上游数据结构变了、脚本 panic）同样返回 500 并说明原因，不会拖垮 tokio 线程：</li>
+</ul>
+<pre><code>脚本 /my_route 执行失败: Data type incorrect: string (expecting i64) (line 4, position 31)
+</code></pre>
+<h2 id="rhai-语法坑--gotchas"><a class="header" href="#rhai-语法坑--gotchas">rhai 语法坑 / Gotchas</a></h2>
+<ul>
+<li>map 字面量必须写 <code>#{ "k": "v" }</code>，不能写 <code>{ "k": "v" }</code></li>
+<li>没有三元运算符 <code>a ? b : c</code>，用 <code>if ... { } else { }</code></li>
+<li>取不存在的键得到 <code>()</code>，判断要用 <code>if x != () { ... }</code></li>
+<li>JSON 用嵌套下标访问：<code>data["data"]["list"][0]["title"]</code>；点号取字段不支持，<code>d.data.list</code> 会报 <code>Unknown property</code></li>
+<li><code>parse_json</code> 依赖 rhai 的 <code>serde</code> feature（已在本项目开启）</li>
+<li>脚本里没有时间格式化能力，<code>pub_date</code> 要自己拼字符串，且不会被校验</li>
+</ul>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li>路由清单与各路由说明：<a href="routes.html">routes</a></li>
+<li>新增静态路由：<a href="new_router_cn.html">new_router_cn</a></li>
+<li>配置文件字段：<a href="config.html">config</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-apnews_topics"><a class="header" href="#router-name-apnews_topics">Router-name: apnews_topics</a></h1>
 <p><strong>Commit time:</strong> 2026.07.24<br />
@@ -1982,6 +2152,23 @@ Default value: true<br />
 Meaning: 内嵌视频
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="b站分区排行榜脚本示例"><a class="header" href="#b站分区排行榜脚本示例">B站分区排行榜(脚本示例)</a></h1>
+<p><strong>Introduction:</strong> 内置 bilibili_partion_ranking 的脚本版，换用官方 ranking/v2 接口，{rid} 传分区。</p>
+<ul>
+<li>路由: /bilibili_partion_ranking_script?rid=36</li>
+<li>rid 取值: 0 全部 / 3 音乐 / 4 游戏 / 36 知识 / 188 科技 / 160 生活</li>
+</ul>
+<hr />
+<h3 id="路由信息"><a class="header" href="#路由信息">路由信息</a></h3>
+<ul>
+<li>路由路径: <code>/bilibili_partion_ranking_script</code></li>
+<li>抓取地址: <code>https://api.bilibili.com/x/web-interface/ranking/v2?rid={rid}&amp;type=all</code></li>
+<li>类型: rhai 脚本（动态路由，编译需开启 scripts feature）</li>
+<li>脚本位置: exe 目录 <code>scripts/</code> 下</li>
+</ul>
+<blockquote>
+<p>启用方式: <code>cargo build --features scripts</code> 编译后，脚本路由自动生效。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_popular"><a class="header" href="#router-name-bilibili_popular">Router-name: bilibili_popular</a></h1>
 <p><strong>Commit time:</strong> 2026.07.12<br />
 <strong>Cookies?:</strong> no<br />
@@ -2030,6 +2217,23 @@ Meaning: 是否内嵌视频播放器与封面图；设为 false 则仅显示文�
 <strong>Parameter:</strong><br />
 无参数
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="b站热搜脚本示例"><a class="header" href="#b站热搜脚本示例">B站热搜(脚本示例)</a></h1>
+<p><strong>Introduction:</strong> 内置 bilibili_search_hot 的脚本版：Rust 侧抓取后注入 raw，脚本只做 JSON 解析。</p>
+<ul>
+<li>路由: /bilibili_search_hot_script</li>
+<li>上游: https://s.search.bilibili.com/main/hotword</li>
+</ul>
+<hr />
+<h3 id="路由信息-1"><a class="header" href="#路由信息-1">路由信息</a></h3>
+<ul>
+<li>路由路径: <code>/bilibili_search_hot_script</code></li>
+<li>抓取地址: <code>https://s.search.bilibili.com/main/hotword</code></li>
+<li>类型: rhai 脚本（动态路由，编译需开启 scripts feature）</li>
+<li>脚本位置: exe 目录 <code>scripts/</code> 下</li>
+</ul>
+<blockquote>
+<p>启用方式: <code>cargo build --features scripts</code> 编译后，脚本路由自动生效。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-bilibili_series"><a class="header" href="#router-name-bilibili_series">Router-name: bilibili_series</a></h1>
 <p><strong>Commit time:</strong> 2026.07.12<br />
 <strong>Cookies?:</strong> no<br />
