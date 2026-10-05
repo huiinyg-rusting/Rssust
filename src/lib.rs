@@ -8,6 +8,8 @@ pub mod logger;
 pub mod rate_limit;
 pub mod request_rules;
 pub mod router;
+#[cfg(feature = "scripts")]
+pub mod scripts;
 pub mod stats;
 
 pub mod connect {

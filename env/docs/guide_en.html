@@ -183,6 +183,7 @@
 <p>Tired of <strong>massive memory consumption, slow running speed, and the extremely high barrier to self-hosting</strong>, or <strong>dependent on someone else’s</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
 <p>Although Rssust’s routers are not on the same scale as Rsshub’s in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust’s router count can grow, but this may seem somewhat like plagiarism, so it’s better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
 <p>If you want to create your own router, click here: <a href="new_router_en.html">Router Development Guide — English</a>
+Prefer scripting over Rust? Write the route in rhai: <a href="script_route_cn.html">Script Route Guide</a>
 Here are the ROUTERS currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="routes.html">ROUTERS</a></p>
 <h2 id="for-general-users"><a class="header" href="#for-general-users">For General Users:</a></h2>
 <h3 id="installation"><a class="header" href="#installation">Installation:</a></h3>
@@ -195,6 +196,8 @@ Here are the ROUTERS currently supported by the server. All the routers in your 
 ├── index
 │   ├── 404.html
 │   └── index.html
+├── scripts            # optional, requires the scripts feature at compile time
+│   └── .......rhai
 └── rssust
 </code></pre>
 <p>It’s quite strict.</p>
@@ -206,6 +209,11 @@ Here are the ROUTERS currently supported by the server. All the routers in your 
 cd Rssust
 ./build.sh
 </code></pre>
+<p>To enable rhai script routes (no Rust needed), add the feature at compile time:</p>
+<pre><code class="language-sh">cargo build --release --features scripts
+</code></pre>
+<p>Drop <code>.rhai</code> files into <code>scripts/</code> next to the executable; the filename is the route name.
+See the <a href="script_route_cn.html">Script Route Guide</a> for the syntax.</p>
 <p>Then when there’s no version update, you can run the commands below to refresh the HTML docs and grab cookies from Firefox (note that this grabs ALL cookies — mind your privacy):</p>
 <pre><code class="language-sh">cd Rssust
 ./env/rssust cookie firefox
@@ -216,7 +224,7 @@ cd Rssust
 <p>Windows users: CMD (unverified)</p>
 <pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --features scripts
 robocopy .\target\debug .\env rssust /IF /S
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
