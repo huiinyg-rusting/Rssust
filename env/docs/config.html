@@ -200,7 +200,7 @@ origins = ["https://bilibili.com"]
 <tr><td><code>server.max_concurrent</code></td><td><code>int</code></td><td>自动检测的 CPU 核心数</td><td>并发上限基数，实际许可数为该值 × 2。Base value of the concurrency limit; the actual number of permits is this value × 2.</td></tr>
 <tr><td><code>server.timeout</code></td><td><code>int</code></td><td><code>60</code></td><td>上游请求超时（秒）。Timeout for upstream requests, in seconds.</td></tr>
 <tr><td><code>server.status_route</code></td><td><code>bool</code></td><td><code>false</code></td><td>是否开放 <code>/status</code> 状态页（服务运行信息 JSON）。默认关闭；<code>true</code> 时访问 <code>/status</code> 返回 <code>{"status":"ok",...}</code>。Whether to enable the <code>/status</code> page (runtime info JSON). Disabled by default; when <code>true</code>, <code>/status</code> returns <code>{"status":"ok",...}</code>.</td></tr>
-<tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由名列表。List of route names to disable.</td></tr>
+<tr><td><code>routes.disabled</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>需要禁用的路由列表，<strong>带前导斜杠</strong>（如 <code>"/zhihu_hot"</code>），漏掉斜杠不生效。List of routes to disable, with the leading slash (e.g. <code>"/zhihu_hot"</code>); entries without it have no effect.</td></tr>
 <tr><td><code>routes.rate_limit</code></td><td><code>table</code></td><td><code>{}</code></td><td>路由名到缓存间隔（秒）的映射。配置后该路由的上游响应会被缓存；间隔内的重复请求直接复用缓存、不再请求上游；若解析报错则自动清理缓存。Map of route name to cache interval (seconds); caches upstream responses and avoids re-fetching within the interval, auto-cleared on parse errors.</td></tr>
 <tr><td><code>cookie.origins</code></td><td><code>string[]</code></td><td><code>["https://bilibili.com"]</code></td><td><code>rssust cookie &lt;browser&gt;</code> 导出 cookies 的网址列表。List of URLs whose cookies are exported by <code>rssust cookie &lt;browser&gt;</code>.</td></tr>
 </tbody></table>
@@ -213,7 +213,7 @@ max_concurrent = 4
 timeout = 30
 
 [routes]
-disabled = ["zhihu_hot", "bilibili_weekly"]
+disabled = ["/zhihu_hot", "/bilibili_weekly"]
 </code></pre>
 <p>不指定 <code>max_concurrent</code> 时，程序自动使用检测到的 CPU 核心数；不指定 <code>timeout</code> 时默认 60 秒；不指定 <code>port</code> 时默认 <code>7878</code>：</p>
 <pre><code class="language-toml">[routes]

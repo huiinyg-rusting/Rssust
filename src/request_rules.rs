@@ -167,10 +167,17 @@ routes! {
     ("/zhihu_hot", zhihu_hot),
 }
 
+/* 判定是否为“未注册路由”的 404（只有 route_dispatch 的兜底 arm 产生，区别于路由自身业务错误） */
+#[cfg(feature = "scripts")]
+fn is_unregistered(e: &anyhow::Error) -> bool {
+    e.downcast_ref::<HttpError>()
+        .is_some_and(|he| he.status == 404 && he.message == "404NotFound")
+}
+
 /* 二级分发：路由前置检查 + 限速缓存。
    1. routes.disabled 命中 → 404
    2. routes.rate_limit 配置了间隔 → 该请求进入缓存作用域（间隔内复用缓存，失败自动清理）
-   3. 交给 route_dispatch 匹配具体路由模块 */
+   3. 交给 route_dispatch 匹配具体路由模块；静态没注册时（仅 feature scripts）回退脚本路由 */
 pub async fn request_rules(
     url: &str,
     parameters: HashMap<String, String>,
@@ -182,7 +189,38 @@ pub async fn request_rules(
     debug!("Route {} matched, fetching", url);
     let ttl = rate_limit_secs(url).map(Duration::from_secs);
     crate::rate_limit::with_cache_scope(ttl, async {
-        let result: Result<String, anyhow::Error> = route_dispatch(url, parameters).await;
+        let result: Result<String, anyhow::Error> = {
+            #[cfg(feature = "scripts")]
+            {
+                match route_dispatch(url, parameters.clone()).await {
+                    std::result::Result::Ok(s) => Ok(s),
+                    std::result::Result::Err(e) => {
+                        /* 静态未命中才回退脚本路由：脚本存在时以其错误为准（便于定位脚本问题） */
+                        if is_unregistered(&e) {
+                            match crate::scripts::try_route(url, parameters).await {
+                                std::result::Result::Ok(s) => {
+                                    debug!("Script route {} served", url);
+                                    Ok(s)
+                                }
+                                std::result::Result::Err(script_err) => {
+                                    if crate::scripts::has_route(url) {
+                                        Err(script_err)
+                                    } else {
+                                        Err(e)
+                                    }
+                                }
+                            }
+                        } else {
+                            Err(e)
+                        }
+                    }
+                }
+            }
+            #[cfg(not(feature = "scripts"))]
+            {
+                route_dispatch(url, parameters).await
+            }
+        };
         match &result {
             std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
             std::result::Result::Err(e) => {

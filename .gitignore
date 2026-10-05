@@ -2,6 +2,8 @@
 *.lock
 env/*.json
 env/rssust
+env/*.log
+env/.docbuild
 env/config.toml
 env/cookies.json
 *.json

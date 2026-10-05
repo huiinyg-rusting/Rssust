@@ -60,17 +60,22 @@ fn collect_route_names(source_root: &Path) -> BTreeSet<String> {
     names
 }
 
-fn generate_api_file(source_root: &Path) -> Result<(), Error> {
+/* script_names 里的路由归到独立分组，不跟内置路由混在 Other 里 */
+fn generate_api_file(source_root: &Path, script_names: &BTreeSet<String>) -> Result<(), Error> {
     let api_path = source_root.join("official/routes.md");
     let (_, group_map) = parse_api_groups(&api_path);
 
     let mut grouped: BTreeMap<String, Vec<(String, String)>> = BTreeMap::new();
     for name in collect_route_names(source_root) {
         let intro = md_intro(&source_root.join(format!("{}.md", name)));
-        let group = group_map
-            .get(&name)
-            .cloned()
-            .unwrap_or_else(|| "Other".to_string());
+        let group = if script_names.contains(&name) {
+            "Scripts (脚本路由)".to_string()
+        } else {
+            group_map
+                .get(&name)
+                .cloned()
+                .unwrap_or_else(|| "Other".to_string())
+        };
         grouped.entry(group).or_default().push((name, intro));
     }
 
@@ -174,23 +179,17 @@ fn check_route_consistency(exe_dir: &Path) -> Vec<String> {
     issues
 }
 
-pub fn doc_generate() -> Result<(), Error> {
-    let exe_dir = std::env::current_exe()?.parent().unwrap().to_path_buf();
-    let source_root = exe_dir.join("docs_md");
-    let official_dir = source_root.join("official");
-    let build_dir = exe_dir.join("docs");
-
-    // 生成 SUMMARY.md
-    let mut summary = String::new();
-    summary.push_str("# 官方文档\n");
+/* 生成 SUMMARY.md：官方文档 + 目录下全部路由文档 */
+fn build_summary(root: &Path, official_dir: &Path) -> String {
+    let mut summary = String::from("# 官方文档\n");
     let mut official_names: Vec<String> = Vec::new();
     if official_dir.is_dir() {
-        for entry in std::fs::read_dir(&official_dir)? {
-            let entry = entry?;
-            let path = entry.path();
-            if path.extension().is_some_and(|e| e == "md") {
-                let name = path.file_stem().unwrap().to_string_lossy().to_string();
-                official_names.push(name);
+        if let Ok(rd) = std::fs::read_dir(official_dir) {
+            for entry in rd.flatten() {
+                let path = entry.path();
+                if path.extension().is_some_and(|e| e == "md") {
+                    official_names.push(path.file_stem().unwrap().to_string_lossy().to_string());
+                }
             }
         }
     }
@@ -201,26 +200,73 @@ pub fn doc_generate() -> Result<(), Error> {
 
     summary.push_str("\n# 路由\n");
     let mut route_names: Vec<String> = Vec::new();
-    for entry in std::fs::read_dir(&source_root)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.extension().is_some_and(|e| e == "md") {
-            let name = path.file_stem().unwrap().to_string_lossy().to_string();
-            if name != "SUMMARY" {
-                route_names.push(name);
+    if let Ok(rd) = std::fs::read_dir(root) {
+        for entry in rd.flatten() {
+            let path = entry.path();
+            if path.extension().is_some_and(|e| e == "md") {
+                let name = path.file_stem().unwrap().to_string_lossy().to_string();
+                if name != "SUMMARY" {
+                    route_names.push(name);
+                }
             }
         }
     }
     route_names.sort();
     for name in &route_names {
-        let file = format!("{}.md", name);
-        summary.push_str(&format!("- [{}]({})\n", name, file));
+        summary.push_str(&format!("- [{}]({}.md)\n", name, name));
+    }
+    summary
+}
+
+/* 递归复制目录（构建用的临时文档源） */
+fn copy_dir(src: &Path, dst: &Path) -> Result<(), Error> {
+    std::fs::create_dir_all(dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let from = entry.path();
+        let to = dst.join(entry.file_name());
+        if from.is_dir() {
+            copy_dir(&from, &to)?;
+        } else {
+            std::fs::copy(&from, &to)?;
+        }
+    }
+    Ok(())
+}
+
+pub fn doc_generate() -> Result<(), Error> {
+    let exe_dir = std::env::current_exe()?.parent().unwrap().to_path_buf();
+    let source_root = exe_dir.join("docs_md");
+    let build_dir = exe_dir.join("docs");
+    /* 脚本文档不落 docs_md，先拷一份到 .docbuild 供 mdbook 构建 */
+    let staging = exe_dir.join(".docbuild");
+
+    let _ = std::fs::remove_dir_all(&staging);
+    copy_dir(&source_root, &staging)?;
+
+    #[cfg_attr(not(feature = "scripts"), allow(unused_mut))]
+    let mut script_names = BTreeSet::new();
+    #[cfg(feature = "scripts")]
+    for doc in crate::scripts::collect_script_docs() {
+        std::fs::write(staging.join(format!("{}.md", doc.name)), doc.markdown)?;
+        script_names.insert(doc.name);
     }
 
-    std::fs::write(source_root.join("SUMMARY.md"), summary)?;
+    let official_dir = staging.join("official");
+
+    // SUMMARY.md / official/routes.md 两份都生成：staging 含脚本路由，docs_md 只留静态路由
+    std::fs::write(
+        staging.join("SUMMARY.md"),
+        build_summary(&staging, &official_dir),
+    )?;
+    std::fs::write(
+        source_root.join("SUMMARY.md"),
+        build_summary(&source_root, &source_root.join("official")),
+    )?;
 
     // 自动生成 official/routes.md（路由清单 + Introduction 描述）
-    generate_api_file(&source_root)?;
+    generate_api_file(&staging, &script_names)?;
+    generate_api_file(&source_root, &BTreeSet::new())?;
 
     // 三方对账：mod.rs / request_rules.rs / docs_md
     let issues = check_route_consistency(&exe_dir);
@@ -237,8 +283,9 @@ pub fn doc_generate() -> Result<(), Error> {
     config.set("output.html.curly-quotes", true)?;
     config.set("build.build-dir", build_dir.to_string_lossy())?;
 
-    let book = MDBook::load_with_config(source_root, config)?;
+    let book = MDBook::load_with_config(&staging, config)?;
     book.build()?;
+    let _ = std::fs::remove_dir_all(&staging);
 
     // 将 official/ 下的 HTML 文件移动到 docs/ 根目录
     let official_out = build_dir.join("official");
