@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>apnews_topics</title>
+        <title>bilibili_search_hot_script</title>
 
 
         <!-- Custom HTML head -->
@@ -175,26 +175,33 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="router-name-apnews_topics"><a class="header" href="#router-name-apnews_topics">Router-name: apnews_topics</a></h1>
-<p><strong>Commit time:</strong> 2026.07.24<br />
-<strong>Cookies?:</strong> no<br />
-<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@zoenglinghou<br />
-<strong>Introduction:</strong> AP News headlines by topic<br />
-<strong>Address:</strong> rssust://apnews_topics<br />
-<strong>Example:</strong> <a href="/apnews_topics">rssust://apnews_topics</a><br />
-<strong>Parameter:</strong><br />
-topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/science/health/sports/entertainment)<br />
-<strong>Environment Variables:</strong> no</p>
+                        <h1 id="b站热搜脚本示例"><a class="header" href="#b站热搜脚本示例">B站热搜(脚本示例)</a></h1>
+<p><strong>Introduction:</strong> 内置 bilibili_search_hot 的脚本版：Rust 侧抓取后注入 raw，脚本只做 JSON 解析。</p>
+<ul>
+<li>路由: /bilibili_search_hot_script</li>
+<li>上游: https://s.search.bilibili.com/main/hotword</li>
+</ul>
+<hr />
+<h3 id="路由信息"><a class="header" href="#路由信息">路由信息</a></h3>
+<ul>
+<li>路由路径: <code>/bilibili_search_hot_script</code></li>
+<li>抓取地址: <code>https://s.search.bilibili.com/main/hotword</code></li>
+<li>类型: rhai 脚本（动态路由，编译需开启 scripts feature）</li>
+<li>脚本位置: exe 目录 <code>scripts/</code> 下</li>
+</ul>
+<blockquote>
+<p>启用方式: <code>cargo build --features scripts</code> 编译后，脚本路由自动生效。</p>
+</blockquote>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="script_route_cn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="bilibili_search_hot.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="baidu_top.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="bilibili_series.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -204,11 +211,11 @@ topic: 话题 (默认 trending-news, 可选 world/politics/business/technology/s
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="script_route_cn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="bilibili_search_hot.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="baidu_top.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="bilibili_series.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
