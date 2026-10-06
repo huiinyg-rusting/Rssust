@@ -1,0 +1,212 @@
+# 多平台并行构建 + 打包 + 发布 Release
+# 产物：linux-x86_64 / linux-arm64 / windows-x86_64
+# 推 v* tag 触发发布；workflow_dispatch 只构建不发布
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BIN_NAME: rssust
+  # cargo 按 target 三元组匹配这个变量，只在编 aarch64-unknown-linux-gnu 时生效，
+  # 其他 target 不受影响。指向 apt 装的 gcc-aarch64-linux-gnu，不用 cross 的 Docker
+  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+  # 发布包开启的 cargo feature，留空 = 只用 default(docs, cookie)。
+  # 想出带 rhai 脚本路由的包，把这里改成 scripts
+  FEATURES: ''
+  # 打进发布包的 env 子目录。启用 scripts feature 后记得把 scripts 加上，
+  # 否则用户会看到 .rhai 文件却没效果
+  PACK_DIRS: docs docs_md index
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x86_64
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - name: linux-arm64
+            runner: ubuntu-latest
+            # 光 rustup target add 会在链接阶段挂（没有 aarch64 链接器），
+            # 靠上面 CARGO_TARGET_..._LINKER 指向 apt 装的 gcc-aarch64-linux-gnu
+            target: aarch64-unknown-linux-gnu
+          - name: windows-x86_64
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install aarch64 cross linker
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          aarch64-linux-gnu-gcc --version | head -1
+          echo "linker=$CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER"
+
+      - name: Cache cargo
+        uses: swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      - name: Read version and check tag
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python3 -c "import tomllib;print(tomllib.load(open('Cargo.toml','rb'))['package']['version'])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Cargo.toml version: $version"
+          # tag 和 Cargo.toml 对不上只警告。老规矩 tag 可能带 -S 后缀，不拦构建
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            tag="${GITHUB_REF#refs/tags/}"
+            if [ "$tag" != "v$version" ]; then
+              echo "::warning::tag $tag 与 Cargo.toml 版本 $version 不一致，产物仍按 $version 命名"
+            fi
+          fi
+
+      # git-bash 在 windows runner 上也有，cargo 认正斜杠路径，
+      # 所以三个平台共用这一步
+      - name: Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --release --target "${{ matrix.target }}" \
+            ${FEATURES:+--features "$FEATURES"}
+
+      # 只传二进制，打包统一交给后面的 ubuntu job
+      - name: Stage binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          ext=""
+          if [ "${{ runner.os }}" = "Windows" ]; then ext=".exe"; fi
+          mkdir -p out
+          cp "target/${{ matrix.target }}/release/${{ env.BIN_NAME }}${ext}" "out/${{ env.BIN_NAME }}${ext}"
+          ls -la out/
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 7
+
+  package:
+    name: Package
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: bins
+
+      - name: Assemble zips
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python3 -c "import tomllib;print(tomllib.load(open('Cargo.toml','rb'))['package']['version'])")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "version=$version"
+          ls -la bins/*/
+
+          rm -rf artifacts
+          mkdir -p artifacts
+
+          for dir in bins/*/; do
+            name=$(basename "$dir")
+            ext=""
+            case "$name" in windows-*) ext=".exe" ;; esac
+            bin="${{ env.BIN_NAME }}${ext}"
+            [ -f "$dir/$bin" ] || { echo "::error::$name 里找不到 $bin"; exit 1; }
+
+            pack="artifacts/${{ env.BIN_NAME }}-${version}-${name}"
+            mkdir -p "$pack"
+            cp "$dir/$bin" "$pack/$bin"
+            [ -n "$ext" ] || chmod +x "$pack/$bin"
+
+            # PACK_DIRS 是 workflow 级 env，shell 里直接就是 $PACK_DIRS
+            for d in $PACK_DIRS; do
+              [ -d "env/$d" ] || { echo "::warning::env/$d 不存在，跳过"; continue; }
+              cp -a "env/$d" "$pack/"
+            done
+
+            (cd artifacts && zip -qr "${pack#artifacts/}.zip" "$(basename "$pack")")
+            echo "打包完成 $(basename "$pack").zip"
+          done
+
+          echo "=== 产物:"; ls -la artifacts/*.zip
+          echo "=== linux-x86_64 包内容:"; unzip -l artifacts/*linux-x86_64.zip | head -20
+
+      - name: Upload zips
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-zips
+          path: artifacts/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Release
+    needs: package
+    # 只有推 tag 才发布；workflow_dispatch 只停在构建+打包
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download zips
+        uses: actions/download-artifact@v4
+        with:
+          name: release-zips
+          path: zips
+
+      - name: Create release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF#refs/tags/}"
+          version="${{ needs.package.outputs.version }}"
+          features="${{ env.FEATURES }}"
+          feats=${features:-default (docs, cookie)}
+
+          # 同名 release 已存在就补传，不存在就新建
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" zips/*.zip --clobber
+          else
+            gh release create "$tag" zips/*.zip \
+              --title "Rssust $version" \
+              --notes "自动构建，cargo feature: \`$feats\`"
+          fi
+          gh release view "$tag"
