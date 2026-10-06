@@ -1,6 +1,6 @@
 # 多平台并行构建 + 打包 + 发布 Release
-# 产物：linux-x86_64 / linux-arm64 / windows-x86_64
-# 推 v* tag 触发发布；workflow_dispatch 只构建不发布
+# 每个平台产出一个完整包：rssust-<版本>-<平台>/ 里含二进制 + docs/ + docs_md/ + index/
+# 推 v* tag 触发发布；workflow_dispatch 只构建，不上传 Release
 name: Release
 
 on:
@@ -72,7 +72,8 @@ jobs:
         with:
           key: ${{ matrix.target }}
 
-      - name: Read version and check tag
+      # git-bash 在 windows runner 上也有，所以这一步三个平台共用
+      - name: Read version
         id: meta
         shell: bash
         run: |
@@ -97,115 +98,100 @@ jobs:
           cargo build --release --target "${{ matrix.target }}" \
             ${FEATURES:+--features "$FEATURES"}
 
-      # 只传二进制，打包统一交给后面的 ubuntu job
-      - name: Stage binary
+      # 在各自 runner 上组装完整包。artifact 名 = 包名，下载下来就是能直接跑的东西。
+      # 只解压不压缩：windows 的 git-bash 没有 zip，压缩统一交给下面的 release job
+      - name: Assemble package
         shell: bash
         run: |
           set -euo pipefail
+          version="${{ steps.meta.outputs.version }}"
           ext=""
           if [ "${{ runner.os }}" = "Windows" ]; then ext=".exe"; fi
-          mkdir -p out
-          cp "target/${{ matrix.target }}/release/${{ env.BIN_NAME }}${ext}" "out/${{ env.BIN_NAME }}${ext}"
-          ls -la out/
 
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.name }}
-          path: out/
-          if-no-files-found: error
-          retention-days: 7
+          pack="out/${{ env.BIN_NAME }}-${version}-${{ matrix.name }}"
+          rm -rf out
+          mkdir -p "$pack"
+          cp "target/${{ matrix.target }}/release/${{ env.BIN_NAME }}${ext}" "$pack/${{ env.BIN_NAME }}${ext}"
+          [ -n "$ext" ] || chmod +x "$pack/${{ env.BIN_NAME }}"
 
-  package:
-    name: Package
-    needs: build
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.meta.outputs.version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          path: bins
-
-      - name: Assemble zips
-        id: meta
-        shell: bash
-        run: |
-          set -euo pipefail
-          version=$(python3 -c "import tomllib;print(tomllib.load(open('Cargo.toml','rb'))['package']['version'])")
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "version=$version"
-          ls -la bins/*/
-
-          rm -rf artifacts
-          mkdir -p artifacts
-
-          for dir in bins/*/; do
-            name=$(basename "$dir")
-            ext=""
-            case "$name" in windows-*) ext=".exe" ;; esac
-            bin="${{ env.BIN_NAME }}${ext}"
-            [ -f "$dir/$bin" ] || { echo "::error::$name 里找不到 $bin"; exit 1; }
-
-            pack="artifacts/${{ env.BIN_NAME }}-${version}-${name}"
-            mkdir -p "$pack"
-            cp "$dir/$bin" "$pack/$bin"
-            [ -n "$ext" ] || chmod +x "$pack/$bin"
-
-            # PACK_DIRS 是 workflow 级 env，shell 里直接就是 $PACK_DIRS
-            for d in $PACK_DIRS; do
-              [ -d "env/$d" ] || { echo "::warning::env/$d 不存在，跳过"; continue; }
-              cp -a "env/$d" "$pack/"
-            done
-
-            (cd artifacts && zip -qr "${pack#artifacts/}.zip" "$(basename "$pack")")
-            echo "打包完成 $(basename "$pack").zip"
+          for d in $PACK_DIRS; do
+            # 缺目录直接失败。静默跳过会产出一个只有二进制的包，用户拿到才发现
+            if [ ! -d "env/$d" ]; then
+              echo "::error::env/$d 不存在，PACK_DIRS($PACK_DIRS) 与仓库结构对不上，拒绝出残包"
+              exit 1
+            fi
+            cp -a "env/$d" "$pack/"
           done
 
-          echo "=== 产物:"; ls -la artifacts/*.zip
-          echo "=== linux-x86_64 包内容:"; unzip -l artifacts/*linux-x86_64.zip | head -20
+          echo "=== $pack 内容:"
+          ls -la "$pack"
+          find "$pack" -type f | wc -l
 
-      - name: Upload zips
+      - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: release-zips
-          path: artifacts/*.zip
+          name: ${{ env.BIN_NAME }}-${{ steps.meta.outputs.version }}-${{ matrix.name }}
+          path: out/
           if-no-files-found: error
           retention-days: 7
 
   release:
     name: Release
-    needs: package
+    needs: build
     # 只有推 tag 才发布；workflow_dispatch 只停在构建+打包
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - name: Download zips
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download packages
         uses: actions/download-artifact@v4
         with:
-          name: release-zips
-          path: zips
+          path: packages
 
-      - name: Create release
+      # 压缩统一在这里做：只有 ubuntu runner 保证有 zip，
+      # 省掉在三个 build job 里各写一份 archiver 分支
+      - name: Zip and create release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           tag="${GITHUB_REF#refs/tags/}"
-          version="${{ needs.package.outputs.version }}"
-          features="${{ env.FEATURES }}"
-          feats=${features:-default (docs, cookie)}
+          version=$(python3 -c "import tomllib;print(tomllib.load(open('Cargo.toml','rb'))['package']['version'])")
+          feats="${{ env.FEATURES }}"
+          feats=${feats:-default (docs, cookie)}
+
+          echo "=== 收到的包:"; ls -la packages/ || true
+
+          # 先确认真的收到了包再动手，否则 zip 会抛 "Nothing to do!" 那种看不懂的错
+          shopt -s nullglob
+          packs=(packages/*/)
+          shopt -u nullglob
+          if [ ${#packs[@]} -eq 0 ]; then
+            echo "::error::没收到任何包，packages/ 是空的"
+            exit 1
+          fi
+
+          rm -rf zips && mkdir -p zips
+          # 输入要进 packages/（保住内层目录名），输出用绝对路径，
+          # 否则 cd 之后 zips/ 会被解析成 packages/zips/
+          zips_abs="$PWD/zips"
+          for pack in "${packs[@]}"; do
+            name=$(basename "$pack")
+            (cd packages && zip -qr "${zips_abs}/${name}.zip" "$name")
+            echo "压缩完成 ${name}.zip"
+          done
+
+          mapfile -t files < <(find zips -name '*.zip' | sort)
+          echo "=== 待上传:"; ls -la "${files[@]}"
 
           # 同名 release 已存在就补传，不存在就新建
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" zips/*.zip --clobber
+            gh release upload "$tag" "${files[@]}" --clobber
           else
-            gh release create "$tag" zips/*.zip \
+            gh release create "$tag" "${files[@]}" \
               --title "Rssust $version" \
               --notes "自动构建，cargo feature: \`$feats\`"
           fi
