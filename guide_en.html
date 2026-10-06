@@ -176,18 +176,15 @@
                 <div id="content" class="content">
                     <main>
                         <h3 id="中文"><a class="header" href="#中文"><a href="guide_cn.html">中文</a></a></h3>
+<h2 id="online-docs"><a class="header" href="#online-docs"><a href="https://huiinyg-rusting.github.io/Rssust/guide_en.html">Online Docs</a></a></h2>
 <h1 id="what-is-rssust"><a class="header" href="#what-is-rssust">What is Rssust?</a></h1>
 <p>Rssust is an <strong>information aggregation and conversion software</strong> built with Rust, aiming to enable everyone to use website-to-RSS technology on desktop computers, similar to Rsshub, <em><strong>but currently still in development</strong></em>.</p>
 <h2 id="we-hope-for-your-help"><a class="header" href="#we-hope-for-your-help">We Hope for Your Help</a></h2>
-<p>Tired of <strong>massive memory consumption and slow running speed</strong>, or <strong>dependent on someone else’s</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
-<hr />
-<p>Plug a USB drive into someone else’s computer, then <em><strong>double-click</strong></em> to open the binary program and a lightweight RSS client to use RSS on their computer without having to find someone else’s server. Let everyone handle their own computing power while actually gaining more stability.</p>
-<hr />
-<h5 id="so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust"><a class="header" href="#so-is-this-project-meant-to-run-locally-not-necessarily-its-more-about-hoping-for-local-operation-but-if-you-have-a-nas-at-home-or-have-the-financial-means-to-build-a-server-never-mind-what-i-said-but-its-still-worth-trying-rssust">So is this project meant to run locally? Not necessarily. <em>It’s more about hoping for local operation</em>, but if you have a NAS at home or have the financial means to build a server, never mind what I said. <strong>But it’s still worth trying Rssust</strong>.</a></h5>
-<hr />
+<p>Tired of <strong>massive memory consumption, slow running speed, and the extremely high barrier to self-hosting</strong>, or <strong>dependent on someone else’s</strong> Rsshub server that suddenly shuts down one day, or are you simply a <strong>Rust enthusiast</strong>?</p>
 <p>Although Rssust’s routers are not on the same scale as Rsshub’s in terms of quantity, it provides a precedent. Perhaps with AI technology, Rssust’s router count can grow, but this may seem somewhat like plagiarism, so it’s better to let AI generate its own. Therefore, if this <strong>infringes on your rights</strong>, please email me and contact me through all possible means, and I will handle it as soon as possible.</p>
 <p>If you want to create your own router, click here: <a href="new_router_en.html">Router Development Guide — English</a>
-Here are the APIs currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="api.html">API DOCS</a></p>
+Prefer scripting over Rust? Write the route in rhai: <a href="script_route_cn.html">Script Route Guide</a>
+Here are the ROUTERS currently supported by the server. All the routers in your left Router column are listed, but there are some categorized here <a href="routes.html">ROUTERS</a></p>
 <h2 id="for-general-users"><a class="header" href="#for-general-users">For General Users:</a></h2>
 <h3 id="installation"><a class="header" href="#installation">Installation:</a></h3>
 <p>It’s worth noting that when running, the binary directory structure should be as follows:</p>
@@ -199,33 +196,35 @@ Here are the APIs currently supported by the server. All the routers in your lef
 ├── index
 │   ├── 404.html
 │   └── index.html
+├── scripts            # optional, requires the scripts feature at compile time
+│   └── .......rhai
 └── rssust
 </code></pre>
 <p>It’s quite strict.</p>
-<h3 id="cookies"><a class="header" href="#cookies">cookies:</a></h3>
-<p>Some routes depend on cookies, so take a look <a href="cookie.html">guide of cookies</a></p>
 <h3 id="binary"><a class="header" href="#binary">Binary:</a></h3>
-<p>Early versions may not include binaries; only versions with an “S” suffix will generate binaries.
-Running the binary is very simple: extract and then start the binary file in the env folder.</p>
+<p>Running the binary is very simple: download it from the release page, extract it, and then start the binary file in the env folder.</p>
 <h3 id="building-from-source"><a class="header" href="#building-from-source">Building from Source:</a></h3>
 <p>Linux users:</p>
 <pre><code class="language-sh">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
-cp -r ./target/debug/rssust ./env
+./build.sh
+</code></pre>
+<p>To enable rhai script routes (no Rust needed), add the feature at compile time:</p>
+<pre><code class="language-sh">cargo build --release --features scripts
+</code></pre>
+<p>Drop <code>.rhai</code> files into <code>scripts/</code> next to the executable; the filename is the route name.
+See the <a href="script_route_cn.html">Script Route Guide</a> for the syntax.</p>
+<p>Then when there’s no version update, you can run the commands below to refresh the HTML docs and grab cookies from Firefox (note that this grabs ALL cookies — mind your privacy):</p>
+<pre><code class="language-sh">cd Rssust
 ./env/rssust cookie firefox
 ./env/rssust docs
-./env/rssust
-</code></pre>
-<p>Then when there’s no version update, you can enter:</p>
-<pre><code class="language-sh">cd Rssust
 ./env/rssust
 </code></pre>
 <p>to start it.</p>
 <p>Windows users: CMD (unverified)</p>
 <pre><code class="language-shell">git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build
+cargo build --features scripts
 robocopy .\target\debug .\env rssust /IF /S
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs

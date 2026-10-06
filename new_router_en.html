@@ -194,10 +194,11 @@
 <li>Filenames can only contain lowercase letters, numbers, underscores, and the fixed .rs extension. Absolutely no spaces in any filename or URL path!</li>
 <li>Router naming convention is: <code>platform_lowercase_english_name_function_lowercase_english_name</code></li>
 <li>The filename part (excluding the .rs extension) becomes your router name</li>
-<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>/docs</code>; more details later</li>
+<li>Each router must have a corresponding documentation file named <code>router_name.md</code> under <code>env/docs_md</code>; more details later</li>
 <li>Each router can only correspond to one function</li>
 </ol>
-<p>Before developing, it’s best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.</p>
+<p>Before developing, it’s best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.
+Build scripts <code>build_dev.sh</code> and <code>build.bat</code> are provided.</p>
 <h3 id="import-libraries"><a class="header" href="#import-libraries">Import Libraries</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -331,15 +332,17 @@ pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Err
 <p>The specific program logic is up to you to write.</p>
 <h3 id="how-to-register-it-after-writing"><a class="header" href="#how-to-register-it-after-writing">How to register it after writing?</a></h3>
 <p>In <code>/src/router/mod.rs</code>, add a new line at the end: <code>pub mod your_router_name;</code></p>
-<p>Then in <code>src/request_rules.rs</code>, add a match arm to the <code>match url</code> dispatcher, following the pattern of other entries:</p>
+<p>Then in <code>src/request_rules.rs</code>, add one line (in alphabetical order) to the <code>routes! { ... }</code> block, following the pattern of other entries:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>"/your_router_name" =&gt; run!(your_router_name, parameters),
+</span>("/your_router_name", your_router_name),
 <span class="boring">}</span></code></pre></pre>
-<p>The <code>run!</code> macro expands to <code>your_router_name::get(parameters.clone()).await</code>, so don’t change its shape.</p>
-<blockquote>
-<p><strong>Note</strong>: <code>parameters</code> in the <code>run!</code> macro is the argument name of <code>request_rules</code>. Due to macro hygiene it can’t refer to the outer variable, so it must be passed explicitly.</p>
-</blockquote>
+<p>The <code>routes!</code> macro generates:</p>
+<ul>
+<li><code>pub const ROUTES: &amp;[&amp;str]</code> (path array) and <code>ROUTE_COUNT</code> (total count)</li>
+<li><code>pub async fn route_dispatch()</code> — internally uses <code>match url</code> to dispatch each path to <code>your_router_name::get(...)</code></li>
+</ul>
+<p>So <strong>don’t</strong> hand-write a <code>match url</code> arm or change the macro shape. After registering, run <code>./env/rssust docs</code> and the new route is automatically written into <code>SUMMARY.md</code> and <code>official/routes.md</code>.</p>
 <h3 id="how-to-run-after-registration"><a class="header" href="#how-to-run-after-registration">How to run after registration?</a></h3>
 <p>I’m very strict about the necessary environment directories for the binary file. Files like <code>cookies.json</code>, the <code>index</code> folder, etc., must be in the same directory as the binary file. Therefore, I created an <code>env</code> folder where all necessary environments are located. It should look like this:</p>
 <pre><code class="language-sh">├── cookies.json
@@ -367,10 +370,10 @@ pub async fn get(para: HashMap&lt;String,String&gt;) -&gt; Result&lt;String, Err
   "expirationDate": 1893456000
 }
 </code></pre>
-<p>All cookies are in the same JSON file, which will be imported when the program starts.</p>
+<p>All cookies are in the same JSON file, which is read on demand at runtime (<code>easyuser::load_cookie_header()</code> builds the <code>Cookie</code> header filtered by domain); no import at startup.</p>
 <p>Tips: You can use the Cookie-Editor extension to export as JSON to clipboard and then merge.</p>
 <h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing!</a></h3>
-<p>Create a file named <code>your_router_name.md</code> under <code>/docs</code>, copy and paste the template below and fill it in:</p>
+<p>Create a file named <code>your_router_name.md</code> under <code>env/docs_md</code>, copy and paste the template below and fill it in:</p>
 <pre><code class="language-markdown"># Router-name: 
 **Commit time:** 
 **Cookies?:** 
