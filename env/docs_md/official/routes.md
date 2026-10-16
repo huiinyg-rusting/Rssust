@@ -240,14 +240,24 @@
 #### Other
 - [cas_research](../cas_research.md)
     中国科学院科研进展列表（服务端渲染 HTML，无官方 RSS，robots.txt 不存在视为允许；pubDate 取链接文件名 tYYYYMMDD 中的发布日期）
+- [cls_newsflash](../cls_newsflash.md)
+    财联社实时电报快讯，支持频道过滤（全部/看盘/公告/基金要闻/港股/精选）
+- [dongqiudi_news](../dongqiudi_news.md)
+    懂球帝新闻
 - [gamersky_news](../gamersky_news.md)
     游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）
+- [gelonghui_newsflash](../gelonghui_newsflash.md)
+    格隆汇实时快讯，支持频道（全部/最热/A股/港股/AI 等）
 - [jiemian_news](../jiemian_news.md)
     界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+- [music163_toplist](../music163_toplist.md)
+    网易云音乐排行榜
 - [mydrivers_news](../mydrivers_news.md)
     快科技（mydrivers）今日资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
 - [nbd_news](../nbd_news.md)
     每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+- [nga_forum](../nga_forum.md)
+    NGA玩家社区分区帖子
 
 #### PingWest (品玩)
 - [pingwest_news](../pingwest_news.md)
