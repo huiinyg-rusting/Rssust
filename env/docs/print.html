@@ -1572,14 +1572,24 @@ OpenAI Research Articles (filtered from official RSS by category=Research)</li>
 <ul>
 <li><a href="cas_research.html">cas_research</a>
 中国科学院科研进展列表（服务端渲染 HTML，无官方 RSS，robots.txt 不存在视为允许；pubDate 取链接文件名 tYYYYMMDD 中的发布日期）</li>
+<li><a href="cls_newsflash.html">cls_newsflash</a>
+财联社实时电报快讯，支持频道过滤（全部/看盘/公告/基金要闻/港股/精选）</li>
+<li><a href="dongqiudi_news.html">dongqiudi_news</a>
+懂球帝新闻</li>
 <li><a href="gamersky_news.html">gamersky_news</a>
 游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）</li>
+<li><a href="gelonghui_newsflash.html">gelonghui_newsflash</a>
+格隆汇实时快讯，支持频道（全部/最热/A股/港股/AI 等）</li>
 <li><a href="jiemian_news.html">jiemian_news</a>
 界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
+<li><a href="music163_toplist.html">music163_toplist</a>
+网易云音乐排行榜</li>
 <li><a href="mydrivers_news.html">mydrivers_news</a>
 快科技（mydrivers）今日资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
 <li><a href="nbd_news.html">nbd_news</a>
 每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）</li>
+<li><a href="nga_forum.html">nga_forum</a>
+NGA玩家社区分区帖子</li>
 </ul>
 <h4 id="pingwest-品玩"><a class="header" href="#pingwest-品玩">PingWest (品玩)</a></h4>
 <ul>
@@ -2510,6 +2520,35 @@ limit（可选，最大 50，默认 20）<br />
 <strong>Parameter:</strong><br />
 无参数<br />
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-cls_newsflash"><a class="header" href="#router-name-cls_newsflash">Router-name: cls_newsflash</a></h1>
+<p><strong>Commit time:</strong> 2026.10.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 财联社实时电报快讯，支持频道过滤（全部/看盘/公告/基金要闻/港股/精选）<br />
+<strong>Address:</strong> rssust://cls_newsflash<br />
+<strong>Example:</strong> <a href="/cls_newsflash">rssust://cls_newsflash</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>category</strong><br />
+Type of parameter: string<br />
+Default value: (空)<br />
+Meaning: 频道过滤，空=全部快讯，取值见下表</li>
+<li><strong>rn</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 返回条数，最大 50（超过 50 上游直接返回空）</li>
+<li><strong>last_time</strong><br />
+Type of parameter: number<br />
+Default value: (当前时间戳)<br />
+Meaning: 翻页游标，传上一页最后一条的 ctime（Unix 秒）取更早的快讯</li>
+</ol>
+<p>category 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>全部</th><th>看盘</th><th>公告</th><th>基金要闻</th><th>港股</th><th>精选</th></tr></thead><tbody>
+<tr><td>(空)</td><td>watch</td><td>announcement</td><td>jjyw</td><td>hk</td><td>red</td></tr>
+</tbody></table>
+</div>
+<p>示例：看盘频道 <code>rssust://cls_newsflash?category=watch</code>；翻到更早 <code>rssust://cls_newsflash?last_time=1700000000</code></p>
+<p><strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-crates_new"><a class="header" href="#router-name-crates_new">Router-name: crates_new</a></h1>
 <p><strong>Commit time:</strong> 2026.08.30<br />
 <strong>Cookies?:</strong> no<br />
@@ -2568,7 +2607,26 @@ limit (optional, max 30, default 10)
 <strong>Parameter:</strong><br />
 (No parameters)
 <strong>Environment Variables:</strong> no</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_latest"><a class="header" href="#router-name-douban_book_latest">Router-name: douban_book_latest</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-dongqiudi_news"><a class="header" href="#router-name-dongqiudi_news">Router-name: dongqiudi_news</a></h1>
+<p><strong>Commit time:</strong> 2026.10.07<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@HendricksZheng<br />
+<strong>Introduction:</strong> 懂球帝新闻<br />
+<strong>Address:</strong> rssust://dongqiudi_news<br />
+<strong>Example:</strong> <a href="/dongqiudi_news">rssust://dongqiudi_news</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>id</strong><br />
+Type of parameter: number<br />
+Default value: 1<br />
+Meaning: 栏目 id（头条=1）</li>
+</ol>
+<p>栏目 id 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>头条</th><th>深度</th><th>闲情</th><th>D站</th><th>中超</th><th>国际</th><th>英超</th><th>西甲</th><th>意甲</th><th>德甲</th></tr></thead><tbody>
+<tr><td>1</td><td>55</td><td>37</td><td>219</td><td>56</td><td>120</td><td>3</td><td>5</td><td>4</td><td>6</td></tr>
+<tr><td><strong>Environment Variables:</strong> no</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-douban_book_latest"><a class="header" href="#router-name-douban_book_latest">Router-name: douban_book_latest</a></h1>
 <p><strong>Commit time:</strong> 2026.07.20<br />
 <strong>Cookies?:</strong> no<br />
 <strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@fengkx<br />
@@ -2676,6 +2734,32 @@ category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽�
 <strong>Parameter:</strong><br />
 tag: 分类 (默认 web_home_page)<br />
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-gelonghui_newsflash"><a class="header" href="#router-name-gelonghui_newsflash">Router-name: gelonghui_newsflash</a></h1>
+<p><strong>Commit time:</strong> 2026.10.08<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 格隆汇实时快讯，支持频道（全部/最热/A股/港股/AI 等）<br />
+<strong>Address:</strong> rssust://gelonghui_newsflash<br />
+<strong>Example:</strong> <a href="/gelonghui_newsflash">rssust://gelonghui_newsflash</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>channel</strong><br />
+Type of parameter: string<br />
+Default value: all<br />
+Meaning: 快讯频道，取值见下表</li>
+</ol>
+<p>channel 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>全部</th><th>最热</th><th>国际</th><th>AI</th><th>港股</th><th>虚拟资产</th><th>中国大陆</th></tr></thead><tbody>
+<tr><td>all</td><td>popular</td><td>international</td><td>ai</td><td>HKStock</td><td>virtualAssets</td><td>chineseMainland</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>A股</th><th>港澳台</th><th>美股</th><th>商品外汇</th><th>楼市</th><th>基金</th><th>债券</th></tr></thead><tbody>
+<tr><td>AStock</td><td>hongkongMacaoTaiwan</td><td>USStock</td><td>exchangeCommodity</td><td>house</td><td>fundLive</td><td>debenture</td></tr>
+</tbody></table>
+</div>
+<blockquote>
+<p>返回条数由频道决定（多数频道 15 条，最热 popular 为 50 条），接口的 limit 参数服务端会忽略。<br />
+<strong>Environment Variables:</strong> no</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-github_advisor"><a class="header" href="#router-name-github_advisor">Router-name: github_advisor</a></h1>
 <p><strong>Commit time:</strong> 2026.08.06<br />
 <strong>Cookies?:</strong> no<br />
@@ -3298,7 +3382,26 @@ limit（可选，最大 30，默认 10）
 <strong>robots.txt:</strong> www.moe.gov.cn 无 robots.txt，视为允许<br />
 <strong>Parameter:</strong> no<br />
 <strong>Environment Variables:</strong> no</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-mydrivers_news"><a class="header" href="#router-name-mydrivers_news">Router-name: mydrivers_news</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-music163_toplist"><a class="header" href="#router-name-music163_toplist">Router-name: music163_toplist</a></h1>
+<p><strong>Commit time:</strong> 2026.10.07<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@DIYgod<br />
+<strong>Introduction:</strong> 网易云音乐排行榜<br />
+<strong>Address:</strong> rssust://music163_toplist<br />
+<strong>Example:</strong> <a href="/music163_toplist">rssust://music163_toplist</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>id</strong><br />
+Type of parameter: number<br />
+Default value: 3778678<br />
+Meaning: 榜单 id（热歌榜）</li>
+</ol>
+<p>榜单 id 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>榜单</th><th>热歌榜</th><th>新歌榜</th><th>飙升榜</th><th>原创榜</th></tr></thead><tbody>
+<tr><td>id</td><td>3778678</td><td>3779629</td><td>19723756</td><td>2884035</td></tr>
+<tr><td><strong>Environment Variables:</strong> no</td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-mydrivers_news"><a class="header" href="#router-name-mydrivers_news">Router-name: mydrivers_news</a></h1>
 <p><strong>Commit time:</strong> 2026.09.13<br />
 <strong>Cookies?:</strong> no<br />
 <strong>Author:</strong> AI制作 / huiinyg-rusting审核<br />
@@ -3344,6 +3447,24 @@ Meaning: 返回的图片条目数（最近若干天），范围 1-30<br />
 <strong>Parameter:</strong><br />
 无参数<br />
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nga_forum"><a class="header" href="#router-name-nga_forum">Router-name: nga_forum</a></h1>
+<p><strong>Commit time:</strong> 2026.10.07<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub@xyqfer<br />
+<strong>Introduction:</strong> NGA玩家社区分区帖子<br />
+<strong>Address:</strong> rssust://nga_forum<br />
+<strong>Example:</strong> <a href="/nga_forum?fid=489">rssust://nga_forum</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>fid</strong><br />
+Type of parameter: number<br />
+Default value: 489<br />
+Meaning: 分区 id（默认怪物猎人=489；其它分区打开分区页面，URL 里的 fid= 参数就是 id）</li>
+</ol>
+<blockquote>
+<p>游客只能看公开分区。需要登录的分区（如水区 fid=-7）会返回「未登录」错误。<br />
+<strong>Environment Variables:</strong> no</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-nmc_alarm"><a class="header" href="#router-name-nmc_alarm">Router-name: nmc_alarm</a></h1>
 <p><strong>Commit time:</strong> 2026.07.31<br />
 <strong>Cookies?:</strong> no<br />
