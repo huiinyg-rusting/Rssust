@@ -18,21 +18,23 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     // Cloudflare 偶尔回壳页("Just a moment")，检测到就重试
     let mut links: Vec<String> = Vec::new();
     for attempt in 0..6 {
-        if let Ok(html) = fetch_browser_get_with_headers(&hub_url, &[
-            (
-                "Accept",
-                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            ),
-            ("Accept-Language", "en-US,en;q=0.9"),
-            ("Referer", "https://apnews.com/"),
-        ])
+        if let Ok(html) = fetch_browser_get_with_headers(
+            &hub_url,
+            &[
+                (
+                    "Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                ),
+                ("Accept-Language", "en-US,en;q=0.9"),
+                ("Referer", "https://apnews.com/"),
+            ],
+        )
         .await
         {
             if !is_cloudflare_shell(&html) {
-                for m in
-                    regex::Regex::new(r#"href="(https://apnews\.com/article/[^"]+)"#)
-                        .unwrap()
-                        .captures_iter(&html)
+                for m in regex::Regex::new(r#"href="(https://apnews\.com/article/[^"]+)"#)
+                    .unwrap()
+                    .captures_iter(&html)
                 {
                     let url = m[1].to_string();
                     if !links.contains(&url) {

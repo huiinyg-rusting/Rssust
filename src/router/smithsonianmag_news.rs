@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-
 fn parse_smithsonian_date(date_str: &str) -> Option<String> {
     let s = date_str.trim().replace("p.m.", "PM").replace("a.m.", "AM");
     // Try formats:

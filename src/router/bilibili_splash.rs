@@ -5,7 +5,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /* 生成 B 站设备标识 buvid。开屏广告接口只对携带 buvid 的请求下发广告数据，
-   裸请求无论 build 是什么都只回占位符（list 为空）。格式：XY + MD5(随机种子) 大写 */
+裸请求无论 build 是什么都只回占位符（list 为空）。格式：XY + MD5(随机种子) 大写 */
 fn random_buvid() -> String {
     use md5::{Digest, Md5};
     use std::time::{SystemTime, UNIX_EPOCH};

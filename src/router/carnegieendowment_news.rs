@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-
 fn parse_carnegie_date(date_str: &str) -> Option<String> {
     let s = date_str.trim();
     // Try formats: "July 22, 2026", "August 5, 2026", "December 2, 2026"

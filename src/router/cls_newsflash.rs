@@ -70,7 +70,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .collect::<Vec<_>>()
         .join("&");
 
-    let json: Value = serde_json::from_str(&fetch_reqwest_get(&format!("{}?{}", api_url, param_str)).await?)?;
+    let json: Value =
+        serde_json::from_str(&fetch_reqwest_get(&format!("{}?{}", api_url, param_str)).await?)?;
 
     let errno = json["errno"].as_i64().unwrap_or(-1);
     if errno != 0 {

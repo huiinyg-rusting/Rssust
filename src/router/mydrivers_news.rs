@@ -28,8 +28,13 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         }
         let class = &caps[3];
         let text = caps[4].trim();
-        let pub_date = if class.contains("today") && Regex::new(r"^(\d{2}):(\d{2})$").unwrap().is_match(text) {
-            let caps2 = Regex::new(r"^(\d{2}):(\d{2})$").unwrap().captures(text).unwrap();
+        let pub_date = if class.contains("today")
+            && Regex::new(r"^(\d{2}):(\d{2})$").unwrap().is_match(text)
+        {
+            let caps2 = Regex::new(r"^(\d{2}):(\d{2})$")
+                .unwrap()
+                .captures(text)
+                .unwrap();
             rss_datetime(&format!(
                 "{}-{:02}-{:02} {}:{}:00",
                 today.year(),
@@ -46,7 +51,10 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                 "{}-{}-{} {}:{}:00",
                 &caps2[1], &caps2[2], &caps2[3], &caps2[4], &caps2[5]
             ))
-        } else if let Some(caps2) = Regex::new(r"^(\d{1,2})日$").ok().and_then(|re| re.captures(text)) {
+        } else if let Some(caps2) = Regex::new(r"^(\d{1,2})日$")
+            .ok()
+            .and_then(|re| re.captures(text))
+        {
             rss_datetime(&format!(
                 "{}-{:02}-{:02} 00:00:00",
                 today.year(),

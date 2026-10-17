@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-
 fn apod_pubdate(date_str: &str) -> Option<String> {
     date_str_to_rss(date_str, "%Y-%m-%d", "+0000")
 }

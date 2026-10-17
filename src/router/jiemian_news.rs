@@ -44,10 +44,9 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let block_re = Regex::new(r#"(?s)class="news-view">(.*?)</div>[\s]*</div>"#)
         .expect("jiemian block 正则编译失败");
     let id_re = Regex::new(r#"article/(\d+)\.html"#).expect("jiemian id 正则编译失败");
-    let title_re =
-        Regex::new(r#"class="title[^"]*">([^<]+)</(?:span|p)>"#).expect("jiemian title 正则编译失败");
-    let date_re =
-        Regex::new(r#"class="date">([^<]+)</span>"#).expect("jiemian date 正则编译失败");
+    let title_re = Regex::new(r#"class="title[^"]*">([^<]+)</(?:span|p)>"#)
+        .expect("jiemian title 正则编译失败");
+    let date_re = Regex::new(r#"class="date">([^<]+)</span>"#).expect("jiemian date 正则编译失败");
 
     let mut item_vec = Vec::new();
     let mut seen = std::collections::HashSet::new();

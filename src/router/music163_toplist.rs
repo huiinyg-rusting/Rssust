@@ -78,10 +78,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
 
     let channel = ChannelBuilder::default()
         .title(format!("网易云音乐 - {}", name))
-        .link(format!(
-            "https://music.163.com/discover/toplist?id={}",
-            id
-        ))
+        .link(format!("https://music.163.com/discover/toplist?id={}", id))
         .description("网易云音乐排行榜".to_string())
         .items(item_vec)
         .build();
