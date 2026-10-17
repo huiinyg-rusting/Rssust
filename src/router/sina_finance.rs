@@ -4,7 +4,6 @@ use rss::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-
 pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     let count = para
         .get("count")

@@ -66,7 +66,9 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let channel = ChannelBuilder::default()
         .title("Defense News - Global Defense & Military News")
         .link("https://www.defensenews.com")
-        .description("Defense News latest articles - global defense, military & aerospace (no official RSS)")
+        .description(
+            "Defense News latest articles - global defense, military & aerospace (no official RSS)",
+        )
         .items(items)
         .build();
 

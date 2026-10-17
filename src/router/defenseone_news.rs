@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html =
         fetch_reqwest_get_with_headers("https://www.defenseone.com", &[("User-Agent", UA_CHROME)])

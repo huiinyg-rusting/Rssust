@@ -7,11 +7,15 @@ use std::time::Duration;
 use tracing::{debug, warn};
 
 /* ShowToUser：路由处理完的“响应载体”，由 connect::render 按类型决定 Content-Type
-   - Html: 文本（首页/文档页/错误正文/status JSON）
-   - Rss:  路由生成的 RSS XML
-   - File: 二进制静态文件（css/js/图片/字体等），需附带 content_type */
+ - Html: HTML 文本（首页/文档页）
+ - Json: JSON 文本（状态接口）
+- Rss:  路由生成的 RSS XML
+- File: 二进制静态文件（css/js/图片/字体等），需附带 content_type */
 pub enum ShowToUser {
     Html {
+        res: Result<String, Error>,
+    },
+    Json {
         res: Result<String, Error>,
     },
     Rss {
@@ -31,9 +35,9 @@ macro_rules! run {
 }
 
 /* routes!：路由注册表宏。列出 ("/路径", 模块名) 后自动生成：
-   - ROUTES（路径数组）/ ROUTE_COUNT（总数）
-   - route_dispatch()：match url 分发到对应路由模块
-   新增路由只需在下方 routes!{...} 块按字母序加一行，无需手写 match */
+- ROUTES（路径数组）/ ROUTE_COUNT（总数）
+- route_dispatch()：match url 分发到对应路由模块
+新增路由只需在下方 routes!{...} 块按字母序加一行，无需手写 match */
 macro_rules! routes {
     ($(($route:literal, $module:ident)),* $(,)?) => {
         pub const ROUTES: &[&str] = &[$($route),*];
@@ -180,9 +184,9 @@ fn is_unregistered(e: &anyhow::Error) -> bool {
 }
 
 /* 二级分发：路由前置检查 + 限速缓存。
-   1. routes.disabled 命中 → 404
-   2. routes.rate_limit 配置了间隔 → 该请求进入缓存作用域（间隔内复用缓存，失败自动清理）
-   3. 交给 route_dispatch 匹配具体路由模块；静态没注册时（仅 feature scripts）回退脚本路由 */
+1. routes.disabled 命中 → 404
+2. routes.rate_limit 配置了间隔 → 该请求进入缓存作用域（间隔内复用缓存，失败自动清理）
+3. 交给 route_dispatch 匹配具体路由模块；静态没注册时（仅 feature scripts）回退脚本路由 */
 pub async fn request_rules(
     url: &str,
     parameters: HashMap<String, String>,
@@ -227,7 +231,10 @@ pub async fn request_rules(
             }
         };
         match &result {
-            std::result::Result::Ok(_) => debug!("Route {} generated successfully", url),
+            std::result::Result::Ok(_) => {
+                debug!("Route {} generated successfully", url);
+                crate::stats::record_request(url.to_string());
+            }
             std::result::Result::Err(e) => {
                 warn!("Route {} generation failed: {}", url, e);
                 crate::rate_limit::cleanup_on_error();
@@ -239,8 +246,8 @@ pub async fn request_rules(
 }
 
 /* root_rules / request_rules 名字相近，职责区分：
-   - root_rules：一级分发（HTTP 请求进来最先调用的入口）
-   - request_rules：二级分发（路由前置检查 + 限速缓存 + 交给 route_dispatch） */
+- root_rules：一级分发（HTTP 请求进来最先调用的入口）
+- request_rules：二级分发（路由前置检查 + 限速缓存 + 交给 route_dispatch） */
 pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) -> ShowToUser {
     if first_part == "/" {
         ShowToUser::Html {
@@ -257,16 +264,17 @@ pub async fn root_rules(first_part: &str, second_part: HashMap<String, String>) 
                 res: Err(HttpError::not_found("404NotFound").into()),
             };
         }
-        let body = format!(
-            "{{\"status\":\"ok\",\"uptime_secs\":{},\"routes\":{},\"cache_entries\":{},\"requests\":{},\"failures\":{}}}",
-            crate::stats::up_secs(),
-            ROUTE_COUNT,
-            crate::rate_limit::len(),
-            crate::stats::requests(),
-            crate::stats::failures(),
-        );
-        ShowToUser::Html {
-            res: std::result::Result::Ok(body),
+        let body = serde_json::json!({
+            "status": "ok",
+            "uptime_secs": crate::stats::up_secs(),
+            "routes": ROUTE_COUNT,
+            "cache_entries": crate::rate_limit::len(),
+            "requests": crate::stats::requests(),
+            "failures": crate::stats::failures(),
+            "every_requests": crate::stats::every_requests(),
+        });
+        ShowToUser::Json {
+            res: std::result::Result::Ok(body.to_string()),
         }
     } else {
         match request_rules(first_part, second_part).await {

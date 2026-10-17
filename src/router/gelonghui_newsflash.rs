@@ -26,7 +26,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .as_array()
         .ok_or_else(|| anyhow!("找不到 result 字段"))?;
     if result.is_empty() {
-        return Err(anyhow!("格隆汇快讯返回空列表，频道 \"{}\" 可能不存在", channel));
+        return Err(anyhow!(
+            "格隆汇快讯返回空列表，频道 \"{}\" 可能不存在",
+            channel
+        ));
     }
 
     let mut item_vec = Vec::new();

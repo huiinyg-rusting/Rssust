@@ -5,7 +5,6 @@ use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
 
-
 fn parse_article_date(html: &str) -> Option<String> {
     let doc = Html::parse_document(html);
     let sel = Selector::parse("div.talk_time").ok()?;

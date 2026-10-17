@@ -72,8 +72,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let mut hit_child = false;
         for area in list {
             let aid = area["id"].as_str().unwrap_or("");
-            if aid == area_id
-                || area["id"].as_i64().map(|i| i.to_string()) == Some(area_id.clone())
+            if aid == area_id || area["id"].as_i64().map(|i| i.to_string()) == Some(area_id.clone())
             {
                 parent_title = pname.to_string();
                 area_title = area["name"].as_str().unwrap_or("").to_string();
@@ -124,7 +123,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
     }
 
     /* 查询房间列表：单子分区直连；父分区展开各子分区并发查询后合并。
-       房间列表接口（room/v1/area/getRoomList）只接受子分区 id，父分区 id 会返回 404 */
+    房间列表接口（room/v1/area/getRoomList）只接受子分区 id，父分区 id 会返回 404 */
     let mut all_rooms: Vec<Value> = Vec::new();
     if child_ids.len() == 1 {
         let room_url = format!(

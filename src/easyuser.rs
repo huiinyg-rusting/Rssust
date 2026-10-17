@@ -82,7 +82,7 @@ pub fn params_to_hashmap(query: &str) -> HashMap<String, String> {
 }
 
 /* 参数读取助手系列：req_xxx 中的 req 指“请求参数（request param）”，不是“必需（require）”
-   用于从 ?a=b&c=d 解析出的 HashMap 里安全取值，避免每个路由手写 Option 处理 */
+用于从 ?a=b&c=d 解析出的 HashMap 里安全取值，避免每个路由手写 Option 处理 */
 pub fn req_param(params: &HashMap<String, String>, key: &str, desc: &str) -> Result<String, Error> {
     params
         .get(key)
