@@ -117,6 +117,10 @@
 - [eastday_24](../eastday_24.md)
     东方资讯24小时热闻
 
+#### Eastmoney (东方财富)
+- [eastmoney_kuaixun](../eastmoney_kuaixun.md)
+    东方财富 7×24 全球财经快讯，支持栏目过滤与翻页（公开 JSON API，无官方 RSS）
+
 #### Gelonghui (格隆汇)
 - [gelonghui_home](../gelonghui_home.md)
     格隆汇首页，支持分类（推荐/股票/基金/新股/研报）
@@ -312,6 +316,8 @@
 #### WallStreetCN
 - [wallstreetcn_hot](../wallstreetcn_hot.md)
     华尔街见闻最热文章
+- [wallstreetcn_kuaixun](../wallstreetcn_kuaixun.md)
+    华尔街见闻 7×24 快讯流，支持频道过滤（公开 JSON API，无官方 RSS）
 
 #### Yicai (第一财经)
 - [yicai_headline](../yicai_headline.md)

@@ -1430,6 +1430,11 @@ Discover Magazine - Science News (no official RSS)</li>
 <li><a href="eastday_24.html">eastday_24</a>
 东方资讯24小时热闻</li>
 </ul>
+<h4 id="eastmoney-东方财富"><a class="header" href="#eastmoney-东方财富">Eastmoney (东方财富)</a></h4>
+<ul>
+<li><a href="eastmoney_kuaixun.html">eastmoney_kuaixun</a>
+东方财富 7×24 全球财经快讯，支持栏目过滤与翻页（公开 JSON API，无官方 RSS）</li>
+</ul>
 <h4 id="gelonghui-格隆汇"><a class="header" href="#gelonghui-格隆汇">Gelonghui (格隆汇)</a></h4>
 <ul>
 <li><a href="gelonghui_home.html">gelonghui_home</a>
@@ -1663,6 +1668,8 @@ VideoCardz.com - Latest GPU &amp; Hardware News (English tech site, no official 
 <ul>
 <li><a href="wallstreetcn_hot.html">wallstreetcn_hot</a>
 华尔街见闻最热文章</li>
+<li><a href="wallstreetcn_kuaixun.html">wallstreetcn_kuaixun</a>
+华尔街见闻 7×24 快讯流，支持频道过滤（公开 JSON API，无官方 RSS）</li>
 </ul>
 <h4 id="yicai-第一财经"><a class="header" href="#yicai-第一财经">Yicai (第一财经)</a></h4>
 <ul>
@@ -2704,6 +2711,49 @@ Meaning: 分类标签，多个用逗号分隔<br />
 <strong>Parameter:</strong><br />
 category: 分类 (默认 社会, 可选 社会/娱乐/国际/军事/养生/汽车/体育/财经/游戏/科技/国内/宠物/情感/人文/教育)<br />
 <strong>Environment Variables:</strong> no</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eastmoney_kuaixun"><a class="header" href="#router-name-eastmoney_kuaixun">Router-name: eastmoney_kuaixun</a></h1>
+<p><strong>Commit time:</strong> 2026.10.17<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 东方财富 7×24 全球财经快讯，支持栏目过滤与翻页（公开 JSON API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://eastmoney_kuaixun<br />
+<strong>Example:</strong> <a href="/eastmoney_kuaixun">rssust://eastmoney_kuaixun</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>column</strong><br />
+Type of parameter: string<br />
+Default value: 102<br />
+Meaning: 栏目 ID，空=102 全球财经，取值见下表</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 返回条数，最大 200（超过 200 上游只返回 200）</li>
+<li><strong>sort_end</strong><br />
+Type of parameter: string<br />
+Default value: (空)<br />
+Meaning: 翻页游标，取上一页最后一条对应的 realSort 值（形如 1792239360072889 的整数串）以加载更早的快讯</li>
+</ol>
+<p>column 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>ID</th><th>栏目</th><th>ID</th><th>栏目</th></tr></thead><tbody>
+<tr><td>101</td><td>焦点</td><td>102</td><td>全球财经</td></tr>
+<tr><td>103</td><td>上市公司</td><td>104</td><td>A股</td></tr>
+<tr><td>107</td><td>外汇</td><td>108</td><td>债券</td></tr>
+<tr><td>109</td><td>基金</td><td>110</td><td>地区-中国</td></tr>
+<tr><td>111</td><td>地区-美国</td><td>112</td><td>地区-欧元区</td></tr>
+<tr><td>113</td><td>地区-英国</td><td>114</td><td>地区-日本</td></tr>
+<tr><td>115</td><td>地区-加拿大</td><td>116</td><td>地区-澳洲</td></tr>
+<tr><td>117</td><td>地区-新兴市场</td><td>118</td><td>央行-中国央行</td></tr>
+<tr><td>119</td><td>央行-美联储</td><td>120</td><td>央行-欧洲央行</td></tr>
+<tr><td>121</td><td>央行-英国央行</td><td>122</td><td>央行-日本央行</td></tr>
+<tr><td>123</td><td>央行-加拿大央行</td><td>124</td><td>央行-澳洲联储</td></tr>
+<tr><td>125</td><td>数据-中国</td><td>126</td><td>数据-美国</td></tr>
+<tr><td>127</td><td>数据-欧元区</td><td>128</td><td>数据-英国</td></tr>
+<tr><td>129</td><td>数据-日本</td><td>130</td><td>数据-加拿大</td></tr>
+<tr><td>131</td><td>数据-澳洲</td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>示例：焦点 <code>rssust://eastmoney_kuaixun?column=101</code>；翻页 <code>rssust://eastmoney_kuaixun?sort_end=1792239360072889</code><br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-eeo_kuaixun"><a class="header" href="#router-name-eeo_kuaixun">Router-name: eeo_kuaixun</a></h1>
 <p><strong>Commit time:</strong> 2026.07.25<br />
 <strong>Cookies?:</strong> no<br />
@@ -3716,6 +3766,31 @@ Default value: day<br />
 Meaning: 时间范围，day(当日) 或 week(当周)<br />
 <strong>Environment Variables:</strong> no</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-wallstreetcn_kuaixun"><a class="header" href="#router-name-wallstreetcn_kuaixun">Router-name: wallstreetcn_kuaixun</a></h1>
+<p><strong>Commit time:</strong> 2026.10.17<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 来源于RSShub<br />
+<strong>Introduction:</strong> 华尔街见闻 7×24 快讯流，支持频道过滤（公开 JSON API，无官方 RSS）<br />
+<strong>Address:</strong> rssust://wallstreetcn_kuaixun<br />
+<strong>Example:</strong> <a href="/wallstreetcn_kuaixun">rssust://wallstreetcn_kuaixun</a><br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>channel</strong><br />
+Type of parameter: string<br />
+Default value: (空)<br />
+Meaning: 快讯频道，空=全部 7×24 快讯，取值见下表</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 20<br />
+Meaning: 返回条数，最大 100（超过 100 上游只返回 100）</li>
+</ol>
+<p>channel 取值：</p>
+<div class="table-wrapper"><table><thead><tr><th>全部</th><th>A股</th><th>港股</th><th>美股</th><th>外汇</th><th>原油</th><th>黄金</th><th>商品</th></tr></thead><tbody>
+<tr><td>(空)</td><td>astock</td><td>hkstock</td><td>usstock</td><td>forex</td><td>oil</td><td>gold</td><td>commodity</td></tr>
+</tbody></table>
+</div>
+<p>已知的标题多为空字符串（纯直播快讯），此时标题自动回退取正文首句，因此无需担心空标题条目。<br />
+<strong>Environment Variables:</strong> no</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-yicai_headline"><a class="header" href="#router-name-yicai_headline">Router-name: yicai_headline</a></h1>
 <p><strong>Commit time:</strong> 2026.07.22<br />
 <strong>Cookies?:</strong> no<br />
