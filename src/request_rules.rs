@@ -59,6 +59,7 @@ macro_rules! routes {
 }
 
 routes! {
+    ("/acfun_rank", acfun_rank),
     ("/apnews_topics", apnews_topics),
     ("/baidu_top", baidu_top),
     ("/bilibili_audio_rank", bilibili_audio_rank),

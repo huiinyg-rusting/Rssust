@@ -5,6 +5,10 @@
 - [apnews_topics](../apnews_topics.md)
     AP News headlines by topic
 
+#### AcFun
+- [acfun_rank](../acfun_rank.md)
+    AcFun 排行榜（日榜/三日榜/周榜），数据取自 AcFun 站内排行榜接口，无官方 RSS
+
 #### BJNews (新京报)
 - [bjnews_cat](../bjnews_cat.md)
     新京报分类文章
