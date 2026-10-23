@@ -12,6 +12,7 @@
 - [script_route_cn](official/script_route_cn.md)
 
 # 路由
+- [acfun_rank](acfun_rank.md)
 - [apnews_topics](apnews_topics.md)
 - [baidu_top](baidu_top.md)
 - [bilibili_audio_rank](bilibili_audio_rank.md)

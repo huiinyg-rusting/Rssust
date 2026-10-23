@@ -1303,6 +1303,11 @@ root_rules(url, params)
 <li><a href="apnews_topics.html">apnews_topics</a>
 AP News headlines by topic</li>
 </ul>
+<h4 id="acfun"><a class="header" href="#acfun">AcFun</a></h4>
+<ul>
+<li><a href="acfun_rank.html">acfun_rank</a>
+AcFun 排行榜（日榜/三日榜/周榜），数据取自 AcFun 站内排行榜接口，无官方 RSS</li>
+</ul>
 <h4 id="bjnews-新京报"><a class="header" href="#bjnews-新京报">BJNews (新京报)</a></h4>
 <ul>
 <li><a href="bjnews_cat.html">bjnews_cat</a>
@@ -1843,6 +1848,30 @@ return result;
 <li>新增静态路由：<a href="new_router_cn.html">new_router_cn</a></li>
 <li>配置文件字段：<a href="config.html">config</a></li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-acfun_rank"><a class="header" href="#router-name-acfun_rank">Router-name: acfun_rank</a></h1>
+<p><strong>Commit time:</strong> 2026.10.23<br />
+<strong>Cookies?:</strong> no<br />
+<strong>Author:</strong> AI转写 / huiinyg审核 - 参考RSShub<br />
+<strong>Introduction:</strong> AcFun 排行榜（日榜/三日榜/周榜），数据取自 AcFun 站内排行榜接口，无官方 RSS<br />
+<strong>Address:</strong> rssust://acfun_rank<br />
+<strong>Example:</strong> <a href="/acfun_rank">rssust://acfun_rank</a><br />
+<strong>robots.txt:</strong> www.acfun.cn 无 robots.txt，视为允许<br />
+<strong>Parameter:</strong></p>
+<ol>
+<li><strong>period</strong><br />
+Type of parameter: string<br />
+Default value: day<br />
+Meaning: 榜单周期，支持 day(日榜)、three_days(三日榜)、week(周榜)；上游不支持月榜（MONTH 返回 result=21）</li>
+<li><strong>limit</strong><br />
+Type of parameter: number<br />
+Default value: 30<br />
+Meaning: 返回条数，范围 1-100，超出会被钳制</li>
+</ol>
+<p>示例：周榜 50 条 <code>rssust://acfun_rank?period=week&amp;limit=50</code></p>
+<blockquote>
+<p>榜单为全站排行，接口本身不分页；单次最多取 100 条。
+<strong>Environment Variables:</strong> no</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="router-name-apnews_topics"><a class="header" href="#router-name-apnews_topics">Router-name: apnews_topics</a></h1>
 <p><strong>Commit time:</strong> 2026.07.24<br />
 <strong>Cookies?:</strong> no<br />

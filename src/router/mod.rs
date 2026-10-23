@@ -1,3 +1,4 @@
+pub mod acfun_rank;
 pub mod apnews_topics;
 pub mod baidu_top;
 pub mod bilibili_audio_rank;
