@@ -4,6 +4,7 @@ env/*.json
 env/rssust
 env/*.log
 env/.docbuild
+env/docs
 env/config.toml
 env/cookies.json
 *.json
