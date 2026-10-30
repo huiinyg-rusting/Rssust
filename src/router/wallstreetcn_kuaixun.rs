@@ -49,7 +49,10 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         .and_then(|v| v.as_array())
         .ok_or_else(|| anyhow!("找不到 data/items 字段或不是数组"))?;
     if items.is_empty() {
-        return Err(anyhow!("华尔街见闻快讯返回空列表，channel \"{}\" 可能无效", channel));
+        return Err(anyhow!(
+            "华尔街见闻快讯返回空列表，channel \"{}\" 可能无效",
+            channel
+        ));
     }
 
     let mut item_vec = Vec::new();

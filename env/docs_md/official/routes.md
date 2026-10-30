@@ -258,6 +258,8 @@
     格隆汇实时快讯，支持频道（全部/最热/A股/港股/AI 等）
 - [jiemian_news](../jiemian_news.md)
     界面新闻（jiemian）要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
+- [lobsters_hot](../lobsters_hot.md)
+    lobste.rs 热门/最新文章（via public JSON API: /hottest.json, /newest.json, /t/{tag}.json），含分数、评论数、标签与摘要
 - [music163_toplist](../music163_toplist.md)
     网易云音乐排行榜
 - [mydrivers_news](../mydrivers_news.md)
@@ -266,6 +268,10 @@
     每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
 - [nga_forum](../nga_forum.md)
     NGA玩家社区分区帖子
+- [rust_blog](../rust_blog.md)
+    The official Rust blog (blog.rust-lang.org) — latest posts scraped from the full post listing, with publish dates (US Eastern time)
+- [weibo_hot_search](../weibo_hot_search.md)
+    微博热搜榜，实时热搜前 50 条，含火热值与榜单标签，可直接订阅
 
 #### PingWest (品玩)
 - [pingwest_news](../pingwest_news.md)
