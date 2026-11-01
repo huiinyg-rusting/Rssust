@@ -252,6 +252,8 @@
     财联社实时电报快讯，支持频道过滤（全部/看盘/公告/基金要闻/港股/精选）
 - [dongqiudi_news](../dongqiudi_news.md)
     懂球帝新闻
+- [epicgames_free](../epicgames_free.md)
+    Epic 游戏商城限时免费游戏，当前可领的排在前面，并可选附带“即将免费”预告；数据来自 Epic 商店前端公开 JSON 接口（无官方 RSS）
 - [gamersky_news](../gamersky_news.md)
     游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）
 - [gelonghui_newsflash](../gelonghui_newsflash.md)
@@ -270,8 +272,12 @@
     NGA玩家社区分区帖子
 - [rust_blog](../rust_blog.md)
     The official Rust blog (blog.rust-lang.org) — latest posts scraped from the full post listing, with publish dates (US Eastern time)
+- [steam_discounts](../steam_discounts.md)
+    Steam 首页“特惠”区的打折游戏，含折扣率、原价/现价与折扣截止时间；数据来自 Steam 官方公开 JSON 接口（无官方 RSS）
 - [weibo_hot_search](../weibo_hot_search.md)
     微博热搜榜，实时热搜前 50 条，含火热值与榜单标签，可直接订阅
+- [zhibo8_news](../zhibo8_news.md)
+    直播吧体育资讯，支持 NBA / 足球 / 电竞等栏目；自动去重并按链接取前 N 条，可选抓取详情页正文
 
 #### PingWest (品玩)
 - [pingwest_news](../pingwest_news.md)
