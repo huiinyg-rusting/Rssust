@@ -107,6 +107,7 @@ routes! {
     ("/eastday_24", eastday_24),
     ("/eastmoney_kuaixun", eastmoney_kuaixun),
     ("/eeo_kuaixun", eeo_kuaixun),
+    ("/epicgames_free", epicgames_free),
     ("/gelonghui_home", gelonghui_home),
     ("/gelonghui_newsflash", gelonghui_newsflash),
     ("/github_advisor", github_advisor),
@@ -169,6 +170,7 @@ routes! {
     ("/stcn_article_list", stcn_article_list),
     ("/stcn_kx", stcn_kx),
     ("/stcn_rank", stcn_rank),
+    ("/steam_discounts", steam_discounts),
     ("/thepaper_featured", thepaper_featured),
     ("/tmtpost_new", tmtpost_new),
     ("/toutiao_hot", toutiao_hot),
@@ -178,6 +180,7 @@ routes! {
     ("/weibo_hot_search", weibo_hot_search),
     ("/yicai_headline", yicai_headline),
     ("/yicai_latest", yicai_latest),
+    ("/zhibo8_news", zhibo8_news),
     ("/zhihu_daily", zhihu_daily),
     ("/zhihu_hot", zhihu_hot),
 }
