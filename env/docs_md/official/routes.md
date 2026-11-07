@@ -253,7 +253,7 @@
 - [dongqiudi_news](../dongqiudi_news.md)
     懂球帝新闻
 - [epicgames_free](../epicgames_free.md)
-    Epic 游戏商城限时免费游戏，当前可领的排在前面，并可选附带“即将免费”预告；数据来自 Epic 商店前端公开 JSON 接口（无官方 RSS）
+    Epic 游戏商城限时免费游戏，当前可领的排在前面，并可选附带“即将免费”预告；数据来自 Epic 商店前端公开 JSON 接口
 - [gamersky_news](../gamersky_news.md)
     游民星空（gamersky）游戏资讯列表（服务端渲染 HTML，无官方 RSS，robots.txt 仅禁 /indexbeta/）
 - [gelonghui_newsflash](../gelonghui_newsflash.md)
@@ -273,7 +273,7 @@
 - [rust_blog](../rust_blog.md)
     The official Rust blog (blog.rust-lang.org) — latest posts scraped from the full post listing, with publish dates (US Eastern time)
 - [steam_discounts](../steam_discounts.md)
-    Steam 首页“特惠”区的打折游戏，含折扣率、原价/现价与折扣截止时间；数据来自 Steam 官方公开 JSON 接口（无官方 RSS）
+    Steam 首页“特惠”区的打折游戏，含折扣率、原价/现价与折扣截止时间；数据来自 Steam 官方公开 JSON
 - [weibo_hot_search](../weibo_hot_search.md)
     微博热搜榜，实时热搜前 50 条，含火热值与榜单标签，可直接订阅
 - [zhibo8_news](../zhibo8_news.md)
