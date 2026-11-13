@@ -252,6 +252,8 @@
     财联社实时电报快讯，支持频道过滤（全部/看盘/公告/基金要闻/港股/精选）
 - [dongqiudi_news](../dongqiudi_news.md)
     懂球帝新闻
+- [douyin_hot](../douyin_hot.md)
+    抖音热搜榜，数据来自抖音网页端公开 JSON API；含热度值、上榜时间与话题封面图
 - [epicgames_free](../epicgames_free.md)
     Epic 游戏商城限时免费游戏，当前可领的排在前面，并可选附带“即将免费”预告；数据来自 Epic 商店前端公开 JSON 接口
 - [gamersky_news](../gamersky_news.md)
@@ -270,10 +272,14 @@
     每经网（nbd）今日要闻列表（服务端渲染 HTML，无官方 RSS，robots.txt 全允许）
 - [nga_forum](../nga_forum.md)
     NGA玩家社区分区帖子
+- [qq_music_rank](../qq_music_rank.md)
+    QQ 音乐排行榜，支持巅峰/地区/特色/全球四组榜单（热歌榜、飙升榜、新歌榜、流行指数榜、内地榜、欧美榜等），含排名、歌手、专辑与时长；数据来自网页端 musicu.fcg 公开接口
 - [rust_blog](../rust_blog.md)
     The official Rust blog (blog.rust-lang.org) — latest posts scraped from the full post listing, with publish dates (US Eastern time)
 - [steam_discounts](../steam_discounts.md)
     Steam 首页“特惠”区的打折游戏，含折扣率、原价/现价与折扣截止时间；数据来自 Steam 官方公开 JSON
+- [steam_topsellers](../steam_topsellers.md)
+    Steam 全球热销榜，含封面、当前价格与折扣信息；与 steam_discounts 同接口族（featuredcategories 的 top_sellers 区），数据来自 Steam 官方公开 JSON
 - [weibo_hot_search](../weibo_hot_search.md)
     微博热搜榜，实时热搜前 50 条，含火热值与榜单标签，可直接订阅
 - [zhibo8_news](../zhibo8_news.md)
