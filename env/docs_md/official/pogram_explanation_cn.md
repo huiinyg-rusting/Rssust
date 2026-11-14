@@ -45,7 +45,7 @@ root_rules(url, params)
 ```
 env/
 ├── config.toml       # 配置文件（自动创建）
-├── cookies.json      # Cookie 文件
+├── cookies.json      # Cookie 文件（可选）
 ├── index/
 │   ├── 404.html      # 404 页面
 │   ├── favicon.ico   # 站点图标
@@ -54,93 +54,15 @@ env/
 │   ├── official/     # 官方文档（含自动生成的 routes.md 路由清单）
 │   ├── SUMMARY.md    # 导航目录（rssust docs 自动生成）
 │   └── 路由名.md     # 各路由的文档
-├── docs/             # rssust docs 生成的 HTML 文档
+├── docs/             # rssust docs 生成的 HTML 文档（gitignore，不进仓库）
+├── scripts/          # rhai 脚本路由（可选，scripts feature）
 └── rssust            # 编译后的二进制
 ```
 
-# crawler 模块 — lib.rs（已禁用）
+# crawler 模块 — 已移除
 
-> **注意**：`crawler` 模块目前在 `src/lib.rs` 中已被注释掉（`/* ... */`），当前版本不可用。以下文档仅作历史参考。
-
-## 位置
-
-`src/lib.rs` 中的 `pub mod crawler` 模块（已注释）。
-
-## 概述
-
-管理无头浏览器（Obscura）实例和 Cookie 的生命周期。所有浏览器操作通过线程局部存储（`thread_local!`）实现，每个线程持有独立的浏览器实例。
-
-## 核心类型
-
-### Coke
-
-内部结构体，存储处理后的 Cookie 信息：
-
-```rust
-struct Coke {
-    url: String,    // 域名
-    mai: String,    // Set-Cookie 字符串
-}
-```
-
-### BROWSER（线程局部变量）
-
-```rust
-thread_local! {
-    static BROWSER: RefCell<Option<(tokio::runtime::Runtime, Browser)>> = RefCell::new(None);
-}
-```
-
-每个线程第一次使用时创建 `Runtime` + `Browser` 实例，后续复用。
-
-## 核心函数
-
-### with_browser()
-
-**签名**: `pub fn with_browser<F, T>(f: F) -> Result<T>`
-
-获取当前线程的浏览器实例，执行闭包。如果浏览器尚未初始化，则自动创建：
-
-- 使用 `tokio::runtime::Builder` 创建单线程运行时
-- 调用 `Browser::new()` 创建 Obscura 无头浏览器实例
-
-### load_cookies()
-
-**签名**: `pub fn load_cookies() -> Result<String, Error>`
-
-从二进制同目录的 `cookies.json` 加载 Cookie：
-
-1. 读取 JSON 文件（空文件跳过）
-2. 反序列化为 `Vec<Value>`（Cookie 对象数组）
-3. 对每个 Cookie 调用 `build_set_cookie()` 转换为 `Coke` 结构
-4. 调用 `init()` 注入到全局浏览器
-
-### init()
-
-**签名**: `fn init(cookies: &[Coke]) -> Result<()>`
-
-将 Cookie 注入到浏览器实例中，通过 `browser.cookies().set()` 设置。
-
-### build_set_cookie()
-
-**签名**: `fn build_set_cookie(cookie: &Value) -> Result<Coke>`
-
-将 JSON Cookie 对象转换为 HTTP `Set-Cookie` 字符串：
-
-- 必填字段：`name`, `value`, `domain`
-- 可选字段：`path`（默认 `/`）, `secure`, `httpOnly`, `sameSite`, `expirationDate`
-- `expirationDate` 会计算 `Max-Age` 并附加到字符串
-
-### fetch()
-
-**签名**: `pub fn fetch(url: &str) -> Result<String>`
-
-使用无头浏览器访问指定 URL，返回页面 HTML 内容：
-
-1. 创建新页面（`new_page()`）
-2. 导航到 URL（`goto()`）
-3. 返回页面内容（`content()`）
-
+> **注意**：早期的 `crawler` 模块（Obscura 无头浏览器实例与 Cookie 生命周期管理）已从 `src/lib.rs` 完全移除，当前代码中已不存在（包括注释掉的旧实现）。
+> 现在页面抓取由 `easyuser` 的 `fetch_reqwest_*` 系列函数（reqwest 普通 HTTP）负责；遇到按 TLS 指纹反爬的站点（如 Cloudflare），使用 `fetch_browser_get*` 系列（基于 curl-impersonate-cli 的浏览器指纹伪装）。
 
 # connect 模块 - lib.rs
 

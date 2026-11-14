@@ -12,17 +12,21 @@ Rssust是一个使用Rust语言做的**信息聚合转换软件**，希望让每
 这里是目前服务器支持的ROUTERS,你的左侧Router一栏都是，但这里有一些分类[ROUTERS](routes.md)
 ## 对于一般用户使用：
 ### 安装：
-值得一提的是，运行时，二进制的目录结构如下所示：
+值得一提的是，运行时，二进制（env 文件夹）的目录结构如下所示：
 ```sh
-├── cookies.json
-├── docs_md
+env/
+├── config.toml          # 配置文件，首次启动自动创建
+├── cookies.json         # 可选，需要 cookies 的路由才会用到
+├── docs/                # 运行 ./env/rssust docs 自动生成的 HTML 文档（无需手动维护）
+├── docs_md/
 │   ├── .......md
+│   ├── SUMMARY.md
 │   └── official
 │       └── ......md
-├── index
+├── index/
 │   ├── 404.html
 │   └── index.html
-├── scripts            # 可选，需要编译时开启 scripts feature
+├── scripts              # 可选，需要编译时开启 scripts feature
 │   └── .......rhai
 └── rssust
 ```
@@ -36,13 +40,15 @@ git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
 ./build.sh
 ```
+`build.sh` 会依次执行：`cargo build --release` → 把二进制拷到 `env/` → `./env/rssust cookie firefox`（按 config.toml 的 origins 导出 cookies）→ `./env/rssust docs` → 启动服务器。
+开发调试用 `./build_dev.sh`（fmt + debug 编译 + 拷贝 + 启动，不导出 cookies）。
 想用 rhai 脚本写路由（不写 Rust），编译时额外加 `--features scripts`：
 ```sh
 cargo build --release --features scripts
 ```
 脚本放进 exe 同目录的 `scripts/`，文件名即路由名，写法见[脚本路由说明](script_route_cn.md)。
 
-然后没有版本更新的时候，你可以输入如下命令来更新html文档以及从firefox抓取cookies（注意这会抓取所有cookies,注意保护隐私）：
+然后没有版本更新的时候，你可以输入如下命令来更新html文档以及从浏览器抓取cookies（导出范围由 `config.toml` 的 `[cookie] origins` 决定，默认只有 bilibili，不会抓取全部 cookies，请放心使用；详见 [cookie 配置指南](cookie.md)）：
 ```sh
 cd Rssust
 ./env/rssust cookie firefox
@@ -54,8 +60,8 @@ Windows用户：CMD（未经验证）
 ```shell
 git clone https://github.com/huiinyg-rusting/Rssust
 cd Rssust
-cargo build --features scripts
-robocopy .\target\debug .\env rssust /IF /S
+cargo build --release --features scripts
+robocopy .\target\release .\env rssust.exe /IF
 .\env\rssust.exe cookie firefox
 .\env\rssust.exe docs
 .\env\rssust.exe

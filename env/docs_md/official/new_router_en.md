@@ -20,7 +20,7 @@ You can create your own .rs file under `/src/router`, but there are some require
 5. Each router can only correspond to one function
 
 Before developing, it's best to compile once first. Incremental compilation is already enabled in development mode. The first compilation will take less than ten minutes to download many Crates, and subsequent compilations will complete in about ten seconds.
-Build scripts `build_dev.sh` and `build.bat` are provided.
+Two Linux scripts are provided: `build.sh` (release build + copy to env + export cookies + generate docs + start) and `build_dev.sh` (fmt + debug build + copy + start, recommended for daily development).
 
 ### Import Libraries
 ```rust
@@ -143,7 +143,7 @@ pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
         let rss_item = ItemBuilder::default()
             .title(Some(item["title"].as_str().unwrap_or("").to_string()))
             .link(Some(item["url"].as_str().unwrap_or("").to_string()))
-            .description(item["desc"].as_str().unwrap_or(""))
+            .description(Some(item["desc"].as_str().unwrap_or("").to_string()))
             .pub_date(now())           // use now() if you can't parse the date yet
             .build();
         item_vec.push(rss_item);
@@ -224,9 +224,11 @@ Create a file named `your_router_name.md` under `env/docs_md`, copy and paste th
 **Introduction:** 
 **Address:** 
 **Example:** 
+**robots.txt:** 
 **Parameter:** 
 **Environment Variables:**
 ```
+**Formatting note**: every line except the last one should end with **two trailing spaces** (Markdown hard line break; otherwise mdbook renders all fields squeezed into one line). Keep a single newline at the end of the file.
 
 First, except for `**Cookies?:**`, `**Environment Variables:**`, and `**Parameter:**`, the rest are mostly self-explanatory, but I'll introduce them anyway:
 
@@ -237,7 +239,8 @@ First, except for `**Cookies?:**`, `**Environment Variables:**`, and `**Paramete
 5. **Introduction:** Write a brief introduction (note: if the platform is mainly in a certain language, use that language)
 6. **Address:** Fill in `rssust://router_name`
 7. **Example:** Optional; if included, use a hyperlink: `[fill Address same as above](/router_name)`
-8. **Parameter:** This means HTTP GET parameters that might be used. You can fill in `no`, leave it empty, or start a new line with the following format:
+8. **robots.txt:** Describe how the upstream robots.txt treats the scraped path (fully allowed / path not disallowed / missing file counts as allowed), plus the recommended rate-limit seconds
+9. **Parameter:** This means HTTP GET parameters that might be used. You can fill in `no`, leave it empty, or start a new line with the following format:
 ```markdown
 **Parameter:** 
 1. **disableembed** 
@@ -251,14 +254,25 @@ The parameter name follows the number, wrapped with `** **` for emphasis.
 **Type of parameter:** Fill in the type, define it yourself
 **Default value:** Default value, must conform to the `Type of parameter`
 **Meaning:** The meaning of the parameter
+10. **Environment Variables:** Environment variables the route may need. Fill in `no`, leave empty, or follow this example:
+```markdown
+**Environment Variables:** 
+1. **GITHUB_TOKEN** 
+   Type: string
+   Meaning: GitHub access token, see env_token.md
+```
+Field meanings are the same as the **Parameter:** sub-items.
 
 ### Final Step: Submit!
 Before submitting with git, run `cargo fmt` first. This helps others better understand your code.
 
 You need to submit:
 1. `/src/router/your_router_name.rs`
-2. `env/docs_md/router_name.md` (generally please do not submit your `router_name.html` file)
+2. `env/docs_md/router_name.md`
 3. `/src/router/mod.rs` and `src/request_rules.rs`
+
+Do not commit the generated `docs/` directory (HTML docs); it is git-ignored anyway.
+Tip: run `./env/rssust docs` once before submitting — it performs a three-way consistency check comparing `src/router/mod.rs`, the `routes!` block in `src/request_rules.rs`, and `docs_md/router_name.md`; missing pieces are reported as `DOC-ISS` log lines. It also automatically adds the new route to the `SUMMARY.md` navigation and the `official/routes.md` route list.
 
 #### This is just a guide for routers. If you want to improve the core code, feel free to submit improvements to the code!
 If you are insterested in pogram explanation,please turn to [pogram_explanation_cn](pogram_explanation_cn.md),but now it only has Chinese.

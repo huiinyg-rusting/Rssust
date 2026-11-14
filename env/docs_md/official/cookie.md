@@ -17,6 +17,7 @@ You can use the browser plugin Cookie-Editor to export it, or use the built-in C
 ```
 rssust cookie <browser>
 ```
+子命令写 `cookie` 或 `cookies` 都可以。
 
 Supported browsers: `firefox`, `chrome` (`chromium`/`chromebeta` 也映射到 chrome)（macOS: `safari`，Windows: `edge`）
 

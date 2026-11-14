@@ -18,6 +18,16 @@
 >
 > **浏览器指纹**：另有 `fetch_browser_get*` 系列（基于 curl-impersonate-cli）用于绕过 Cloudflare 等按 TLS 指纹反爬的站点，见下文。
 
+### UA_CHROME
+
+**签名**: `pub const UA_CHROME: &str`
+
+预置的 Chrome 浏览器 User-Agent 字符串。需要自定义 UA 时配合 `fetch_reqwest_get_with_headers()` 使用：
+
+```rust
+fetch_reqwest_get_with_headers(&url, &[("User-Agent", UA_CHROME), ("Accept", "application/json")]).await?;
+```
+
 ### fetch_reqwest_get()
 
 **签名**: `pub async fn fetch_reqwest_get(url: &str) -> Result<String, Error>`
@@ -215,6 +225,12 @@ fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 去除字符串首尾的双引号。
 
 **用在**: 路由中清理从 JSON 提取的字符串值，因为 `serde_json::Value::to_string()` 会给字符串加双引号。
+
+### strip_script_style()
+
+**签名**: `pub fn strip_script_style(html: &str) -> String`
+
+移除 HTML 中所有 `<script>` 与 `<style>` 标签（含内容），返回处理后的文本。抓详情页正文前先过一遍这个函数，可以避免把脚本/样式残留带进 RSS 描述。
 
 ### env_search()
 

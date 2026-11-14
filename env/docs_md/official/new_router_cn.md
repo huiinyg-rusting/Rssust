@@ -15,11 +15,11 @@
 1. 文件名只能包含小写字母或数字或下划线还有固定的.rs后缀，严禁在任何文件名或者网址路径中出现空格！
 2. 路由的规范命名是这样的： 平台小写英文名_功能小写英文名
 3. 文件名的除了后缀名的部分就是你的路由名;
-4. 每一个路由在/docs下都必须有一个对应为 路由名.md的文档，待会再讲;
+4. 每一个路由在`env/docs_md/`下都必须有一个对应为 路由名.md 的文档，待会再讲;
 5. 每一个路由只能对应一种功能;
 
 开发前，最好先编译一次，增量编译在开发模式已经开启，第一次编译会耗时十分钟以内，要下很多的Crates,之后都是十秒钟编译完的事
-提供了build_dev.sh以及build.bat脚本
+提供了两个 Linux 脚本：`build.sh`（release 构建 + 拷贝到 env + 导出 cookies + 生成文档 + 启动）与 `build_dev.sh`（fmt + debug 构建 + 拷贝 + 启动，日常开发推荐）
 ### 导入库
 ```rust
 use std::collections::HashMap;
@@ -140,7 +140,7 @@ pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
         let rss_item = ItemBuilder::default()
             .title(Some(item["title"].as_str().unwrap_or("").to_string()))
             .link(Some(item["url"].as_str().unwrap_or("").to_string()))
-            .description(item["desc"].as_str().unwrap_or(""))
+            .description(Some(item["desc"].as_str().unwrap_or("").to_string()))
             .pub_date(now())           // 不会解析时间就先填当前时间
             .build();
         item_vec.push(rss_item);
@@ -201,7 +201,7 @@ pub async fn get(para: HashMap<String,String>) -> Result<String, Error> {
  所有的cookies挤在同一个json文件，程序运行时按需读取（`easyuser::load_cookie_header()` 会按域名过滤拼装成 `Cookie` 头），无需启动时导入。
 Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 ### 文档的编写！
-在`env/docs_md/`下新建 你的路由名.md的文件，复制粘贴一下再慢慢填：
+在`env/docs_md/`下新建 你的路由名.md 的文件，复制粘贴一下再慢慢填：
 ```markdown
 # Router-name: 
 **Commit time:** 
@@ -210,9 +210,12 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 **Introduction:** 
 **Address:** 
 **Example:** 
+**robots.txt:** 
 **Parameter:** 
 **Environment Variables:**
 ```
+**排版注意**：除最后一行外，每行行尾要加**两个空格**（Markdown 硬换行，否则 mdbook 渲染时所有字段会挤成一行）；文件末尾保留一个换行符即可。
+
 首先除了`**Cookies?:**`,`**Environment Variables:**`和`**Parameter:** `,其余基本上都是字面意思，但我还是介绍一下：
 1. **Router-name:** 填路由名
 2. **Commit time:** 提交时间，以`年.月.日`的形式填写
@@ -221,7 +224,8 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 5. **Introduction:** 写一下简介（注意，如果平台以什么语言为主就用什么语言）
 6. **Address:** 填 `rssust://路由名`就好
 7. **Example:** 可选项，如果要选就要用超链接`[填Address相同的](填/路由名)`
-8. **Parameter:** 这个意思是http get时可能用到的参数，可以填`no`, 或者空着，另起一行，像下面的示例
+8. **robots.txt:** 说明上游 robots.txt 对抓取路径的态度（全允许 / 未禁止该路径 / 不存在视为允许），并写上建议的限流秒数
+9. **Parameter:** 这个意思是http get时可能用到的参数，可以填`no`, 或者空着，另起一行，像下面的示例
 ``` markdown
 **Parameter:** 
 1. **disableembed** 
@@ -235,22 +239,23 @@ Tips：可以使用扩展 Cookie-Editor导出为json到剪贴板再合并。
 **Type of parameter:** 填类型，自己定
 **Default value:** 默认值，要符合`Type of parameter`
 **Meaning:** 参数的含义
-9. **Environment Variables:** 可能用到的环境变量，填no,或者空着，另起一行，像下面的示例
+10. **Environment Variables:** 可能用到的环境变量，填no,或者空着，像下面的示例
 ``` markdown
-**Parameter:** 
-1. **disableembed** 
-   Type of parameter: bool
-   Default value: true
-   Meaning: 内嵌视频
-2. 接下来如法炮制
+**Environment Variables:** 
+1. **GITHUB_TOKEN** 
+   Type: string
+   Meaning: GitHub 访问令牌，见 env_token.md
 ```
-注意：必填的项目把默认值设为null，每个项目的意思参考**Parameter:** 的子项
+每个项目的意思参考**Parameter:** 的子项
 ### 最后一步：提交！
 使用git提交前，先运行`cargo fmt`，这可以使别人更好的识别你的代码
 你需要提交的有：
 1. /src/router/你的路由名.rs
-2. env/docs_md/路由名.md (一般情况下请不要提交您的`路由名.html`文件)
+2. env/docs_md/路由名.md
 3. /src/router/mod.rs以及src/request_rules.rs
+
+生成的 `docs/` 目录（HTML 文档）不要提交，也不会进入 git。
+提示：提交前跑一次 `./env/rssust docs`，它会做三方对账——比对 `src/router/mod.rs`、`src/request_rules.rs` 的 `routes!` 块和 `docs_md/路由名.md` 是否一致，缺漏会输出 `DOC-ISS` 日志；同时自动把新路由写进 `SUMMARY.md` 导航和 `official/routes.md` 路由清单。
    
 #### 这只是路由的指南，如果你想改进核心代码，欢迎提交关于代码的改进，完善
 如果好奇程序构造的，可以看[rogram_explanation_cn](pogram_explanation_cn.md)
