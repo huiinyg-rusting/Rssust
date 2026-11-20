@@ -27,7 +27,7 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         urlencoding::encode(&cc),
         urlencoding::encode(&lang)
     );
-    let resp = fetch_reqwest_get_with_headers(
+    let resp = fetch_reqwest_get_with_retry(
         &url,
         &[("User-Agent", UA_CHROME), ("Accept", "application/json")],
     )

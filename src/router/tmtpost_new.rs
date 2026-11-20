@@ -21,7 +21,11 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         let title = item["title"].as_str().unwrap_or("");
         let guid = item["guid"].as_str().unwrap_or("");
         let link = item["share_link"].as_str().unwrap_or("");
-        let ts = item["time_published"].as_i64().unwrap_or(0);
+        /* 不带浏览器 UA 时该字段会以字符串返回，两种类型都接住 */
+        let ts = item["time_published"]
+            .as_i64()
+            .or_else(|| item["time_published"].as_str().and_then(|s| s.parse().ok()))
+            .unwrap_or(0);
 
         if title.is_empty() || guid.is_empty() {
             continue;

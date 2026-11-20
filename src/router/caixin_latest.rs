@@ -18,7 +18,11 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     for article in list {
         let title = article["title"].as_str().unwrap_or("");
         let link = article["url"].as_str().unwrap_or("");
-        let pub_ts = article["time"].as_i64().unwrap_or(0);
+        let mut pub_ts = article["time"].as_i64().unwrap_or(0);
+        /* 网关曾以秒返回，现已改毫秒：粗略按位数判断，统一折回秒 */
+        if pub_ts > 10_000_000_000 {
+            pub_ts /= 1000;
+        }
         let category = article["channelObject"]["name"].as_str().unwrap_or("");
 
         if title.is_empty() || link.is_empty() {

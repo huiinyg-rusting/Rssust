@@ -47,7 +47,8 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
                 .map(|e| e.inner_html())
                 .unwrap_or_default();
 
-            let pub_date = extract_guancha_date(&detail_html);
+            /* 12/20 的详情页没有 div.time（视频页等），兜底为当前时间，避免 pubDate 缺失 */
+            let pub_date = extract_guancha_date(&detail_html).unwrap_or_else(now);
 
             let item = ItemBuilder::default()
                 .title(Some(title.clone()))

@@ -93,7 +93,8 @@ fn parse_entry(entry_html: &str) -> Result<(String, String, String, String)> {
 pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let ua = UA_CHROME;
 
-    let html = fetch_reqwest_get_with_headers(BASE_URL, &[("User-Agent", ua)]).await?;
+    /* 站点已挂 Cloudflare 盾，reqwest+UA 会被 challenge 页拦下，改用浏览器指纹伪装 */
+    let html = fetch_browser_get_with_headers(BASE_URL, &[("User-Agent", ua)]).await?;
 
     let doc = Html::parse_document(&html);
     let entry_sel = Selector::parse("a.techbuzz-entry.techbuzz-entry-index")

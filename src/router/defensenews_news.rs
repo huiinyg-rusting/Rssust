@@ -1,11 +1,9 @@
 use crate::easyuser::*;
-use anyhow::{Error, Result};
-use chrono::{DateTime, NaiveDateTime, Utc};
+use anyhow::{Error, Result, anyhow};
+use chrono::DateTime;
 use rss::*;
 use scraper::{Html, Selector};
 use std::collections::HashMap;
-use std::sync::Arc;
-use tokio::sync::Semaphore;
 
 const UA: &str = UA_CHROME;
 
@@ -13,52 +11,80 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
     let html = fetch_reqwest_get_with_headers("https://www.defensenews.com", &[("User-Agent", UA)])
         .await?;
 
-    let cards = extract_cards(&html);
-    tracing::info!("defensenews: extracted {} cards", cards.len());
-
-    // Parallelize article date fetching with concurrency limit
-    let semaphore = Arc::new(Semaphore::new(10));
-    let mut handles = Vec::new();
-
-    for (title, link, author, image) in cards {
-        let semaphore = semaphore.clone();
-        let ua = UA.to_string();
-        let link_clone = link.clone();
-        let title_clone = title.clone();
-        let author_clone = author.clone();
-
-        handles.push(tokio::spawn(async move {
-            let _permit = semaphore.acquire().await.unwrap();
-            let pub_date = fetch_article_date(&link_clone, &ua).await;
-            (title_clone, link_clone, author_clone, image, pub_date)
-        }));
-    }
+    /* 站点 2026 年改版为 WordPress Gutenberg 结构：
+    - 文章卡片：<li class="wp-block-post ...">
+    - 标题/链接：标题标签在 h3/h4/h5/h6 间浮动，统一按 .wp-block-post-title a 取
+    - 摘要：p.wp-block-post-excerpt__excerpt
+    - 时间：卡片内 <time datetime="RFC3339">，无需再逐篇抓详情页
+    - 配图：img.wp-post-image */
+    let doc = Html::parse_document(&html);
+    let card_sel = Selector::parse("li.wp-block-post").map_err(|_| anyhow!("card selector"))?;
+    let title_sel =
+        Selector::parse(".wp-block-post-title a").map_err(|_| anyhow!("title selector"))?;
+    let excerpt_sel = Selector::parse(".wp-block-post-excerpt__excerpt")
+        .map_err(|_| anyhow!("excerpt selector"))?;
+    let date_sel =
+        Selector::parse(".wp-block-post-date time").map_err(|_| anyhow!("date selector"))?;
+    let img_sel = Selector::parse("img.wp-post-image").map_err(|_| anyhow!("image selector"))?;
 
     let mut items = Vec::new();
-    for handle in handles {
-        match handle.await {
-            Ok((title, link, author, image, pub_date)) => {
-                // 描述：图片 + 署名，保证每个 item 都有 description
-                let mut desc = if author.is_empty() {
-                    "Defense News 最新军事新闻".to_string()
-                } else {
-                    format!("By {}", author)
-                };
-                if !image.is_empty() {
-                    desc = format!("<img src=\"{}\"><br>{}", image, desc);
-                }
-                items.push(
-                    ItemBuilder::default()
-                        .title(Some(title))
-                        .link(link)
-                        .pub_date(pub_date)
-                        .description(Some(desc))
-                        .build(),
-                );
-            }
-            Err(e) => {
-                tracing::warn!("defensenews: task join error: {}", e);
-            }
+    for card in doc.select(&card_sel) {
+        let Some(title_el) = card.select(&title_sel).next() else {
+            continue;
+        };
+        let title = title_el.text().collect::<String>().trim().to_string();
+        let Some(href) = title_el.value().attr("href") else {
+            continue;
+        };
+        if title.is_empty() {
+            continue;
+        }
+        let link = if href.starts_with("http") {
+            href.to_string()
+        } else {
+            format!("https://www.defensenews.com{}", href)
+        };
+
+        let excerpt = card
+            .select(&excerpt_sel)
+            .next()
+            .map(|e| e.text().collect::<String>().trim().to_string())
+            .unwrap_or_default();
+        let image = card
+            .select(&img_sel)
+            .next()
+            .and_then(|e| e.value().attr("src"))
+            .unwrap_or_default();
+        let pub_date = card
+            .select(&date_sel)
+            .next()
+            .and_then(|e| e.value().attr("datetime"))
+            .and_then(|d| DateTime::parse_from_rfc3339(d).ok())
+            .map(|dt| dt.format("%a, %d %b %Y %H:%M:%S %z").to_string())
+            .unwrap_or_else(now);
+
+        let mut description = if excerpt.is_empty() {
+            "Defense News 最新军事新闻".to_string()
+        } else {
+            excerpt
+        };
+        if !image.is_empty() {
+            description = format!(
+                "<img src=\"{}\" referrerpolicy=\"no-referrer\"><br>{}",
+                image, description
+            );
+        }
+
+        items.push(
+            ItemBuilder::default()
+                .title(Some(title))
+                .link(link)
+                .pub_date(pub_date)
+                .description(Some(description))
+                .build(),
+        );
+        if items.len() >= 20 {
+            break;
         }
     }
     tracing::info!("defensenews: built {} items", items.len());
@@ -73,100 +99,4 @@ pub async fn get(_para: HashMap<String, String>) -> Result<String, Error> {
         .build();
 
     Ok(channel.to_string())
-}
-
-fn extract_cards(html: &str) -> Vec<(String, String, String, String)> {
-    let doc = Html::parse_document(html);
-    // Article cards have data-story-url and itemType="http://schema.org/Article"
-    let card_sel = Selector::parse(r#"article[data-story-url]"#).unwrap();
-    // Headline is in h3/h4/h5 with itemProp="headline" or class o-storyCard__headline
-    let title_sel = Selector::parse(r#"[itemProp="headline"], .o-storyCard__headline"#).unwrap();
-    // Author byline
-    let author_sel = Selector::parse(r#"span[class*="Byline__Author"]"#).unwrap();
-    // 缩略图
-    let img_sel = Selector::parse("img.c-image").unwrap();
-
-    let mut cards = Vec::new();
-    for card in doc.select(&card_sel) {
-        // Try multiple selectors for title
-        let title = card
-            .select(&title_sel)
-            .next()
-            .map(|e| e.text().collect::<String>().trim().to_string())
-            .unwrap_or_default();
-
-        let link = card
-            .value()
-            .attr("data-story-url")
-            .map(|h| {
-                if h.starts_with("http") {
-                    h.to_string()
-                } else {
-                    format!("https://www.defensenews.com{}", h)
-                }
-            })
-            .unwrap_or_default();
-
-        if title.is_empty() || link.is_empty() {
-            continue;
-        }
-
-        let author = card
-            .select(&author_sel)
-            .next()
-            .map(|e| e.text().collect::<String>().trim().to_string())
-            .unwrap_or_default();
-
-        let image = card
-            .select(&img_sel)
-            .next()
-            .and_then(|e| e.value().attr("src"))
-            .map(|s| s.to_string())
-            .unwrap_or_default();
-
-        cards.push((title, link, author, image));
-
-        if cards.len() >= 15 {
-            break;
-        }
-    }
-
-    cards
-}
-
-async fn fetch_article_date(link: &str, ua: &str) -> String {
-    if let Ok(html) = fetch_reqwest_get_with_headers(link, &[("User-Agent", ua)]).await
-        && let Some(date) = extract_date_from_json(&html)
-    {
-        return date;
-    }
-    now()
-}
-
-fn extract_date_from_json(html: &str) -> Option<String> {
-    // Look for "datePublished":"2026-07-21T16:07:00.832Z" in embedded JSON
-    let mut start = 0;
-    while let Some(idx) = html[start..].find("\"datePublished\":\"") {
-        let pos = start + idx + "\"datePublished\":\"".len();
-        if let Some(end) = html[pos..].find('"') {
-            let raw = &html[pos..pos + end];
-            if let Ok(parsed) = DateTime::parse_from_rfc3339(raw) {
-                return Some(
-                    parsed
-                        .with_timezone(&Utc)
-                        .format("%a, %d %b %Y %H:%M:%S %z")
-                        .to_string(),
-                );
-            }
-            if let Ok(naive) = NaiveDateTime::parse_from_str(raw, "%Y-%m-%dT%H:%M:%S") {
-                return Some(
-                    DateTime::<Utc>::from_naive_utc_and_offset(naive, Utc)
-                        .format("%a, %d %b %Y %H:%M:%S %z")
-                        .to_string(),
-                );
-            }
-        }
-        start = pos + 1;
-    }
-    None
 }

@@ -38,8 +38,13 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
         let mark = item["mark"].as_str().unwrap_or_default();
         let cover_url = item["cover_url"].as_str().unwrap_or_default();
         let ctime = item["ctime"].as_str().unwrap_or_default();
-        let announce_link = item["announce_link"].as_str();
-        let id = item["id"].as_i64().unwrap_or_default();
+        /* announce_link 可能是空串，空串同样走兜底链接 */
+        let announce_link = item["announce_link"].as_str().filter(|s| !s.is_empty());
+        /* id 曾是数字、现为字符串，两种类型都接住 */
+        let id = item["id"]
+            .as_i64()
+            .or_else(|| item["id"].as_str().and_then(|s| s.parse().ok()))
+            .unwrap_or_default();
 
         let description = format!(
             "{}<br><img src=\"{}\" referrerpolicy=\"no-referrer\">",
@@ -53,13 +58,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             )
         });
 
-        let pub_date = if !ctime.is_empty() {
-            // ctime format example: "2024-01-01 12:00:00"
-            let date_str = ctime.replace(' ', "T");
-            format!("{} +08:00", date_str)
-        } else {
-            now()
-        };
+        /* ctime 形如 "2024-01-01 12:00:00"，转成标准 RFC2822 */
+        let pub_date = datetime_str_to_rss(ctime).unwrap_or_else(now);
 
         let item = ItemBuilder::default()
             .title(Some(no_double_quotes(item["title"].to_string())))

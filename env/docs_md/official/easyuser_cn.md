@@ -46,6 +46,17 @@ let headers = &[("Referer", "https://example.com"), ("Cookie", "session=abc")];
 fetch_reqwest_get_with_headers("https://api.example.com/data", headers).await?;
 ```
 
+### fetch_reqwest_get_with_retry()
+
+**签名**: `pub async fn fetch_reqwest_get_with_retry(url: &str, headers: &[(&str, &str)]) -> Result<String, Error>`
+
+带 1 次重试的 GET 请求：失败时间隔 2 秒重试一次，两次都失败才返回错误。适用于偶发限速或抖动的上游（如 Steam 商店 API 对数据中心 IP 的间歇超时）。
+
+示例：
+```rust
+fetch_reqwest_get_with_retry("https://api.example.com/data", &[("User-Agent", UA_CHROME)]).await?;
+```
+
 ### fetch_reqwest_post()
 
 **签名**: `pub async fn fetch_reqwest_post(url: &str, body: String, header: Option<reqwest::header::HeaderMap>) -> Result<String, Error>`

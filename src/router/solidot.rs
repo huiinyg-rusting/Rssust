@@ -88,6 +88,8 @@ pub async fn get(para: HashMap<String, String>) -> Result<String, Error> {
             Selector::parse("div.block_m div.bg_htit h2 a").map_err(|_| anyhow!("selector"))?;
         doc.select(&sel)
             .filter_map(|e| e.value().attr("href"))
+            /* 列表里混有指向子站的导航链接（如 /science.solidot.org），只保留真正的文章页 */
+            .filter(|href| href.contains("story?"))
             .map(|href| {
                 if href.starts_with("http") {
                     href.to_string()

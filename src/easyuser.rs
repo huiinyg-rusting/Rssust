@@ -314,6 +314,22 @@ pub async fn fetch_reqwest_get_with_headers(
     result
 }
 
+/* 带 1 次重试的 GET：上游偶发限速或超时（如 Steam 对数据中心 IP 的抖动）时，
+间隔 2 秒重试一次，两次都失败才返回错误 */
+pub async fn fetch_reqwest_get_with_retry(
+    url: &str,
+    headers: &[(&str, &str)],
+) -> Result<String, Error> {
+    match fetch_reqwest_get_with_headers(url, headers).await {
+        Ok(v) => Ok(v),
+        Err(e) => {
+            warn!("GET {} retrying once: {}", url, e);
+            tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+            fetch_reqwest_get_with_headers(url, headers).await
+        }
+    }
+}
+
 pub fn parse_bool(value: Option<&String>, default: bool) -> bool {
     match value.map(String::as_str) {
         Some("1") | Some("true") | Some("True") => true,
